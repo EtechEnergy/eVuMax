@@ -1,0 +1,26 @@
+﻿export class WellSectionPUSOSettings {
+  WellID: string = "";
+  SectionID: string = "";
+  PUChannel: string = "SPPA";
+  PUPumpCutOff: number = 99;
+  PURPMCutOff: number = 12;
+  PUMaxMovement: number = 70;
+  PUMinMovement: number = 5;
+  PUDynMethod: number = 0;
+  PUFilterMaxLocal: boolean = false;
+  SOChannel: string = "SPPA";
+  SOPumpCutOff: number = 99;
+  SORPMCutOff: number = 12;
+  SOMaxMovement: number = 70;
+  SOMinMovement: number = 5;
+  SODynMethod: number = 0;
+  SOFilterMaxLocal: boolean = false;
+  ROTChannel: string = "SPPA";
+  ROTPumpCutOff: number = 99;
+  ROTMinRPM: number = 12;
+  ROTMaxRPM: number = 30;
+  ROTTolerance: number = 1;
+  ROTPoints: number = 1;
+  DepthMovementTime: number = 1;
+  RunNo: string = "";
+}

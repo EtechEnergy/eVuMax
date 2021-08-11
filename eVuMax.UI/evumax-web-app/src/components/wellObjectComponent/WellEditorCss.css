@@ -1,0 +1,185 @@
+.form-inline {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+}
+
+.form-inline label {
+    color: black;
+    margin: 5px 10px 5px 0;
+    width: 219px;
+    justify-content: flex-end !important;
+}
+
+.form-inline input {
+    vertical-align: middle;
+    margin: 5px 10px 5px 0;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    width: 100px;
+    height: 7px;
+}
+
+.form-inline button {
+    padding: 10px 20px;
+    background-color: dodgerblue;
+    border: 1px solid #ddd;
+    color: white;
+    cursor: pointer;
+}
+
+.form-inline button:hover {
+    background-color: royalblue;
+}
+
+.k-splitter-flex {
+    /* display: flex;
+            width: 100%; */
+    height: 100vh !important;
+}
+
+.react-confirm-alert-overlay {
+    background: none !important
+}
+
+.k-grid td{
+    white-space: nowrap;
+  }
+/*
+
+.form-inline {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+}
+
+    .form-inline label {
+        color: white;
+        margin: 5px 10px 5px 0;
+        width: 219px;
+        justify-content: flex-end !important;
+    }
+
+    .form-inline input {
+        vertical-align: middle;
+        margin: 5px 10px 5px 0;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        width: 100px;
+        height: 7px;
+    }
+
+    .form-inline button {
+        padding: 10px 20px;
+        background-color: dodgerblue;
+        border: 1px solid #ddd;
+        color: white;
+        cursor: pointer;
+    }
+
+        .form-inline button:hover {
+            background-color: royalblue;
+        }
+
+
+@media (max-width: 800px) {
+    .form-inline input {
+        margin: 10px 0;
+    }
+
+    .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+input:focus {
+    border-color: #1be23c !important;
+    box-shadow: sandybrown !important;
+  }
+  input{
+      width: 200px !important;
+  }
+
+
+
+
+div.k-treeview {
+    overflow: visible;
+}
+
+
+
+
+
+
+#tabstrip {
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: auto;
+}
+
+.k-tabstrip .k-content {
+    height: 700px;
+
+    top: 41px;
+    bottom: 0;
+    background-color: black;
+}
+
+.btnStyle {
+    color: whitesmoke;
+    font-size: 36px;
+}
+
+.imgFill{
+    fill:white !important;
+}
+.pane-content {
+     padding: 0 10px;
+     background-color:black
+     }
+     .form-inline {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: flex-end;
+    }
+    .k-menu-link{
+        color: black !important;
+    }
+
+    .context-menu{
+        color: blueviolet !important;
+    }
+    .k-checkbox{
+        width: 20px !important;
+    }
+
+
+.k-tabstrip-items .k-item .k-link {
+    color: white;
+    background-color:black;
+  }
+
+        .k-tabstrip>.k-content {
+
+            background-color:inherit !important;
+        }
+
+        .k-splitter {
+            border-color: rgba(0,0,0,0.08);
+
+            background-color: black !important;
+        }
+
+
+
+
+    .treeViewText{
+color: white !important;
+    } */

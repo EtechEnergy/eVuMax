@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Fragment>
+    <ComponentGroup Id="WebAPIComponents">
+      
+      
+      <Component Id="bin" Guid="{7D729D33-1F60-4648-A05B-03AA1A1A90BE}" Directory="bin">
+
+        <File Id="eVuMax.API" Source="$(var.eVuMax.API.TargetDir)\eVuMax.API.dll"/>
+        <File Id="eVuMax.DataBroker" Source="$(var.eVuMax.API.TargetDir)\eVuMax.DataBroker.dll"/>       
+        <File Id="Newtonsoft.Json" Source="$(var.eVuMax.API.TargetDir)\Newtonsoft.Json.dll"/>
+
+        <File Id="VuMaxDR.Data.Objects" Source="$(var.eVuMax.API.TargetDir)\VuMaxDR.Data.Objects.dll"/>
+        <File Id="VuMaxDR.Data" Source="$(var.eVuMax.API.TargetDir)\VuMaxDR.Data.dll"/>
+        <File Id="VuMaxDR.Common" Source="$(var.eVuMax.API.TargetDir)\VuMaxDR.Common.dll"/>
+
+        <File Id="log4net.dll" Source="$(var.eVuMax.API.TargetDir)\log4net.dll"/>
+        <File Id="FastEval.dll" Source="..\lib\FastEval.dll"/>
+        <File Id="VuMaxDR.AdvKPI.dll" Source="..\lib\VuMaxDR.AdvKPI.dll"/>
+
+        <File Id="Microsoft.AspNet.TelemetryCorrelation.dll" Source="$(var.eVuMax.API.TargetDir)\Microsoft.AspNet.TelemetryCorrelation.dll"/>
+        <File Id="System.Diagnostics.DiagnosticSource.dll" Source="$(var.eVuMax.API.TargetDir)\System.Diagnostics.DiagnosticSource.dll"/>
+
+        
+      </Component>
+
+
+      <Component Id="API" Guid="{F4F30D61-24BC-4DAF-AF62-F2D5E5D1B333}" Directory="dir_eVuMaxAPI">
+
+        <File Id="eVuMax.asmx" Source="$(var.eVuMax.API.ProjectDir)\eVuMax.asmx"/>
+        <File Id="Web.config" Source="$(var.eVuMax.API.ProjectDir)\Web.config"/>
+
+
+        <util:XmlFile Id="VuMaxConfig" Action="setValue" Permanent="yes" File="[#Web.config]"
+       ElementPath="/configuration/connectionStrings/add[\[]@name='VuMax'[\]]" Name="connectionString"
+       Value="Provider=SQLNCLI11;Data Source=[DB_SERVER]; User Id=[DB_USER];Password=[DB_PASSWORD];MARS Connection=True;Database=VuMaxDR;"/>
+       
+      </Component>
+
+
+      <!--<Component Id="IntegratedComponent" Guid="{F0E8277B-B2F1-423A-9F3B-F84683D1F2C6}" KeyPath="yes" Directory="dir_eVuMaxAPI">
+
+     
+       
+
+      </Component>-->
+
+      
+
+
+
+    
+    </ComponentGroup>
+	</Fragment>
+</Wix>

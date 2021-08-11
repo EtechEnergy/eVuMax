@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <UI Id="UIDialog">
+
+
+      <TextStyle Id="DialogTitle" Bold="yes" Underline="yes" Size="10" FaceName="Tahoma"/>
+      <TextStyle Id="DialogNotes" Bold="yes" Size="8" Red="0" Green="128" Blue="0"   FaceName="Tahoma" />
+      <Dialog Id="DatabaseDlg"   Width="370" Height="270" Title="Database Settings" NoMinimize="yes">
+        <Control Id="Label"  Type="Text" X="10" Y="10" Width="220" Height="15" TabSkip="no" Text="{\DialogTitle}Database Connection Information" />      
+
+
+       
+
+
+        <Control Id="ServerNameLabel" Type="Text" X="20" Y="65" Width="220" Height="18" TabSkip="no" Text="Database server name or IP :" >
+         
+        </Control>
+        <Control Id="ServerNameEdit" Type="Edit" X="130" Y="61" Width="180" Height="18" Property="DB_SERVER" Text="{80}" >
+        
+        </Control>
+
+        <Control Id="ServerNotesLabel" Type="Text" X="130" Y="80" Width="220" Height="18" TabSkip="no" Text="{\DialogNotes}(e.g. : SERVERNAME\INSTANCE or 192.0.0.101 )" >
+          
+        </Control>
+
+
+
+
+
+        <Control Id="UserLabel" Type="Text" X="62" Y="101" Width="100" Height="15" TabSkip="no" Text="&amp;Login User name :" >
+        </Control>
+        <Control Id="UserEdit" Type="Edit" X="130" Y="98" Width="180" Height="18" Property="DB_USER" Text="{80}" >
+        </Control>
+
+        <Control Id="PasswordLabel" Type="Text" X="86" Y="123" Width="220" Height="15" TabSkip="no" Text="&amp;Password :" >
+        </Control>
+        <Control Id="PasswordEdit" Type="Edit" X="130" Y="120" Width="180" Height="18" Property="DB_PASSWORD" Text="{80}" Password="yes" >
+        </Control>
+       
+
+
+
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back"></Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next"></Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+      </Dialog>
+
+
+    </UI>
+
+    <UIRef Id="WixUI_Common" />
+  </Fragment>
+
+
+</Wix>

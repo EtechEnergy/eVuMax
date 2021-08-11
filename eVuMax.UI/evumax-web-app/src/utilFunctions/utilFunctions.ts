@@ -1,0 +1,199 @@
+import history from "../history/history";
+
+export function CopyObject(paramObject: any) {
+  return JSON.parse(JSON.stringify(paramObject));
+}
+
+export function setComboValue(paramComboBox: any, paramValue: string) {
+  try {
+    const paramStrValue = paramValue.trim().toString().toLowerCase();
+    let index: number = 0;
+    paramComboBox.forEach(function (value: any) {
+      if (value.text == paramValue) {
+        return paramComboBox[index];
+      }
+      index += 1;
+    });
+  } catch (error) { }
+}
+
+export function convertMapToDictionaryJSON(paramValue: any, keyField?: string) {
+  try {
+    //Below code is to convert Map to c# dictionary object
+    let jsonObject: any = {};
+    paramValue.forEach((value: any, key: any) => {
+      if (keyField !== undefined) {
+        jsonObject[value[keyField]] = value;
+      } else {
+        jsonObject[key] = value;
+      }
+    });
+    return jsonObject;
+  } catch (error) {
+    return null;
+  }
+}
+
+export function DictionaryToMap(paramDict: any, paramNewMap: any) {
+  try {
+    for (let index = 0; index < Object.keys(paramDict).length; index++) {
+
+      const key = Object.keys(paramDict)[index];
+      paramNewMap.set(key, paramDict[key]);
+    }
+
+    return paramNewMap;
+  } catch (error) {
+    return null;
+  }
+}
+
+//Function to convert hex format to a rgb color
+export function rgb2hex(rgb: any) {
+  rgb = rgb.match(
+    /^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i
+  );
+  return rgb && rgb.length === 4
+    ? "#" +
+    ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+    ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+    ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2)
+    : "";
+}
+
+export function appendLeadingZeroes(n) {
+  if (n <= 9) {
+    return "0" + n;
+  }
+  return n;
+}
+
+//prath 01-10-2020
+export function formateDate(paramDate: Date) {
+  try {
+    let day = paramDate.getDate();
+    let mlist = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    let month = mlist[paramDate.getMonth()];
+    let year = paramDate.getFullYear();
+    let hour = paramDate.getHours();
+    let minute = paramDate.getMinutes();
+    let seconds = paramDate.getSeconds();
+
+    let strDate =
+      day +
+      "-" +
+      month +
+      "-" +
+      year +
+      " " +
+      hour +
+      ":" +
+      minute +
+      ":" +
+      seconds;
+
+    return strDate;
+  } catch (error) {
+    return "";
+  }
+}
+
+
+
+//Nishant 07-10-2020
+//Common function to launch Widget from List Cick
+export function getWidgetList() {
+  try {
+    const WidgetList = [
+      { id: "DrlgSummary", name: "Drilling Summary" },
+      { id: "DrlgConnSummary", name: "Drlg. Conn. Summary" },
+      { id: "DrlgConnSummary2", name: "Drlg. Conn. Summary (Split View)" },
+      { id: "TripConnSummary", name: "Trip Conn. Summary" },
+      { id: "ToolfaceSummary", name: "Toolface Summary" },
+      { id: "ROPSummary", name: "ROP Summary" },
+      { id: "TripSpeed1", name: "Trip Speed 1" },
+      { id: "TripSpeed2", name: "Trip Speed 2" },
+      { id: "Broomstick", name: "Broomstick" },
+
+    ];
+
+    return WidgetList;
+  } catch (error) {
+
+  }
+}
+export function launchWidget(interfaceID: string, wellID: string) {
+  try {
+
+
+    if (interfaceID === "ROPSummary") {
+      history.push("ROPSummaryPlot/" + wellID);
+    }
+
+    if (interfaceID === "DrlgSummary") {
+      history.push("DrillingSummary/" + wellID);
+    }
+    if (interfaceID === "DrlgConnSummary") {
+      history.push("DrlgConnSummary/" + wellID);
+    }
+
+    if (interfaceID === "DrlgConnSummary2") {
+      history.push("DrlgConnSummary2/" + wellID);
+    }
+
+    if (interfaceID === "TripConnSummary") {
+      history.push("TripConnSummary/" + wellID);
+    }
+
+    if (interfaceID === "ToolfaceSummary") {
+      history.push("ToolfaceSummary/" + wellID);
+    }
+
+    if (interfaceID === "TripSpeed1") {
+      history.push("TripSpeedPlot1/" + wellID);   //TripSpeed1
+    }
+
+    if (interfaceID === "TripSpeed2") {
+      history.push("TripSpeedPlot2/" + wellID);
+    }
+
+    if (interfaceID === "Broomstick") {
+      history.push("Broomstick/" + wellID);
+    }
+
+  } catch (error) {
+
+  }
+}
+
+export function parseJSON(pString: string) {
+  try {
+    JSON.parse(pString);
+    return JSON.parse(pString);
+
+  } catch (e) {
+    return false;
+  }
+}
+
+export function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}

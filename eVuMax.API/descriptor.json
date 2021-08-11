@@ -1,0 +1,33 @@
+{
+    "fileName": "./MoonlightSonata.raw",
+    "nElements": 63897600,
+    "fileSize": 63897600,
+    "maxElements": 8000,
+    "windowSize": 16,
+    "lodFiles": [
+        {
+            "fileName": "./MoonlightSonata_1.raw",
+            "fileSize": 7987200,
+            "level": 1,
+            "nElements": 3993600
+        },
+        {
+            "fileName": "./MoonlightSonata_2.raw",
+            "fileSize": 499200,
+            "level": 2,
+            "nElements": 249600
+        },
+        {
+            "fileName": "./MoonlightSonata_3.raw",
+            "fileSize": 31200,
+            "level": 3,
+            "nElements": 15600
+        },
+        {
+            "fileName": "./MoonlightSonata_4.raw",
+            "fileSize": 1950,
+            "level": 4,
+            "nElements": 975
+        }
+    ]
+}

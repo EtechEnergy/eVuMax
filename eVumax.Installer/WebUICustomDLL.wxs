@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="WebUICustomComponents">
+
+
+      <Component Id="eVuMaxUIConfig" Guid="{20344EAC-1802-4E07-99C6-7F2CE4BC9AEE}" Directory="dir_eVuMaxUI">
+
+        <File Id="eVumaxUI.web.config" Source="..\lib\web.config"/>
+      </Component>
+
+
+
+
+    </ComponentGroup>
+  </Fragment>
+</Wix>

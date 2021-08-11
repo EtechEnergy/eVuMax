@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <Fragment>
+    
+    <iis:WebSite Id="DefaultWebSite" Description="Default Web Site" Directory="dir_eVuMaxAPI">
+      <iis:WebAddress Id="AllUnassigned" Port="80" />     
+    </iis:WebSite>
+   
+    <ComponentGroup Id="IISConfigComponent">
+
+
+      <Component Id="IIS.Component.UI" KeyPath="yes" Guid="{F5A85DAC-DAA8-41C2-BF83-9401121D368B}" Directory="dir_eVuMaxUI">
+        <iis:WebAppPool Id="eVuMaxAppPool" Name="eVuMaxAppPool" Identity="networkService"  ManagedRuntimeVersion="v4.0" ManagedPipelineMode="Integrated"  MaxWorkerProcesses="100" />
+
+        <iis:WebVirtualDir  Id="dir_eVuMaxUI_Virtual" Alias="evumaxapp" Directory="dir_eVuMaxUI" WebSite="DefaultWebSite">
+          <iis:WebApplication Id="dir_eVumaxUI_Application" Name="evumaxapp" WebAppPool="eVuMaxAppPool" />
+        </iis:WebVirtualDir>
+      </Component>
+      
+      
+      <Component Id="IIS.Component.API" KeyPath="yes" Guid="{C682C945-9BE5-4F83-B555-A6158A5BA2F7}" Directory="dir_eVuMaxAPI">
+      
+        <iis:WebVirtualDir  Id="dir_eVuMaxAPI_Virtual" Alias="evumaxapi" Directory="dir_eVuMaxAPI" WebSite="DefaultWebSite">
+          <iis:WebApplication Id="dir_eVumaxAPI_Application" Name="evumaxapi" WebAppPool="eVuMaxAppPool" />          
+        </iis:WebVirtualDir>
+      </Component>
+    </ComponentGroup>
+    
+  </Fragment> 
+</Wix>

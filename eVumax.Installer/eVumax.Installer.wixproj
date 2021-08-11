@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.10</ProductVersion>
+    <ProjectGuid>ea3f799f-1bbb-4375-bc1e-762a5595fa40</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>eVumaxApp</OutputName>
+    <OutputType>Package</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="img" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\eVuMax.API\eVuMax.API.csproj">
+      <Name>eVuMax.API</Name>
+      <Project>{c0646829-198b-4764-a52a-bda16bdc686e}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\eVuMax.DataBroker\eVuMax.DataBroker.csproj">
+      <Name>eVuMax.DataBroker</Name>
+      <Project>{d410ef8d-47ed-4b64-a70d-f1b32037f791}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\eVuMax.UI\eVuMax.UI.csproj">
+      <Name>eVuMax.UI</Name>
+      <Project>{8fbc4a01-34b5-409c-a439-5bf6b9d4fd1e}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixTagExtension">
+      <HintPath>$(WixExtDir)\WixTagExtension.dll</HintPath>
+      <Name>WixTagExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixIIsExtension">
+      <HintPath>$(WixExtDir)\WixIIsExtension.dll</HintPath>
+      <Name>WixIIsExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="config.bat" />
+    <Content Include="img\EtechBackground.bmp" />
+    <Content Include="img\EtechBanner.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Common.wxl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Directories.wxs" />
+    <Compile Include="IIS.wxs" />
+    <Compile Include="Product.wxs" />
+    <Compile Include="UI.wxs" />
+    <Compile Include="UIDialog.wxs" />
+    <Compile Include="WebAPI.wxs" />
+    <Compile Include="WebUI.wxs" />
+    <Compile Include="WebUICustomDLL.wxs" />
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+  <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
+    <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
+  </Target>
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.
+
+	
+	-->
+  <Target Name="BeforeBuild">
+    <GetAssemblyIdentity AssemblyFiles="..\eVuMax.API\bin\eVuMax.API.dll">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <DefineConstants>BuildVersion=%(AssemblyVersion.Version)</DefineConstants>
+    </PropertyGroup>
+    <!--Run NPM Script UI-->
+    <Exec Command="npm -v" />
+    <Exec Command="npm --prefix ../eVuMax.UI/evumax-web-app/ run-script build" />
+    
+    <!--Run Publish Command API-->
+    <HeatDirectory OutputFile="WebUI.wxs" DirectoryRefId="dir_eVuMaxUI" ComponentGroupName="WebUIComponents" SuppressCom="true" Directory="..\eVuMax.UI\evumax-web-app\build\" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" AutoGenerateGuids="false" GenerateGuidsNow="true" ToolPath="$(WixToolPath)" PreprocessorVariable="loc.eVuMaxUI" />
+  </Target>
+  <Target Name="AfterBuild">
+    <PropertyGroup>
+      <DefineConstants>DateTimeStamp=%date%_%time:~0,2%%time:~3,2%%time:~6,2%</DefineConstants>
+    </PropertyGroup>
+    <Exec Command="if not exist MSI mkdir MSI" />
+    <Exec Command="config.bat" />
+    <Exec Command="move bin\$(Configuration)\en-us\$(OutputName).msi MSI\eVumaxApp__$(Configuration)__%(AssemblyVersion.Version).msi" />
+  </Target>
+</Project>

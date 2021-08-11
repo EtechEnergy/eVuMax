@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLDIR" Name="ETECH">
+
+          <Directory Id="dir_eVuMaxUI" Name="eVuMaxUI">
+            <Directory Id="UI_bin" Name="bin"/>
+          </Directory>
+          <Directory Id="dir_eVuMaxAPI"  Name="eVuMaxAPI">
+            <Directory Id="bin" Name="bin"/>
+          </Directory>
+
+        </Directory>
+      </Directory>
+
+
+    </Directory>
+  </Fragment>
+</Wix>
