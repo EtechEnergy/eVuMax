@@ -57,7 +57,7 @@
       <HintPath>..\lib\VuMaxDR.Common.dll</HintPath>
     </Reference>
     <Reference Include="VuMaxDR.Data">
-      <HintPath>..\..\..\..\..\E-TECH\VuMax DR Ex - 39781\VuMaxDR.Data\VuMaxDR.Data\bin\x86\Release\VuMaxDR.Data.dll</HintPath>
+      <HintPath>..\lib\VuMaxDR.Data.dll</HintPath>
     </Reference>
     <Reference Include="VuMaxDR.Data.Objects">
       <HintPath>..\lib\VuMaxDR.Data.Objects.dll</HintPath>
