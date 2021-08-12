@@ -111,13 +111,13 @@ class ToolfaceSummary extends Component {
     ShowDrillingWindow: false,
     GeoDrlgWindowData: [],
     GeoDrlgWindowColor: "",
-    GeoDrlgWindowTrans: 50,
+    GeoDrlgWindowTrans: 0.5,
 
     // ROP
     ShowROPDrillingWindow: false,
     ROPDrlgWindowData: [],
     ROPDrlgWindowColor: "",
-    ROPDrlgWindowTrans: 50,
+    ROPDrlgWindowTrans: 0.5,
 
     GTF: {
       Mnemonic: "GTF",
@@ -1278,13 +1278,13 @@ class ToolfaceSummary extends Component {
         ShowDrillingWindow: this.objUserSettings.ShowDrillingWindow,
         GeoDrlgWindowData: newGeoDrlgWindowData,
         GeoDrlgWindowColor: this.objUserSettings.GeoDrlgWindowColor,
-        GeoDrlgWindowTrans: this.objUserSettings.GeoDrlgWindowTrans,
+        GeoDrlgWindowTrans: this.objUserSettings.GeoDrlgWindowTrans>1?0.5:this.objUserSettings.GeoDrlgWindowTrans, //Nishant 12/08/2021
 
         // ROP
         ShowROPDrillingWindow: this.objUserSettings.ShowROPDrillingWindow,
         ROPDrlgWindowData: newROPDrlgWindowData,
         ROPDrlgWindowColor: this.objUserSettings.ROPDrlgWindowColor,
-        ROPDrlgWindowTrans: this.objUserSettings.ROPDrlgWindowTrans,
+        ROPDrlgWindowTrans: this.objUserSettings.ROPDrlgWindowTrans>1?0.5:this.objUserSettings.ROPDrlgWindowTrans,//Nishant 12/08/2021
 
         GTF: this.objUserSettings.GTF,
         MTF: this.objUserSettings.MTF,
@@ -3010,6 +3010,8 @@ class ToolfaceSummary extends Component {
                       <div className="col-lg-4 col-xl-3 col-md-4 col-sm-4">
                         <NumericTextBox
                           className="form-control"
+                          min={0.1} //Nishant 12/08/2021
+                          max={1} //Nishant 12/08/2021
                           value={this.state.GeoDrlgWindowTrans}
                           onChange={(e) =>
                             this.OnChange(e, "GeoDrlgWindowTrans")
@@ -3157,6 +3159,8 @@ class ToolfaceSummary extends Component {
                         <div className="col-lg-4 col-xl-3 col-md-4 col-sm-4">
                           <NumericTextBox
                             className="form-control"
+                            min={0.1}
+                            max={1}
                             value={this.state.ROPDrlgWindowTrans}
                             onChange={(e) =>
                               this.OnChange(e, "ROPDrlgWindowTrans")
