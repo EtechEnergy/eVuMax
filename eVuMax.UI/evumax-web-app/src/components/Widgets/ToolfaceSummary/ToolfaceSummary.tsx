@@ -3159,8 +3159,8 @@ class ToolfaceSummary extends Component {
                         <div className="col-lg-4 col-xl-3 col-md-4 col-sm-4">
                           <NumericTextBox
                             className="form-control"
-                            min={0.1}
-                            max={1}
+                            min={0.1} //Nishant 12/08/2021
+                            max={1} //Nishant 12/08/2021
                             value={this.state.ROPDrlgWindowTrans}
                             onChange={(e) =>
                               this.OnChange(e, "ROPDrlgWindowTrans")
