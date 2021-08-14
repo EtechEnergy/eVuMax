@@ -18,11 +18,11 @@
 
 
 .bg-custom-black {
-    /* background: #1a1e30; */
-    background: var(--base-menu-left) !important;
+    background: #1a1e30;
+    /* background: var(--base-menu-left) !important; */
 }
 
 .bg-custom-lightBlack {
-    /* background: #292c3e; */
-    background-color: var(--base-work-area) !important;
+    background: #292c3e;
+    /* background-color: var(--base-work-area) !important; */
 }
