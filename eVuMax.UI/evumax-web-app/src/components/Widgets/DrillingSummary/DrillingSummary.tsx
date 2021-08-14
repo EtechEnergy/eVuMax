@@ -21,7 +21,7 @@ import * as utilFunc from "../../../utilFunctions/utilFunctions";
 
 import { axisLabelStyle, Axis } from "../../../eVuMaxObjects/Chart/Axis";
 import { exit } from "process";
-import Moment from "react-moment";
+//import Moment from "react-moment";
 import ProcessLoader from "../../loader/loader";
 import DataSelector from "../../Common/DataSelector";
 import moment from "moment";
@@ -83,10 +83,13 @@ export class DrillingSummary extends Component {
 
   componentDidMount() {
     //initialize chart
+
     this.initilizeCharts();
     this.setState({
       objChart_ROP: this.objChart,
     });
+
+
     this.loadDrlgSummary();
     window.addEventListener("resize", this.refreshChart);
   }
@@ -105,6 +108,7 @@ export class DrillingSummary extends Component {
     ptoDepth: number
   ) => {
     try {
+
       this.setState({ selectionType: pselectedval });
       this.selectionType = pselectedval;
       this.fromDate = pfromDate;
@@ -401,6 +405,12 @@ export class DrillingSummary extends Component {
       this.objChart_ROPLine.bottomAxis().ShowTitle = true;
       this.objChart_ROPLine.bottomAxis().LabelAngel = 0;
       this.objChart_ROPLine.bottomAxis().ShowSelector = false;
+      this.objChart_ROPLine.bottomAxis().Labels = [];
+      this.objChart_ROPLine.bottomAxis().LabelStyle =
+        axisLabelStyle.values;
+      this.objChart_ROPLine.bottomAxis().bandScale = false;
+      this.objChart_ROPLine.bottomAxis().PaddingMax = 0;
+
 
       this.objChart_ROPLine.rightAxis().Visible = false;
       this.objChart_ROPLine.rightAxis().ShowLabels = false;
@@ -432,8 +442,24 @@ export class DrillingSummary extends Component {
       for (let i = 0; i < this.state.objSummaryData.ROPData.length; i++) {
         let objVal: ChartData = new ChartData();
         //objVal.datetime = new Date(Date.parse(paramData[i]["DATETIME1"]));
+
+        const element = this.state.objSummaryData.ROPData[i];
+        //let lblString: string = element.Y + "#" + element.DATE_TIME;
+
+        let lblString: string = element.Y + "#" + element.DATE_TIME.split(" ")[0] + "#" + element.DATE_TIME.split(" ")[1];
+
+        let strArr = lblString.split("#");
+        lblString = strArr[0] + "~" + strArr[1] + "~" + strArr[2];
+
+        objVal.label = strArr[0];
+
+        //objVal.label = lblString; //Depth  //new Date(Date.parse(paramData[i]["DATETIME1"]));
         objVal.x = this.state.objROPData[i].Y; //Depth  //new Date(Date.parse(paramData[i]["DATETIME1"]));
         objVal.y = this.state.objROPData[i].X; //ROP
+
+        this.objChart_ROPLine.bottomAxis().Labels.push(lblString);
+
+
         objROPLine.Data.push(objVal);
       }
 
@@ -467,6 +493,7 @@ export class DrillingSummary extends Component {
       }
 
       this.objChart_ROPLine.drawLegend();
+      debugger;
       this.objChart_ROPLine.reDraw();
     } catch (error) { }
   };
@@ -535,6 +562,7 @@ export class DrillingSummary extends Component {
 
         this.objChart_RigStateSummary.DataSeries.set(objSeries.Id, objSeries);
 
+
         let lblString: string = element.TEXT_LABEL;
         let strArr = lblString.split("#");
 
@@ -553,6 +581,7 @@ export class DrillingSummary extends Component {
 
         objSeries.Data.push(objDataPoint);
       }
+
       this.objChart_RigStateSummary.reDraw();
 
       //console.log("Labels", this.objChart_RigStateSummary.bottomAxis().Labels);
@@ -667,7 +696,6 @@ export class DrillingSummary extends Component {
       this.objChart.bottomAxis().LabelAngel = 0;
       this.objChart.bottomAxis().ShowSelector = false;
       this.objChart.bottomAxis().LabelStyle = axisLabelStyle.labels;
-
       this.objChart.bottomAxis().Labels = [];
 
       this.objChart.rightAxis().ShowLabels = false;
@@ -1194,6 +1222,7 @@ export class DrillingSummary extends Component {
         value_3: this.state.objSummaryData.MainDepthOut.toFixed(2),
       };
       arrOffsetNumericTable.push(objData);
+
       objData = {
         col_1: "Drlg Start Date",
         value_1: moment(this.state.objSummaryData.OffsetStartDate).format(
@@ -1860,15 +1889,31 @@ export class DrillingSummary extends Component {
                     display: "inline-block",
                   }}
                 ></div>
-                <div
-                  id="roplinechart"
-                  style={{
-                    height: "calc(28vh)",
-                    width: "calc(98vw)",
-                    float: "left",
-                    backgroundColor: "transparent",
-                  }}
-                ></div>
+
+                {this.state.objOffsetNumericData.length <= 0 ?
+                  <div
+                    id="roplinechart"
+                    style={{
+                      height: "calc(54vh)",
+                      width: "calc(95vw)",
+                      float: "left",
+                      backgroundColor: "transparent",
+                    }}
+                  ></div>
+                  :
+                  <div
+                    id="roplinechart"
+                    style={{
+                      height: "calc(28vh)",
+                      width: "calc(95vw)",
+                      float: "left",
+                      backgroundColor: "transparent",
+                    }}
+                  ></div>
+
+
+                }
+
               </div>
             </TabStripTab>
             {/* <TabStripTab title="Settings" >

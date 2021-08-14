@@ -1,28 +1,28 @@
 ﻿@media (min-width: 768px) {
-    .h-md-100 {
-        height: 100vh;
-    }
+  .h-md-100 {
+    height: 100vh;
+  }
 }
 
 .btn-round {
-    border-radius: 30px;
+  border-radius: 30px;
 }
 
 .bg-indigo {
-    background: indigo;
+  background: indigo;
 }
 
 .text-cyan {
-    color: #35bdff;
+  color: #35bdff;
 }
 
-
 .bg-custom-black {
-    /* background: #1a1e30; */
-    background: var(--base-menu-left) !important;
+  background: #1a1e30;
+  /* background: var(--base-menu-left) !important; */
 }
 
 .bg-custom-lightBlack {
-    /* background: #292c3e; */
-    background-color: var(--base-work-area) !important;
+  background: #292c3e;
+  /* background-color: var(--base-work-area) !important; */
+  /* nkkk */
 }

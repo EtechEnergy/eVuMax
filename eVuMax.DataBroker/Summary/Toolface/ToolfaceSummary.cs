@@ -332,8 +332,8 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 calculateInZoneROP(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog, out InZoneROPPercent);
 
-                objToolfaceSummary.OutOfDrlgWindowPercent = 100 - InZonePercent;
-                objToolfaceSummary.OutOfROPWindowPercent = 100 - InZoneROPPercent;
+                objToolfaceSummary.OutOfDrlgWindowPercent = Math.Round(100 - InZonePercent,2); //Nishant 12/08/2021
+                objToolfaceSummary.OutOfROPWindowPercent = Math.Round(100 - InZoneROPPercent,2); //Nishant 12/08/2021
 
 
                 objResponse.Response = JsonConvert.SerializeObject(objToolfaceSummary);
@@ -1325,11 +1325,19 @@ namespace eVuMax.DataBroker.Summary.Toolface
                                 foreach (DataRow objDrlgWindowRow in objSettings.GeoDrlgWindowData.Rows)
                                 {
 
-                                    double lnFromMD = double.Parse(DataService.checkNull(objDrlgWindowRow["FROM_MD"], 0).ToString());
-                                    double lnToMD = double.Parse(DataService.checkNull(objDrlgWindowRow["TO_MD"], 0).ToString());
+                                    //double lnFromMD = double.Parse(DataService.checkNull(objDrlgWindowRow["FROM_MD"], 0).ToString());
+                                    //double lnToMD = double.Parse(DataService.checkNull(objDrlgWindowRow["TO_MD"], 0).ToString());
 
-                                    double lnTop = double.Parse(DataService.checkNull(objDrlgWindowRow["TOP"], 0).ToString());
-                                    double lnBottom = double.Parse(DataService.checkNull(objDrlgWindowRow["BOTTOM"], 0).ToString());
+                                    //double lnTop = double.Parse(DataService.checkNull(objDrlgWindowRow["TOP"], 0).ToString());
+                                    //double lnBottom = double.Parse(DataService.checkNull(objDrlgWindowRow["BOTTOM"], 0).ToString());
+
+
+                                    //Nishant 12/08/2021
+                                    double lnFromMD = double.Parse(DataService.checkNull(objDrlgWindowRow["StartMD"], 0).ToString());
+                                    double lnToMD = double.Parse(DataService.checkNull(objDrlgWindowRow["EndMD"], 0).ToString());
+
+                                    double lnTop = double.Parse(DataService.checkNull(objDrlgWindowRow["TopWindow"], 0).ToString());
+                                    double lnBottom = double.Parse(DataService.checkNull(objDrlgWindowRow["BottomWindow"], 0).ToString());
 
 
                                     if (MD >= lnFromMD & MD <= lnToMD)
@@ -1456,12 +1464,12 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                                 foreach (DataRow objDrlgWindowRow in objSettings.ROPDrlgWindowData.Rows)
                                 {
+                                    //Nishant 12/08/2021
+                                    double lnFromMD = double.Parse(DataService.checkNull(objDrlgWindowRow["StartMD"], 0).ToString());
+                                    double lnToMD = double.Parse(DataService.checkNull(objDrlgWindowRow["EndMD"], 0).ToString());
 
-                                    double lnFromMD = double.Parse(DataService.checkNull(objDrlgWindowRow["FROM_MD"], 0).ToString());
-                                    double lnToMD = double.Parse(DataService.checkNull(objDrlgWindowRow["TO_MD"], 0).ToString());
-
-                                    double lnTop = double.Parse(DataService.checkNull(objDrlgWindowRow["TOP"], 0).ToString());
-                                    double lnBottom = double.Parse(DataService.checkNull(objDrlgWindowRow["BOTTOM"], 0).ToString());
+                                    double lnTop = double.Parse(DataService.checkNull(objDrlgWindowRow["TopWindow"], 0).ToString());
+                                    double lnBottom = double.Parse(DataService.checkNull(objDrlgWindowRow["BottomWindow"], 0).ToString());
 
 
                                     if (MD >= lnFromMD & MD <= lnToMD)
