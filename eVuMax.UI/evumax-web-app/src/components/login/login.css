@@ -26,3 +26,6 @@
     background: #292c3e;
     /* background-color: var(--base-work-area) !important; */
 }
+.userName{
+    color: white;
+}
