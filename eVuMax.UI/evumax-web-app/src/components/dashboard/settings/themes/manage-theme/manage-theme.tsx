@@ -13,7 +13,7 @@ import { Grid, GridToolbar } from "@progress/kendo-react-grid";
 import BrokerRequest from "../../../../../broker/BrokerRequest";
 import { Route } from "react-router-dom";
 import { ColorPicker } from "@progress/kendo-react-inputs";
-
+import { Color, ColorPicker as MColorPicker } from "material-ui-color";
 import ThemeHeader from "../../../../../objects/theme/theme-header";
 import ThemeProps from "../../../../../objects/theme/theme-props";
 import BrokerParameter from "../../../../../broker/BrokerParameter";
@@ -50,12 +50,13 @@ export default class ManageTheme extends React.Component {
     } catch { }
   };
 
-  onChangeWorkArea = (e: any) => {
-    this.setState({ _workAreaValue: e.value });
+  onChangeWorkArea = (e: Color) => {
+    debugger;
+    this.setState({ _workAreaValue: e.css.backgroundColor });
   };
 
   onChangeMenuBar = (e: any) => {
-    this.setState({ _menuBarValue: e.value });
+    this.setState({ _menuBarValue: e.css.backgroundColor });
   };
 
   onChangeFontColor = (e: any) => {
@@ -182,6 +183,7 @@ export default class ManageTheme extends React.Component {
                 params: { paramRequest: JSON.stringify(objBrokerRequest) },
               })
               .then((res) => {
+                debugger;
                 const objData = res.data;
 
                 if (objData.RequestSuccessfull) {
@@ -214,6 +216,7 @@ export default class ManageTheme extends React.Component {
   };
 
   DisplayData = (props: any) => {
+    debugger;
     $("#txtName").val(props.Name || "");
     this.setState({ _pId: props.Id });
 
@@ -295,12 +298,13 @@ export default class ManageTheme extends React.Component {
                     Work Area :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._workAreaValue}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeWorkArea}
-                    />
+                    /> */}
+                    <MColorPicker value={this.state._workAreaValue} deferred onChange={this.onChangeWorkArea} disableTextfield/>
                   </div>
                 </div>
                 <div className="form-group row">
@@ -308,12 +312,13 @@ export default class ManageTheme extends React.Component {
                     Menu bar :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._menuBarValue}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeMenuBar}
-                    />
+                    /> */}
+                    <MColorPicker value={this.state._menuBarValue} deferred onChange={this.onChangeMenuBar} disableTextfield/>
                   </div>
                 </div>
                 <div className="form-group row">
@@ -328,6 +333,7 @@ export default class ManageTheme extends React.Component {
                       onChange={this.onChangeFontColor}
                       icon={"edit-tools"}
                     />
+
                   </div>
                 </div>
 
