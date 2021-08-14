@@ -719,7 +719,7 @@ class ToolfaceSummary extends Component {
             .attr("y", y1)
             .attr("width", x2 - x1)
             .attr("height", 7)
-            .style("opacity", 0.5)
+            .style("opacity", 0.4)
             .style("fill", fillColor);
         }
       }
@@ -775,6 +775,7 @@ class ToolfaceSummary extends Component {
             }
           }
 
+
           let x1: number = this.objChart.bottomAxis().ScaleRef(x1Depth);
           let x2: number = this.objChart.bottomAxis().ScaleRef(x2Depth);
 
@@ -797,7 +798,7 @@ class ToolfaceSummary extends Component {
             .attr("y", y1)
             .attr("width", x2 - x1)
             .attr("height", 5)
-            .style("opacity", 0.1)
+            .style("opacity", 0.6)
             .style("fill", fillColor);
         }
       }
@@ -3280,7 +3281,7 @@ class ToolfaceSummary extends Component {
                 </div>
               </div>
 
-              <div className="col-lg-6 p-5">
+              {/* <div className="col-lg-6 p-5">
                 <div className="row">
                   <div className="form-group row w-100">
                     <label className="col-lg-3 col-form-label text-right">
@@ -3349,7 +3350,7 @@ class ToolfaceSummary extends Component {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* <div className="col-lg-6 p-5">
                 <div className="row mb-3 mt-2">

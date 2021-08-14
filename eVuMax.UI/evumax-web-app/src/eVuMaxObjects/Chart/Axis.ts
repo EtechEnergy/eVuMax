@@ -40,7 +40,8 @@ export class Axis {
   TitleFont: string = "Verdana";
   TitleFontColor: string = "white";
   TitleFontSize: number = 12;
-  TitleFontBold: boolean = false;
+  TitleFontBold: boolean = true;
+
   TitleFontItalic: boolean = false;
   TitleFontUnderLine: boolean = false;
   TitleAngle: number = 0; //Used to rotate title
@@ -61,7 +62,7 @@ export class Axis {
   LabelFont: string = "Verdana";
   LabelFontColor: string = "white";
   LabelFontSize: number = 12;
-  LabelFontBold: boolean = false;
+  LabelFontBold: boolean = true;
   LabelFontItalic: boolean = false;
   LabelFontUnderLine: boolean = false;
   LabelAngel: number = 0;
@@ -93,6 +94,7 @@ export class Axis {
   Max: number = 0;
   MinDate: Date = new Date();
   MaxDate: Date = new Date();
+  MaxWidthLabel: string = ""; // prath 14-08-2021
 
   bandScale: boolean = false;
 
@@ -409,6 +411,7 @@ export class Axis {
   formatAxis = () => {
     let maxLabel = "";
 
+
     if (this.IsDateTime) {
       let objRange: AxisDateRange = this.getAxisRange();
 
@@ -458,6 +461,7 @@ export class Axis {
         requiredTicks = this.__axisSize / textWidth;
       }
     } else {
+
       if (this.LabelAngel == 0) {
         requiredTicks = this.__axisSize / textWidth;
       } else {
@@ -534,6 +538,7 @@ export class Axis {
         .attr("transform", "translate(" + titleX + "," + titleY + ")")
         .attr("text-anchor", "middle")
         .attr("fill", "white")
+        .attr("font-weight", this.LabelFontBold == true ? "bold" : "normal")
         .select("text")
         .attr("transform", "rotate(-90)")
         .text(this.Title);
@@ -579,7 +584,9 @@ export class Axis {
         .attr("transform", "translate(" + titleX + "," + titleY + ")")
         .attr("text-anchor", "middle")
         .attr("fill", "white")
+        .attr("font-weight", this.TitleFontBold == true ? "bold" : "normal")
         .select("text")
+
         .attr("transform", "rotate(-90)")
         .text(this.Title);
 
@@ -594,6 +601,7 @@ export class Axis {
     }
 
     if (this.Position == axisPosition.bottom) {
+
       let titleX = 0;
       let titleY = 0;
 
@@ -612,7 +620,10 @@ export class Axis {
             //prath 06-10-2020 wip
 
             if (this.Labels.length > 0) {
+
+
               if (this.Labels[0].split("~").length > 1) {
+                ////alert(this.Id);
                 this.LabelMultiline = true;
               }
             } else {
@@ -647,6 +658,7 @@ export class Axis {
         .attr("class", "axis-title") //custom axis title from base color  01-10-2020 in CSS
         .attr("transform", "translate(" + titleX + "," + titleY + ")")
         .attr("text-anchor", "middle")
+        .attr("font-weight", this.TitleFontBold == true ? "bold" : "normal")
         .attr("fill", "white")
         .select("text")
         .text(this.Title);
@@ -701,6 +713,7 @@ export class Axis {
         .attr("transform", "translate(" + titleX + "," + titleY + ")")
         .attr("text-anchor", "middle")
         .attr("fill", "white")
+        .attr("font-weight", this.TitleFontBold == true ? "bold" : "normal")
         .select("text")
         .text(this.Title);
 
@@ -858,6 +871,7 @@ export class Axis {
 
     this.ChartRef.SVGRef.select("#" + this.Id)
       .selectAll(".tick text")
+      .attr("font-weight", this.LabelFontBold == true ? "bold" : "normal")
       .attr(
         "style",
         "stroke-dasharray:0;font-family:" +
@@ -871,7 +885,7 @@ export class Axis {
       this.ChartRef.SVGRef.select("#" + this.Id)
 
         .selectAll(".tick")
-
+        //.attr("style",)
         .select("text")
         .attr("fill", "currentColor");
     } else {
@@ -941,10 +955,7 @@ export class Axis {
         .call(this.AxisRef);
     }
 
-    if (
-      this.Position == axisPosition.bottom ||
-      this.Position == axisPosition.top
-    ) {
+    if (this.Position == axisPosition.bottom || this.Position == axisPosition.top) {
       if (this.Position == axisPosition.top) {
         //To stop overwrite top axis label print over chart
         this.ChartRef.SVGRef.select("#" + this.Id)
@@ -1028,6 +1039,7 @@ export class Axis {
 
     //Split the axes labels in two lines
     if (this.IsDateTime) {
+      //alert("xxx" + this.Id);
       try {
         let sel = this.ChartRef.SVGRef.select("#" + this.Id).selectAll(
           "#" + this.Id + " .tick text"
@@ -1054,7 +1066,7 @@ export class Axis {
       } catch (error) { }
     } else {
       //wip
-
+      // alert("yyy" + this.Id);
       //else part added on 05-10-2020 wip prath
       try {
         let sel = this.ChartRef.SVGRef.select("#" + this.Id).selectAll(
@@ -1064,10 +1076,31 @@ export class Axis {
         let arr: any[] = sel._groups[0];
 
         if (arr.length > 0) {
+          console.log("Arr", arr);
           for (let i = 0; i < arr.length; i++) {
             let textElement = $(arr[i]);
 
             let currentText = textElement.text();
+            console.log("lables count", this.Labels.length);
+
+            //wip Nishant
+            // if (this.Id == "ROPLine_Chart-bottom") {
+            //   debugger;
+            // }
+            if (this.Labels.length > 0) {
+
+              for (let index = 0; index < this.Labels.length; index++) {
+                const labelText = this.Labels[index].split("~")[0];
+                if (labelText == currentText) {
+                  currentText = this.Labels[index];
+                }
+              }
+
+            }
+
+            //===========================
+
+
             let s = currentText.split("~");
             if (s.length > 1) {
               textElement.text("");
@@ -1082,6 +1115,7 @@ export class Axis {
                   "</tspan>";
               }
               textElement.html(newTxt);
+
             }
           }
         }
@@ -1158,6 +1192,8 @@ export class Axis {
           this.ScaleRef.domain([objAxisDateRange.Max, objAxisDateRange.Min]);
         }
       }
+
+
 
       if (this.bandScale) {
         //loop through
@@ -1582,6 +1618,8 @@ export class Axis {
         if (isStackedBar && !this.IsDateTime) {
           return this.getAxisRangeStacked();
         } else {
+
+
           //First date time axis type
           if (this.IsDateTime) {
             let lMin: Date = new Date(0);
@@ -1624,6 +1662,33 @@ export class Axis {
           }
 
           if (!this.IsDateTime) {
+
+            let objRange = new AxisRange();
+            //Is Multiline
+            if (this.LabelMultiline) {
+              //added by prath (To check width of max label on multiline axis)
+              if (this.Id == "ROPLine_Chart-bottom") {
+                let beforeLength = 0;
+                let maxWidthLabel = "";
+                for (let index = 0; index < this.Labels.length; index++) {
+                  const element = this.Labels[index];
+                  let lblList: any = element.split("~");
+                  for (let index1 = 0; index1 < lblList.length; index1++) {
+                    const element1 = lblList[index1];
+                    if (element1.length > beforeLength) {
+                      beforeLength = element1.length;
+                      maxWidthLabel = element1;
+                    }
+                  }
+
+                }
+                objRange.MaxWidthLabel = maxWidthLabel;
+                console.log("After-- " + objRange.MaxWidthLabel);
+              }
+
+            }
+
+
             //X bound data
             let lMin: number = 0;
             let lMax: number = 0;
@@ -1667,7 +1732,7 @@ export class Axis {
               }
             }
 
-            let objRange = new AxisRange();
+            //let objRange = new AxisRange();
             objRange.Min = lMin;
             objRange.Max = lMax;
 
@@ -1677,6 +1742,13 @@ export class Axis {
               objRange.Max = objRange.Max + (paddingNumber * this.PaddingMax) / 100;
               return objRange;
             }
+
+
+
+
+
+
+
 
             return objRange;
           }

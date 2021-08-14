@@ -13,13 +13,13 @@
     "@progress/kendo-react-animation": "^3.14.0",
     "@progress/kendo-react-charts": "^3.14.0",
     "@progress/kendo-react-conversational-ui": "^3.14.0",
-    "@progress/kendo-react-data-tools": "^3.12.0",
     "@progress/kendo-react-dateinputs": "^3.12.0",
     "@progress/kendo-react-dialogs": "^3.12.0",
     "@progress/kendo-react-dropdowns": "^3.12.0",
     "@progress/kendo-react-editor": "^3.14.0",
     "@progress/kendo-react-excel-export": "^3.14.0",
     "@progress/kendo-react-form": "^3.14.0",
+    "@progress/kendo-react-gantt": "^4.8.0",
     "@progress/kendo-react-gauges": "^3.14.0",
     "@progress/kendo-react-grid": "^3.12.0",
     "@progress/kendo-react-inputs": "^3.12.0",
@@ -89,9 +89,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-
   "homepage": "http://localhost/evumaxapp/",
-
   "browserslist": {
     "production": [
       ">0.2%",
