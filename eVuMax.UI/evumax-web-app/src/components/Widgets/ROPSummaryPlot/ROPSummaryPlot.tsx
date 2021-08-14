@@ -816,9 +816,10 @@ export class ROPSummaryPlot extends Component {
           Util.StatusSuccess("Data successfully retrived  ");
 
 
-          if (objData.offSetWellName == "") {
-            objData.offsetDepthIn = 0;
-            objData.offsetDepthOut = 0;
+          if (objData.offSetWellName == "" || (objData.OffsetRotaryPercent == 0 && objData.OffsetSlidePercent == 0)) {
+            //  if (objData.offSetWellName == "" ) {
+            objData.offsetDepthIn = -1;
+            objData.offsetDepthOut = -1;
 
           }
           this.setState({
@@ -927,11 +928,9 @@ export class ROPSummaryPlot extends Component {
                 <div className="card-body">
                   <h6 className="card-subtitle mb-2">Offset Depth In</h6>
                   <div className="_summaryLabelBig">
-                    {this.state.objROPSummaryData.offsetDepthIn > 0 ? (isNaN(Number(this.state.objROPSummaryData.offsetDepthIn))
-                      ? 0.0
-                      : Number(
-                        this.state.objROPSummaryData.offsetDepthIn
-                      ).toFixed(2)) : ""}
+                    {this.state.objROPSummaryData.offSetWellName == "" ? "" :
+                      (this.state.objROPSummaryData.offsetDepthIn >= 0 ? Number(this.state.objROPSummaryData.offsetDepthIn).toFixed(2) : "")
+                    }
                   </div>
                 </div>
               </div>
@@ -942,12 +941,9 @@ export class ROPSummaryPlot extends Component {
                 <div className="card-body">
                   <h6 className="card-subtitle mb-2">Offset Depth Out</h6>
                   <div className="_summaryLabelBig">
-
-                    {this.state.objROPSummaryData.offsetDepthOut > 0 ? isNaN(Number(this.state.objROPSummaryData.offsetDepthOut))
-                      ? 0.0
-                      : Number(
-                        this.state.objROPSummaryData.offsetDepthOut
-                      ).toFixed(2) : ""}
+                    {this.state.objROPSummaryData.offSetWellName == "" ? "" :
+                      (this.state.objROPSummaryData.offsetDepthOut >= 0 ? Number(this.state.objROPSummaryData.offsetDepthOut).toFixed(2) : "")
+                    }
                   </div>
                 </div>
               </div>
@@ -1004,61 +1000,7 @@ export class ROPSummaryPlot extends Component {
         </div> */}
         <div className="clearfix"></div>
 
-        <div className="row">
-          {/* <div className="col-xl-5 col-lg-4 col-md-4 col-sm-4">
-            <label
-              className="summaryLabelDate"
-              style={{ width: "300px", textAlign: "left" }}
-            >
-              {this.state.objROPSummaryData.WellName}
-            </label>
-          </div> */}
-          {/* <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2">
-            <label
-              className="summaryLabelHeader"
-              style={{ width: "75px", textAlign: "right" }}
-            >
-              Offset :
-            </label>
-            <label
-              className="summaryLabel"
-              style={{ width: "200px", textAlign: "left" }}
-            >
-              {this.state.objROPSummaryData.offSetWellName}
-            </label>
-            <br />
-          </div>
 
-          <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2">
-            <label
-              className="summaryLabelHeader"
-              style={{ width: "75px", textAlign: "right" }}
-            >
-              Depth In
-            </label>
-            <label
-              className="summaryLabel"
-              style={{ width: "100px", textAlign: "right" }}
-            >
-              {Number(this.state.objROPSummaryData.fromDepth).toFixed(2)}
-            </label>
-          </div>
-
-          <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2">
-            <label
-              className="summaryLabelHeader"
-              style={{ width: "70px", textAlign: "right" }}
-            >
-              Depth Out
-            </label>
-            <label
-              className="summaryLabel"
-              style={{ width: "100px", textAlign: "right" }}
-            >
-              {Number(this.state.objROPSummaryData.toDepth).toFixed(2)}
-            </label>
-          </div> */}
-        </div>
         <div className="clearfix"></div>
         <hr />
 
