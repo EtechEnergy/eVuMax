@@ -1025,7 +1025,7 @@ class ToolfaceSummary extends Component {
               "stroke",
               util.rgb2hex(this.objUserSettings.GeoDrlgWindowColor)
             ) //Nishant 28/07/2021
-            .style("opacity", this.objUserSettings.GeoDrlgWindowTrans); //Nishant 28/07/2021
+            .style("opacity", (this.objUserSettings.GeoDrlgWindowTrans/100)); //Nishant 28/07/2021
         }
 
       }
@@ -1231,7 +1231,7 @@ class ToolfaceSummary extends Component {
               "stroke",
               util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
             )
-            .style("opacity", this.objUserSettings.ROPDrlgWindowTrans); //Nishant 28/07/2021
+            .style("opacity", (this.objUserSettings.ROPDrlgWindowTrans/100)); //Nishant 28/07/2021
         }
       }
 
@@ -3011,6 +3011,8 @@ class ToolfaceSummary extends Component {
                       <div className="col-lg-4 col-xl-3 col-md-4 col-sm-4">
                         <NumericTextBox
                           className="form-control"
+                          min={10} //Nishant 12/08/2021
+                          max={100} //Nishant 12/08/2021
                           value={this.state.GeoDrlgWindowTrans}
                           onChange={(e) =>
                             this.OnChange(e, "GeoDrlgWindowTrans")
@@ -3158,6 +3160,8 @@ class ToolfaceSummary extends Component {
                         <div className="col-lg-4 col-xl-3 col-md-4 col-sm-4">
                           <NumericTextBox
                             className="form-control"
+                            min={10} //Nishant 12/08/2021
+                            max={100} //Nishant 12/08/2021
                             value={this.state.ROPDrlgWindowTrans}
                             onChange={(e) =>
                               this.OnChange(e, "ROPDrlgWindowTrans")
