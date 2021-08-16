@@ -51,7 +51,7 @@ export default class ManageTheme extends React.Component {
   };
 
   onChangeWorkArea = (e: Color) => {
-    debugger;
+   
     this.setState({ _workAreaValue: e.css.backgroundColor });
   };
 
@@ -60,14 +60,15 @@ export default class ManageTheme extends React.Component {
   };
 
   onChangeFontColor = (e: any) => {
-    this.setState({ _fontColor: e.value });
+    debugger;
+    this.setState({ _fontColor:  e.css.backgroundColor });
   };
 
   onChangePrimaryBackColor = (e: any) => {
-    this.setState({ _primaryBackColor: e.value });
+    this.setState({ _primaryBackColor:  e.css.backgroundColor });
   };
   onChangePrimaryColor = (e: any) => {
-    this.setState({ _primaryColor: e.value });
+    this.setState({ _primaryColor:  e.css.backgroundColor });
   };
 
   Save = () => {
@@ -278,7 +279,8 @@ export default class ManageTheme extends React.Component {
 
         <div className="mt-2">
           <div className="row">
-            <div className="col-lg-6 ">
+            <div className="col-lg-6" style={{paddingTop:"20px"}}>
+            
               <form>
                 <div className="form-group row">
                   <label className="col-sm-3 col-form-label text-right">
@@ -304,7 +306,8 @@ export default class ManageTheme extends React.Component {
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeWorkArea}
                     /> */}
-                    <MColorPicker value={this.state._workAreaValue} deferred hideTextfield onChange={this.onChangeWorkArea} />
+                    <MColorPicker value={this.state._workAreaValue}  hideTextfield onChange={this.onChangeWorkArea} /> 
+                    {/* deferred */}
                   </div>
                 </div>
                 <div className="form-group row">
@@ -318,7 +321,8 @@ export default class ManageTheme extends React.Component {
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeMenuBar}
                     /> */}
-                    <MColorPicker value={this.state._menuBarValue} deferred hideTextfield onChange={this.onChangeMenuBar} />
+                    <MColorPicker value={this.state._menuBarValue} hideTextfield onChange={this.onChangeMenuBar} />
+                     {/* deferred */}
                   </div>
                 </div>
                 <div className="form-group row">
@@ -326,14 +330,15 @@ export default class ManageTheme extends React.Component {
                     Font color :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._fontColor}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeFontColor}
                       icon={"edit-tools"}
-                    />
-
+                    /> */}
+                    <MColorPicker value={this.state._fontColor} hideTextfield  onChange={this.onChangeFontColor} />
+                     {/* deferred */}
                   </div>
                 </div>
 
@@ -342,13 +347,15 @@ export default class ManageTheme extends React.Component {
                     Primary Backcolor :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._primaryBackColor}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangePrimaryBackColor}
                       icon={"edit-tools"}
-                    />
+                    /> */}
+                    <MColorPicker value={this.state._primaryBackColor} hideTextfield onChange={this.onChangePrimaryBackColor} />
+                     {/* deferred */}
                   </div>
                 </div>
 
@@ -357,16 +364,18 @@ export default class ManageTheme extends React.Component {
                     Primary color :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._primaryColor}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangePrimaryColor}
                       icon={"edit-tools"}
-                    />
+                    /> */}
+                     <MColorPicker value={this.state._primaryColor} hideTextfield onChange={this.onChangePrimaryColor}/>
+                      {/* deferred */}
                   </div>
                 </div>
-              </form>
+              </form>            
             </div>
           </div>
         </div>
