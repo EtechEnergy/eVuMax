@@ -60,6 +60,11 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
 
 
     onItemChange = (e: any) => {
+        debugger;
+        //Nishant 16/08/2021
+        if(e.dataItem.COLUMN_ID == "OPEN_INTERFACE" || e.dataItem.COLUMN_ID == "EDIT_WELL") {
+            return;
+        }
         e.dataItem[e.field] = e.value;
         this.setState({
             data: [...this.state.columnWell]
@@ -103,6 +108,7 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
                 .then((res) => {
 
                     const objData = JSON.parse(res.data.Response);
+                    
 
                     this.setState({
                         columnWell: objData.map((item: any) => Object.assign({ selected: false, inEdit: true }, item))
@@ -288,7 +294,13 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
     };
 
     handleMoveUp = () => {
-        ;
+        
+        //Nishant 16/08/2021
+        if(this.state.selectedItem.COLUMN_ID == "OPEN_INTERFACE" || this.state.selectedItem.COLUMN_ID == "EDIT_WELL") {
+            return;
+        }
+
+
         if (this.state.selectedItem) {
             let index = this.state.columnWell.findIndex((item: any) => item["COLUMN_ID"] === this.state.selectedItem.COLUMN_ID
             );
@@ -306,7 +318,15 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
 
     handleMoveDown = () => {
 
+        
+
         if (this.state.columnWell) {
+        //Nishant 16/08/2021
+            if(this.state.selectedItem.COLUMN_ID == "OPEN_INTERFACE" || this.state.selectedItem.COLUMN_ID == "EDIT_WELL") {
+                return;
+            }
+    
+        
             let index = this.state.columnWell.findIndex(
                 item => item.COLUMN_ID === this.state.selectedItem.COLUMN_ID
             );

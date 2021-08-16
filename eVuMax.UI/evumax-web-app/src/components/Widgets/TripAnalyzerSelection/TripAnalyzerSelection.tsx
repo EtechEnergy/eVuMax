@@ -1021,6 +1021,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
                                 onChange={(e) => {
                                   props.onChange({
                                     dataItem: props.dataItem,
+                                    dataIndex:props.dataIndex,
                                     field: props.field,
                                     syntheticEvent: e.syntheticEvent,
                                     value: e.value,
@@ -1051,6 +1052,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
                                 onChange={(e) => {
                                   props.onChange({
                                     dataItem: props.dataItem,
+                                    dataIndex:props.dataIndex,
                                     field: props.field,
                                     syntheticEvent: e.syntheticEvent,
                                     value: e.value,
