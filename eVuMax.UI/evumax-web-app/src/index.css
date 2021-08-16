@@ -15,6 +15,7 @@
   --base-grid-bg-hover: #09c6ffe3;
   --base-grid-color-hover: #fff;
   --base-axis-color: #fff;
+  --base-chart-grid-color:#444;
 
   /* --base-work-area: white;
 --base-menu-top:white;
@@ -37,6 +38,7 @@ body {
   font-size: 81.25% !important;
   color: var(--base-anchor-color) !important;
   overflow-x: hidden;
+  font-weight: bold !important;
 }
 
 .text-theme {
@@ -111,6 +113,7 @@ a {
   border-radius: 0 !important;
   font-size: 0.875rem !important;
   text-transform: none !important;
+  font-weight: bold !important;
 }
 
 hr {
@@ -267,6 +270,7 @@ input[type="password"]::-ms-input-placeholder {
 /* Nishant 1-06-2020  No Wrap in Grid Column will show three dots ... */
 .k-grid td {
   white-space: nowrap;
+  font-weight: bold !important;
 }
 
 .react-confirm-alert-overlay {
@@ -528,7 +532,7 @@ div.k-time-tab.k-datetime-wrap {
 
 .statusCard > .card-body > .card-subtitle {
   font-style: italic !important;
-  font-weight: normal !important;
+  font-weight: bold !important;
 }
 
 .axis-title {
@@ -567,6 +571,7 @@ div.k-time-tab.k-datetime-wrap {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: var(--base-anchor-color);
   text-decoration: underline;
+  font-weight: bold !important;
 }
 .k-i-close {
   color: var(--base-anchor-color) !important;
@@ -618,4 +623,9 @@ div.k-time-tab.k-datetime-wrap {
 
 .k-grid-header-sticky {
   background-color: inherit !important;
+}
+
+/* prath */
+.chart_grid_color{
+  stroke: var(--base-chart-grid-color) !important;
 }

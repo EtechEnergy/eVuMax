@@ -240,10 +240,51 @@ export class TripSpeedPlot1 extends Component {
   refreshChart = () => {
     try {
       this.refreshTripSpeedChart();
+      this.getMaxTripSpeed();
       this.refreshBarWOConnChart();
       this.refreshBarWithConn();
     } catch (error) { }
   };
+
+  getMaxTripSpeed = () => {
+    try {
+
+      //Check BanchMark Value if greater then Max value of Axis then set
+      let maxTripSpeed = Math.max(
+        ...this.state.objTripSpeedData.bar1Data.map((item) => item.X)
+      );
+
+
+      //Check BanchMark Value if greater then Max value of Axis then set
+      let maxTripSpeedWO = Math.max(
+        ...this.state.objTripSpeedData.bar2Data.map((item) => item.X)
+      );
+
+      let maxBenchMarkWO = this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection
+      let maxBenchMarkWithConn = this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection
+      debugger;
+      let max = 0;
+      if (maxTripSpeed > maxTripSpeedWO) {
+        max = maxTripSpeed;
+      } else {
+        max = maxTripSpeedWO;
+      }
+
+
+      if (maxBenchMarkWO > max) {
+        max = maxBenchMarkWO;
+      }
+
+      if (maxBenchMarkWithConn > max) {
+        max = maxBenchMarkWithConn;
+      }
+
+
+    } catch (error) {
+
+    }
+
+  }
 
   refreshTripSpeedChart() {
     try {

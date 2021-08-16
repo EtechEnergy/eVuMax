@@ -48,14 +48,14 @@ export class Axis {
   Inverted: boolean = false;
   Logarithmic: boolean = false; //Makes axis scale logarithmic
   GridVisible: boolean = true;
-  GridColor: string = "#404142";
+  GridColor: string = "red" //"#404142";
   GridLineStyle: Chart.lineStyle = Chart.lineStyle.solid;
   GridLineWidth: number = 1;
   IRelativePos: number = 0;
   ShowAxisLine: boolean = false; //Controls the visibility of axis line on the chart. If turned off, only ticks are visible on axis
   Visible: boolean = false;
   MinorGridVisible: boolean = false; //original false
-  MinorGridColor: string = "#727475";
+  MinorGridColor: string = "blue" //"#727475";
   MinorGridLineStyle: Chart.lineStyle = Chart.lineStyle.solid;
   MinorGridLineWidth: number = 1;
   ShowLabels: boolean = true;
@@ -94,7 +94,6 @@ export class Axis {
   Max: number = 0;
   MinDate: Date = new Date();
   MaxDate: Date = new Date();
-  MaxWidthLabel: string = ""; // prath 14-08-2021
 
   bandScale: boolean = false;
 
@@ -422,16 +421,8 @@ export class Axis {
 
       objRange.Max = Number.parseFloat(objRange.Max.toFixed(2).toString());
       objRange.Min = Number.parseFloat(objRange.Min.toFixed(2).toString());
-      objRange.MaxWidthLabel = objRange.MaxWidthLabel; //prath 14-08-2021;
 
-      //changes by prath on 14-08-2021 (for multiline label width)
-      //maxLabel = objRange.Max.toString();
-      if (!this.LabelMultiline) {
-        maxLabel = objRange.Max.toString();
-      } else {
-        maxLabel = objRange.MaxWidthLabel.toString();
-      }
-
+      maxLabel = objRange.Max.toString();
     }
 
     let textWidth = this.ChartRef.calculateWidth(
@@ -871,7 +862,8 @@ export class Axis {
         "stroke-width:0px;" + "stroke-dasharray:" + dashArray + ";"
       )
       .select("line")
-      .attr("stroke", this.GridColor)
+      // .attr("stroke", this.GridColor)
+      .attr("class", "chart_grid_color")
 
       .attr("stroke-width", "1px")
       .selectAll("text")
@@ -924,7 +916,8 @@ export class Axis {
         .selectAll(".tick")
         .attr("stroke-width", "0px")
         .select("line")
-        .attr("stroke", this.GridColor)
+        // .attr("stroke", this.GridColor)
+        .attr("class", "chart_grid_color")
         .attr("stroke-width", "1px")
         .style("display", "none");
     } else {
@@ -932,7 +925,8 @@ export class Axis {
         .selectAll(".tick")
         .attr("stroke-width", "0px")
         .select("line")
-        .attr("stroke", this.GridColor)
+        // .attr("stroke", this.GridColor)
+        .attr("class", "chart_grid_color")
         .attr("stroke-width", "1px")
         .style("display", "");
     }
@@ -1084,12 +1078,12 @@ export class Axis {
         let arr: any[] = sel._groups[0];
 
         if (arr.length > 0) {
-          console.log("Arr", arr);
+          //console.log("Arr", arr);
           for (let i = 0; i < arr.length; i++) {
             let textElement = $(arr[i]);
 
             let currentText = textElement.text();
-            console.log("lables count", this.Labels.length);
+            //console.log("lables count", this.Labels.length);
 
             //wip Nishant
             // if (this.Id == "ROPLine_Chart-bottom") {
@@ -1201,8 +1195,6 @@ export class Axis {
         }
       }
 
-
-
       if (this.bandScale) {
         //loop through
         let uniqueValues: Map<string, string> = new Map();
@@ -1291,7 +1283,6 @@ export class Axis {
 
         this.Min = objAxisRange.Min;
         this.Max = objAxisRange.Max;
-        this.MaxWidthLabel = objAxisRange.MaxWidthLabel; //prath 14-08-2021
 
         if (
           this.Position == axisPosition.left ||
@@ -1627,8 +1618,6 @@ export class Axis {
         if (isStackedBar && !this.IsDateTime) {
           return this.getAxisRangeStacked();
         } else {
-
-
           //First date time axis type
           if (this.IsDateTime) {
             let lMin: Date = new Date(0);
@@ -1671,33 +1660,6 @@ export class Axis {
           }
 
           if (!this.IsDateTime) {
-
-            let objRange = new AxisRange();
-            //Is Multiline
-            if (this.LabelMultiline) {
-              //added by prath (To check width of max label on multiline axis)
-              if (this.Id == "ROPLine_Chart-bottom") {
-                let beforeLength = 0;
-                let maxWidthLabel = "";
-                for (let index = 0; index < this.Labels.length; index++) {
-                  const element = this.Labels[index];
-                  let lblList: any = element.split("~");
-                  for (let index1 = 0; index1 < lblList.length; index1++) {
-                    const element1 = lblList[index1];
-                    if (element1.length > beforeLength) {
-                      beforeLength = element1.length;
-                      maxWidthLabel = element1;
-                    }
-                  }
-
-                }
-                objRange.MaxWidthLabel = maxWidthLabel;
-                console.log("After-- " + objRange.MaxWidthLabel);
-              }
-
-            }
-
-
             //X bound data
             let lMin: number = 0;
             let lMax: number = 0;
@@ -1741,7 +1703,7 @@ export class Axis {
               }
             }
 
-            //let objRange = new AxisRange();
+            let objRange = new AxisRange();
             objRange.Min = lMin;
             objRange.Max = lMax;
 
@@ -1751,13 +1713,6 @@ export class Axis {
               objRange.Max = objRange.Max + (paddingNumber * this.PaddingMax) / 100;
               return objRange;
             }
-
-
-
-
-
-
-
 
             return objRange;
           }

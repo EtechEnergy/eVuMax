@@ -38,6 +38,7 @@ export default class ManageTheme extends React.Component {
     _fontColor: "#FFF",
     _primaryBackColor: "#007bff",
     _primaryColor: "#FFF",
+    _chartGridColor: "#FFF",
   };
 
   componentDidMount() {
@@ -68,6 +69,10 @@ export default class ManageTheme extends React.Component {
   };
   onChangePrimaryColor = (e: any) => {
     this.setState({ _primaryColor: e.value });
+  };
+
+  onChangeGridColor = (e: any) => {
+    this.setState({ _chartGridColor: e.value });
   };
 
   Save = () => {
@@ -106,6 +111,12 @@ export default class ManageTheme extends React.Component {
       objTheme.props.push(objThemeProps);
 
       objThemeProps = new ThemeProps();
+
+      objThemeProps.PropName = "ChartGridColor";
+      objThemeProps.PropValue = this.state._chartGridColor;
+      objTheme.props.push(objThemeProps);
+
+
 
       objBrokerRequest = new BrokerRequest();
 
@@ -240,9 +251,11 @@ export default class ManageTheme extends React.Component {
           this.setState({ _primaryColor: items.PropValue });
         }
 
-        if (items.PropName === "AxisColor") {
-          this.setState({ _AxisColor: items.PropValue });
+        if (items.PropName === "ChartGridColor") {
+          this.setState({ _chartGridColor: items.PropValue });
         }
+
+
       });
     }
   };
@@ -362,6 +375,22 @@ export default class ManageTheme extends React.Component {
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangePrimaryColor}
+                      icon={"edit-tools"}
+                    />
+                  </div>
+                </div>
+
+
+                <div className="form-group row">
+                  <label className="col-sm-3 col-form-label text-right">
+                    Chart Grid color :
+                  </label>
+                  <div className="col-sm-3">
+                    <ColorPicker
+                      value={this.state._chartGridColor}
+                      view={"gradient"}
+                      gradientSettings={this.gradientSettings}
+                      onChange={this.onChangeGridColor}
                       icon={"edit-tools"}
                     />
                   </div>

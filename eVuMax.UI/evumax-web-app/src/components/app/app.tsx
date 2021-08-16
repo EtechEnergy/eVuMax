@@ -51,6 +51,7 @@ class App extends Component {
         })
         .then((res) => {
           const objData = res.data;
+          debugger;
           if (objData.RequestSuccessfull) {
 
             this.applyTheme(JSON.parse(objData.Response));
@@ -77,6 +78,7 @@ class App extends Component {
   };
 
   applyTheme = (props: any) => {
+    debugger;
 
     if (props.length) {
       //
@@ -120,6 +122,15 @@ class App extends Component {
             items.Value
           );
         }
+
+        if (items.PropertyName === "ChartGridColor") {
+          document.documentElement.style.setProperty(
+            "--base-chart-grid-color",
+            items.Value
+          );
+        }
+
+
       });
     }
   };
