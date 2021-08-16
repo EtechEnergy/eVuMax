@@ -297,14 +297,14 @@ export default class ManageTheme extends React.Component {
                   <label className="col-sm-3 col-form-label text-right">
                     Work Area :
                   </label>
-                  <div className="col-sm-3">
+                  <div className="col-sm-3" >
                     {/* <ColorPicker
                       value={this.state._workAreaValue}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeWorkArea}
                     /> */}
-                    <MColorPicker value={this.state._workAreaValue} deferred onChange={this.onChangeWorkArea} disableTextfield/>
+                    <MColorPicker value={this.state._workAreaValue} deferred hideTextfield onChange={this.onChangeWorkArea} />
                   </div>
                 </div>
                 <div className="form-group row">
@@ -318,7 +318,7 @@ export default class ManageTheme extends React.Component {
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeMenuBar}
                     /> */}
-                    <MColorPicker value={this.state._menuBarValue} deferred onChange={this.onChangeMenuBar} disableTextfield/>
+                    <MColorPicker value={this.state._menuBarValue} deferred hideTextfield onChange={this.onChangeMenuBar} />
                   </div>
                 </div>
                 <div className="form-group row">
