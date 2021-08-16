@@ -1269,7 +1269,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
                                                                 onChange={e => {
                                                                     props.onChange({
                                                                         dataItem: props.dataItem,
-                                                                        dataIndex:props.dataIndex,
+                                                                        dataIndex: props.dataIndex,
                                                                         field: props.field,
                                                                         syntheticEvent: e.syntheticEvent,
                                                                         value: e.value
@@ -1302,7 +1302,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
                                                                 onChange={e => {
                                                                     props.onChange({
                                                                         dataItem: props.dataItem,
-                                                                        dataIndex:props.dataIndex,
+                                                                        dataIndex: props.dataIndex,
                                                                         field: props.field,
                                                                         syntheticEvent: e.syntheticEvent,
                                                                         value: e.value.id

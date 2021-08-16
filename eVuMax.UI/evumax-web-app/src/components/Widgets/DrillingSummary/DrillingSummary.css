@@ -7,6 +7,7 @@
   width: 140px !important;
   /* font-size: 1px !important; */
   vertical-align: center;
+  font-weight: bold !important;
 }
 
 .summaryLabelBig {
@@ -19,6 +20,7 @@
   text-align: right;
   margin-left: 10px;
   margin-right: 10px;
+  font-weight: bold !important;
 }
 
 .summaryLabelDate {
@@ -31,6 +33,7 @@
   text-align: right;
   margin-left: 10px;
   margin-right: 10px;
+  font-weight: bold !important;
   /* mix-blend-mode: difference; */
 }
 
@@ -47,6 +50,7 @@
   font-size: 14px;
   text-align: right;
   margin-bottom: 0.3rem;
+  font-weight: bold !important;
 }
 .summaryLabel3 {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -56,6 +60,7 @@
   font-size: 14px;
   text-align: right;
   margin-bottom: 0.3rem;
+  font-weight: bold !important;
   /* mix-blend-mode: difference; */
 }
 .summaryLabel2 {
@@ -71,6 +76,7 @@
   width: 160px !important;
   /* font-size: 1px !important; */
   vertical-align: center;
+  font-weight: bold !important;
 }
 path.slice {
   stroke-width: 2px;
@@ -121,4 +127,5 @@ hr {
   font-weight: 700;
   /* text-align: right; */
   font-size: 1.2em;
+  font-weight: bold !important;
 }

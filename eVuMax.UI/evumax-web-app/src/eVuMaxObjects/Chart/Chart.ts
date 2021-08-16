@@ -973,7 +973,7 @@ export class Chart {
 
       $("#" + this.Id + "-calculator").show();
       $("#" + this.Id + "-calculator").html(pText);
-      console.log("LABEL PTAX --->", pText);
+      //console.log("LABEL PTAX --->", pText);
 
       $("#" + this.Id + "-calculator").css("font-family", pFontName);
       $("#" + this.Id + "-calculator").css("display", "inline-block");

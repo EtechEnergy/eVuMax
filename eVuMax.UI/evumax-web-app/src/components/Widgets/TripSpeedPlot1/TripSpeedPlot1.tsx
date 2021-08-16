@@ -43,6 +43,7 @@ export class TripSpeedPlot1 extends Component {
     objUserSettings: {} as any,
 
     isProcess: false,
+    maxWithAndWOConn: 0
   };
 
   PlotId: "TripSpeed1";
@@ -240,10 +241,55 @@ export class TripSpeedPlot1 extends Component {
   refreshChart = () => {
     try {
       this.refreshTripSpeedChart();
+      this.getMaxTripSpeed();
       this.refreshBarWOConnChart();
       this.refreshBarWithConn();
     } catch (error) { }
   };
+
+  getMaxTripSpeed = () => {
+    try {
+
+      //Check BanchMark Value if greater then Max value of Axis then set
+      let maxTripSpeed = Math.max(
+        ...this.state.objTripSpeedData.bar1Data.map((item) => item.X)
+      );
+
+
+      //Check BanchMark Value if greater then Max value of Axis then set
+      let maxTripSpeedWO = Math.max(
+        ...this.state.objTripSpeedData.bar2Data.map((item) => item.X)
+      );
+
+      let maxBenchMarkWO = this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection
+      let maxBenchMarkWithConn = this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection
+      debugger;
+      let max = 0;
+      if (maxTripSpeed > maxTripSpeedWO) {
+        max = maxTripSpeed;
+      } else {
+        max = maxTripSpeedWO;
+      }
+
+
+      if (maxBenchMarkWO > max) {
+        max = maxBenchMarkWO;
+      }
+
+      if (maxBenchMarkWithConn > max) {
+        max = maxBenchMarkWithConn;
+      }
+
+      max = max + max * 0.10
+      this.setState({ maxWithAndWOConn: max });
+
+
+
+    } catch (error) {
+
+    }
+
+  }
 
   refreshTripSpeedChart() {
     try {
@@ -623,12 +669,19 @@ export class TripSpeedPlot1 extends Component {
       ...this.state.objTripSpeedData.bar1Data.map((item) => item.X)
     );
 
-    if (this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection > max) {
-      this.objChart_BarWOConn.leftAxis().AutoScale = false;
-      this.objChart_BarWOConn.leftAxis().Max =
-        this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection +
-        this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection * 0.1;
-    }
+    //Changes
+    // if (this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection > max) {
+    //   this.objChart_BarWOConn.leftAxis().AutoScale = false;
+    //   this.objChart_BarWOConn.leftAxis().Max =
+    //     this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection +
+    //     this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection * 0.1;
+    // }
+
+    this.objChart_BarWOConn.leftAxis().AutoScale = false;
+    this.objChart_BarWOConn.leftAxis().Max = this.state.maxWithAndWOConn;
+    //===============
+
+
     this.objChart_BarWOConn.onBeforeSeriesDraw.subscribe((e, i) => {
       this.onBeforeDrawWOConnSeries(e, i);
     });
@@ -704,15 +757,20 @@ export class TripSpeedPlot1 extends Component {
         ...this.state.objTripSpeedData.bar2Data.map((item) => item.X)
       );
 
-      if (
-        this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection > max
-      ) {
-        this.objChart_BarWithConn.leftAxis().AutoScale = false;
-        this.objChart_BarWithConn.leftAxis().Max =
-          this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection +
-          this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection *
-          0.1;
-      }
+      // if (
+      //   this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection > max
+      // ) {
+      //   this.objChart_BarWithConn.leftAxis().AutoScale = false;
+      //   this.objChart_BarWithConn.leftAxis().Max =
+      //     this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection +
+      //     this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection *
+      //     0.1;
+      // }
+
+
+
+      this.objChart_BarWithConn.leftAxis().AutoScale = false;
+      this.objChart_BarWithConn.leftAxis().Max = this.state.maxWithAndWOConn;
 
       this.objChart_BarWithConn.onBeforeSeriesDraw.subscribe((e, i) => {
         this.onBeforeDrawWithConnSeries(e, i);

@@ -16,6 +16,7 @@
   text-align: right;
   margin-left: 10px;
   margin-right: 10px;
+  font-weight: bold !important;
   /* mix-blend-mode: difference; */
 }
 
@@ -29,6 +30,7 @@
 
 .summaryGroupHeader {
   color: #3282b8;
+  font-weight: bold !important;
 }
 
 .leftPadding {

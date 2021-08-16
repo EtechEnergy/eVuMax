@@ -304,6 +304,7 @@ export class StackedBarSeries {
 
               .append("text")
               .attr("class", "barlabel")
+
               .attr("x", function (d) {
 
                 // prath

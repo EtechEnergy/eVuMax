@@ -64,6 +64,7 @@ const searchFieldStyle = {
   backgroundColor: "inherit",
   color: "var(--base-anchor-color)",
   padding: "5px 20px",
+  borderTopColor: "var(--base-anchor-color) !important"
 };
 
 const headerlabel = {

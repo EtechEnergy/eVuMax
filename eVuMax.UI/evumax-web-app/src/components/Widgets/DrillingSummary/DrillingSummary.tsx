@@ -410,6 +410,7 @@ export class DrillingSummary extends Component {
         axisLabelStyle.values;
       this.objChart_ROPLine.bottomAxis().bandScale = false;
       this.objChart_ROPLine.bottomAxis().PaddingMax = 0;
+      this.objChart_ROPLine.bottomAxis().bandScale = false;
 
 
       this.objChart_ROPLine.rightAxis().Visible = false;
@@ -441,23 +442,18 @@ export class DrillingSummary extends Component {
 
       for (let i = 0; i < this.state.objSummaryData.ROPData.length; i++) {
         let objVal: ChartData = new ChartData();
-        //objVal.datetime = new Date(Date.parse(paramData[i]["DATETIME1"]));
 
-        const element = this.state.objSummaryData.ROPData[i];
-        //let lblString: string = element.Y + "#" + element.DATE_TIME;
+        // const element = this.state.objSummaryData.ROPData[i];
+        // let lblString: string = element.Y + "#" + element.DATE_TIME.split(" ")[0] + "#" + element.DATE_TIME.split(" ")[1];
+        // let strArr = lblString.split("#");
+        // lblString = strArr[0] + "~" + strArr[1] + "~" + strArr[2];
+        // objVal.label = strArr[0];
 
-        let lblString: string = element.Y + "#" + element.DATE_TIME.split(" ")[0] + "#" + element.DATE_TIME.split(" ")[1];
 
-        let strArr = lblString.split("#");
-        lblString = strArr[0] + "~" + strArr[1] + "~" + strArr[2];
-
-        objVal.label = strArr[0];
-
-        //objVal.label = lblString; //Depth  //new Date(Date.parse(paramData[i]["DATETIME1"]));
         objVal.x = this.state.objROPData[i].Y; //Depth  //new Date(Date.parse(paramData[i]["DATETIME1"]));
         objVal.y = this.state.objROPData[i].X; //ROP
 
-        this.objChart_ROPLine.bottomAxis().Labels.push(lblString);
+        //        this.objChart_ROPLine.bottomAxis().Labels.push(lblString);
 
 
         objROPLine.Data.push(objVal);
@@ -518,9 +514,9 @@ export class DrillingSummary extends Component {
       this.objChart_RigStateSummary.bottomAxis().LabelAngel = 0; //bottom axis angle
       this.objChart_RigStateSummary.bottomAxis().ShowSelector = false;
       this.objChart_RigStateSummary.bottomAxis().ShowLabels = true;
-      this.objChart_RigStateSummary.bottomAxis().LabelStyle =
-        axisLabelStyle.labels;
-      //this.objChart_RigStateSummary.bottomAxis().LabelMultiline = true; //
+      this.objChart_RigStateSummary.bottomAxis().LabelStyle = axisLabelStyle.labels;
+      this.objChart_RigStateSummary.bottomAxis().bandScale = true;
+      //this.objChart_RigStateSummary.bottomAxis().LabelMultiline = false; //
 
       this.objChart_RigStateSummary.bottomAxis().Labels = [];
 
