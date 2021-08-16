@@ -422,8 +422,16 @@ export class Axis {
 
       objRange.Max = Number.parseFloat(objRange.Max.toFixed(2).toString());
       objRange.Min = Number.parseFloat(objRange.Min.toFixed(2).toString());
+      objRange.MaxWidthLabel = objRange.MaxWidthLabel; //prath 14-08-2021;
 
-      maxLabel = objRange.Max.toString();
+      //changes by prath on 14-08-2021 (for multiline label width)
+      //maxLabel = objRange.Max.toString();
+      if (!this.LabelMultiline) {
+        maxLabel = objRange.Max.toString();
+      } else {
+        maxLabel = objRange.MaxWidthLabel.toString();
+      }
+
     }
 
     let textWidth = this.ChartRef.calculateWidth(
@@ -1283,6 +1291,7 @@ export class Axis {
 
         this.Min = objAxisRange.Min;
         this.Max = objAxisRange.Max;
+        this.MaxWidthLabel = objAxisRange.MaxWidthLabel; //prath 14-08-2021
 
         if (
           this.Position == axisPosition.left ||

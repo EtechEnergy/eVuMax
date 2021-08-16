@@ -85,9 +85,9 @@ export class LoginPage extends React.Component<Props> {
                         <div className="d-md-flex align-items-center h-100 p-5 text-center justify-content-center">
                             <div className="logoarea pt-5 pb-5">
                                 <img src={VuMaxLogo} style={{ display: 'inline-block', paddingBottom: '30px' }} />
-                                <span className="text-theme" style={{ display: 'inline-block', fontSize: '6em', fontWeight: 'bold' }}>VuMax</span>
+                                <span className="userName" style={{ display: 'inline-block', fontSize: '6em', fontWeight: 'bold' }}>VuMax</span>
                                 <br />
-                                <span className="text-theme" style={{ fontWeight: 'bold', display: 'inline-block', fontSize: '1.5em' }}>Realtime Drilling Operation Monitoring and Optimization System</span>
+                                <span className="userName" style={{ fontWeight: 'bold', display: 'inline-block', fontSize: '1.5em' }}>Realtime Drilling Operation Monitoring and Optimization System</span>
                             </div>
                         </div>
 
@@ -100,11 +100,11 @@ export class LoginPage extends React.Component<Props> {
                             <form className="rounded bg-custom-black  p-5 shadow pt-3 col-12 col-lg-12 col-md-12 col-xl-8  col-sm-12" style={{ minHeight: 700 }}>
                                 <div className="d-none d-block d-sm-block d-md-none text-center">
                                     <img src={VuMaxLogo} className="mr-2" style={{ display: 'inline-block', paddingBottom: '20px', width: '70px' }} />
-                                    <span className="text-theme" style={{ display: 'inline-block', fontSize: '4em', fontWeight: 'bold' }}>VuMax</span>
+                                    <span className="userName" style={{ display: 'inline-block', fontSize: '4em', fontWeight: 'bold' }}>VuMax</span>
                                 </div>
 
                                 <div className="text-center d-none d-sm-none d-md-block">
-                                    <h3 className="text-theme">Login </h3>
+                                    <h3 className="userName">Login </h3>
                                 </div>
                                 <div className="form-group pb-3 pt-5">
                                     <div className="input-group flex-nowrap">
@@ -141,7 +141,7 @@ export class LoginPage extends React.Component<Props> {
 
                 <div className="footer fixed-bottom" style={{ display: 'inline-block', paddingLeft: '20px', paddingBottom: '10px' }}>
                     <img src={EtechLogo} style={{ width: '40px' }} />
-                    <label className="text-theme pl-3">Copyright © 2020, ETECH International Inc.</label>
+                    <label className="userName pl-3">Copyright © 2020, ETECH International Inc.</label>
                 </div>
             </div>
         )
