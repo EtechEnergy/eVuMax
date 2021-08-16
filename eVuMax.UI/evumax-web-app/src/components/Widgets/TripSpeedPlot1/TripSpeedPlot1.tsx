@@ -665,9 +665,9 @@ export class TripSpeedPlot1 extends Component {
     objSeries.Data.push(objVal);
 
     //Check BanchMark Value if greater then Max value of Axis then set
-    let max = Math.max(
-      ...this.state.objTripSpeedData.bar1Data.map((item) => item.X)
-    );
+    // let max = Math.max(
+    //   ...this.state.objTripSpeedData.bar1Data.map((item) => item.X)
+    // );
 
     //Changes
     // if (this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection > max) {
@@ -753,10 +753,9 @@ export class TripSpeedPlot1 extends Component {
       objSeries.Data.push(objVal);
 
       //Check BanchMark Value if greater then Max value of Axis then set
-      let max = Math.max(
-        ...this.state.objTripSpeedData.bar2Data.map((item) => item.X)
-      );
-
+      // let max = Math.max(
+      //   ...this.state.objTripSpeedData.bar2Data.map((item) => item.X)
+      // );
       // if (
       //   this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection > max
       // ) {
