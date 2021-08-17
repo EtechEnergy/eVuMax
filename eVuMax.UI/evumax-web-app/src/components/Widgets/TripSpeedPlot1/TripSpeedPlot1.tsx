@@ -43,6 +43,7 @@ export class TripSpeedPlot1 extends Component {
     objUserSettings: {} as any,
 
     isProcess: false,
+    maxWithAndWOConn: 0
   };
 
   PlotId: "TripSpeed1";
@@ -278,6 +279,10 @@ export class TripSpeedPlot1 extends Component {
       if (maxBenchMarkWithConn > max) {
         max = maxBenchMarkWithConn;
       }
+
+      max = max + max * 0.10
+      this.setState({ maxWithAndWOConn: max });
+
 
 
     } catch (error) {
@@ -660,16 +665,23 @@ export class TripSpeedPlot1 extends Component {
     objSeries.Data.push(objVal);
 
     //Check BanchMark Value if greater then Max value of Axis then set
-    let max = Math.max(
-      ...this.state.objTripSpeedData.bar1Data.map((item) => item.X)
-    );
+    // let max = Math.max(
+    //   ...this.state.objTripSpeedData.bar1Data.map((item) => item.X)
+    // );
 
-    if (this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection > max) {
-      this.objChart_BarWOConn.leftAxis().AutoScale = false;
-      this.objChart_BarWOConn.leftAxis().Max =
-        this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection +
-        this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection * 0.1;
-    }
+    //Changes
+    // if (this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection > max) {
+    //   this.objChart_BarWOConn.leftAxis().AutoScale = false;
+    //   this.objChart_BarWOConn.leftAxis().Max =
+    //     this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection +
+    //     this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection * 0.1;
+    // }
+
+    this.objChart_BarWOConn.leftAxis().AutoScale = false;
+    this.objChart_BarWOConn.leftAxis().Max = this.state.maxWithAndWOConn;
+    //===============
+
+
     this.objChart_BarWOConn.onBeforeSeriesDraw.subscribe((e, i) => {
       this.onBeforeDrawWOConnSeries(e, i);
     });
@@ -741,19 +753,23 @@ export class TripSpeedPlot1 extends Component {
       objSeries.Data.push(objVal);
 
       //Check BanchMark Value if greater then Max value of Axis then set
-      let max = Math.max(
-        ...this.state.objTripSpeedData.bar2Data.map((item) => item.X)
-      );
+      // let max = Math.max(
+      //   ...this.state.objTripSpeedData.bar2Data.map((item) => item.X)
+      // );
+      // if (
+      //   this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection > max
+      // ) {
+      //   this.objChart_BarWithConn.leftAxis().AutoScale = false;
+      //   this.objChart_BarWithConn.leftAxis().Max =
+      //     this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection +
+      //     this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection *
+      //     0.1;
+      // }
 
-      if (
-        this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection > max
-      ) {
-        this.objChart_BarWithConn.leftAxis().AutoScale = false;
-        this.objChart_BarWithConn.leftAxis().Max =
-          this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection +
-          this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection *
-          0.1;
-      }
+
+
+      this.objChart_BarWithConn.leftAxis().AutoScale = false;
+      this.objChart_BarWithConn.leftAxis().Max = this.state.maxWithAndWOConn;
 
       this.objChart_BarWithConn.onBeforeSeriesDraw.subscribe((e, i) => {
         this.onBeforeDrawWithConnSeries(e, i);
