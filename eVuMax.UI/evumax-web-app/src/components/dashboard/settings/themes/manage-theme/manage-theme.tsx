@@ -61,18 +61,18 @@ export default class ManageTheme extends React.Component {
   };
 
   onChangeFontColor = (e: any) => {
-    this.setState({ _fontColor: e.value });
+    this.setState({ _fontColor:  e.css.backgroundColor });
   };
 
   onChangePrimaryBackColor = (e: any) => {
-    this.setState({ _primaryBackColor: e.value });
+    this.setState({ _primaryBackColor: e.css.backgroundColor });
   };
   onChangePrimaryColor = (e: any) => {
-    this.setState({ _primaryColor: e.value });
+    this.setState({ _primaryColor: e.css.backgroundColor });
   };
 
   onChangeGridColor = (e: any) => {
-    this.setState({ _chartGridColor: e.value });
+    this.setState({ _chartGridColor:  e.css.backgroundColor });
   };
 
   Save = () => {
@@ -339,14 +339,14 @@ export default class ManageTheme extends React.Component {
                     Font color :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._fontColor}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeFontColor}
                       icon={"edit-tools"}
-                    />
-
+                    /> */}
+               <MColorPicker value={this.state._fontColor} deferred hideTextfield onChange={this.onChangeFontColor} />
                   </div>
                 </div>
 
@@ -355,13 +355,14 @@ export default class ManageTheme extends React.Component {
                     Primary Backcolor :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._primaryBackColor}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangePrimaryBackColor}
                       icon={"edit-tools"}
-                    />
+                    /> */}
+                    <MColorPicker value={this.state._primaryBackColor} deferred hideTextfield  onChange={this.onChangePrimaryBackColor} />
                   </div>
                 </div>
 
@@ -370,13 +371,14 @@ export default class ManageTheme extends React.Component {
                     Primary color :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._primaryColor}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangePrimaryColor}
                       icon={"edit-tools"}
-                    />
+                    /> */}
+                     <MColorPicker value={this.state._primaryColor} deferred hideTextfield  onChange={this.onChangePrimaryColor} />
                   </div>
                 </div>
 
@@ -386,13 +388,14 @@ export default class ManageTheme extends React.Component {
                     Chart Grid color :
                   </label>
                   <div className="col-sm-3">
-                    <ColorPicker
+                    {/* <ColorPicker
                       value={this.state._chartGridColor}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeGridColor}
                       icon={"edit-tools"}
-                    />
+                    /> */}
+                      <MColorPicker value={this.state._chartGridColor} deferred hideTextfield onChange={this.onChangeGridColor} />
                   </div>
                 </div>
               </form>
