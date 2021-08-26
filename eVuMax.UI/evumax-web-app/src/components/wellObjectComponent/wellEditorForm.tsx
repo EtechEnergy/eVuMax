@@ -155,6 +155,7 @@ export default class WellEditorForm extends React.Component<IProps> {
   }
 
   handleContextMenu = (event: any) => {
+    return; //Nishant 26/08/2021 Error while right click on Node
     event.preventDefault();
 
     //let itemId = event.target.childNodes.length> 0 ? event.target.childNodes[1].data : "Main" //0 is img tag coz of image display
