@@ -1006,7 +1006,7 @@ export default class WellEditorForm extends React.Component<IProps> {
               }}
                 onClose={e => {
                   let element: any = document.querySelector('.context-menu');
-                  if(element!=null){
+                  if(element!=null){ //Nishant 26/08/2021
                     element.removeEventListener('blur', this.closeContextMenu)
                   }
                   
