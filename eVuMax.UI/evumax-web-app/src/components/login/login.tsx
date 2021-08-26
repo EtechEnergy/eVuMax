@@ -28,6 +28,7 @@ import {
 } from "../../redux/actions/loginActions";
 import RegularButton from "../CustomButtons/Button";
 import { confirmAlert } from "react-confirm-alert";
+import { color } from "d3";
 
 let _gMod = new GlobalMod();
 
