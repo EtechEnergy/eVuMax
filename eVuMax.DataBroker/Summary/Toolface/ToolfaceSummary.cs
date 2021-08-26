@@ -84,6 +84,9 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
         private Broker.BrokerResponse getToolfaceSummary(Broker.BrokerRequest paramRequest)
         {
+
+            string paramWarnings = "";
+
             try
             {
 
@@ -244,6 +247,16 @@ namespace eVuMax.DataBroker.Summary.Toolface
                 Trajectory objActualTraj = Trajectory.loadActualTrajectory(ref paramRequest.objDataService, wellId);
 
 
+                if(objPlanTraj==null)
+                {
+                    paramWarnings = paramWarnings + " " + "Plan Trajectory not found.";
+                }
+
+                if(objActualTraj==null)
+                {
+                    paramWarnings = paramWarnings + " " + "Actual Trajectory not found";
+                }
+
                 //First we need to find the max. extent
                 double trajMinMD = 0;
                 double trajMaxMD = 0;
@@ -301,8 +314,14 @@ namespace eVuMax.DataBroker.Summary.Toolface
                 objToolfaceSummary.MYData = getMYData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog);
 
                 //GTF and MTF Data
-                objToolfaceSummary.GTFData = getGTFData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog);
-                objToolfaceSummary.MTFData = getMTFData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog);
+                string gtfWarning = "";
+                objToolfaceSummary.GTFData = getGTFData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog,out gtfWarning);
+                paramWarnings = paramWarnings + " " + gtfWarning;
+
+                string mtfWarning = "";
+                objToolfaceSummary.MTFData = getMTFData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog,out mtfWarning);
+                paramWarnings = paramWarnings + " " + mtfWarning;
+
                 objToolfaceSummary.RotarySections = getRotarySections(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog);
 
                 DataTable lnSlideTable = new DataTable();
@@ -337,6 +356,9 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
 
                 objResponse.Response = JsonConvert.SerializeObject(objToolfaceSummary);
+
+                objResponse.Warnings = paramWarnings;
+
                 objResponse.RequestSuccessfull = true;
                 objResponse.Errors = "";
 
@@ -1814,8 +1836,10 @@ namespace eVuMax.DataBroker.Summary.Toolface
             }
         }
 
-        private DataTable getGTFData(Broker.BrokerRequest paramRequest, string WellId, double fromDepth, double toDepth, DateTime fromDate, DateTime toDate, ToolfaceSettings objSettings, TimeLog objLog)
+        private DataTable getGTFData(Broker.BrokerRequest paramRequest, string WellId, double fromDepth, double toDepth, DateTime fromDate, DateTime toDate, ToolfaceSettings objSettings, TimeLog objLog,out string paramWarnings)
         {
+            paramWarnings = "";
+
             try
             {
 
@@ -1837,6 +1861,7 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 if (GTFMnemonic.Trim() == "")
                 {
+                    paramWarnings = "GTF data not found";
                     return null;
                 }
 
@@ -1933,8 +1958,10 @@ namespace eVuMax.DataBroker.Summary.Toolface
             }
         }
 
-        private DataTable getMTFData(Broker.BrokerRequest paramRequest, string WellId, double fromDepth, double toDepth, DateTime fromDate, DateTime toDate, ToolfaceSettings objSettings, TimeLog objLog)
+        private DataTable getMTFData(Broker.BrokerRequest paramRequest, string WellId, double fromDepth, double toDepth, DateTime fromDate, DateTime toDate, ToolfaceSettings objSettings, TimeLog objLog,out string paramWarnings)
         {
+            paramWarnings = "";
+
             try
             {
 
@@ -1954,6 +1981,7 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 if (MTFMnemonic.Trim() == "")
                 {
+                    paramWarnings = "MTF data not found";
                     return null;
                 }
 

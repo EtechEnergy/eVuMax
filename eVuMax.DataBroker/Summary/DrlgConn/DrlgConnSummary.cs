@@ -238,6 +238,8 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
 
+                objResponse.Warnings = "";
+
                 //Assign tables
 
                 objDrlgConnSummary.connData = connData;
@@ -259,6 +261,22 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 if (objData != null)
                 {
 
+                    //Check if any connection was found. If not then process it
+                    if (objData.Rows.Count == 0)
+                    {
+                        ConnectionLogProcessor objConnProcessor = new ConnectionLogProcessor();
+                        objConnProcessor.processPointsBulk(ref paramRequest.objDataService, wellId);
+
+                        //Run the query again
+                        objData = paramRequest.objDataService.getTable(strSQL);
+
+                        if (objData == null)
+                        {
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Errors = "Error retrieving data";
+                            objResponse.Response = "";
+                        }
+                    }
 
                     DataTable objExclConn = paramRequest.objDataService.getTable("SELECT DEPTH FROM VMX_CONN_INFO WHERE WELL_ID='" + wellId + "'");
 
@@ -651,7 +669,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                     }
 
-                    if(subQuery.Trim()!="")
+                    if (subQuery.Trim() != "")
                     {
                         subQuery = subQuery.Substring(2);
                         strSQL = strSQL + " AND (" + subQuery + ")";
@@ -863,26 +881,26 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     }
                     else
                     {
-                        objDrlgConnSummary.NetCashFlow = -1* Math.Round(sumNegative - sumPositive, 2);
+                        objDrlgConnSummary.NetCashFlow = -1 * Math.Round(sumNegative - sumPositive, 2);
                     }
 
 
-                    objDrlgConnSummary.PositiveCashFlow = Math.Round(sumPositive,2);
-                    objDrlgConnSummary.NegativeCashFlow = Math.Round( sumNegative,2);
+                    objDrlgConnSummary.PositiveCashFlow = Math.Round(sumPositive, 2);
+                    objDrlgConnSummary.NegativeCashFlow = Math.Round(sumNegative, 2);
 
 
 
                     if (sumSTSPositive > sumSTSNegative)
                     {
-                        objDrlgConnSummary.NetSTSCashFlow= Math.Round(sumSTSPositive- sumSTSNegative, 2);
+                        objDrlgConnSummary.NetSTSCashFlow = Math.Round(sumSTSPositive - sumSTSNegative, 2);
                     }
                     else
                     {
                         objDrlgConnSummary.NetSTSCashFlow = -1 * Math.Round(sumSTSNegative - sumSTSPositive, 2);
                     }
 
-                    objDrlgConnSummary.PositiveSTSCashFlow = Math.Round( sumSTSPositive,2);
-                    objDrlgConnSummary.NegativeSTSCashFlow = Math.Round(sumSTSNegative,2);
+                    objDrlgConnSummary.PositiveSTSCashFlow = Math.Round(sumSTSPositive, 2);
+                    objDrlgConnSummary.NegativeSTSCashFlow = Math.Round(sumSTSNegative, 2);
 
 
                     objDrlgConnSummary.avgTime = 0;
@@ -995,7 +1013,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     double[] arrBins = bins.Keys.OrderBy(x => x).ToArray();
 
 
-                    for(int i=arrBins.Length-1;i>=0;i--)
+                    for (int i = arrBins.Length - 1; i >= 0; i--)
                     {
 
                         double lnKey = arrBins[i];
@@ -1018,6 +1036,13 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     #endregion
 
                     objResponse.Response = JsonConvert.SerializeObject(objDrlgConnSummary);
+
+                    if (objDrlgConnSummary.connData.Rows.Count==0)
+                    {
+                        objResponse.Warnings = "No Drlg. Connections found for the selection";
+                    }
+
+
                 }
                 else
                 {
@@ -1139,10 +1164,10 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 string strSQL = "";
 
                 //Delete existing settings
-                strSQL = "UPDATE   VMX_AKPI_DRLG_CONNECTIONS SET USER_COMMENT='"+ Comments + "' WHERE WELL_ID ='"+ wellId + "' AND ROUND(DEPTH,0)="+ Depth;
+                strSQL = "UPDATE   VMX_AKPI_DRLG_CONNECTIONS SET USER_COMMENT='" + Comments + "' WHERE WELL_ID ='" + wellId + "' AND ROUND(DEPTH,0)=" + Depth;
                 paramRequest.objDataService.executeNonQuery(strSQL);
 
-                
+
 
                 if (paramRequest.objDataService.executeNonQuery(strSQL))
                 {

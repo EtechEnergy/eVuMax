@@ -164,7 +164,8 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
         {
             try
             {
-                
+
+                string __Warnings = "";
 
                 userId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
@@ -266,9 +267,17 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
 
                 objROPSummaryData.RigStates =Util.getRigState(ref paramRequest.objDataService, wellId); //prath
-                generateReportData(paramRequest);
+
+                string ropWarning = "";
+
+                generateReportData(paramRequest,out ropWarning);
+
+                __Warnings = __Warnings + " " + ropWarning;
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
+
+                objResponse.Warnings = __Warnings;
+
                 objResponse.Response = JsonConvert.SerializeObject(objROPSummaryData);
                 return objResponse;
 
@@ -362,8 +371,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
         }
 
-        private void generateReportData(Broker.BrokerRequest paramRequest)
+        private void generateReportData(Broker.BrokerRequest paramRequest,out string paramWarnings)
         {
+
+            paramWarnings = "";
+
             try
             {
                 {
@@ -389,6 +401,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         {
                              // 'No data found ...
                         }
+                    }
+
+                    if(yMnemonic.Trim()=="")
+                    {
+                        paramWarnings = "ROP data not found in time log. Please check mnemonic mappings";
                     }
 
                     string strSQL = "";

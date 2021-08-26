@@ -263,7 +263,7 @@ export class TripSpeedPlot1 extends Component {
 
       let maxBenchMarkWO = this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection
       let maxBenchMarkWithConn = this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection
-      debugger;
+      
       let max = 0;
       if (maxTripSpeed > maxTripSpeedWO) {
         max = maxTripSpeed;

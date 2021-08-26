@@ -18,6 +18,8 @@ namespace eVuMax.DataBroker.Well.Data.Objects.Well.Dashboard
         //Nishant 07-10-2020
         const string updateUserFav = "updateUserFav";
         const string getUserFav = "getUserFav";
+        const string removeUserFav_ = "removeUserFav";
+
 
         public Broker.BrokerResponse getData(Broker.BrokerRequest paramRequest)
         {
@@ -175,6 +177,11 @@ namespace eVuMax.DataBroker.Well.Data.Objects.Well.Dashboard
                     return UpdateUserFav(paramRequest);
                 }
 
+                if (paramRequest.Function == removeUserFav_)
+                {
+                    return removeUserFav(paramRequest);
+                }
+
                 if (paramRequest.Function == "RemoveWellFromDashboard")
                 {
                     RemoveWellFromDashboard(paramRequest);
@@ -255,6 +262,49 @@ namespace eVuMax.DataBroker.Well.Data.Objects.Well.Dashboard
         }
 
 
+        //Nishant 24/08/2021
+        private Broker.BrokerResponse removeUserFav(Broker.BrokerRequest paramRequest) //Nishant
+        {
+            try
+            {
+
+                string userID = @"";
+                string strSQL = "";
+                try
+                {
+                    userID = @paramRequest.Parameters.Where(x => x.ParamName.Contains("UserName")).FirstOrDefault().ParamValue;
+                }
+                catch (Exception ex)
+                {
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Errors = "Invalid Request Parameter.Use proper function name in the Broker Request i.e UserName/ " + ex.Message + ex.StackTrace;
+                    return objBadResponse;
+                }
+
+                foreach (var objParameter in paramRequest.Parameters)
+                {
+
+                    if (objParameter.ParamName == "favList")
+                    {
+
+                        string FavList = objParameter.ParamValue;
+
+                        paramRequest.objDataService.executeNonQuery("DELETE FROM eVuMaxUserFavorites WHERE USERID='" + userID + "' AND ID='" + FavList.ToString() + "'");
+                        paramRequest.objDataService.executeNonQuery(strSQL);
+                    }
+                }
+
+                return new Broker.BrokerResponse();
+            }
+            catch (Exception ex)
+            {
+                Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                objBadResponse.RequestSuccessfull = false;
+                objBadResponse.Errors = "Error in RemoveUserFav " + ex.Message + ex.StackTrace;
+                return objBadResponse;
+            }
+        }
 
         private Broker.BrokerResponse UpdateUserFav(Broker.BrokerRequest paramRequest) //Nishant
         {
@@ -279,26 +329,34 @@ namespace eVuMax.DataBroker.Well.Data.Objects.Well.Dashboard
 
                     if (objParameter.ParamName == "favList")
                     {
-                        string[] FavList = objParameter.ParamValue.Split('~');
-                        if (FavList.Length > 0)
-                        {
-                            paramRequest.objDataService.executeNonQuery("DELETE FROM eVuMaxUserFavorites WHERE USERID='" + userID + "'");
 
-                            for (int i = 0; i < FavList.Length; i++)
+                        string FavList = objParameter.ParamValue;
+
+                        
+
+                        paramRequest.objDataService.executeNonQuery("DELETE FROM eVuMaxUserFavorites WHERE USERID='" + userID + "' AND ID= '"+ FavList.ToString() + "'");
+
+
+                        strSQL = @"INSERT INTO eVuMaxUserFavorites (ID,USERID, CREATEDDATE,CREATEDBY) VALUES(";
+                        strSQL += "'" + FavList.ToString() + "'";
+                        strSQL += ",'" + userID.ToString() + "'";
+                        strSQL += ",'" + DateTime.Now.ToString("yyyy-MM-dd HH:MM:ss") + "'";
+                        strSQL += ",'" + userID + "')";
+
+                        paramRequest.objDataService.executeNonQuery(strSQL);
+
+                        for (int i = 0; i < FavList.Length; i++)
                             {
-                                if (FavList[i] != "")
-                                {
-                                    strSQL = @"INSERT INTO eVuMaxUserFavorites (ID,USERID, CREATEDDATE,CREATEDBY) VALUES(";
-                                    strSQL += "'" + FavList[i].ToString() + "'";
-                                    strSQL += ",'" + userID.ToString() + "'";
-                                    strSQL += ",'" + DateTime.Now.ToString("yyyy-MM-dd HH:MM:ss") + "'";
-                                    strSQL += ",'" + userID + "')";
 
-                                    paramRequest.objDataService.executeNonQuery(strSQL);
-                                }
+                               
+
+                                //if (FavList[i] != "")
+                                //{
+
+                                //}
 
                             }
-                        }
+                        //}
                     }
                 }
 

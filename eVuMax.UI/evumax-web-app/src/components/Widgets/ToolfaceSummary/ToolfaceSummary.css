@@ -56,6 +56,7 @@
   position: relative;
   left: 0;
   transition: left 200ms ease-out 0s;
+  top: 0.3em !important;
 }
 
 .k-switch {

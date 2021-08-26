@@ -222,17 +222,28 @@ export class BarSeries {
         .enter()
         .append("rect")
         .attr("x", function (d) {
-          return HAxisScale_x1(d.key);
+          if(!isNaN(HAxisScale_x1(d.key)))
+          {
+            return HAxisScale_x1(d.key);
+          }
         })
         //If the value is negative, put the top left corner of the rect bar on the zero line
 
         .attr("y", function (d) {
-          return VAxisScale(d.value);
+          if(!isNaN(VAxisScale(d.value)))
+          {
+            return VAxisScale(d.value);
+          }
+          
         })
 
-        .attr("width", barWidth)
+        .attr("width", (isNaN(barWidth)?0:barWidth))
         .attr("height", function (d) {
-          return height - Math.abs(VAxisScale(d.value));
+          if(!isNaN(height - Math.abs(VAxisScale(d.value))))
+          {
+            return height - Math.abs(VAxisScale(d.value));
+          }
+          
         })
         .attr("fill", function (d) {
           return z(d.key);
@@ -248,6 +259,7 @@ export class BarSeries {
           this.ChartRef.__toolTip.html(tooltipText);
           this.ChartRef.__toolTip.css("position", "absolute");
 
+          
           this.ChartRef.__toolTip.css("background-color", "#585656");
           this.ChartRef.__toolTip.css("padding", "5px");
           this.ChartRef.__toolTip.css("border-radius", "3px");

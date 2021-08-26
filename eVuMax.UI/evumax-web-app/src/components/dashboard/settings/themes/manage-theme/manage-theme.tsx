@@ -13,7 +13,7 @@ import { Grid, GridToolbar } from "@progress/kendo-react-grid";
 import BrokerRequest from "../../../../../broker/BrokerRequest";
 import { Route } from "react-router-dom";
 import { ColorPicker } from "@progress/kendo-react-inputs";
-import { Color, ColorPicker as MColorPicker } from "material-ui-color";
+
 import ThemeHeader from "../../../../../objects/theme/theme-header";
 import ThemeProps from "../../../../../objects/theme/theme-props";
 import BrokerParameter from "../../../../../broker/BrokerParameter";
@@ -48,16 +48,15 @@ export default class ManageTheme extends React.Component {
   Cancel = () => {
     try {
       history.push("/dashboard/themes");
-    } catch { }
+    } catch {}
   };
 
-  onChangeWorkArea = (e: Color) => {
-    debugger;
-    this.setState({ _workAreaValue: e.css.backgroundColor });
+  onChangeWorkArea = (e: any) => {
+    this.setState({ _workAreaValue: e.value });
   };
 
   onChangeMenuBar = (e: any) => {
-    this.setState({ _menuBarValue: e.css.backgroundColor });
+    this.setState({ _menuBarValue: e.value });
   };
 
   onChangeFontColor = (e: any) => {
@@ -116,8 +115,6 @@ export default class ManageTheme extends React.Component {
       objThemeProps.PropValue = this.state._chartGridColor;
       objTheme.props.push(objThemeProps);
 
-
-
       objBrokerRequest = new BrokerRequest();
 
       // Add
@@ -169,12 +166,11 @@ export default class ManageTheme extends React.Component {
           console.log("rejected");
           this.setState({ isProcess: false });
         });
-    } catch { }
+    } catch {}
   };
 
   Load = () => {
     try {
-
       let objSession = sessionStorage.getItem("themes");
       if (objSession !== null) {
         let Formmode = JSON.parse(objSession).FormMode;
@@ -194,12 +190,10 @@ export default class ManageTheme extends React.Component {
                 params: { paramRequest: JSON.stringify(objBrokerRequest) },
               })
               .then((res) => {
-                debugger;
                 const objData = res.data;
 
                 if (objData.RequestSuccessfull) {
                   this.DisplayData(JSON.parse(objData.Response));
-
                 } else {
                   // Error
                 }
@@ -219,15 +213,14 @@ export default class ManageTheme extends React.Component {
                 console.log("rejected");
                 this.setState({ isProcess: false });
               });
-          } catch { }
+          } catch {}
         } else {
         }
       }
-    } catch { }
+    } catch {}
   };
 
   DisplayData = (props: any) => {
-    debugger;
     $("#txtName").val(props.Name || "");
     this.setState({ _pId: props.Id });
 
@@ -254,8 +247,6 @@ export default class ManageTheme extends React.Component {
         if (items.PropName === "ChartGridColor") {
           this.setState({ _chartGridColor: items.PropValue });
         }
-
-
       });
     }
   };
@@ -310,14 +301,14 @@ export default class ManageTheme extends React.Component {
                   <label className="col-sm-3 col-form-label text-right">
                     Work Area :
                   </label>
-                  <div className="col-sm-3" >
-                    {/* <ColorPicker
+                  <div className="col-sm-3">
+                    <ColorPicker
                       value={this.state._workAreaValue}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeWorkArea}
-                    /> */}
-                    <MColorPicker value={this.state._workAreaValue} deferred hideTextfield onChange={this.onChangeWorkArea} />
+                    />
+                    {/* <MColorPicker value={this.state._workAreaValue} deferred hideTextfield onChange={this.onChangeWorkArea} /> */}
                   </div>
                 </div>
                 <div className="form-group row">
@@ -325,13 +316,13 @@ export default class ManageTheme extends React.Component {
                     Menu bar :
                   </label>
                   <div className="col-sm-3">
-                    {/* <ColorPicker
+                    <ColorPicker
                       value={this.state._menuBarValue}
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeMenuBar}
-                    /> */}
-                    <MColorPicker value={this.state._menuBarValue} deferred hideTextfield onChange={this.onChangeMenuBar} />
+                    />
+                    {/* <MColorPicker value={this.state._menuBarValue} deferred hideTextfield onChange={this.onChangeMenuBar} /> */}
                   </div>
                 </div>
                 <div className="form-group row">
@@ -344,9 +335,7 @@ export default class ManageTheme extends React.Component {
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeFontColor}
-                      icon={"edit-tools"}
                     />
-
                   </div>
                 </div>
 
@@ -360,7 +349,6 @@ export default class ManageTheme extends React.Component {
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangePrimaryBackColor}
-                      icon={"edit-tools"}
                     />
                   </div>
                 </div>
@@ -375,11 +363,9 @@ export default class ManageTheme extends React.Component {
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangePrimaryColor}
-                      icon={"edit-tools"}
                     />
                   </div>
                 </div>
-
 
                 <div className="form-group row">
                   <label className="col-sm-3 col-form-label text-right">
@@ -391,7 +377,6 @@ export default class ManageTheme extends React.Component {
                       view={"gradient"}
                       gradientSettings={this.gradientSettings}
                       onChange={this.onChangeGridColor}
-                      icon={"edit-tools"}
                     />
                   </div>
                 </div>

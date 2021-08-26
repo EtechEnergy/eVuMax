@@ -440,56 +440,66 @@ export class DrillingSummary extends Component {
       //Populate the data series with this data
       objROPLine.Data.slice(0, objROPLine.Data.length);
 
+      console.log(this.state.objSummaryData.ROPData);
+
+
       for (let i = 0; i < this.state.objSummaryData.ROPData.length; i++) {
         let objVal: ChartData = new ChartData();
 
-        // const element = this.state.objSummaryData.ROPData[i];
-        // let lblString: string = element.Y + "#" + element.DATE_TIME.split(" ")[0] + "#" + element.DATE_TIME.split(" ")[1];
-        // let strArr = lblString.split("#");
-        // lblString = strArr[0] + "~" + strArr[1] + "~" + strArr[2];
-        // objVal.label = strArr[0];
+        const element = this.state.objSummaryData.ROPData[i];
+        let lblString: string = element.Y + "#" + element.DATE_TIME.split(" ")[0] + "#" + element.DATE_TIME.split(" ")[1];
+        let strArr = lblString.split("#");
+
+        lblString = strArr[0] + "~" + strArr[1] + "~" + strArr[2];
+        objVal.label = strArr[0];
 
 
         objVal.x = this.state.objROPData[i].Y; //Depth  //new Date(Date.parse(paramData[i]["DATETIME1"]));
         objVal.y = this.state.objROPData[i].X; //ROP
 
-        //        this.objChart_ROPLine.bottomAxis().Labels.push(lblString);
+        this.objChart_ROPLine.bottomAxis().Labels.push(lblString);
 
 
         objROPLine.Data.push(objVal);
       }
 
-      //offset well
 
-      objROPLine = new DataSeries();
-      objROPLine.Id = "ROPOffsetlineSeries";
-      objROPLine.Name = "ROP-Offset";
-      objROPLine.XAxisId = this.objChart_ROPLine.bottomAxis().Id;
-      objROPLine.YAxisId = this.objChart_ROPLine.leftAxis().Id;
-      objROPLine.Type = dataSeriesType.Line;
-      objROPLine.Title = "ROP (Offset)";
-      objROPLine.Color = "#FF0000";
-      objROPLine.LineStyle = lineStyle.solid;
-      objROPLine.LineWidth = 2;
-      objROPLine.CurveStyle = curveStyle.normal;
 
-      objROPLine.ShowInLegend = true;
-
-      this.objChart_ROPLine.DataSeries.set(objROPLine.Id, objROPLine);
 
       //Populate the data series with this data
       objROPLine.Data.slice(0, objROPLine.Data.length);
 
-      for (let i = 0; i < this.state.objSummaryData.ROPDataOffset.length; i++) {
-        let objVal: ChartData = new ChartData();
-        //objVal.datetime = new Date(Date.parse(paramData[i]["DATETIME1"]));
-        objVal.x = this.state.objROPDataOffset[i].Y; //Depth  //new Date(Date.parse(paramData[i]["DATETIME1"]));
-        objVal.y = this.state.objROPDataOffset[i].X; //ROP
-        objROPLine.Data.push(objVal);
+
+      //offset well
+      if (this.state.objSummaryData.ROPDataOffset.length > 0) {
+        objROPLine = new DataSeries();
+        objROPLine.Id = "ROPOffsetlineSeries";
+        objROPLine.Name = "ROP-Offset";
+        objROPLine.XAxisId = this.objChart_ROPLine.bottomAxis().Id;
+        objROPLine.YAxisId = this.objChart_ROPLine.leftAxis().Id;
+        objROPLine.Type = dataSeriesType.Line;
+        objROPLine.Title = "ROP (Offset)";
+        objROPLine.Color = "#FF0000";
+        objROPLine.LineStyle = lineStyle.solid;
+        objROPLine.LineWidth = 2;
+        objROPLine.CurveStyle = curveStyle.normal;
+
+        objROPLine.ShowInLegend = true;
+
+        this.objChart_ROPLine.DataSeries.set(objROPLine.Id, objROPLine);
+
+
+        for (let i = 0; i < this.state.objSummaryData.ROPDataOffset.length; i++) {
+          let objVal: ChartData = new ChartData();
+          //objVal.datetime = new Date(Date.parse(paramData[i]["DATETIME1"]));
+          objVal.x = this.state.objROPDataOffset[i].Y; //Depth  //new Date(Date.parse(paramData[i]["DATETIME1"]));
+          objVal.y = this.state.objROPDataOffset[i].X; //ROP
+          objROPLine.Data.push(objVal);
+        }
       }
 
       this.objChart_ROPLine.drawLegend();
-      debugger;
+
       this.objChart_ROPLine.reDraw();
     } catch (error) { }
   };
@@ -516,7 +526,7 @@ export class DrillingSummary extends Component {
       this.objChart_RigStateSummary.bottomAxis().ShowLabels = true;
       this.objChart_RigStateSummary.bottomAxis().LabelStyle = axisLabelStyle.labels;
       this.objChart_RigStateSummary.bottomAxis().bandScale = true;
-      //this.objChart_RigStateSummary.bottomAxis().LabelMultiline = false; //
+      this.objChart_RigStateSummary.bottomAxis().LabelMultiline = true; //
 
       this.objChart_RigStateSummary.bottomAxis().Labels = [];
 
@@ -857,8 +867,8 @@ export class DrillingSummary extends Component {
     try {
       this.refreshROPChart();
       this.refreshDistanceChart();
-
       this.refreshTimeChart();
+
       this.refreshRigStateSummaryChart();
 
       this.refreshROPLineChart();
@@ -1891,7 +1901,7 @@ export class DrillingSummary extends Component {
                     id="roplinechart"
                     style={{
                       height: "calc(54vh)",
-                      width: "calc(95vw)",
+                      width: "calc(92vw)",
                       float: "left",
                       backgroundColor: "transparent",
                     }}
@@ -1901,7 +1911,7 @@ export class DrillingSummary extends Component {
                     id="roplinechart"
                     style={{
                       height: "calc(28vh)",
-                      width: "calc(95vw)",
+                      width: "calc(92vw)",
                       float: "left",
                       backgroundColor: "transparent",
                     }}

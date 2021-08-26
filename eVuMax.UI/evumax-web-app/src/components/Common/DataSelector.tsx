@@ -273,7 +273,7 @@ class DataSelector extends Component<IProps, IState> {
             }}
           >
             <div
-              id="selector_chart" className="eVumaxBorder"
+              id="selector_chart" 
               style={{
                 //height: "100%",
                 height: "90px",

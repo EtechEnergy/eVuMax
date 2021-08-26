@@ -226,6 +226,8 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
 
+                objResponse.Warnings = "";
+
                 //Assign tables
 
                 objTripConnSummary.connData = connData;
@@ -247,6 +249,25 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                 if (objData != null)
                 {
+
+
+                    //Check if any connection was found. If not then process it
+                    if (objData.Rows.Count == 0)
+                    {
+                        TripConnectionLogProcessor objConnProcessor = new TripConnectionLogProcessor();
+                        objConnProcessor.processPointsBulk(ref paramRequest.objDataService, wellId);
+
+                        //Run the query again
+                        objData = paramRequest.objDataService.getTable(strSQL);
+
+                        if (objData == null)
+                        {
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Errors = "Error retrieving data";
+                            objResponse.Response = "";
+                        }
+                    }
+
 
 
                     DataTable objExclConn = paramRequest.objDataService.getTable("SELECT DEPTH FROM VMX_TRIP_CONN_INFO WHERE WELL_ID='" + wellId + "'");
@@ -786,7 +807,18 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                     #endregion
 
+
+                    
+
                     objResponse.Response = JsonConvert.SerializeObject(objTripConnSummary);
+
+                    if(objTripConnSummary.connData.Rows.Count==0)
+                    {
+                        objResponse.Warnings = "No Trip Connections found for the selection";
+                    }
+                    
+
+
                 }
                 else
                 {

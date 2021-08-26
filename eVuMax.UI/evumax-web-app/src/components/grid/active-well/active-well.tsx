@@ -58,13 +58,13 @@ let wellList: any[] = [];
 const searchFieldStyle = {
   // borderRadius: '22px',
   width: "40%",
-  borderColor: "#9e9e9e",
-  border: "1px solid var(--base-anchor-color)",
+  borderColor: "var(--base-anchor-color)",
+  border: "1px solid var(--base-anchor-color) ",
   borderRadius: "22px",
   backgroundColor: "inherit",
   color: "var(--base-anchor-color)",
   padding: "5px 20px",
-  borderTopColor: "var(--base-anchor-color) !important"
+  borderTopColor: "var(--base-anchor-color) !important",
 };
 
 const headerlabel = {
@@ -139,7 +139,6 @@ export default class ActiveWell extends React.Component {
           let widgetList = utilFunc.getWidgetList();
           let favList: any[] = [];
           for (let i = 0; i < userFav.length; i++) {
-
             const objItem = userFav[i];
 
             let index = widgetList.findIndex((x) => x.id === objItem.Id);
@@ -158,8 +157,8 @@ export default class ActiveWell extends React.Component {
           });
           this.forceUpdate();
         })
-        .catch(function (error) { });
-    } catch (error) { }
+        .catch(function (error) {});
+    } catch (error) {}
   };
 
   componentWillUnmount() {
@@ -216,7 +215,7 @@ export default class ActiveWell extends React.Component {
       } else {
         return this.state.columnWell[index].ORDER_NO - 1;
       }
-    } catch (error) { }
+    } catch (error) {}
   };
   //**************** */
 
@@ -291,7 +290,7 @@ export default class ActiveWell extends React.Component {
           console.log("rejected");
           this.setState({ isProcess: false });
         });
-    } catch { }
+    } catch {}
   };
 
   getActiveWellList = () => {
@@ -347,7 +346,7 @@ export default class ActiveWell extends React.Component {
       // this.setState({
       //     currentWellID:""
       // });
-    } catch { }
+    } catch {}
   };
 
   filterData = (e: any) => {
@@ -462,7 +461,7 @@ export default class ActiveWell extends React.Component {
 
       this.setState({ removeWells: false });
       this.setState({ showDeleteDialog: false });
-    } catch (error) { }
+    } catch (error) {}
   };
 
   cmdRemoveWell_click = () => {
@@ -587,7 +586,7 @@ export default class ActiveWell extends React.Component {
       if (this.state.OpenInterfaceID === "Broomstick") {
         history.push("Broomstick/" + this.state.currentWellID);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   render() {
@@ -650,10 +649,7 @@ export default class ActiveWell extends React.Component {
                   </span>
                 </div>
 
-                <div
-                  className="k-textbox k-space-right"
-                  style={searchFieldStyle}
-                >
+                <div className="k-textbox k-space-right serachStyle">
                   <input
                     type="text"
                     onChange={this.filterData}
@@ -959,18 +955,23 @@ export default class ActiveWell extends React.Component {
               />
             )}
             {/* {this.isColumnVisible("EDIT_WELL") && <Column width="70px" headerClassName="text-center" resizable={false} orderIndex={this.getColumnOrderIndex("EDIT_WELL")} */}
-            <Column width="70px" locked headerClassName="text-center" resizable={false} orderIndex={this.getColumnOrderIndex("EDIT_WELL")}
+            <Column
+              width="70px"
+              locked
+              headerClassName="text-center"
+              resizable={false}
+              orderIndex={this.getColumnOrderIndex("EDIT_WELL")}
               field="editWell"
               title="Edit Well"
-              cell={props => (
-
-                <td style={props.style} className={"text-center k-command-cell " + props.className}
-                  onClick={e => this.cmdEditWell_click(e, props.dataItem)}
+              cell={(props) => (
+                <td
+                  style={props.style}
+                  className={"text-center k-command-cell " + props.className}
+                  onClick={(e) => this.cmdEditWell_click(e, props.dataItem)}
                 >
-                  <span >
+                  <span>
                     <FontAwesomeIcon icon={faPen} />
                   </span>
-
                 </td>
               )}
             />
@@ -986,7 +987,7 @@ export default class ActiveWell extends React.Component {
             minimizeButton={() => null}
             maximizeButton={() => null}
             restoreButton={() => null}
-          // closeButton={() => this.ApplyWellColumns(false)}
+            // closeButton={() => this.ApplyWellColumns(false)}
           >
             <div>
               {/* <WellColumnsEditor actionOnClick={this.ApplyWellColumns} ></WellColumnsEditor> */}

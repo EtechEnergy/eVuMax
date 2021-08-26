@@ -120,10 +120,10 @@ export class Dashboard extends React.Component<Props> {
         </Dialog>}
         <nav className="navbar navbar-expand-lg navbar-expand-sm navbar-expand-md navbar-expand-xs navbar-expand navbar-light bg-black">
           <NavLink className="nav-link" exact to="/dashboard/home">
-            <a className="navbar-brand">
+            <div className="navbar-brand">
               <img src={VuMaxLogo} width="45" />
               <span className="text-theme ml-3">VuMax</span>
-            </a>
+            </div>
           </NavLink>
 
           <button

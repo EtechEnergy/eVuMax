@@ -16,6 +16,7 @@ namespace eVuMax.DataBroker.Broker
         public string Response { get; set; } = "";
         public bool RequestSuccessfull { get; set; } = true;
         public string Errors { get; set; } = "";
+        public string Warnings { get; set; } = "";
         public DateTime ResponseTime { get; set; } = DateTime.Now;
 
 

@@ -14,7 +14,7 @@ export function setComboValue(paramComboBox: any, paramValue: string) {
       }
       index += 1;
     });
-  } catch (error) { }
+  } catch (error) {}
 }
 
 export function convertMapToDictionaryJSON(paramValue: any, keyField?: string) {
@@ -37,7 +37,6 @@ export function convertMapToDictionaryJSON(paramValue: any, keyField?: string) {
 export function DictionaryToMap(paramDict: any, paramNewMap: any) {
   try {
     for (let index = 0; index < Object.keys(paramDict).length; index++) {
-
       const key = Object.keys(paramDict)[index];
       paramNewMap.set(key, paramDict[key]);
     }
@@ -55,9 +54,9 @@ export function rgb2hex(rgb: any) {
   );
   return rgb && rgb.length === 4
     ? "#" +
-    ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
-    ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
-    ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2)
+        ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2)
     : "";
 }
 
@@ -111,34 +110,31 @@ export function formateDate(paramDate: Date) {
   }
 }
 
-
-
 //Nishant 07-10-2020
 //Common function to launch Widget from List Cick
 export function getWidgetList() {
   try {
     const WidgetList = [
-      { id: "DrlgSummary", name: "Drilling Summary" },
-      { id: "DrlgConnSummary", name: "Drlg. Conn. Summary" },
-      { id: "DrlgConnSummary2", name: "Drlg. Conn. Summary (Split View)" },
-      { id: "TripConnSummary", name: "Trip Conn. Summary" },
-      { id: "ToolfaceSummary", name: "Toolface Summary" },
-      { id: "ROPSummary", name: "ROP Summary" },
-      { id: "TripSpeed1", name: "Trip Speed 1" },
-      { id: "TripSpeed2", name: "Trip Speed 2" },
-      { id: "Broomstick", name: "Broomstick" },
-
+      { id: "DrlgSummary", name: "Drilling Summary", isFav: false },
+      { id: "DrlgConnSummary", name: "Drlg. Conn. Summary", isFav: false },
+      {
+        id: "DrlgConnSummary2",
+        name: "Drlg. Conn. Summary (Split View)",
+        isFav: false,
+      },
+      { id: "TripConnSummary", name: "Trip Conn. Summary", isFav: false },
+      { id: "ToolfaceSummary", name: "Toolface Summary", isFav: false },
+      { id: "ROPSummary", name: "ROP Summary", isFav: false },
+      { id: "TripSpeed1", name: "Trip Speed 1", isFav: false },
+      { id: "TripSpeed2", name: "Trip Speed 2", isFav: false },
+      { id: "Broomstick", name: "Broomstick", isFav: false },
     ];
 
     return WidgetList;
-  } catch (error) {
-
-  }
+  } catch (error) {}
 }
 export function launchWidget(interfaceID: string, wellID: string) {
   try {
-
-
     if (interfaceID === "ROPSummary") {
       history.push("ROPSummaryPlot/" + wellID);
     }
@@ -163,7 +159,7 @@ export function launchWidget(interfaceID: string, wellID: string) {
     }
 
     if (interfaceID === "TripSpeed1") {
-      history.push("TripSpeedPlot1/" + wellID);   //TripSpeed1
+      history.push("TripSpeedPlot1/" + wellID); //TripSpeed1
     }
 
     if (interfaceID === "TripSpeed2") {
@@ -173,25 +169,21 @@ export function launchWidget(interfaceID: string, wellID: string) {
     if (interfaceID === "Broomstick") {
       history.push("Broomstick/" + wellID);
     }
-
-  } catch (error) {
-
-  }
+  } catch (error) {}
 }
 
 export function parseJSON(pString: string) {
   try {
     JSON.parse(pString);
     return JSON.parse(pString);
-
   } catch (e) {
     return false;
   }
 }
 
 export function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
+  var letters = "0123456789ABCDEF";
+  var color = "#";
   for (var i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }

@@ -103,7 +103,7 @@ export default class Themes extends React.Component {
           console.log("rejected");
           this.setState({ isProcess: false });
         });
-    } catch { }
+    } catch {}
   };
   Add = () => {
     let objSession = {
@@ -141,8 +141,6 @@ export default class Themes extends React.Component {
           params: { paramRequest: JSON.stringify(objBrokerRequest) },
         })
         .then((res) => {
-
-
           const objData = JSON.parse(res.data.Response);
           _themeList = objData;
           this.setState({ ThemeList: objData });
@@ -162,11 +160,9 @@ export default class Themes extends React.Component {
           console.log("rejected");
           this.setState({ isProcess: false });
         });
-    } catch { }
+    } catch {}
   };
   render() {
-
-
     Themes.contextType = ThemeContext;
     const themeId = this.context.Id;
     return (
@@ -181,10 +177,20 @@ export default class Themes extends React.Component {
             <div className="col-lg-12 col-xl-12 col-12 col-md-12 col-sm-12">
               <Grid
                 style={{ height: "75vh", width: "95vw" }}
-                data={this.state.ThemeList}
+                data={
+                  this.state.ThemeList != null
+                    ? this.state.ThemeList.map((item: any) => ({
+                        ...item,
+                        //inEdit: item.id === themeId,
+                        selected: item.Id === themeId,
+                      }))
+                    : null
+                }
+                // data={this.state.ThemeList}
                 resizable={true}
                 scrollable={"scrollable"}
                 sortable={true}
+                selectedField="selected"
               >
                 <GridToolbar>
                   <div className="mr-1" style={headerlabel}>
@@ -200,8 +206,8 @@ export default class Themes extends React.Component {
                   </div>
 
                   <span
-                    className="k-textbox k-space-right float-right"
-                    style={searchFieldStyle}
+                    style={{ width: "15%" }}
+                    className="k-textbox k-space-right float-right serachStyle"
                   >
                     <input
                       type="text"
@@ -228,7 +234,6 @@ export default class Themes extends React.Component {
                   title="Action"
                   cell={(props) => (
                     <td className="text-center">
-
                       <div>
                         <span onClick={(e) => this.Edit(e, props.dataItem)}>
                           <FontAwesomeIcon icon={faPen} />

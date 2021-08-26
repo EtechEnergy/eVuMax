@@ -170,7 +170,8 @@ class DrlgConnSummary2 extends Component {
       this.objBTSChart.MarginLeft = 10;
       this.objBTSChart.MarginBottom = 0;
       this.objBTSChart.MarginTop = 10;
-      this.objBTSChart.MarginRight = 60;
+      this.objBTSChart.MarginRight = 80;
+      
 
       this.objBTSChart.initialize();
       this.objBTSChart.reDraw();
@@ -219,7 +220,7 @@ class DrlgConnSummary2 extends Component {
       this.objSTSChart.MarginLeft = 10;
       this.objSTSChart.MarginBottom = 0;
       this.objSTSChart.MarginTop = 0;
-      this.objSTSChart.MarginRight = 10;
+      this.objSTSChart.MarginRight = 0;
 
       this.objSTSChart.initialize();
       this.objSTSChart.reDraw();
@@ -261,7 +262,7 @@ class DrlgConnSummary2 extends Component {
       this.objSTBChart.MarginLeft = 10;
       this.objSTBChart.MarginBottom = 10;
       this.objSTBChart.MarginTop = 0;
-      this.objSTBChart.MarginRight = 10;
+      this.objSTBChart.MarginRight = 80;
 
       this.objSTBChart.initialize();
       this.objSTBChart.reDraw();
@@ -636,7 +637,7 @@ class DrlgConnSummary2 extends Component {
             <div
               id="main_container"
               style={{
-                height: "calc(100vh - 335px)",
+                height: "calc(100vh - 400px)",
                 width: "calc(100vw - 90px)",
                 backgroundColor: "transparent",
               }}
@@ -646,8 +647,8 @@ class DrlgConnSummary2 extends Component {
                   id="bts_chart"
                   style={{
                     float: "left",
-                    height: "calc( ((100vh - 300px)*30)/100)",
-                    width: "calc(100vw - 240px)",
+                    height: "calc( ((100vh - 400px)*30)/100)",
+                    width: "calc(100vw - 240px )",
                     backgroundColor: "transparent",
                   }}
                 ></div>
@@ -656,7 +657,7 @@ class DrlgConnSummary2 extends Component {
                   id="bts_chart_legend"
                   style={{
                     float: "right",
-                    height: "calc( ((100vh - 335px)*30)/100)",
+                    height: "calc( ((100vh - 400px)*30)/100)",
                     width: "150px",
                     //vimal
                     paddingTop: "80px",
@@ -670,7 +671,7 @@ class DrlgConnSummary2 extends Component {
                   id="sts_chart"
                   style={{
                     float: "left",
-                    height: "calc(((100vh - 335px)*30)/100)",
+                    height: "calc(((100vh - 400px)*30)/100)",
                     width: "calc(100vw - 240px)",
                     backgroundColor: "transparent",
                   }}
@@ -682,7 +683,7 @@ class DrlgConnSummary2 extends Component {
                     //viaml
                     paddingTop: "60px",
                     float: "right",
-                    height: "calc( ((100vh - 335px)*30)/100)",
+                    height: "calc( ((100vh - 400px)*30)/100)",
                     width: "150px",
                     backgroundColor: "transparent",
                   }}
@@ -694,7 +695,7 @@ class DrlgConnSummary2 extends Component {
                   id="stb_chart"
                   style={{
                     float: "left",
-                    height: "calc(((100vh - 335px)*40)/100)",
+                    height: "calc(((100vh - 400px)*40)/100)",
                     width: "calc(100vw - 240px)",
                     backgroundColor: "transparent",
                   }}
@@ -712,7 +713,7 @@ class DrlgConnSummary2 extends Component {
                     paddingTop: "75px",
                     // paddingLeft: "50px",
                     float: "right",
-                    height: "calc( ((100vh - 335px)*40)/100)",
+                    height: "calc( ((100vh - 400px)*40)/100)",
                     width: "150px",
                     backgroundColor: "transparent",
                   }}
@@ -1247,7 +1248,7 @@ class DrlgConnSummary2 extends Component {
                   <label className="summaryLabelHeader-long">
                     Connection Time
                   </label>
-                  <span>
+                  <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
                       width="100px"
@@ -1256,14 +1257,14 @@ class DrlgConnSummary2 extends Component {
                         this.setState({ DrlgBenchMark: event.target.value });
                       }}
                     />
-                    minutes
+                    <span style={{ paddingLeft: "15px" }} > minutes</span>
                   </span>
                   <br />
 
                   <label className="summaryLabelHeader-long">
                     Bottom to Slips Time
                   </label>
-                  <span>
+                  <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
                       width="100px"
@@ -1272,14 +1273,14 @@ class DrlgConnSummary2 extends Component {
                         this.setState({ BTSBenchMark: event.target.value });
                       }}
                     />
-                    minutes
+                    <span style={{ paddingLeft: "15px" }} > minutes</span>
                   </span>
 
                   <br />
-                  <label className="summaryLabelHeader-long">
+                  <label className="summaryLabelHeader-long" >
                     Slips to Slip Time
                   </label>
-                  <span>
+                  <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
                       width="100px"
@@ -1288,7 +1289,7 @@ class DrlgConnSummary2 extends Component {
                         this.setState({ STSBenchMark: event.target.value });
                       }}
                     />
-                    minutes
+                    <span style={{ paddingLeft: "15px" }} > minutes</span>
                   </span>
 
                   <br />
@@ -1296,7 +1297,7 @@ class DrlgConnSummary2 extends Component {
                   <label className="summaryLabelHeader-long">
                     Slip To Bottom Time
                   </label>
-                  <span>
+                  <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
                       width="100px"
@@ -1305,14 +1306,14 @@ class DrlgConnSummary2 extends Component {
                         this.setState({ STBBenchMark: event.target.value });
                       }}
                     />
-                    minutes
+                    <span style={{ paddingLeft: "15px" }} > minutes</span>
                   </span>
                 </div>
                 <div className="col-lg-6">
                   <label className="summaryLabelHeader-long">
                     Target Conn. Time
                   </label>
-                  <span className="mr-3">
+                  <span className="mr-3" style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
                       width="100px"
@@ -1321,13 +1322,13 @@ class DrlgConnSummary2 extends Component {
                         this.setState({ TargetTime: event.target.value });
                       }}
                     />
-                    minutes
+                    <span style={{ paddingLeft: "15px" }} > minutes</span>
                   </span>
                   <br />
                   <label className="summaryLabelHeader-long">
-                    Rig Cost/Day $
+                    Rig Cost/Day
                   </label>
-                  <span>
+                  <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
                       width="100px"
@@ -1337,6 +1338,7 @@ class DrlgConnSummary2 extends Component {
                       }}
                     />
                   </span>
+                  <span style={{ paddingLeft: "15px" }} > $</span>
 
                   <br />
                   <br />

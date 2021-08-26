@@ -793,7 +793,7 @@ export default class WitsmlExplorer extends React.Component {
 
 
             let selectedNode = this.state.downloadQueue[1];// this.state.selectedNode;
-            debugger;
+            
             // selectedNode.imageUrl = "../../images/downloading-blue.gif";
             selectedNode.downloading = false;
 
@@ -1233,23 +1233,25 @@ export default class WitsmlExplorer extends React.Component {
 
 
                             {/* New code for context menu on treeview */}
-                            <Popup className="context-menu" show={this.state.contextMenuShow} offset={this.state.contextMenuOffset} onOpen={e => {
-                                let element: any = document.querySelector('.context-menu');
-                                if (element !== null) {
-                                    element.setAttribute('tabIndex', 0) // make it focusable
-                                    element.focus(); // focus it
-                                    element.addEventListener('blur', this.closeContextMenu) // attach on blur event which will close it.
-                                }
-                            }}
-                                onClose={e => {
-                                    let element: any = document.querySelector('.context-menu');
-                                    element.removeEventListener('blur', this.closeContextMenu)
-                                }}
+                            {/* temp. Commented this code */}
+                            <Popup className="context-menu" show={this.state.contextMenuShow} offset={this.state.contextMenuOffset} 
+                            // onOpen={e => {
+                            //     let element: any = document.querySelector('.context-menu');
+                            //     if (element !== null) {
+                            //         element.setAttribute('tabIndex', 0) // make it focusable
+                            //         element.focus(); // focus it
+                            //         element.addEventListener('blur', this.closeContextMenu) // attach on blur event which will close it.
+                            //     }
+                            // }}
+                                // onClose={e => {
+                                //     let element: any = document.querySelector('.context-menu');
+                                //     element.removeEventListener('blur', this.closeContextMenu)
+                                // }}
                             >
-                                {/* <Popup className="context-menu" show={this.state.contextMenuShow} offset={this.state.contextMenuOffset}> */}
-                                {/* <Menu vertical={true} style={{ display: "inline-block",background: "cornflowerblue" }} onSelect={this.onMenuSelect}>
-                        <MenuItem data={{ logType: "-1", id: "mnuClose" }} text="Close" />
-                        </Menu> */}
+                                {/* New Code Close */}
+                                
+                                
+                               
 
                                 {this.state.menuType == 0 ?
                                     // Wellbore

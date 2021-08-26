@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.1062
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eVuMax.API", "eVuMax.API.csproj", "{C0646829-198B-4764-A52A-BDA16BDC686E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eVuMax.DataBroker", "..\eVuMax.DataBroker\eVuMax.DataBroker.csproj", "{D410EF8D-47ED-4B64-A70D-F1B32037F791}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C0646829-198B-4764-A52A-BDA16BDC686E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0646829-198B-4764-A52A-BDA16BDC686E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0646829-198B-4764-A52A-BDA16BDC686E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D410EF8D-47ED-4B64-A70D-F1B32037F791}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D410EF8D-47ED-4B64-A70D-F1B32037F791}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D410EF8D-47ED-4B64-A70D-F1B32037F791}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D410EF8D-47ED-4B64-A70D-F1B32037F791}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

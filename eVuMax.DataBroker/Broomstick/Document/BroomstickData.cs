@@ -13,6 +13,7 @@ namespace eVuMax.DataBroker.Broomstick.Document
         public string depthUnit { get; set; } = "";
         public string hkldUnit { get; set; } = "";
         public string torqueUnit { get; set; } = "";
+        public string RunNo { get; set; } = "";
 
         public List<BroomstickPlanData> HkldPlanData { get; set; } = new List<BroomstickPlanData>();
 
@@ -23,6 +24,8 @@ namespace eVuMax.DataBroker.Broomstick.Document
         public List<BroomstickPlanData> TorquePlanData { get; set; } = new List<BroomstickPlanData>();
         public List<BroomstickDataPoint> OnBottomTorquePoints { get; set; } = new List<BroomstickDataPoint>();
         public List<BroomstickDataPoint> OffBottomTorquePoints { get; set; } = new List<BroomstickDataPoint>();
+
+        public List<String> RunList { get; set; } = new List<string>();
 
     }
 

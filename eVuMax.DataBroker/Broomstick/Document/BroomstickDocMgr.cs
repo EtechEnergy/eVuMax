@@ -70,14 +70,15 @@ namespace eVuMax.DataBroker.Broomstick.Document
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
 
-
                 BroomstickData objBroomstickData = new BroomstickData();
 
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 string wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
+                string RunNo = paramRequest.Parameters.Where(x => x.ParamName.Contains("RunNo")).FirstOrDefault().ParamValue;
                 string selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
                 double fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                 double toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
+
                 DateTime fromDate = DateTime.Now;
                 DateTime toDate = DateTime.Now;
 
@@ -146,37 +147,29 @@ namespace eVuMax.DataBroker.Broomstick.Document
 
                 string strSQL = "";
 
-                string RunNo = "";
 
-
-                //Retrieve first unique run no. from the data
-                strSQL = "SELECT DISTINCT(RUN_NO) AS RUN_NO  FROM VMX_ADNL_HKLD_PLAN WHERE WELL_ID='" + wellId + "'";
-
-                DataTable objData = paramRequest.objDataService.getTable(strSQL);
-
-                if(objData.Rows.Count>0)
+                if(RunNo=="")
                 {
 
-                    RunNo = DataService.checkNull(objData.Rows[0]["RUN_NO"], "").ToString();
+                    //Retrieve first unique run no. from the data
+                    strSQL = "SELECT DISTINCT(RUN_NO) AS RUN_NO  FROM VMX_ADNL_HKLD_PLAN WHERE WELL_ID='" + wellId + "'";
+
+                    DataTable objData = paramRequest.objDataService.getTable(strSQL);
+
+                    if (objData.Rows.Count > 0)
+                    {
+
+                        RunNo = DataService.checkNull(objData.Rows[0]["RUN_NO"], "").ToString();
+                    }
+
+                    objData.Dispose();
+
                 }
 
-                objData.Dispose();
 
-
-
-                //Now get the unique plan data
-                if(RunNo.Trim()!="")
-                {
-                    strSQL = "SELECT PLAN_ID,PLAN_NAME FROM VMX_ADNL_HKLD_PLAN WHERE WELL_ID='" + wellId + "' AND RUN_NO='" + RunNo.Replace("'", "''") + "'";
-                }
-                else
-                {
-                    strSQL = "SELECT PLAN_ID,PLAN_NAME FROM VMX_ADNL_HKLD_PLAN WHERE WELL_ID='" + wellId + "'";
-                }
-
+                strSQL = "SELECT PLAN_ID,PLAN_NAME FROM VMX_ADNL_HKLD_PLAN WHERE WELL_ID='" + wellId + "' AND RUN_NO='" + RunNo.Replace("'", "''") + "'";
 
                 DataTable objPlanData = paramRequest.objDataService.getTable(strSQL);
-
 
                 bool rotDataAdded = false;
 
@@ -412,8 +405,25 @@ namespace eVuMax.DataBroker.Broomstick.Document
                 #endregion
 
 
-                objResponse.Response = JsonConvert.SerializeObject(objBroomstickData);
+                objBroomstickData.RunNo = RunNo;
 
+                //Get the list of run nos. 
+                DataTable objRunData = paramRequest.objDataService.getTable("SELECT DISTINCT(RUN_NO) FROM VMX_ADNL_HKLD_PLAN WHERE WELL_ID='" + wellId + "' ORDER BY RUN_NO");
+
+                if(objRunData!=null)
+                {
+                    foreach (DataRow objRunRow in objRunData.Rows)
+                    {
+                        string lnRuNo = DataService.checkNull(objRunRow["RUN_NO"], "").ToString();
+
+                        objBroomstickData.RunList.Add(lnRuNo);
+                    }
+
+                    objRunData.Dispose();
+                }
+
+
+                objResponse.Response = JsonConvert.SerializeObject(objBroomstickData);
 
                 return objResponse;
             }

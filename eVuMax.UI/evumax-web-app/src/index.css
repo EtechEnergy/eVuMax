@@ -15,7 +15,7 @@
   --base-grid-bg-hover: #09c6ffe3;
   --base-grid-color-hover: #fff;
   --base-axis-color: #fff;
-  --base-chart-grid-color:#444;
+  --base-chart-grid-color: #444;
 
   /* --base-work-area: white;
 --base-menu-top:white;
@@ -42,7 +42,7 @@ body {
 }
 
 .text-theme {
-  color: var(--base-anchor-color);
+  color: var(--base-anchor-color) !important;
 }
 
 a {
@@ -622,10 +622,31 @@ div.k-time-tab.k-datetime-wrap {
 }
 
 .k-grid-header-sticky {
-  background-color: inherit !important;
+  /* background-color: inherit !important; */
 }
 
 /* prath */
-.chart_grid_color{
+.chart_grid_color {
   stroke: var(--base-chart-grid-color) !important;
+}
+
+.k-grid-header th.k-grid-header-sticky,
+.k-grid-header td.k-grid-header-sticky,
+.k-grid-header .k-grid-header-sticky.k-sorted {
+  background-color: var(--base-menu-top) !important ;
+}
+
+.k-master-row.k-alt .k-grid-content-sticky {
+  color: var(--base-anchor-color) !important ;
+  background-color: var(--base-menu-top) !important ;
+}
+
+.k-master-row .k-grid-content-sticky {
+  color: var(--base-anchor-color) !important ;
+  background-color: var(--base-menu-top) !important ;
+}
+
+.k-dropdown .k-dropdown-wrap .k-select,
+.k-dropdowntree .k-dropdown-wrap .k-select {
+  color: var(--base-anchor-color) !important ;
 }

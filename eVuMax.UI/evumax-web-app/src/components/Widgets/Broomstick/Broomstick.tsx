@@ -10,7 +10,6 @@ import {
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
-
 import { axisLabelStyle, Axis } from "../../../eVuMaxObjects/Chart/Axis";
 import { exit } from "process";
 import Moment from "react-moment";
@@ -18,10 +17,9 @@ import ProcessLoader from "../../loader/loader";
 import moment from "moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
-
 import "./Broomstick.css";
-
 import GlobalMod from "../../../objects/global";
+import { DropDownList } from "@progress/kendo-react-dropdowns";
 
 import {
   faPlug,
@@ -49,6 +47,7 @@ class Broomstick extends Component {
     WellName: "",
     objBroomstickData: {} as any,
     isProcess: false,
+    RunNo: ''
   };
 
   WellId: string = "";
@@ -57,6 +56,22 @@ class Broomstick extends Component {
   selectionType: string = "-1"; //"-1 Default,0= DateRange and 1 = Depth Range"
   fromDepth: number = 0;
   toDepth: number = 0;
+
+  runlist=[];
+  
+  selRunNo='';
+
+  runChanged = (item: any) => {
+    //Do refresh
+      
+    
+    this.selRunNo=item.target.value;
+        
+    this.loadConnections();
+    
+
+  };
+
 
   componentDidMount() {
     try {
@@ -91,6 +106,16 @@ class Broomstick extends Component {
       );
       objBrokerRequest.Parameters.push(paramwellId);
 
+
+      debugger
+      let paramRunNo: BrokerParameter = new BrokerParameter(
+        "RunNo",
+        this.selRunNo
+      );
+      objBrokerRequest.Parameters.push(paramRunNo);
+
+
+
       let paramSelectionType: BrokerParameter = new BrokerParameter(
         "SelectionType",
         this.selectionType
@@ -121,10 +146,17 @@ class Broomstick extends Component {
 
           let objData = JSON.parse(res.data.Response);
 
+          this.runlist=objData.RunList;
+
+          this.selRunNo=objData.RunNo;
+
+
           this.setState({
             objBroomstickData: objData,
+            RunNo: objData.RunNo,
             // isProcess: false,
           });
+
 
           if (
             objData.PickupPoints.length === 0 &&
@@ -182,7 +214,7 @@ class Broomstick extends Component {
       "Hookload" + " (" + this.state.objBroomstickData.hkldUnit + ")"; //???? Unit
     this.objChart_Broomstick.bottomAxis().ShowLabels = true;
     this.objChart_Broomstick.bottomAxis().ShowTitle = true;
-    this.objChart_Broomstick.bottomAxis().LabelAngel = 90;
+    this.objChart_Broomstick.bottomAxis().LabelAngel = 10;
     this.objChart_Broomstick.bottomAxis().ShowSelector = false;
     this.objChart_Broomstick.bottomAxis().IsDateTime = false;
     this.objChart_Broomstick.bottomAxis().Visible = true;
@@ -190,7 +222,7 @@ class Broomstick extends Component {
     this.objChart_Broomstick.rightAxis().Visible = false;
 
     this.objChart_Broomstick.MarginLeft = 10;
-    this.objChart_Broomstick.MarginBottom = 10;
+    this.objChart_Broomstick.MarginBottom = 70;
     this.objChart_Broomstick.MarginTop = 10;
     this.objChart_Broomstick.MarginRight = 10;
 
@@ -202,8 +234,16 @@ class Broomstick extends Component {
     //   });
   };
 
+
+  
   componentDidUpdate() {
     try {
+
+      //Set run no.
+
+
+      
+
       this.refreshChart();
     } catch (error) { }
   }
@@ -486,6 +526,24 @@ class Broomstick extends Component {
             </div>
           </div>
         </div>
+
+        <div className="row">
+          <label
+          style={{paddingLeft: "20px",paddingRight: "15px"}}
+          >Run No.</label>
+
+
+          <DropDownList
+                      style={{ width: "200px" }}
+                      onChange={(e) =>
+                        this.runChanged(e)
+                      }
+                      value={this.state.RunNo}
+
+                      data={this.runlist}
+                    />
+
+        </div>
         <div className="clearfix"></div>
 
         <div className="row">
@@ -494,7 +552,7 @@ class Broomstick extends Component {
             <div
               id="Broomstick"
               style={{
-                height: "calc(88vh)",
+                height: "calc(100vh - 130px)",
                 //width: "calc(70vw)",
                 width: "auto",
                 backgroundColor: "transparent",

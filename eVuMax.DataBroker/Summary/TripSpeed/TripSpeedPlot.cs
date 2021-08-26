@@ -42,8 +42,6 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                     return objResponse;
                 }
 
-              
-
 
                 //No matching function found ...
                 Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();

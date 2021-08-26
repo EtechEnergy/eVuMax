@@ -477,7 +477,7 @@ export class Chart {
       //this function will re-calculate everything
       for (let key of this.Axes.keys()) {
         if (key == "ROPLine_Chart-bottom") {
-          debugger;
+          
         }
         let objAxis: Axis = this.Axes.get(key);
 
@@ -1896,16 +1896,20 @@ export class Chart {
 
       //IS BELOW CODE NEEDED ?????????
       $("#rect" + this.Id).remove();
-      this.SVGRef.append("rect")
+
+      
+
+      if(!isNaN(this.__chartRect.width))
+      {
+        this.SVGRef.append("rect")
         .attr("id", "rect" + this.Id)
         .attr("x", this.__chartRect.left)
         .attr("y", this.__chartRect.top)
         .style("opacity", 0.002) //Must require to see behind series
         .attr("width", this.__chartRect.width)
         .attr("height", this.__chartRect.height);
-      //????????
 
-      var clip = this.SVGRef.append("svg:clipPath")
+        var clip = this.SVGRef.append("svg:clipPath")
         .attr("id", "clip" + this.Id)
         .attr("class", "clip" + this.Id)
         .append("svg:rect")
@@ -1921,6 +1925,9 @@ export class Chart {
       );
       this.SVGRect = SVGRect;
 
+      //????????
+
+
 
       //===========End Zoom Clip Logic
 
@@ -1932,6 +1939,8 @@ export class Chart {
         .attr("height", this.Height)
         .attr("width", this.Width)
         .style("position", 'absolute');
+
+      
 
       this.CanvasContext = this.CanvasRef.node().getContext('2d');
 
@@ -1946,7 +1955,7 @@ export class Chart {
       //=====================
 
 
-
+      }
 
 
       this.updateSeries();

@@ -16,6 +16,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 {
     public class DrlgSummary : IBroker
     {
+
+
+
         private Dictionary<string, ChartOutputItem> itemsList = new Dictionary<string, ChartOutputItem>();
         private DataTable objFilteredData = new DataTable();
         private TimeLog objTimeLog;
@@ -131,15 +134,14 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
             try
             {
 
+
+                string __Warnings = "";
+
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
                 selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
                 fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                 toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
-
-
-
-
 
                 try
                 {
@@ -278,7 +280,10 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 getRigStateSummaryData(paramRequest, fromDate, toDate);
 
                 //  ''#4 ROP Main + Offset Line Data
-                generateROPData(ref paramRequest.objDataService);
+                string ropWarnings = "";
+                generateROPData(ref paramRequest.objDataService,out ropWarnings);
+
+                __Warnings = __Warnings + " " + ropWarnings;
 
                 //  ''#3 Calculate Statistics
                 calculateStatistics(ref paramRequest.objDataService);
@@ -299,6 +304,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
+
+                objResponse.Warnings = __Warnings;
+
                 objResponse.Response = JsonConvert.SerializeObject(objSummaryData);
                 return objResponse;
             }
@@ -369,10 +377,14 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
 
 
-        private void generateROPData(ref VuMaxDR.Data.DataService objDataService)
+        private void generateROPData(ref VuMaxDR.Data.DataService objDataService, out string paramWarnings)
         {
+            paramWarnings = "";
+
             try
             {
+                
+
                 objMnemonicMappingMgr.loadMappings(ref objDataService);
                 DataTable objROPData = new DataTable();
 
@@ -397,6 +409,11 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 {
                     mainROPMnemonic = objMnemonicMappingMgr.getMappedMnemonic(ROPMnemonic, objTimeLog.logCurves);
 
+                }
+
+                if(mainROPMnemonic.Trim()=="")
+                {
+                    paramWarnings = "ROP data of main well not found. Check the mnemonic mappings.";
                 }
 
                 if (objOffsetTimeLog != null)

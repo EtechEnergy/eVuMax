@@ -8,6 +8,7 @@ import { map, max, Numeric } from "d3";
 import { DateRange } from "@progress/kendo-react-scheduler/dist/npm/models";
 import { EventDispatcher } from "strongly-typed-events";
 import * as utilFunc from "../../utilFunctions/utilFunctions";
+import { exit } from "process";
 ///"/utilFunctions/utilFunctions";
 
 
@@ -94,6 +95,7 @@ export class Axis {
   Max: number = 0;
   MinDate: Date = new Date();
   MaxDate: Date = new Date();
+  MaxWidthLabel: string = ""; // prath 14-08-2021
 
   bandScale: boolean = false;
 
@@ -207,11 +209,27 @@ export class Axis {
         objRange.Max = Number.parseFloat(objRange.Max.toFixed(2).toString());
         objRange.Min = Number.parseFloat(objRange.Min.toFixed(2).toString());
 
-        maxLabelWidth = this.ChartRef.calculateWidth(
-          objRange.Max.toString(),
-          this.LabelFont,
-          this.LabelFontSize.toString() + "px"
-        );
+        //prath 17-08-2021 change
+        // maxLabelWidth = this.ChartRef.calculateWidth(
+        //   objRange.Max.toString(),
+        //   this.LabelFont,
+        //   this.LabelFontSize.toString() + "px"
+        // );
+
+        if (this.LabelMultiline) {
+          maxLabelWidth = this.ChartRef.calculateWidth(
+            objRange.MaxWidthLabel.toString(),
+            this.LabelFont,
+            this.LabelFontSize.toString() + "px"
+          );
+        } else {
+          maxLabelWidth = this.ChartRef.calculateWidth(
+            objRange.Max.toString(),
+            this.LabelFont,
+            this.LabelFontSize.toString() + "px"
+          );
+        }
+        //=============
 
         maxLabelHeight = this.ChartRef.calculateHeight(
           objRange.Max.toString(),
@@ -417,12 +435,18 @@ export class Axis {
       let formatFunc = d3.timeFormat(this.DateFormat);
       maxLabel = formatFunc(objRange.Max);
     } else {
-      let objRange: AxisRange = this.getAxisRange();
 
+      let objRange: AxisRange = this.getAxisRange();
       objRange.Max = Number.parseFloat(objRange.Max.toFixed(2).toString());
       objRange.Min = Number.parseFloat(objRange.Min.toFixed(2).toString());
+      objRange.MaxWidthLabel = objRange.MaxWidthLabel; //prath 14-08-2021;
 
+      //changes by prath on 14-08-2021 (for multiline label width)
       maxLabel = objRange.Max.toString();
+      if (this.LabelMultiline && this.bandScale == false) {
+        maxLabel = objRange.MaxWidthLabel.toString();
+      }
+      //===========
     }
 
     let textWidth = this.ChartRef.calculateWidth(
@@ -1041,7 +1065,7 @@ export class Axis {
 
     //Split the axes labels in two lines
     if (this.IsDateTime) {
-      //alert("xxx" + this.Id);
+
       try {
         let sel = this.ChartRef.SVGRef.select("#" + this.Id).selectAll(
           "#" + this.Id + " .tick text"
@@ -1067,40 +1091,58 @@ export class Axis {
         }
       } catch (error) { }
     } else {
-      //wip
-      // alert("yyy" + this.Id);
-      //else part added on 05-10-2020 wip prath
       try {
+
+        //
+        if (this.Id == "RigState_Summary-bottom") {
+
+
+        }
+
+        //
+
+
         let sel = this.ChartRef.SVGRef.select("#" + this.Id).selectAll(
           "#" + this.Id + " .tick text"
         );
 
         let arr: any[] = sel._groups[0];
-
+        //array of lables
         if (arr.length > 0) {
-          //console.log("Arr", arr);
+
+
           for (let i = 0; i < arr.length; i++) {
             let textElement = $(arr[i]);
 
             let currentText = textElement.text();
-            //console.log("lables count", this.Labels.length);
 
-            //wip Nishant
-            // if (this.Id == "ROPLine_Chart-bottom") {
-            //   debugger;
-            // }
             if (this.Labels.length > 0) {
-
-              for (let index = 0; index < this.Labels.length; index++) {
-                const labelText = this.Labels[index].split("~")[0];
-                if (labelText == currentText) {
-                  currentText = this.Labels[index];
+              //Multi line labels for (bar Chart)
+              if (this.bandScale) {
+                for (let index = 0; index < this.Labels.length; index++) {
+                  const labelText = this.Labels[index].split("~")[0];
+                  if (labelText == currentText) {
+                    //
+                    currentText = this.Labels[index];
+                  }
                 }
+              } else {
+                //Multi line labels 19-08-2021 for (number axes) - prath
+                let newText = "";
+                for (let index = 0; index < this.Labels.length; index++) {
+                  let arr = this.Labels[index].split("~");
+                  if (eval(currentText) >= eval(arr[0])) {
+                    newText = currentText + "~" + arr[1] + "~" + arr[2];
+                  }
+                }
+                currentText = newText;
               }
 
-            }
 
+
+            }
             //===========================
+
 
 
             let s = currentText.split("~");
@@ -1280,6 +1322,7 @@ export class Axis {
 
 
         let objAxisRange: AxisRange = this.getAxisRange();
+        this.MaxWidthLabel = objAxisRange.MaxWidthLabel; //prath 14-08-2021 (for Multiline label)
 
         this.Min = objAxisRange.Min;
         this.Max = objAxisRange.Max;
@@ -1660,6 +1703,36 @@ export class Axis {
           }
 
           if (!this.IsDateTime) {
+
+
+            //Is Multiline
+            let objRange = new AxisRange();
+
+            if (this.LabelMultiline) {
+              let beforeLength = 0;
+              let maxWidthLabel = "";
+              for (let index = 0; index < this.Labels.length; index++) {
+                const element = this.Labels[index];
+                let lblList: any = element.split("~");
+                for (let index1 = 0; index1 < lblList.length; index1++) {
+                  const element1 = lblList[index1];
+                  if (element1.length > beforeLength) {
+                    beforeLength = element1.length;
+                    maxWidthLabel = element1;
+                  }
+                }
+
+              }
+              objRange.MaxWidthLabel = maxWidthLabel;
+
+            }
+            //}
+            //==============================
+
+
+
+
+
             //X bound data
             let lMin: number = 0;
             let lMax: number = 0;
@@ -1703,7 +1776,7 @@ export class Axis {
               }
             }
 
-            let objRange = new AxisRange();
+            //objRange = new AxisRange();
             objRange.Min = lMin;
             objRange.Max = lMax;
 
