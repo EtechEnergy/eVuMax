@@ -309,26 +309,24 @@ class TripConnSummary extends Component {
 
           this.objSummaryData = JSON.parse(res.data.Response);
 
-          
-          this.Warnings=res.data.Warnings;
-         
 
-          if(this.Warnings.trim()!="")
-          {
-            $("#warning").css("backgroundColor","#ffb74d");
+          this.Warnings = res.data.Warnings;
+
+
+          if (this.Warnings.trim() != "") {
+            $("#warning").css("backgroundColor", "#ffb74d");
             $("#lblWarning").text(res.data.Warnings);
           }
-          else
-          {
-            $("#warning").css("backgroundColor","transparent");
+          else {
+            $("#warning").css("backgroundColor", "transparent");
             $("#lblWarning").text("");
           }
-          
+
 
           this.setData();
 
           // if (this.objSummaryData.tripInfoData.length > 0) {
-            
+
           //   Util.StatusSuccess("Data successfully retrived  ");
           // } else {
           //   Util.StatusSuccess("Data not available");
@@ -1015,7 +1013,7 @@ class TripConnSummary extends Component {
           </TabStripTab>
         </TabStrip>
 
-        <div id="warning" style={{ padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black" }}> <label  id="lblWarning" style={{color: "black", marginLeft: "10px" }} ></label> </div>
+        <div id="warning" style={{ padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
 
 
 
@@ -1073,7 +1071,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().LabelAngel = 90;
       this.objChart.bottomAxis().ShowSelector = false;
       this.objChart.bottomAxis().LabelStyle = axisLabelStyle.labels;
-      this.objChart.bottomAxis().IsDateTime = false;
+      this.objChart.bottomAxis().IsDateTime = true;
       this.objChart.bottomAxis().bandScale = true;
 
       this.objChart.rightAxis().ShowLabels = true;
@@ -1109,17 +1107,18 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Labels = [];
 
       //Fill up the data for data series
+
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
 
-        // this.objChart.bottomAxis().Labels.push(Depth.toString());
+        this.objChart.bottomAxis().Labels.push(Depth.toString());
 
         let objSTSPoint = new ChartData();
-        // objSTSPoint.datetime = new Date(
-        //   Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
-        // );
+        objSTSPoint.datetime = new Date(
+          Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
+        );
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
-        objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
+        //objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
 
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
@@ -1138,7 +1137,7 @@ class TripConnSummary extends Component {
           Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
         );
         objCostPoint.y = this.objSummaryData.connData[i]["COST"];
-        objCostPoint.x = this.objSummaryData.connData[i]["DEPTH"];
+        //objCostPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objCost.Data.push(objCostPoint);
       }
 
@@ -1166,7 +1165,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Title = "Depth";
       this.objChart.bottomAxis().LabelAngel = 90;
       this.objChart.bottomAxis().ShowSelector = false;
-      this.objChart.bottomAxis().IsDateTime = false;
+      this.objChart.bottomAxis().IsDateTime = true;
       this.objChart.bottomAxis().bandScale = true;
       this.objChart.bottomAxis().LabelStyle = axisLabelStyle.labels;
 
@@ -1203,7 +1202,7 @@ class TripConnSummary extends Component {
         objPoint.datetime = new Date(
           Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
         );
-        objPoint.x=this.objSummaryData.connData[i]["DEPTH"];
+        //objPoint.x=this.objSummaryData.connData[i]["DEPTH"];
         objPoint.y = this.objSummaryData.connData[i]["DIFF"];
 
         if (objPoint.y >= 0) {
@@ -1242,7 +1241,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().LabelAngel = 90;
       this.objChart.bottomAxis().ShowSelector = false;
       this.objChart.bottomAxis().bandScale = true;
-      this.objChart.bottomAxis().IsDateTime = false;
+      this.objChart.bottomAxis().IsDateTime = true;
       this.objChart.bottomAxis().LabelStyle = axisLabelStyle.labels;
 
       this.objChart.rightAxis().Visible = true;
@@ -1288,7 +1287,7 @@ class TripConnSummary extends Component {
             objDataPoint.datetime = new Date(
               Date.parse(this.objSummaryData.rigStateData[i]["FROM_DATE"])
             );
-            objDataPoint.x=this.objSummaryData.rigStateData[i]["DEPTH"];
+            //objDataPoint.x=this.objSummaryData.rigStateData[i]["DEPTH"];
             objDataPoint.y = Number.parseFloat(arrRigStates[j]);
             objSeries.Data.push(objDataPoint);
           }
@@ -1300,7 +1299,7 @@ class TripConnSummary extends Component {
       //Fill up the data for data series
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
-        //this.objChart.bottomAxis().Labels.push(Depth.toString());
+        this.objChart.bottomAxis().Labels.push(Depth.toString());
       }
 
       let objCost = new DataSeries();
@@ -1320,7 +1319,7 @@ class TripConnSummary extends Component {
         objCostPoint.datetime = new Date(
           Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
         );
-        objCostPoint.x=this.objSummaryData.connData[i]["DEPTH"];
+        //objCostPoint.x=this.objSummaryData.connData[i]["DEPTH"];
         objCostPoint.y = this.objSummaryData.connData[i]["COST"];
         objCost.Data.push(objCostPoint);
       }
@@ -1388,7 +1387,7 @@ class TripConnSummary extends Component {
     try {
 
 
-      return;
+      //return;
 
       d3.select(".sts_benchmark").remove();
       d3.select(".trip_highlight").remove();

@@ -1025,7 +1025,7 @@ class ToolfaceSummary extends Component {
               "stroke",
               util.rgb2hex(this.objUserSettings.GeoDrlgWindowColor)
             ) //Nishant 28/07/2021
-            .style("opacity", (this.objUserSettings.GeoDrlgWindowTrans/100)); //Nishant 28/07/2021
+            .style("opacity", (this.objUserSettings.GeoDrlgWindowTrans / 100)); //Nishant 28/07/2021
         }
 
       }
@@ -1231,7 +1231,7 @@ class ToolfaceSummary extends Component {
               "stroke",
               util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
             )
-            .style("opacity", (this.objUserSettings.ROPDrlgWindowTrans/100)); //Nishant 28/07/2021
+            .style("opacity", (this.objUserSettings.ROPDrlgWindowTrans / 100)); //Nishant 28/07/2021
         }
       }
 
@@ -1429,6 +1429,40 @@ class ToolfaceSummary extends Component {
           Util.StatusSuccess("Data successfully retrived  ");
 
           this.objToolfaceData = JSON.parse(res.data.Response);
+
+          if (this.objToolfaceData.MTFData == null) {
+            this.objToolfaceData.MTFData = [];
+          }
+
+          if (this.objToolfaceData.GTFData == null) {
+            this.objToolfaceData.GTFData = [];
+          }
+
+          if (this.objToolfaceData.ActualTVD == null) {
+            this.objToolfaceData.ActualTVD = [];
+          }
+          if (this.objToolfaceData.PlanTVD == null) {
+            this.objToolfaceData.PlanTVD = [];
+          }
+          if (this.objToolfaceData.ActualDLS == null) {
+            this.objToolfaceData.ActualDLS = [];
+          }
+          if (this.objToolfaceData.PlanDLS == null) {
+            this.objToolfaceData.PlanDLS = [];
+          }
+          if (this.objToolfaceData.MYData == null) {
+            this.objToolfaceData.MYData = [];
+          }
+          if (this.objToolfaceData.GTFData == null) {
+            this.objToolfaceData.GTFData = [];
+          }
+          if (this.objToolfaceData.MTFData == null) {
+            this.objToolfaceData.MTFData = [];
+          }
+          if (this.objToolfaceData.adnlChannelsData == null) {
+            this.objToolfaceData.adnlChannelsData = [];
+          }
+
 
           this.displayData();
         })

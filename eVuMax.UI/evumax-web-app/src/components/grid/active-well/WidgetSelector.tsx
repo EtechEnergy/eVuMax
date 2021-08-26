@@ -20,7 +20,7 @@ let objParameter = new BrokerParameter("odata", "odata");
 
 const WidgetList = utilFunc.getWidgetList();
 
-interface IProps {}
+interface IProps { }
 
 interface IState {
   currentWellID: string;
@@ -84,8 +84,8 @@ export default class WidgetSelector extends React.Component<IProps> {
             data: WidgetList,
           });
         })
-        .catch(function (error) {});
-    } catch (error) {}
+        .catch(function (error) { });
+    } catch (error) { }
   };
 
   componentDidMount() {
@@ -96,7 +96,7 @@ export default class WidgetSelector extends React.Component<IProps> {
         });
         this.loadUserFav();
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   itemRender = (li, itemProps) => {
@@ -167,7 +167,6 @@ export default class WidgetSelector extends React.Component<IProps> {
   };
 
   OpenWidget = (props) => {
-    debugger;
     utilFunc.launchWidget(props.id, this.currentWellID);
   };
   AddtoFavourite = (props) => {
@@ -205,7 +204,7 @@ export default class WidgetSelector extends React.Component<IProps> {
         })
         .then((response) => {
           //this.__parentRef.CloseOpenInterfaceDialog(true);
-          debugger;
+
           let i = WidgetList.findIndex((x) => x.id === props.id);
           if (i < 0) {
             //not found do nothing
@@ -221,8 +220,8 @@ export default class WidgetSelector extends React.Component<IProps> {
             data: WidgetList,
           });
         })
-        .catch(function (error) {});
-    } catch (error) {}
+        .catch(function (error) { });
+    } catch (error) { }
   };
   onAddToFavoritesCheckbox = (e) => {
     try {
@@ -230,7 +229,7 @@ export default class WidgetSelector extends React.Component<IProps> {
       this.setState({
         addToFav: e.target.checked,
       });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   MyItemRender = (props) => {
@@ -310,8 +309,8 @@ export default class WidgetSelector extends React.Component<IProps> {
         .then((response) => {
           this.__parentRef.CloseOpenInterfaceDialog(true);
         })
-        .catch(function (error) {});
-    } catch (error) {}
+        .catch(function (error) { });
+    } catch (error) { }
   };
 
   render() {

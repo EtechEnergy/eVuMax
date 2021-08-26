@@ -477,7 +477,7 @@ export class Chart {
       //this function will re-calculate everything
       for (let key of this.Axes.keys()) {
         if (key == "ROPLine_Chart-bottom") {
-          
+
         }
         let objAxis: Axis = this.Axes.get(key);
 
@@ -1041,6 +1041,7 @@ export class Chart {
             hAxis.ChartRef.__toolTip.css("class", "tooltip");
 
             if (hAxis.IsDateTime) {
+              //hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + point.datetime + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
               hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + point.datetime + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
             } else {
               hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + Number(point.x).toFixed(2) + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
@@ -1051,7 +1052,7 @@ export class Chart {
             hAxis.ChartRef.__toolTip.css("border-radius", "3px");
             hAxis.ChartRef.__toolTip.css("left", 0);
             hAxis.ChartRef.__toolTip.css("top", 0);
-            hAxis.ChartRef.__toolTip.css("z-index", 10000); //bring tooltip on front
+            hAxis.ChartRef.__toolTip.css("z-index", 1000000); //bring tooltip on front
 
             //change code to find relative position of tooltip
             var tooltipX = SVGRef._groups[0][0].getBoundingClientRect().left + point.xPixel;// point.xPixel;
@@ -1897,62 +1898,61 @@ export class Chart {
       //IS BELOW CODE NEEDED ?????????
       $("#rect" + this.Id).remove();
 
-      
 
-      if(!isNaN(this.__chartRect.width))
-      {
+
+      if (!isNaN(this.__chartRect.width)) {
         this.SVGRef.append("rect")
-        .attr("id", "rect" + this.Id)
-        .attr("x", this.__chartRect.left)
-        .attr("y", this.__chartRect.top)
-        .style("opacity", 0.002) //Must require to see behind series
-        .attr("width", this.__chartRect.width)
-        .attr("height", this.__chartRect.height);
+          .attr("id", "rect" + this.Id)
+          .attr("x", this.__chartRect.left)
+          .attr("y", this.__chartRect.top)
+          .style("opacity", 0.002) //Must require to see behind series
+          .attr("width", this.__chartRect.width)
+          .attr("height", this.__chartRect.height);
 
         var clip = this.SVGRef.append("svg:clipPath")
-        .attr("id", "clip" + this.Id)
-        .attr("class", "clip" + this.Id)
-        .append("svg:rect")
-        .attr("x", this.__chartRect.left)
-        .attr("y", this.__chartRect.top)
+          .attr("id", "clip" + this.Id)
+          .attr("class", "clip" + this.Id)
+          .append("svg:rect")
+          .attr("x", this.__chartRect.left)
+          .attr("y", this.__chartRect.top)
 
-        .attr("width", this.__chartRect.width)
-        .attr("height", this.__chartRect.height);
+          .attr("width", this.__chartRect.width)
+          .attr("height", this.__chartRect.height);
 
-      let SVGRect = this.SVGRef.append("g").attr(
-        "clip-path",
-        "url(#clip" + this.Id + ")"
-      );
-      this.SVGRect = SVGRect;
+        let SVGRect = this.SVGRef.append("g").attr(
+          "clip-path",
+          "url(#clip" + this.Id + ")"
+        );
+        this.SVGRect = SVGRect;
 
-      //????????
-
-
-
-      //===========End Zoom Clip Logic
+        //????????
 
 
-      //Canvas Clip
-      this.CanvasRef = d3.select("#" + this.ContainerId)
-        .append("canvas")
-        .attr("id", "canvas" + this.Id)
-        .attr("height", this.Height)
-        .attr("width", this.Width)
-        .style("position", 'absolute');
 
-      
+        //===========End Zoom Clip Logic
 
-      this.CanvasContext = this.CanvasRef.node().getContext('2d');
 
-      // Clip a rectangular area
-      this.CanvasContext.rect(this.__chartRect.left, this.__chartRect.top, this.__chartRect.width, this.__chartRect.height);
-      //      this.CanvasContext.stroke();
-      this.CanvasContext.clip();
+        //Canvas Clip
+        this.CanvasRef = d3.select("#" + this.ContainerId)
+          .append("canvas")
+          .attr("id", "canvas" + this.Id)
+          .attr("height", this.Height)
+          .attr("width", this.Width)
+          .style("position", 'absolute');
 
-      // Draw red rectangle after clip()
-      this.CanvasContext.fillStyle = "transparent";
-      this.CanvasContext.fillRect(this.__chartRect.left, this.__chartRect.top, this.__chartRect.width, this.__chartRect.height);
-      //=====================
+
+
+        this.CanvasContext = this.CanvasRef.node().getContext('2d');
+
+        // Clip a rectangular area
+        this.CanvasContext.rect(this.__chartRect.left, this.__chartRect.top, this.__chartRect.width, this.__chartRect.height);
+        //      this.CanvasContext.stroke();
+        this.CanvasContext.clip();
+
+        // Draw red rectangle after clip()
+        this.CanvasContext.fillStyle = "transparent";
+        this.CanvasContext.fillRect(this.__chartRect.left, this.__chartRect.top, this.__chartRect.width, this.__chartRect.height);
+        //=====================
 
 
       }
@@ -1996,6 +1996,7 @@ export class Chart {
       let barChartFound: boolean = false;
 
       for (let key of this.DataSeries.keys()) {
+
         if (this.DataSeries.get(key).Type == dataSeriesType.Bar) {
           if (this.DataSeries.get(key).Stacked) {
             stackedBarChartsFound = true;
@@ -2147,13 +2148,29 @@ export class Chart {
             let objAxis = this.getAxisByID(objSeries.XAxisId);
 
             if (objAxis != null) {
-              strText =
-                strText +
-                " <p style='color:white;padding:0px;margin:0px'>" +
-                objAxis.Title +
-                ":  " +
-                objSeries.Data[index].x +
-                "</p>";
+              //PRATH WIP -9999999999999999999
+              if (objSeries.Data[index].x == undefined) {
+                strText = "";
+
+                // strText =
+                //   strText +
+                //   " <p style='color:white;padding:0px;margin:0px'>" +
+                //   objAxis.Title +
+                //   ":  " +
+                //   objSeries.Data[index].x +
+                //   "</p>";
+
+              } else {
+                strText =
+                  strText +
+                  " <p style='color:white;padding:0px;margin:0px'>" +
+                  objAxis.Title +
+                  ":  " +
+                  objSeries.Data[index].x +
+                  "</p>";
+              }
+
+
               break;
             }
           }

@@ -40,7 +40,7 @@ export class StackedBarSeries {
 			} else {
 				this.redrawNumeric();
 			}
-		} catch (error) {}
+		} catch (error) { }
 	};
 
 	redrawNumeric = () => {
@@ -55,7 +55,7 @@ export class StackedBarSeries {
 				if (objSeries.Type == dataSeriesType.Bar) {
 					try {
 						$('.' + objSeries.Id).remove();
-					} catch (error) {}
+					} catch (error) { }
 				}
 			}
 
@@ -290,30 +290,28 @@ export class StackedBarSeries {
 							this.ChartRef.SVGRect
 								.append('text')
 								.attr('class', 'barlabel')
-								.attr('x', function(d) {
+								.attr('x', function (d) {
 									// prath
 									let element = document.createElement('canvas');
 									let context = element.getContext('2d');
 									context.font = '12px Arial';
 									let width = context.measureText(stackValues[s].toString().trim()).width;
-									
 
-                  if(!isNaN(xPos + (barWidth - width) / 2))
-                  {
-                    return xPos + (barWidth - width) / 2;
-                  }
+
+									if (!isNaN(xPos + (barWidth - width) / 2)) {
+										return xPos + (barWidth - width) / 2;
+									}
 
 								})
-								.attr('y', function(d) {
-                  if(!isNaN(yPos - 20))
-                  {
-                    return yPos - 20;
-                  }
-									
+								.attr('y', function (d) {
+									if (!isNaN(yPos - 20)) {
+										return yPos - 20;
+									}
+
 								})
 								.style('fill', colorValues[s])
 								.attr('dy', '.75em')
-								.text(function(d) {
+								.text(function (d) {
 									return stackValues[s];
 								});
 						}
@@ -323,37 +321,35 @@ export class StackedBarSeries {
 						if (s == stackValues.length - 1 && this.ChartRef.ShowCustomComments) {
 
 
-              if(isNaN(xPos + barWidth / 2) || isNaN((yPos - 25)) )
-              {
+							if (isNaN(xPos + barWidth / 2) || isNaN((yPos - 25))) {
 
-              }
-              else
-              {
+							}
+							else {
 
-                this.ChartRef.SVGRect
-								//.append("g")
-								//.attr("transform", "translate(" + (xPos + barWidth / 2) + "," + (yPos - 25) + ")")
-								.append('text')
-								.style('background-color', 'green')
-								.attr('class', 'axis-title')
-								//.style("fill", "blue")
-								.attr('dy', '.75em')
-								.attr(
-									'transform',
-									'translate(' + (xPos + barWidth / 2) + ',' + (yPos - 25) + ') rotate(-90)'
-								)
-								.text(function(d) {
-									return customLabels[i];
-								});
+								this.ChartRef.SVGRect
+									//.append("g")
+									//.attr("transform", "translate(" + (xPos + barWidth / 2) + "," + (yPos - 25) + ")")
+									.append('text')
+									.style('background-color', 'green')
+									.attr('class', 'axis-title')
+									//.style("fill", "blue")
+									.attr('dy', '.75em')
+									.attr(
+										'transform',
+										'translate(' + (xPos + barWidth / 2) + ',' + (yPos - 25) + ') rotate(-90)'
+									)
+									.text(function (d) {
+										return customLabels[i];
+									});
 
-              }
+							}
 
 						}
 					}
 					////********************************* */
 				}
 			}
-		} catch (error) {}
+		} catch (error) { }
 	};
 
 	redrawDateTime = () => {
@@ -366,7 +362,7 @@ export class StackedBarSeries {
 				if (objSeries.Type == dataSeriesType.Bar) {
 					try {
 						$('.' + objSeries.Id).remove();
-					} catch (error) {}
+					} catch (error) { }
 				}
 			}
 
@@ -563,6 +559,8 @@ export class StackedBarSeries {
 							this.ChartRef.__toolTip.css('border-radius', '3px');
 							this.ChartRef.__toolTip.css('left', 0);
 							this.ChartRef.__toolTip.css('top', 0);
+							this.ChartRef.__toolTip.css('opacity', 0.7); //add prath  26-08-2021
+							this.ChartRef.__toolTip.css('z-index', 10000); //add prath 26-08-2021
 
 							var tooltipX = this.ChartRef.__mouseLastX;
 							var tooltipY = this.ChartRef.__mouseLastY;
@@ -591,12 +589,12 @@ export class StackedBarSeries {
 						});
 				}
 			}
-		} catch (error) {}
+		} catch (error) { }
 	};
 
 	isBarClicked = (x: number, y: number) => {
 		try {
 			let allbars = d3.selectAll('rect');
-		} catch (error) {}
+		} catch (error) { }
 	};
 }

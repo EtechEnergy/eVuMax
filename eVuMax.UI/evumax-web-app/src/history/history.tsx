@@ -1,7 +1,7 @@
 import { createBrowserHistory } from "history";
 
 // for local testing
-//export default createBrowserHistory();
+// export default createBrowserHistory();
 
 // for client side install
 export default createBrowserHistory({ basename: "/evumaxapp/" });
