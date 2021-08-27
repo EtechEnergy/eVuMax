@@ -51,6 +51,7 @@ export class ROPSummaryPlot extends Component {
   toDate: Date = null;
   fromDepth: number = 0;
   toDepth: number = 0;
+  Warnings: string = ""; //Nishant 27/08/2021
 
   componentDidMount() {
     try {
@@ -599,6 +600,7 @@ export class ROPSummaryPlot extends Component {
       objSeries.Name = "ROP Rotary";
       objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
+      objSeries.PointSize =2; //Nishant 27/08/2021
       objSeries.Type = dataSeriesType.Point;
       objSeries.PointStyle = pointStyle.Circle;
       objSeries.Title = "Rotary";
@@ -629,6 +631,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.PointStyle = pointStyle.Circle;
         objSeries.Title = "Rotary (Offset) ";
         objSeries.Color = "#F44336"; //"#1762ad";
+        objSeries.PointSize =2; //Nishant 27/08/2021
         objSeries.ShowInLegend = true;
 
         this.objChart_Combine.DataSeries.set(objSeries.Id, objSeries);
@@ -654,6 +657,7 @@ export class ROPSummaryPlot extends Component {
       objSeries.Name = "ROP Slide";
       objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
+      objSeries.PointSize =2; //Nishant 27/08/2021
       objSeries.Type = dataSeriesType.Point;
       objSeries.PointStyle = pointStyle.Circle;
       objSeries.Title = "Slide";
@@ -679,6 +683,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.Name = "ROP Slide (Offset)";
         objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
         objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
+        objSeries.PointSize =2; //Nishant 27/08/2021
         objSeries.Type = dataSeriesType.Point;
         objSeries.PointStyle = pointStyle.Circle;
         objSeries.Title = "Slide (Offset)";
@@ -787,6 +792,21 @@ export class ROPSummaryPlot extends Component {
           // $("#loader").hide();
 
           let objData = JSON.parse(res.data.Response);
+
+          this.Warnings = res.data.Warnings;
+
+
+          if (this.Warnings.trim() != "") {
+            $("#warning").css("backgroundColor", "#ffb74d");
+            $("#lblWarning").text(res.data.Warnings);
+          }
+          else {
+            $("#warning").css("backgroundColor", "transparent");
+            $("#lblWarning").text("");
+          }
+
+
+
 
           //Draw Tip Outs Line on Combine Chart
           let tripOuts = Object.values(objData.tripOuts);
@@ -1232,6 +1252,7 @@ export class ROPSummaryPlot extends Component {
               <DataSelector {...this} />
             </div>
           </div>
+          <div id="warning" style={{ paddingBottom:"10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
         </div>
 
         {/* <div className="row">
@@ -1265,6 +1286,7 @@ export class ROPSummaryPlot extends Component {
             </TabStrip>
           </div>
         </div> */}
+      
       </div>
     );
   }

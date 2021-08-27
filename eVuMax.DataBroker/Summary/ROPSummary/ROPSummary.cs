@@ -856,6 +856,8 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                             yMnemonic = objMnemonicMappingMgr.getMappedMnemonic(yMnemonic, objOffsetTimeLog.logCurves);
                             if (string.IsNullOrEmpty(yMnemonic.Trim()))
                             {
+                                //Nishant 27/08/2021
+                                paramWarnings += " Offset Well Data not found. Please check mnemonic mappings of Offset Well";
                                 goto over;
                             }
                         }
@@ -1185,7 +1187,8 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     }
                     // '########################################################################################''
 
-
+                //Nishant 27/08/2021     
+                over:
                     detectTripOuts(paramRequest);
 
                     // Save to ROP Summary object
@@ -1291,9 +1294,9 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
 
                 }
-
-            over:
-                bool doNothing = true;
+//Commented below code Nishant 27/08/2021
+            //over:
+            //    bool doNothing = true;
                 //return
 
             }
