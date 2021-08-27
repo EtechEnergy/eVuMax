@@ -35,6 +35,7 @@ import { startLog_Out } from "../../redux/actions/loginActions";
 import routes from "../../routes/routes";
 import AboutPage from "../../components/About/about";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
+import ETECHLogo from "../../images/etechSVG.svg";
 
 type Props = LinkStateProps & LinkDispatchProps;
 
@@ -111,7 +112,7 @@ export class Dashboard extends React.Component<Props> {
   render() {
     return (
       <div>
-        {this.state.showAboutDialog && <Dialog height="375px" width="800px" title="About"
+        {this.state.showAboutDialog && <Dialog height="390px" width="800px" title="About"
           onClose={() => { this.setState({ showAboutDialog: false }); }}
         >
           <div className="" style={{ paddingTop: "50px" }}>
@@ -257,11 +258,19 @@ export class Dashboard extends React.Component<Props> {
 
         <nav></nav>
 
+        
         <div className="fixed-bottom bg-status">
           <span id="statuIcon" className="ml-3" style={{ minWidth: 20 }}></span>
           <div id="statusText" className="pt-1 pb-1 pl-1 hidenOverFlow ">
             Ready
           </div>
+          <div id="" className="ml-auto mr-3 float-right d-inline-flex">
+          <div id="PoweredByText" className="pt-1 pb-1 pl-1 hidenOverFlow ">
+          Powered by <img src={ETECHLogo} style={{height:"15px"}} className="img-fluid ml-1 mr-1" /> Etech &copy; {new Date().getFullYear()}   
+          </div>
+          {/* Powered by  <img src={ETECHLogo} style={{height:"15px"}} className="img-fluid ml-2 mr-2 mt-2" /> ETECH <p>&copy; {new Date().getFullYear()}  </p> */}
+          </div>
+          
         </div>
         {/* Side menu */}
 
