@@ -21,6 +21,9 @@ import { faUndo } from "@fortawesome/free-solid-svg-icons";
 
 import $ from "jquery";
 import { Util } from "../../../Models/eVuMax";
+import "bootstrap";
+import "bootstrap/dist/css/bootstrap.css";
+
 let _gMod = new GlobalMod();
 
 export class ROPSummaryPlot extends Component {
@@ -442,11 +445,12 @@ export class ROPSummaryPlot extends Component {
       objSeries.XAxisId = this.objChart_Slide.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_Slide.leftAxis().Id;
       objSeries.Type = dataSeriesType.Point;
-      objSeries.PointStyle = pointStyle.Circle;
       objSeries.PointStyle = pointStyle.Diamond;
       objSeries.Title = "Main";
       objSeries.Color = "#FFD600"; // this.getRigStateColor(1); //"#1762ad";
       objSeries.ShowInLegend = true;
+      objSeries.PointHeight = 5;
+      objSeries.PointWidth = 5;
 
       this.objChart_Slide.DataSeries.set(objSeries.Id, objSeries);
 
@@ -470,6 +474,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.YAxisId = this.objChart_Slide.leftAxis().Id;
         objSeries.Type = dataSeriesType.Point;
         objSeries.PointStyle = pointStyle.Circle;
+        objSeries.PointSize = 2;
         objSeries.Title = "Offset";
         objSeries.Color = "#3D5AFE"; //"#1762ad";
         objSeries.ShowInLegend = true;
@@ -600,7 +605,7 @@ export class ROPSummaryPlot extends Component {
       objSeries.Name = "ROP Rotary";
       objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
-      objSeries.PointSize =2; //Nishant 27/08/2021
+      objSeries.PointSize = 2; //Nishant 27/08/2021
       objSeries.Type = dataSeriesType.Point;
       objSeries.PointStyle = pointStyle.Circle;
       objSeries.Title = "Rotary";
@@ -631,7 +636,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.PointStyle = pointStyle.Circle;
         objSeries.Title = "Rotary (Offset) ";
         objSeries.Color = "#F44336"; //"#1762ad";
-        objSeries.PointSize =2; //Nishant 27/08/2021
+        objSeries.PointSize = 2; //Nishant 27/08/2021
         objSeries.ShowInLegend = true;
 
         this.objChart_Combine.DataSeries.set(objSeries.Id, objSeries);
@@ -657,7 +662,7 @@ export class ROPSummaryPlot extends Component {
       objSeries.Name = "ROP Slide";
       objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
-      objSeries.PointSize =2; //Nishant 27/08/2021
+      objSeries.PointSize = 2; //Nishant 27/08/2021
       objSeries.Type = dataSeriesType.Point;
       objSeries.PointStyle = pointStyle.Circle;
       objSeries.Title = "Slide";
@@ -683,7 +688,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.Name = "ROP Slide (Offset)";
         objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
         objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
-        objSeries.PointSize =2; //Nishant 27/08/2021
+        objSeries.PointSize = 2; //Nishant 27/08/2021
         objSeries.Type = dataSeriesType.Point;
         objSeries.PointStyle = pointStyle.Circle;
         objSeries.Title = "Slide (Offset)";
@@ -1136,7 +1141,7 @@ export class ROPSummaryPlot extends Component {
               id="combinepointchart"
               style={{
                 //height: "calc(100vh - 700px)",
-                height: "calc(30vh)",
+                height: "calc(28vh)",
                 //width: "calc(70vw)",
                 width: "100%",
                 backgroundColor: "transparent",
@@ -1155,19 +1160,37 @@ export class ROPSummaryPlot extends Component {
               }}
             />
 
-            <div className="float-left">
-              <label className="float-left text-danger mr-2">
-                Main Well Trip outs :
-              </label>
-              {this.tripOutsString}
+
+            <div className="container">
+              <div className="row">
+                <div className="float-left">
+                  <label className="float-left text-danger mr-2">
+                    Main Well Trip outs :
+                  </label>
+                  {this.tripOutsString}
+                </div>
+
+              </div>
+              <div className="row">
+                <div className="float-left">
+                  <div>
+                    <label className="float-left text-info  mr-2">
+                      Offset Well Trip outs :
+                    </label>
+                    {this.tripOutsOffsetString}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="float-left">
+            {/* <div className="float-left">
               <label className="float-left text-info ml-5 mr-2">
                 Offset Well Trip outs :
               </label>
               {this.tripOutsOffsetString}
-            </div>
+            </div> */}
           </div>
+
+
         </div>
 
         <div className="row">
@@ -1252,7 +1275,7 @@ export class ROPSummaryPlot extends Component {
               <DataSelector {...this} />
             </div>
           </div>
-          <div id="warning" style={{ paddingBottom:"10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
+          <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
         </div>
 
         {/* <div className="row">
@@ -1286,7 +1309,7 @@ export class ROPSummaryPlot extends Component {
             </TabStrip>
           </div>
         </div> */}
-      
+
       </div>
     );
   }

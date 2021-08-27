@@ -1119,6 +1119,7 @@ export class Chart {
         .attr("id", "svg-plot-" + this.ContainerId)
         .attr("height", this.Height)
         .attr("width", this.Width)
+        .style("display", "block")
         // .attr("height", this.Height)
         // .attr("width", this.Width);
         // .style("left", '0px')
