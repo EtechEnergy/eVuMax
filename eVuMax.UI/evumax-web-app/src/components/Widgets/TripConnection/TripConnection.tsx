@@ -737,7 +737,7 @@ class TripConnSummary extends Component {
                                         field="COST"
                                         headerClassName="text-center"
                                         className="text-right"
-                                        title="Cost $"
+                                        title="Cost"
                                         width="90px"
                                         cell={(props) => (
                                             <td className="text-right" style={{}}>
@@ -749,7 +749,7 @@ class TripConnSummary extends Component {
                                         field="TARGET_COST"
                                         headerClassName="text-center"
                                         className="text-right"
-                                        title="Target Cost $"
+                                        title="Target Cost"
                                         width="90px"
                                     />
                                     <Column
@@ -757,7 +757,7 @@ class TripConnSummary extends Component {
                                         field="DIFF"
                                         headerClassName="text-center"
                                         className="text-right"
-                                        title="Diff $"
+                                        title="Diff"
                                         width="90px"
                                         cell={(props) => (
                                             <td className="text-right" style={{}}>
@@ -1031,7 +1031,7 @@ class TripConnSummary extends Component {
             this.objChart.rightAxis().ShowTitle = true;
             this.objChart.rightAxis().Visible = true;
             this.objChart.rightAxis().AutoScale = true;
-            this.objChart.rightAxis().Title = "Cost $";
+            this.objChart.rightAxis().Title = "Cost";
             this.objChart.rightAxis().Inverted = false;
 
             //Add new serieses
@@ -1105,7 +1105,7 @@ class TripConnSummary extends Component {
             //Configure Axes
             this.objChart.leftAxis().Inverted = false;
             this.objChart.leftAxis().AutoScale = true;
-            this.objChart.leftAxis().Title = "Cost Diff $";
+            this.objChart.leftAxis().Title = "Cost Diff";
             this.objChart.leftAxis().ShowSelector = false;
 
             this.objChart.bottomAxis().AutoScale = true;
@@ -1121,7 +1121,7 @@ class TripConnSummary extends Component {
             this.objChart.rightAxis().Visible = false;
             this.objChart.rightAxis().ShowLabels = false;
             this.objChart.rightAxis().ShowTitle = false;
-            this.objChart.rightAxis().Title = "Cost $";
+            this.objChart.rightAxis().Title = "Cost";
             this.objChart.rightAxis().Inverted = true;
 
             //Add new serieses
@@ -1194,7 +1194,7 @@ class TripConnSummary extends Component {
             this.objChart.rightAxis().ShowLabels = true;
             this.objChart.rightAxis().ShowTitle = true;
             this.objChart.rightAxis().AutoScale = true;
-            this.objChart.rightAxis().Title = "Cost $";
+            this.objChart.rightAxis().Title = "Cost";
             this.objChart.rightAxis().Inverted = false;
 
             //Create series for each rig state
@@ -1298,7 +1298,7 @@ class TripConnSummary extends Component {
             this.objChart.rightAxis().ShowLabels = false;
             this.objChart.rightAxis().ShowTitle = false;
             this.objChart.rightAxis().Visible = false;
-            this.objChart.rightAxis().Title = "Cost $";
+            this.objChart.rightAxis().Title = "Cost";
             this.objChart.rightAxis().Inverted = false;
 
             //Add new serieses

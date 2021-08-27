@@ -252,14 +252,14 @@ export class ROPSummaryPlot extends Component {
       objPieData.y = eval(
         Number(this.state.objROPSummaryData.RotaryPercent).toFixed(2)
       ); // eval(  this.state.objROPSummaryData.RotaryPercent);
-      objPieData.label = "Rotary:" + objPieData.y + "%";
+      objPieData.label = "Rotary: " + objPieData.y + "%";
       objPieData.color = "blue"; //this.getRigStateColor(0);
       objPieSeries.Data.push(objPieData);
 
       //Fill up the data for data series
       objPieData = new ChartData();
       objPieData.y = eval(this.state.objROPSummaryData.SlidePercent);
-      objPieData.label = "SlideTime:" + objPieData.y + "%";
+      objPieData.label = "SlideTime: " + objPieData.y + "%";
 
       objPieData.color = "orange"; // this.getRigStateColor(1);
       objPieSeries.Data.push(objPieData);
@@ -291,7 +291,7 @@ export class ROPSummaryPlot extends Component {
       objPieData.y = eval(
         Number(this.state.objROPSummaryData.OffsetRotaryPercent).toFixed(2)
       );
-      objPieData.label = "Rotary:" + objPieData.y + "%";
+      objPieData.label = "Rotary: " + objPieData.y + "%";
       objPieData.color = "blue"; //this.getRigStateColor(0);
       objPieSeries.PieRadius = 60.0; //set Size of Pie circle;
 
@@ -300,7 +300,7 @@ export class ROPSummaryPlot extends Component {
       //Fill up the data for data series
       objPieData = new ChartData();
       objPieData.y = eval(this.state.objROPSummaryData.OffsetSlidePercent);
-      objPieData.label = "SlideTime:" + objPieData.y + "%";
+      objPieData.label = "SlideTime: " + objPieData.y + "%";
 
       objPieData.color = "orange"; // this.getRigStateColor(1);
       objPieSeries.Data.push(objPieData);
@@ -1015,7 +1015,7 @@ export class ROPSummaryPlot extends Component {
 
             <div className="pieHeader">
               <div className="pieBody" style={{ textAlign: 'center' }}>
-                <h6 className="card-subtitle mb-2">Current View</h6>
+                <h6 className="card-subtitle mb-2">Current Well - {this.state.objROPSummaryData.WellName} </h6>
               </div>
             </div>
 

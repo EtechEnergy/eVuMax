@@ -29,7 +29,7 @@ import { PointSeries } from "./PointSeries"; //prath 01-10-2020
 
 import { BarSeries } from "../Chart/BarSeries";
 import { ZoomStep } from "./ZoomSteps";
-import { faAssistiveListeningSystems } from "@fortawesome/free-solid-svg-icons";
+import { faAssistiveListeningSystems, faLeaf } from "@fortawesome/free-solid-svg-icons";
 
 import { AxisRange, AxisDateRange } from "../Chart/AxisRange";
 
@@ -109,6 +109,7 @@ export class Chart {
   ScrollingScale: Map<string, any> = new Map<string, any>();
 
   ShowCustomComments: boolean = false; //prath 04-08-2021
+  ShowLegend: boolean = true; //27-08-2021
   //#region
   __parentRef: any;
 
@@ -1191,6 +1192,9 @@ export class Chart {
       this.createAxes();
 
       //Create Title prath 01-10-2020
+
+      //alert(this.Width + " - " + this.__chartRect.width);
+
       this.SVGRef.append("text")
         .attr("x", this.Width / 2)
         .attr("y", 20)
@@ -1213,6 +1217,8 @@ export class Chart {
 
       this.updateChart();
       this.drawLegend();
+
+
     } catch (error) { }
   };
 
@@ -1812,6 +1818,10 @@ export class Chart {
   drawLegend = () => {
     try {
       $("#" + this.ContainerId + "_legend").empty();
+
+      if (this.ShowLegend == false) {
+        return;
+      }
 
       let legendString = "";
 

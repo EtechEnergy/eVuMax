@@ -321,7 +321,7 @@ export class StackedBarSeries {
 						if (s == stackValues.length - 1 && this.ChartRef.ShowCustomComments) {
 
 
-							if (isNaN(xPos + barWidth / 2) || isNaN((yPos - 25))) {
+							if (isNaN(xPos + barWidth / 2) || isNaN(this.ChartRef.__chartRect.height - 20)) {
 
 							}
 							else {
@@ -336,7 +336,8 @@ export class StackedBarSeries {
 									.attr('dy', '.75em')
 									.attr(
 										'transform',
-										'translate(' + (xPos + barWidth / 2) + ',' + (yPos - 25) + ') rotate(-90)'
+										//										'translate(' + (xPos + barWidth / 2) + ',' + (yPos - 25) + ') rotate(-90)'
+										'translate(' + (xPos + barWidth / 2) + ',' + (this.ChartRef.__chartRect.height - 20) + ') rotate(-90)'
 									)
 									.text(function (d) {
 										return customLabels[i];

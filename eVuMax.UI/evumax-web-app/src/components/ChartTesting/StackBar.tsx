@@ -192,12 +192,7 @@ export default class StackBar extends Component {
             this.objChartBar.bottomAxis().ShowTitle = true;
             this.objChartBar.bottomAxis().Visible = true;
 
-            // this.objChartBar.rightAxis().ShowLabels = false;
-            // this.objChartBar.rightAxis().ShowTitle = true;
-            // this.objChartBar.rightAxis().Visible = false;
-            // this.objChartBar.rightAxis().AutoScale = true;
-            // this.objChartBar.rightAxis().Title = "Cost $";
-            // this.objChartBar.rightAxis().Inverted = true;
+
 
             //Add new serieses
 
@@ -321,7 +316,7 @@ export default class StackBar extends Component {
             //Configure Axes
             this.objChartBar.leftAxis().Inverted = true;
             this.objChartBar.leftAxis().AutoScale = true;
-            this.objChartBar.leftAxis().Title = "Cost Diff $";
+            this.objChartBar.leftAxis().Title = "Cost Diff";
             this.objChartBar.leftAxis().ShowSelector = false;
 
             this.objChartBar.bottomAxis().AutoScale = true;
@@ -334,7 +329,7 @@ export default class StackBar extends Component {
             this.objChartBar.rightAxis().Visible = false;
             this.objChartBar.rightAxis().ShowLabels = false;
             this.objChartBar.rightAxis().ShowTitle = false;
-            this.objChartBar.rightAxis().Title = "Cost $";
+            this.objChartBar.rightAxis().Title = "Cost";
             this.objChartBar.rightAxis().Inverted = true;
 
             //Add new serieses
@@ -402,7 +397,7 @@ export default class StackBar extends Component {
             this.objChartBar.rightAxis().ShowLabels = true;
             this.objChartBar.rightAxis().ShowTitle = true;
             this.objChartBar.rightAxis().AutoScale = true;
-            this.objChartBar.rightAxis().Title = "Cost $";
+            this.objChartBar.rightAxis().Title = "Cost";
             this.objChartBar.rightAxis().Inverted = true;
 
 
@@ -539,7 +534,7 @@ export default class StackBar extends Component {
             this.objChartBar.rightAxis().ShowLabels = false;
             this.objChartBar.rightAxis().ShowTitle = false;
             this.objChartBar.rightAxis().Visible = false;
-            this.objChartBar.rightAxis().Title = "Cost $";
+            this.objChartBar.rightAxis().Title = "Cost";
             this.objChartBar.rightAxis().Inverted = true;
 
             //Add new serieses

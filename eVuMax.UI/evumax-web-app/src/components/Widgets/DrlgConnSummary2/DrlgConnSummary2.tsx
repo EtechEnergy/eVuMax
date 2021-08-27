@@ -171,7 +171,7 @@ class DrlgConnSummary2 extends Component {
       this.objBTSChart.MarginBottom = 0;
       this.objBTSChart.MarginTop = 10;
       this.objBTSChart.MarginRight = 80;
-      
+
 
       this.objBTSChart.initialize();
       this.objBTSChart.reDraw();
@@ -209,7 +209,7 @@ class DrlgConnSummary2 extends Component {
       this.objSTSChart.rightAxis().AutoScale = true;
       this.objSTSChart.rightAxis().Min = 100;
       this.objSTSChart.rightAxis().Max = 200;
-      this.objSTSChart.rightAxis().Title = "Cost $";
+      this.objSTSChart.rightAxis().Title = "Cost";
       this.objSTSChart.rightAxis().ShowLabels = true;
       this.objSTSChart.rightAxis().ShowTitle = true;
       this.objSTSChart.rightAxis().ShowSelector = false;
@@ -1091,14 +1091,14 @@ class DrlgConnSummary2 extends Component {
                     field="COST"
                     headerClassName="text-center"
                     className="text-right"
-                    title="Cost $"
+                    title="Cost"
                     width="90px"
                   />
                   <Column
                     field="TARGET_COST"
                     headerClassName="text-center"
                     className="text-right"
-                    title="Target Cost $"
+                    title="Target Cost"
                     width="90px"
                     cell={(props) => (
                       <td className="text-right" style={{}}>
@@ -1113,7 +1113,7 @@ class DrlgConnSummary2 extends Component {
                     field="DIFF"
                     headerClassName="text-center"
                     className="text-right"
-                    title="Diff $"
+                    title="Diff"
                     width="90px"
                   />
 
@@ -1121,7 +1121,7 @@ class DrlgConnSummary2 extends Component {
                     field="STS_COST"
                     headerClassName="text-center"
                     className="text-right"
-                    title="STS Cost $"
+                    title="STS Cost"
                     width="90px"
                   />
 
@@ -1129,7 +1129,7 @@ class DrlgConnSummary2 extends Component {
                     field="STS_DIFF"
                     headerClassName="text-center"
                     className="text-right"
-                    title="STS Diff $"
+                    title="STS Diff"
                     width="90px"
                     cell={(props) => (
                       <td className="text-right" style={{}}>
@@ -1450,7 +1450,7 @@ class DrlgConnSummary2 extends Component {
       this.objSTSChart.rightAxis().AutoScale = true;
       this.objSTSChart.rightAxis().Min = 100;
       this.objSTSChart.rightAxis().Max = 200;
-      this.objSTSChart.rightAxis().Title = "Cost $";
+      this.objSTSChart.rightAxis().Title = "Cost";
       this.objSTSChart.rightAxis().ShowLabels = true;
       this.objSTSChart.rightAxis().ShowTitle = true;
       this.objSTSChart.rightAxis().ShowSelector = false;
@@ -1623,7 +1623,7 @@ class DrlgConnSummary2 extends Component {
       this.objSTSChart.rightAxis().AutoScale = true;
       this.objSTSChart.rightAxis().Min = 100;
       this.objSTSChart.rightAxis().Max = 200;
-      this.objSTSChart.rightAxis().Title = "Cost $";
+      this.objSTSChart.rightAxis().Title = "Cost";
       this.objSTSChart.rightAxis().ShowLabels = true;
       this.objSTSChart.rightAxis().ShowTitle = true;
       this.objSTSChart.rightAxis().ShowSelector = false;

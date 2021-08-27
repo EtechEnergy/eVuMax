@@ -68,6 +68,7 @@ export class PieSeries {
           .outerRadius(radius - 10)
           .innerRadius(0);
 
+
         let label = d3
           .arc()
           .outerRadius(radius)
@@ -97,6 +98,7 @@ export class PieSeries {
           .append("text")
           .style("font-size", "12px")
           .attr("text-anchor", "middle")
+          .attr("word-spacing", "5px") //added prath on 27-08-2021
           .attr("transform", function (d) {
             var pos = outerArc.centroid(d);
             //pos[0] = radius * (this.midAngle(d) < Math.PI ? 1.0 : -1.0);
@@ -109,7 +111,7 @@ export class PieSeries {
           })
           .text(function (d) {
             if (d.data.y > 0) {
-              return d.data.label;
+              return d.data.label + " ";
             }
           })
           .attr("class", "axis-title")

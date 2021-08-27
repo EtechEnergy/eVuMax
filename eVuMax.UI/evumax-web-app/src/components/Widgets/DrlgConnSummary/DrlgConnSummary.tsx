@@ -1223,14 +1223,14 @@ class DrlgConnSummary extends Component {
                         field="COST"
                         headerClassName="text-center"
                         className="text-right"
-                        title="Cost $"
+                        title="Cost"
                         width="90px"
                       />
                       <Column
                         field="TARGET_COST"
                         headerClassName="text-center"
                         className="text-right"
-                        title="Target Cost $"
+                        title="Target Cost"
                         width="90px"
                         cell={(props) => (
                           <td className="text-right" style={{}}>
@@ -1248,7 +1248,7 @@ class DrlgConnSummary extends Component {
                         field="DIFF"
                         headerClassName="text-center"
                         className="text-right"
-                        title="Diff $"
+                        title="Diff"
                         width="90px"
                       />
 
@@ -1256,7 +1256,7 @@ class DrlgConnSummary extends Component {
                         field="STS_COST"
                         headerClassName="text-center"
                         className="text-right"
-                        title="STS Cost $"
+                        title="STS Cost"
                         width="90px"
                       />
 
@@ -1264,7 +1264,7 @@ class DrlgConnSummary extends Component {
                         field="STS_DIFF"
                         headerClassName="text-center"
                         className="text-right"
-                        title="STS Diff $"
+                        title="STS Diff"
                         width="90px"
                         cell={(props) => (
                           <td className="text-right" style={{}}>
@@ -1584,6 +1584,7 @@ class DrlgConnSummary extends Component {
       //Clear all the series
 
       this.objChart.DataSeries.clear();
+      this.objChart.ShowLegend = true;
       this.objChart.updateChart();
 
       //Configure Axes
@@ -1605,7 +1606,7 @@ class DrlgConnSummary extends Component {
       this.objChart.rightAxis().ShowTitle = true;
       this.objChart.rightAxis().Visible = true;
       this.objChart.rightAxis().AutoScale = true;
-      this.objChart.rightAxis().Title = "Cost $";
+      this.objChart.rightAxis().Title = "Cost";
       this.objChart.rightAxis().Inverted = false;
 
       this.objChart.ShowCustomComments = true;  //prath 04-08-2021
@@ -1722,12 +1723,13 @@ class DrlgConnSummary extends Component {
       //Clear all the series
 
       this.objChart.DataSeries.clear();
+      this.objChart.ShowLegend = false;
       this.objChart.updateChart();
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;
       this.objChart.leftAxis().AutoScale = true;
-      this.objChart.leftAxis().Title = "Cost Diff $";
+      this.objChart.leftAxis().Title = "Cost Diff";
       this.objChart.leftAxis().ShowSelector = false;
 
       this.objChart.bottomAxis().AutoScale = true;
@@ -1735,13 +1737,13 @@ class DrlgConnSummary extends Component {
       this.objChart.bottomAxis().LabelAngel = 90;
       this.objChart.bottomAxis().ShowSelector = false;
 
-      this.objChart.rightAxis().ShowLabels = false;
+      // this.objChart.rightAxis().ShowLabels = false;
       this.objChart.rightAxis().ShowTitle = false;
       this.objChart.rightAxis().Visible = false;
-      this.objChart.rightAxis().ShowLabels = false;
-      this.objChart.rightAxis().ShowTitle = false;
-      this.objChart.rightAxis().Title = "Cost $";
-      this.objChart.rightAxis().Inverted = true;
+      // this.objChart.rightAxis().ShowLabels = false;
+      // this.objChart.rightAxis().ShowTitle = false;
+      // this.objChart.rightAxis().Title = "Cost";
+      // this.objChart.rightAxis().Inverted = true;
 
       //Add new serieses
 
@@ -1782,6 +1784,7 @@ class DrlgConnSummary extends Component {
       //Clear all the series
 
       this.objChart.DataSeries.clear();
+      this.objChart.ShowLegend = true;
       this.objChart.updateChart();
 
       //Configure Axes
@@ -1799,7 +1802,7 @@ class DrlgConnSummary extends Component {
       this.objChart.rightAxis().ShowLabels = true;
       this.objChart.rightAxis().ShowTitle = true;
       this.objChart.rightAxis().AutoScale = true;
-      this.objChart.rightAxis().Title = "Cost $";
+      this.objChart.rightAxis().Title = "Cost";
       this.objChart.rightAxis().Inverted = false;
 
       //sort array on depth
@@ -1894,6 +1897,7 @@ class DrlgConnSummary extends Component {
       //Clear all the series
 
       this.objChart.DataSeries.clear();
+      this.objChart.ShowLegend = false;
       this.objChart.updateChart();
 
       //Configure Axes
@@ -1911,7 +1915,7 @@ class DrlgConnSummary extends Component {
       this.objChart.rightAxis().ShowLabels = false;
       this.objChart.rightAxis().ShowTitle = false;
       this.objChart.rightAxis().Visible = false;
-      this.objChart.rightAxis().Title = "Cost $";
+      this.objChart.rightAxis().Title = "Cost";
       this.objChart.rightAxis().Inverted = true;
 
       //Add new serieses

@@ -42,8 +42,7 @@ export class Axis {
   TitleFontColor: string = "white";
   TitleFontSize: number = 12;
   TitleFontBold: boolean = true;
-
-  TitleFontItalic: boolean = false;
+  TitleFontItalic: boolean = true;
   TitleFontUnderLine: boolean = false;
   TitleAngle: number = 0; //Used to rotate title
   Inverted: boolean = false;
@@ -562,6 +561,7 @@ export class Axis {
         .attr("text-anchor", "middle")
         .attr("fill", "white")
         .attr("font-weight", this.LabelFontBold == true ? "bold" : "normal")
+        .attr("font-style", this.TitleFontItalic == true ? "italic" : "normal")
         .select("text")
         .attr("transform", "rotate(-90)")
         .text(this.Title);
@@ -608,6 +608,7 @@ export class Axis {
         .attr("text-anchor", "middle")
         .attr("fill", "white")
         .attr("font-weight", this.TitleFontBold == true ? "bold" : "normal")
+        .attr("font-style", this.TitleFontItalic == true ? "italic" : "normal")
         .select("text")
 
         .attr("transform", "rotate(-90)")
@@ -682,6 +683,7 @@ export class Axis {
         .attr("transform", "translate(" + titleX + "," + titleY + ")")
         .attr("text-anchor", "middle")
         .attr("font-weight", this.TitleFontBold == true ? "bold" : "normal")
+        .attr("font-style", this.TitleFontItalic == true ? "italic" : "normal")
         .attr("fill", "white")
         .select("text")
         .text(this.Title);
@@ -737,6 +739,7 @@ export class Axis {
         .attr("text-anchor", "middle")
         .attr("fill", "white")
         .attr("font-weight", this.TitleFontBold == true ? "bold" : "normal")
+        .attr("font-style", this.TitleFontItalic == true ? "italic" : "normal")
         .select("text")
         .text(this.Title);
 
