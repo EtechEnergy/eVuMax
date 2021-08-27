@@ -125,6 +125,7 @@ class TripConnSummary extends Component {
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");
       this.objChart.ContainerId = "tripConnections";
+      this.objChart.ShowLegend = true;
 
       this.objChart.leftAxis().AutoScale = true;
       this.objChart.leftAxis().Min = 0;
@@ -571,7 +572,7 @@ class TripConnSummary extends Component {
                 backgroundColor: "transparent",
                 display: "inline-block",
                 minWidth: "800",
-                minHeight: "500"
+                //minHeight: "500"
 
               }}
             ></div>

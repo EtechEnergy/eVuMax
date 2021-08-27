@@ -970,7 +970,7 @@ export class DrillingSummary extends Component {
     let objPieSeries = new DataSeries();
     objPieSeries.Id = "OffsetPieSeries1";
     objPieSeries.Stacked = false;
-
+    //objPieSeries.PieRadius = 50;
     objPieSeries.Title = "Rotary Vs Drilling";
     objPieSeries.Type = dataSeriesType.Pie;
 

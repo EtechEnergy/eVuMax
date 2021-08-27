@@ -1848,6 +1848,15 @@ export class Chart {
       }
 
       $("#" + this.ContainerId + "_legend").html(legendString);
+
+
+      // this.SVGRef.append("g").append("div")
+      //   .attr("x", 100)
+      //   .attr("y", 20)
+      //   .attr("text-anchor", "middle")
+      //   .style("font-size", "26px")
+      //   .style("text-decoration", "underline")
+      //   .html(legendString);
     } catch (error) { }
   };
 

@@ -67,6 +67,7 @@ class DataSelector extends Component<IProps, IState> {
       //initialize chart
       this.objChart = new Chart(this, "SelectorChart");
       this.objChart.ContainerId = "selector_chart";
+      this.objChart.ShowLegend = false;
       this.objChart.isZoomByRect = false; //No need to zoom
 
       this.objChart.leftAxis().AutoScale = true;
@@ -273,7 +274,7 @@ class DataSelector extends Component<IProps, IState> {
             }}
           >
             <div
-              id="selector_chart" 
+              id="selector_chart"
               style={{
                 //height: "100%",
                 height: "90px",

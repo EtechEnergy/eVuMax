@@ -39,7 +39,7 @@ export class DataSeries {
   PointStyle: pointStyle = pointStyle.DownTriangle;
   PointHeight: number = 10;
   PointWidth: number = 10;
-  PointSize: number = 4; //for point series point Size
+  PointSize: number = 2; //for point series point Size
 
   PointBorderColor: string = "";
   PointBorderStyle: Chart.lineStyle = Chart.lineStyle.solid;
