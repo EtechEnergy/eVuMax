@@ -1729,6 +1729,7 @@ class ToolfaceSummary extends Component {
 
     item.type = "primary";
     this._selectedItem = item;
+
     let index =
       this.state.LineStyleList.findIndex(
         (x) => x.id == this._selectedItem.lineStyle.toString()
@@ -2661,7 +2662,7 @@ class ToolfaceSummary extends Component {
                     <div className="col-lg-6">
                       <span className="mt-2 mb-2">
                         {" "}
-                        <b>Line Formatting </b> 
+                        <b style={{ wordSpacing: "5px" }}>Line Formatting {" (" + this._selectedItem.Mnemonic})</b>
                       </span>
                       <br />
                       <hr />
