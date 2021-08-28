@@ -1276,42 +1276,12 @@ export class ROPSummaryPlot extends Component {
           <div className="col-lg-9">
             <div style={{ width: "100%" }}>
               <DataSelector {...this} />
+              <div id="warning" style={{ paddingBottom:"10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black",position:"absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
             </div>
           </div>
-          <div id="warning" style={{ paddingBottom:"10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
         </div>
-
-        {/* <div className="row">
-          <div className="col-lg-12">
-            <TabStrip
-              selected={this.state.selected}
-              onSelect={this.handleSelect}
-            >
-              <TabStripTab title="ROP Summary">
-
-
-
-
-              </TabStripTab>
-              <TabStripTab title="Settings">
-                  <div style={{marginTop:"10px"}}>
-                <div className="row">
-                  <div className="col-lg-12">
-                  <h6 className="mb-2">Data Downsampling</h6>
-
-                  <br />
-                  <label>No. of data points per ft/mtr</label>{" "}
-                  <NumericTextBox format="n2" width="100px" />
-                  <br />
-                  <label>Moving Avg. Data Points</label>{" "}
-                  <NumericTextBox format="n2" width="100px" />
-                  </div>
-                </div>
-                </div>
-              </TabStripTab>
-            </TabStrip>
-          </div>
-        </div> */}
+        
+       
       
       </div>
     );
