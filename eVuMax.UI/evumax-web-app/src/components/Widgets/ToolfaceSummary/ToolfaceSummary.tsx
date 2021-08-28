@@ -1025,7 +1025,8 @@ class ToolfaceSummary extends Component {
               "stroke",
               util.rgb2hex(this.objUserSettings.GeoDrlgWindowColor)
             ) //Nishant 28/07/2021
-            .style("opacity", (this.objUserSettings.GeoDrlgWindowTrans / 100)); //Nishant 28/07/2021
+            .style("filter", "opacity("+ ( 100 -this.objUserSettings.GeoDrlgWindowTrans )+"%)"); //Kuldip 28/08/2021
+            
         }
 
       }
@@ -1231,7 +1232,8 @@ class ToolfaceSummary extends Component {
               "stroke",
               util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
             )
-            .style("opacity", (this.objUserSettings.ROPDrlgWindowTrans / 100)); //Nishant 28/07/2021
+            //.style("opacity", (this.objUserSettings.ROPDrlgWindowTrans / 100)); //Nishant 28/07/2021
+            .style("filter", "opacity("+ ( 100 -this.objUserSettings.ROPDrlgWindowTrans )+"%)"); //Kuldip 28/08/2021
         }
       }
 
@@ -2659,7 +2661,7 @@ class ToolfaceSummary extends Component {
                     <div className="col-lg-6">
                       <span className="mt-2 mb-2">
                         {" "}
-                        <b>Line Formatting</b>
+                        <b>Line Formatting </b> 
                       </span>
                       <br />
                       <hr />
