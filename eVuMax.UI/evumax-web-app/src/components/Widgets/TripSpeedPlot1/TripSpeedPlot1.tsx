@@ -181,7 +181,7 @@ export class TripSpeedPlot1 extends Component {
       this.objChart_BarWithConn.leftAxis().ShowLabels = true;
       this.objChart_BarWithConn.leftAxis().ShowTitle = true;
       this.objChart_BarWithConn.leftAxis().Title =
-        "Trip Speed With Conn (" +
+        "Trip Speed With Connection (" +
         this.state.objTripSpeedData.DepthVumaxUnitID +
         "/hr)";
       this.objChart_BarWithConn.leftAxis().DisplayOrder = 1;
@@ -352,14 +352,14 @@ export class TripSpeedPlot1 extends Component {
 
       let objSeries = new DataSeries();
       objSeries.Id = "TripSpeedWOConnection";
-      objSeries.Name = "Trip Speed W/O Conn";
+      objSeries.Name = "Trip Speed W/o Conn";
       objSeries.XAxisId = this.objChart_TripSpeed.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_TripSpeed.leftAxis().Id;
       objSeries.Type = dataSeriesType.Line;
 
       objSeries.LineWidth = 3;
 
-      objSeries.Title = "Trip Speed W/O Connection";
+      objSeries.Title = "Trip Speed W/o Connection";
       objSeries.Color = "#18FFFF"; //"steelBlue";
       objSeries.ShowInLegend = true;
 
@@ -381,7 +381,7 @@ export class TripSpeedPlot1 extends Component {
       if (this.state.objTripSpeedData.line2Data.length > 0) {
         objSeries = new DataSeries();
         objSeries.Id = "TripSpeedWithConnection";
-        objSeries.Name = "Trip Speed with Conn";
+        objSeries.Name = "Trip Speed with Connection";
         objSeries.XAxisId = this.objChart_TripSpeed.bottomAxis().Id;
         objSeries.YAxisId = this.objChart_TripSpeed.leftAxis().Id;
         objSeries.Type = dataSeriesType.Line;
@@ -425,7 +425,7 @@ export class TripSpeedPlot1 extends Component {
 
         objSeries.CurveStyle = curveStyle.step;
 
-        objSeries.Title = "Trip Speed Without Connection";
+        objSeries.Title = "Trip Speed W/o Connection";
         objSeries.Color = "#69F0AE";
         objSeries.ShowInLegend = true;
 
@@ -456,7 +456,7 @@ export class TripSpeedPlot1 extends Component {
       if (this.state.objTripSpeedData.line4Data.length > 0) {
         objSeries = new DataSeries();
         objSeries.Id = "BenchMarkwithConn";
-        objSeries.Name = "BenchMark With Conn.";
+        objSeries.Name = "BenchMark With Connection";
         objSeries.XAxisId = this.objChart_TripSpeed.bottomAxis().Id;
         objSeries.YAxisId = this.objChart_TripSpeed.leftAxis().Id;
         objSeries.Type = dataSeriesType.Line;
@@ -494,7 +494,7 @@ export class TripSpeedPlot1 extends Component {
       if (this.state.objTripSpeedData.deltaWithConnData.length > 0) {
         objSeries = new DataSeries();
         objSeries.Id = "deltaWithConn";
-        objSeries.Name = "delta With Conn";
+        objSeries.Name = "Delta With Connection";
         objSeries.XAxisId = this.objChart_TripSpeed.topAxis().Id;
         objSeries.YAxisId = this.objChart_TripSpeed.leftAxis().Id;
         objSeries.Type = dataSeriesType.Line;
@@ -503,7 +503,7 @@ export class TripSpeedPlot1 extends Component {
 
         objSeries.CurveStyle = curveStyle.step;
 
-        objSeries.Title = "delta With Conn";
+        objSeries.Title = "Delta With Connection";
         objSeries.Color = "#E040FB";
         objSeries.ShowInLegend = true;
 
@@ -541,7 +541,7 @@ export class TripSpeedPlot1 extends Component {
       if (this.state.objTripSpeedData.deltaWOConnData.length > 0) {
         objSeries = new DataSeries();
         objSeries.Id = "deltaWOConn";
-        objSeries.Name = "delta Without Conn";
+        objSeries.Name = "Delta W/o Conn";
         objSeries.XAxisId = this.objChart_TripSpeed.topAxis().Id;
         objSeries.YAxisId = this.objChart_TripSpeed.leftAxis().Id;
         objSeries.Type = dataSeriesType.Line;
@@ -549,7 +549,7 @@ export class TripSpeedPlot1 extends Component {
         objSeries.LineStyle = lineStyle.dashed;
 
         objSeries.CurveStyle = curveStyle.step;
-        objSeries.Title = "delta With Conn";
+        objSeries.Title = "Delta W/o Connection";
         objSeries.Color = "#00E676";
         objSeries.ShowInLegend = true;
 
@@ -647,8 +647,8 @@ export class TripSpeedPlot1 extends Component {
     objSeries.YAxisId = this.objChart_BarWOConn.leftAxis().Id;
     objSeries.Color = "Green";
 
-    objSeries.Title = "Trip Speed W/O Connection";
-    objSeries.Color = "#18FFFF";
+    objSeries.Title = "Trip Speed W/o Connection";
+    objSeries.Color = "green";// "#18FFFF";
     objSeries.ShowInLegend = true;
 
     this.objChart_BarWOConn.DataSeries.set(objSeries.Id, objSeries);
@@ -943,7 +943,8 @@ export class TripSpeedPlot1 extends Component {
               <FontAwesomeIcon
                 icon={faUndo}
                 onClick={() => {
-                  this.forceUpdate();
+                  // this.forceUpdate();
+                  this.refreshChart();
                 }}
               />
             </div>
@@ -976,8 +977,9 @@ export class TripSpeedPlot1 extends Component {
                     <div
                       id="ChartTripSpeed_legend"
                       style={{
-                        textAlign: "center",
+                        textAlign: "justify",
                         height: "40px",
+                        marginLeft:"10px",
                         width: "calc(30vw)",
                         backgroundColor: "transparent",
                         display: "inline-block",
