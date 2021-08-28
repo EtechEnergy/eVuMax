@@ -500,7 +500,11 @@ export class ROPSummaryPlot extends Component {
   onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
     try {
       let tripOutlineData = [];
-      let tripOutArr = this.tripOutsString.split(",");
+      let tripOutArr = [];
+      if(this.tripOutsString!=""){
+
+      
+      tripOutArr = this.tripOutsString.split(",");
 
       for (let index = 0; index < tripOutArr.length; index++) {
         const item: number = Number(Number(tripOutArr[index]).toFixed(0));
@@ -526,10 +530,15 @@ export class ROPSummaryPlot extends Component {
           .style("stroke", "red")
           .style("stroke-dasharray", "5,5");
       }
-
+    }
       //offset Tripout Lines
 
       tripOutlineData = [];
+      //Nishant 28/07/2021
+      if(this.tripOutsOffsetString== ""){
+        return;
+      }
+      ////********** */
       tripOutArr = this.tripOutsOffsetString.split(",");
 
       for (let index = 0; index < tripOutArr.length; index++) {
@@ -539,6 +548,7 @@ export class ROPSummaryPlot extends Component {
 
       for (let index = 0; index < tripOutlineData.length; index++) {
         const depth = tripOutlineData[index][0];
+        
         let x1 = this.objChart_Combine.bottomAxis().ScaleRef(depth);
         let x2 = x1;
         let y1 = this.objChart_Combine.__chartRect.top;
@@ -822,6 +832,7 @@ export class ROPSummaryPlot extends Component {
             this.tripOutsString = strLabel.substring(0, strLabel.length - 1);
           }
           strLabel = "";
+          debugger;
           if (tripOutsOffset.length > 0) {
             for (let index = 0; index < tripOutsOffset.length; index++) {
               const objItem = Number(tripOutsOffset[index]).toFixed(2);
@@ -842,6 +853,7 @@ export class ROPSummaryPlot extends Component {
             objData.offsetDepthOut = -1;
 
           }
+          console.log("objROPSummaryData",objData);
           this.setState({
             objROPSummaryData: objData,
             isProcess: false,
@@ -966,6 +978,9 @@ export class ROPSummaryPlot extends Component {
                     }
                   </div>
                 </div>
+                <div className="col-lg-12">
+           
+          </div>
               </div>
             </div>
 
@@ -995,10 +1010,21 @@ export class ROPSummaryPlot extends Component {
                   </div>
                 </div>
               </div>
+              
             </div>
           </div>
         </div>
-
+        {/* Nishant 28/08/2021 */}
+        <div className="col-lg-12">
+            <div className="float-right mr-2">
+              <FontAwesomeIcon
+                icon={faUndo}
+                onClick={() => {
+                  this.refreshChart();
+                }}
+              />
+            </div>
+          </div>
         {/* <div className="row">
           <div className="col-lg-12 eVumaxPanelTitle">
             <div>
