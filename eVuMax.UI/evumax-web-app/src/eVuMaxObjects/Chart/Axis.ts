@@ -174,6 +174,22 @@ export class Axis {
     } catch (error) { }
   };
 
+//Prathmesh : 28-08-2021 (to resolve trip speed plot spacing between legend & bottom axes title)
+  getLongestLableValue=(lblArr:any)=>{
+  try {
+    if(lblArr.length>0){
+      let longest = this.Labels.sort(
+        function (a, b) {
+            return b.length - a.length;
+        }
+    )[0];
+      return longest;
+    }
+  } catch (error) {
+    return "";
+  }
+}
+
   //Calculates the axis width that includes axis labels + axis title
   calculateAxisWidth = () => {
     try {
@@ -186,6 +202,12 @@ export class Axis {
 
         let objAxisRange: AxisDateRange = this.getAxisRange();
         let maxLabel: string = formatFunc(objAxisRange.Max);
+        
+        //added by prath on 28-08-2021 (to resolve trip speed plot spacing between legend & bottom axes title)
+        if(this.Labels.length>0){
+               maxLabel=this.getLongestLableValue(this.Labels).toString();
+        }
+      
 
         maxLabelWidth = this.ChartRef.calculateWidth(
           maxLabel,
@@ -193,7 +215,10 @@ export class Axis {
           this.LabelFontSize.toString() + "px"
         );
 
-        maxLabelWidth = (maxLabelWidth * 70) / 100;
+        //keep in condition by prath on 28-08-2021
+         if(this.Labels.length==0){
+            maxLabelWidth = (maxLabelWidth * 70) / 100;
+         }
 
         maxLabelHeight = this.ChartRef.calculateHeight(
           maxLabel,

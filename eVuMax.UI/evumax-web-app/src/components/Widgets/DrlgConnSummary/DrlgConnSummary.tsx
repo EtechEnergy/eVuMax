@@ -1970,8 +1970,8 @@ class DrlgConnSummary extends Component {
             .attr("y", y1)
             .attr("width", x2 - x1)
             .attr("height", y2 - y1)
-            .style("fill", "red")
-            .style("opacity", 0.5);
+            .style("fill", "#189AB4");
+            // .style("opacity", 0.5);
         }
       }
     } catch (error) { }

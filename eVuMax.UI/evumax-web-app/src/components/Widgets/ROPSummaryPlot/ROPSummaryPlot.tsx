@@ -376,7 +376,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.XAxisId = this.objChart_Rotary.bottomAxis().Id;
         objSeries.YAxisId = this.objChart_Rotary.leftAxis().Id;
         objSeries.Type = dataSeriesType.Point;
-        objSeries.PointStyle = pointStyle.Circle;
+        objSeries.PointStyle = pointStyle.Diamond;
         objSeries.Title = "Offset";
         objSeries.Color = "#F44336"; //"#1762ad";
         objSeries.ShowInLegend = true;
@@ -442,7 +442,6 @@ export class ROPSummaryPlot extends Component {
       objSeries.XAxisId = this.objChart_Slide.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_Slide.leftAxis().Id;
       objSeries.Type = dataSeriesType.Point;
-      objSeries.PointStyle = pointStyle.Circle;
       objSeries.PointStyle = pointStyle.Diamond;
       objSeries.Title = "Main";
       objSeries.Color = "#FFD600"; // this.getRigStateColor(1); //"#1762ad";
@@ -469,7 +468,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.XAxisId = this.objChart_Slide.bottomAxis().Id;
         objSeries.YAxisId = this.objChart_Slide.leftAxis().Id;
         objSeries.Type = dataSeriesType.Point;
-        objSeries.PointStyle = pointStyle.Circle;
+        objSeries.PointStyle = pointStyle.Diamond;
         objSeries.Title = "Offset";
         objSeries.Color = "#3D5AFE"; //"#1762ad";
         objSeries.ShowInLegend = true;
@@ -612,7 +611,7 @@ export class ROPSummaryPlot extends Component {
       objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
       objSeries.PointSize =2; //Nishant 27/08/2021
       objSeries.Type = dataSeriesType.Point;
-      objSeries.PointStyle = pointStyle.Circle;
+      objSeries.PointStyle = pointStyle.Diamond;
       objSeries.Title = "Rotary";
       objSeries.Color = "#76FF03"; //this.getRigStateColor(0); //"#1762ad";
       objSeries.ShowInLegend = true;
@@ -804,6 +803,7 @@ export class ROPSummaryPlot extends Component {
           let objData = JSON.parse(res.data.Response);
 
           this.Warnings = res.data.Warnings;
+          
 
 
           if (this.Warnings.trim() != "") {

@@ -37,9 +37,9 @@ export class DataSeries {
   Color: string = "black";
   //PointStyle: pointStyle = pointStyle.Circle;
   PointStyle: pointStyle = pointStyle.DownTriangle;
-  PointHeight: number = 10;
-  PointWidth: number = 10;
-  PointSize: number = 4; //for point series point Size
+  PointHeight: number = 5;
+  PointWidth: number = 5;
+  PointSize: number = 2; //for point series point Size
 
   PointBorderColor: string = "";
   PointBorderStyle: Chart.lineStyle = Chart.lineStyle.solid;
