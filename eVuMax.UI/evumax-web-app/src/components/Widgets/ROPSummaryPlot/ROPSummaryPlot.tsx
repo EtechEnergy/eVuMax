@@ -69,7 +69,7 @@ export class ROPSummaryPlot extends Component {
 
   componentDidUpdate() {
     try {
-      //alert('comp did update');
+
       this.refreshChart();
     } catch (error) { }
   }
@@ -206,7 +206,7 @@ export class ROPSummaryPlot extends Component {
 
   //Nishant
   getRigStateColor = (number) => {
-    //alert(this.state.objROPSummaryData.RigStates);
+
     if (this.state.objROPSummaryData.RigStates != undefined) {
       let index = this.state.objROPSummaryData.RigStates.findIndex(
         (e) => e.RIG_STATE_NUMBER === number
@@ -337,9 +337,9 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Rotary.rightAxis().Visible = false;
       this.objChart_Rotary.rightAxis().ShowLabels = false;
 
-      this.objChart_Rotary.MarginLeft = 80;
-      this.objChart_Rotary.MarginBottom = 60;
-      this.objChart_Rotary.MarginTop = 25;
+      this.objChart_Rotary.MarginLeft = 20;
+      this.objChart_Rotary.MarginBottom = 0;
+      this.objChart_Rotary.MarginTop = 10;
       this.objChart_Rotary.MarginRight = 10;
 
       let objSeries = new DataSeries();
@@ -431,9 +431,9 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Slide.rightAxis().Visible = false;
       this.objChart_Slide.rightAxis().ShowLabels = false;
 
-      this.objChart_Slide.MarginLeft = 80;
-      this.objChart_Slide.MarginBottom = 60;
-      this.objChart_Slide.MarginTop = 25;
+      this.objChart_Slide.MarginLeft = 40;
+      this.objChart_Slide.MarginBottom = 0;
+      this.objChart_Slide.MarginTop = 5;
       this.objChart_Slide.MarginRight = 10;
 
       let objSeries = new DataSeries();
@@ -500,41 +500,41 @@ export class ROPSummaryPlot extends Component {
     try {
       let tripOutlineData = [];
       let tripOutArr = [];
-      if(this.tripOutsString!=""){
+      if (this.tripOutsString != "") {
 
-      
-      tripOutArr = this.tripOutsString.split(",");
 
-      for (let index = 0; index < tripOutArr.length; index++) {
-        const item: number = Number(Number(tripOutArr[index]).toFixed(0));
-        tripOutlineData.push([item, 0]);
+        tripOutArr = this.tripOutsString.split(",");
+
+        for (let index = 0; index < tripOutArr.length; index++) {
+          const item: number = Number(Number(tripOutArr[index]).toFixed(0));
+          tripOutlineData.push([item, 0]);
+        }
+
+        for (let index = 0; index < tripOutlineData.length; index++) {
+          const depth = tripOutlineData[index][0];
+          let x1 = this.objChart_Combine.bottomAxis().ScaleRef(depth);
+          let x2 = x1;
+          let y1 = this.objChart_Combine.__chartRect.top;
+          let y2 = this.objChart_Combine.__chartRect.bottom;
+
+          this.objChart_Combine.SVGRef.append("g")
+            .attr("class", "dashed" + this.objChart_Combine.Id)
+            .append("line")
+            .attr("id", "line-1")
+            .attr("x1", x1)
+            .attr("y1", y1)
+            .attr("x2", x2)
+            .attr("y2", y2)
+            .style("fill", "red")
+            .style("stroke", "red")
+            .style("stroke-dasharray", "5,5");
+        }
       }
-
-      for (let index = 0; index < tripOutlineData.length; index++) {
-        const depth = tripOutlineData[index][0];
-        let x1 = this.objChart_Combine.bottomAxis().ScaleRef(depth);
-        let x2 = x1;
-        let y1 = this.objChart_Combine.__chartRect.top;
-        let y2 = this.objChart_Combine.__chartRect.bottom;
-
-        this.objChart_Combine.SVGRef.append("g")
-          .attr("class", "dashed" + this.objChart_Combine.Id)
-          .append("line")
-          .attr("id", "line-1")
-          .attr("x1", x1)
-          .attr("y1", y1)
-          .attr("x2", x2)
-          .attr("y2", y2)
-          .style("fill", "red")
-          .style("stroke", "red")
-          .style("stroke-dasharray", "5,5");
-      }
-    }
       //offset Tripout Lines
 
       tripOutlineData = [];
       //Nishant 28/07/2021
-      if(this.tripOutsOffsetString== ""){
+      if (this.tripOutsOffsetString == "") {
         return;
       }
       ////********** */
@@ -547,7 +547,7 @@ export class ROPSummaryPlot extends Component {
 
       for (let index = 0; index < tripOutlineData.length; index++) {
         const depth = tripOutlineData[index][0];
-        
+
         let x1 = this.objChart_Combine.bottomAxis().ScaleRef(depth);
         let x2 = x1;
         let y1 = this.objChart_Combine.__chartRect.top;
@@ -600,8 +600,8 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Combine.rightAxis().ShowLabels = false;
 
       this.objChart_Combine.MarginLeft = 80;
-      this.objChart_Combine.MarginBottom = 60;
-      this.objChart_Combine.MarginTop = 25;
+      this.objChart_Combine.MarginBottom = 0;
+      this.objChart_Combine.MarginTop = 5;
       this.objChart_Combine.MarginRight = 10;
 
       let objSeries = new DataSeries();
@@ -609,7 +609,7 @@ export class ROPSummaryPlot extends Component {
       objSeries.Name = "ROP Rotary";
       objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
-      objSeries.PointSize =2; //Nishant 27/08/2021
+      objSeries.PointSize = 2; //Nishant 27/08/2021
       objSeries.Type = dataSeriesType.Point;
       objSeries.PointStyle = pointStyle.Diamond;
       objSeries.Title = "Rotary";
@@ -640,7 +640,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.PointStyle = pointStyle.Circle;
         objSeries.Title = "Rotary (Offset) ";
         objSeries.Color = "#F44336"; //"#1762ad";
-        objSeries.PointSize =2; //Nishant 27/08/2021
+        objSeries.PointSize = 2; //Nishant 27/08/2021
         objSeries.ShowInLegend = true;
 
         this.objChart_Combine.DataSeries.set(objSeries.Id, objSeries);
@@ -666,7 +666,7 @@ export class ROPSummaryPlot extends Component {
       objSeries.Name = "ROP Slide";
       objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
       objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
-      objSeries.PointSize =2; //Nishant 27/08/2021
+      objSeries.PointSize = 2; //Nishant 27/08/2021
       objSeries.Type = dataSeriesType.Point;
       objSeries.PointStyle = pointStyle.Circle;
       objSeries.Title = "Slide";
@@ -692,7 +692,7 @@ export class ROPSummaryPlot extends Component {
         objSeries.Name = "ROP Slide (Offset)";
         objSeries.XAxisId = this.objChart_Combine.bottomAxis().Id;
         objSeries.YAxisId = this.objChart_Combine.leftAxis().Id;
-        objSeries.PointSize =2; //Nishant 27/08/2021
+        objSeries.PointSize = 2; //Nishant 27/08/2021
         objSeries.Type = dataSeriesType.Point;
         objSeries.PointStyle = pointStyle.Circle;
         objSeries.Title = "Slide (Offset)";
@@ -750,7 +750,7 @@ export class ROPSummaryPlot extends Component {
       objBrokerRequest.Parameters.push(paramwellId);
 
       //test depth range
-      //alert(this.selectionType);
+
       let paramSelectionType: BrokerParameter = new BrokerParameter(
         "SelectionType",
         this.selectionType
@@ -803,7 +803,7 @@ export class ROPSummaryPlot extends Component {
           let objData = JSON.parse(res.data.Response);
 
           this.Warnings = res.data.Warnings;
-          
+
 
 
           if (this.Warnings.trim() != "") {
@@ -832,7 +832,7 @@ export class ROPSummaryPlot extends Component {
             this.tripOutsString = strLabel.substring(0, strLabel.length - 1);
           }
           strLabel = "";
-          debugger;
+
           if (tripOutsOffset.length > 0) {
             for (let index = 0; index < tripOutsOffset.length; index++) {
               const objItem = Number(tripOutsOffset[index]).toFixed(2);
@@ -853,7 +853,7 @@ export class ROPSummaryPlot extends Component {
             objData.offsetDepthOut = -1;
 
           }
-          console.log("objROPSummaryData",objData);
+          console.log("objROPSummaryData", objData);
           this.setState({
             objROPSummaryData: objData,
             isProcess: false,
@@ -979,8 +979,8 @@ export class ROPSummaryPlot extends Component {
                   </div>
                 </div>
                 <div className="col-lg-12">
-           
-          </div>
+
+                </div>
               </div>
             </div>
 
@@ -1010,21 +1010,21 @@ export class ROPSummaryPlot extends Component {
                   </div>
                 </div>
               </div>
-              
+
             </div>
           </div>
         </div>
         {/* Nishant 28/08/2021 */}
         <div className="col-lg-12">
-            <div className="float-right mr-2">
-              <FontAwesomeIcon
-                icon={faUndo}
-                onClick={() => {
-                  this.refreshChart();
-                }}
-              />
-            </div>
+          <div className="float-right mr-2">
+            <FontAwesomeIcon
+              icon={faUndo}
+              onClick={() => {
+                this.refreshChart();
+              }}
+            />
           </div>
+        </div>
         {/* <div className="row">
           <div className="col-lg-12 eVumaxPanelTitle">
             <div>
@@ -1050,15 +1050,8 @@ export class ROPSummaryPlot extends Component {
         <div className="clearfix"></div>
         <hr />
 
-        <div className="row">
-          {/* <div className="col-lg-2"> */}
-
-
-
-
+        <div className="row" >
           <div style={{ width: "20%" }}>
-
-
             <div className="pieHeader">
               <div className="pieBody" style={{ textAlign: 'center' }}>
                 <h6 className="card-subtitle mb-2">Current Well - {this.state.objROPSummaryData.WellName} </h6>
@@ -1068,25 +1061,20 @@ export class ROPSummaryPlot extends Component {
             <div
               id="CurrentPie_Chart"
               style={{
-                height: "calc(28vh)",
-                // width: "calc(20vw)",
                 backgroundColor: "transparent",
+                height: "calc(23vh)",
                 marginLeft: "30px",
               }}
             ></div>
           </div>
 
-          {/* <div className="col-lg-5"> */}
           <div style={{ width: "40%" }}>
             <div
               id="rotarypointchart"
               style={{
-                height: "calc(28vh)",
-
-                //width: "calc(30vw)",
                 width: "100%",
+                height: "calc(23vh)",
                 backgroundColor: "transparent",
-                // float: "right",
                 marginLeft: "10px",
               }}
             ></div>
@@ -1101,16 +1089,12 @@ export class ROPSummaryPlot extends Component {
               }}
             />
           </div>
-          {/* <div className="col-lg-5"> */}
           <div style={{ width: "36%" }}>
             <div
               id="slidepointchart"
               style={{
-                //  height: "calc(100vh - 700px)",
-                // height: "90%",
-                height: "calc(28vh)",
-                //width: "calc(30vw)",
                 width: "100%",
+                height: "calc(23vh)",
                 backgroundColor: "transparent",
                 // float: "right",
                 marginLeft: "10px",
@@ -1148,7 +1132,7 @@ export class ROPSummaryPlot extends Component {
             <div
               id="OffsetPie_Chart"
               style={{
-                height: "calc(28vh)",
+                height: "calc(23vh)",
                 width: "100%",
                 backgroundColor: "transparent",
 
@@ -1175,24 +1159,14 @@ export class ROPSummaryPlot extends Component {
               style={{
                 textAlign: "center",
                 height: "40px",
-                width: "calc(30vw)",
+                width: "calc(76vw)",
                 backgroundColor: "transparent",
                 display: "inline-block",
               }}
             />
 
-            <div className="float-left">
-              <label className="float-left text-danger mr-2">
-                Main Well Trip outs :
-              </label>
-              {this.tripOutsString}
-            </div>
-            <div className="float-left">
-              <label className="float-left text-info ml-5 mr-2">
-                Offset Well Trip outs :
-              </label>
-              {this.tripOutsOffsetString}
-            </div>
+
+
           </div>
         </div>
 
@@ -1275,14 +1249,51 @@ export class ROPSummaryPlot extends Component {
 
           <div className="col-lg-9">
             <div style={{ width: "100%" }}>
+              {/* <div className="float-left">
+              <label className="float-left text-danger mr-2">
+                Main Well Trip outs :
+              </label>
+              {this.tripOutsString}
+            </div>
+            <div className="float-left">
+              <label className="float-left text-info ml-5 mr-2">
+                Offset Well Trip outs :
+              </label>
+              {this.tripOutsOffsetString}
+            </div> */}
+
+
+              <div className="container">
+                <div className="row">
+                  <div className="float-left">
+                    <label className="float-left text-danger mr-2">
+                      Main Well Trip outs :
+                    </label>
+                    {this.tripOutsString}
+                  </div>
+
+                </div>
+                <div className="row">
+                  <div className="float-left">
+                    <div>
+                      <label className="float-left text-info  mr-2">
+                        Offset Well Trip outs :
+                      </label>
+                      {this.tripOutsOffsetString}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
               <DataSelector {...this} />
-              <div id="warning" style={{ paddingBottom:"10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black",position:"absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
+              <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
             </div>
           </div>
         </div>
-        
-       
-      
+
+
+
       </div>
     );
   }

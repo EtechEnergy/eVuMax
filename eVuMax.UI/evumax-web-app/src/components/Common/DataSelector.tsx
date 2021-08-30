@@ -43,12 +43,22 @@ interface IState {
 }
 
 class DataSelector extends Component<IProps, IState> {
-  constructor(parentRef, props: any) {
+  //Changed by prath on 30-08-2021
+  // constructor(parentRef, props: any) {
+  //   super(props);
+  //   this.__parentRef = parentRef;
+  //   this.WellId = parentRef.WellId;
+  //   this.state = { selectedval: "0" };
+  // }
+
+
+  constructor(props: any) {
     super(props);
-    this.__parentRef = parentRef;
-    this.WellId = parentRef.WellId;
+    this.__parentRef = props;
+    this.WellId = props.WellId;
     this.state = { selectedval: "0" };
   }
+  //=========================
 
   WellId: string = "";
   Mnemonic: string = "DEPTH";
@@ -273,7 +283,7 @@ class DataSelector extends Component<IProps, IState> {
             }}
           >
             <div
-              id="selector_chart" 
+              id="selector_chart"
               style={{
                 //height: "100%",
                 height: "90px",
