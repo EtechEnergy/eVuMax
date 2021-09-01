@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/evumaxapp/static/css/main.c1fb2208.chunk.css",
-    "main.js": "/evumaxapp/static/js/main.d07863ee.chunk.js",
-    "main.js.map": "/evumaxapp/static/js/main.d07863ee.chunk.js.map",
+    "main.js": "/evumaxapp/static/js/main.76b3f354.chunk.js",
+    "main.js.map": "/evumaxapp/static/js/main.76b3f354.chunk.js.map",
     "runtime-main.js": "/evumaxapp/static/js/runtime-main.582f3784.js",
     "runtime-main.js.map": "/evumaxapp/static/js/runtime-main.582f3784.js.map",
     "static/css/2.6f9ce932.chunk.css": "/evumaxapp/static/css/2.6f9ce932.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.6f9ce932.chunk.css",
     "static/js/2.1cc65ac8.chunk.js",
     "static/css/main.c1fb2208.chunk.css",
-    "static/js/main.d07863ee.chunk.js"
+    "static/js/main.76b3f354.chunk.js"
   ]
 }

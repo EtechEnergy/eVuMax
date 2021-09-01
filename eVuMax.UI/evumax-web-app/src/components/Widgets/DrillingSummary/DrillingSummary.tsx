@@ -914,14 +914,14 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     let objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.RotaryTimePercent);
-    objPieData1.label = "RotaryTime : " + objPieData1.y + "%";
+    objPieData1.label = "RotaryTime: " + objPieData1.y + "%";
     objPieData1.color = this.getRigStateColor(0);
     objPieSeries.Data.push(objPieData1);
 
     //Fill up the data for data series
     objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.SlideTimePercent);
-    objPieData1.label = "SlideTime : " + objPieData1.y + "%";
+    objPieData1.label = "SlideTime: " + objPieData1.y + "%";
 
     objPieData1.color = this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData1);
@@ -952,14 +952,14 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     let objPieData2 = new ChartData();
     objPieData2.y = eval(this.state.objSummaryData.DrillingTimePercent);
-    objPieData2.label = "DrlgTime : " + objPieData2.y + "%";
+    objPieData2.label = "DrlgTime: " + objPieData2.y + "%";
     objPieData2.color = "green"; //this.getRigStateColor(0);
     objPieSeries.Data.push(objPieData2);
 
     //Fill up the data for data series
     objPieData2 = new ChartData();
     objPieData2.y = eval(this.state.objSummaryData.NonDrillingTimePercent);
-    objPieData2.label = "NonDrlgTime : " + objPieData2.y + "%";
+    objPieData2.label = "NonDrlgTime: " + objPieData2.y + "%";
 
     objPieData2.color = "blue"; //this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData2);
@@ -990,7 +990,7 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     let objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.OffsetRotaryTimePercent);
-    objPieData1.label = "RotaryTime : " + objPieData1.y + "%";
+    objPieData1.label = "RotaryTime: " + objPieData1.y + "%";
 
     objPieData1.color = this.getRigStateColor(0);
     objPieSeries.Data.push(objPieData1);
@@ -998,7 +998,7 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.OffsetSlideTimePercent);
-    objPieData1.label = "SlideTime : " + objPieData1.y + "%";
+    objPieData1.label = "SlideTime: " + objPieData1.y + "%";
 
     objPieData1.color = this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData1);
@@ -1029,7 +1029,7 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     let objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.OffsetDrillingTimePercent);
-    objPieData1.label = "RotaryTime : " + objPieData1.y + "%";
+    objPieData1.label = "RotaryTime: " + objPieData1.y + "%";
 
     objPieData1.color = "green";
     objPieSeries.Data.push(objPieData1);
@@ -1039,7 +1039,7 @@ export class DrillingSummary extends Component {
     objPieData1.y = eval(
       this.state.objSummaryData.OffsetNonDrillingTimePercent
     );
-    objPieData1.label = "SlideTime : " + objPieData1.y + "%";
+    objPieData1.label = "SlideTime: " + objPieData1.y + "%";
 
     objPieData1.color = "blue";
     objPieSeries.Data.push(objPieData1);
