@@ -465,7 +465,7 @@ class TripConnSummary extends Component {
     return (
       <>
 
-        <div className="row">
+        <div className="row ml-1 mr-1">
           <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
@@ -620,7 +620,7 @@ class TripConnSummary extends Component {
                   <div className="group-inline">
                     <div className="form-group">
                       <label className="summaryLabelHeader-long">
-                        Positive Cash Flow $
+                        Positive Cash Flow
                       </label>
                       <label className="summaryLabel" id="txtPositiveFlow">
                         {this.state.PositiveFlow}
@@ -628,7 +628,7 @@ class TripConnSummary extends Component {
                     </div>
                     <div className="form-group">
                       <label className="summaryLabelHeader-long">
-                        Negative Cash Flow $
+                        Negative Cash Flow
                       </label>
                       <label className="summaryLabel" id="txtNegativeFlow">
                         {this.state.NegativeFlow}
@@ -636,7 +636,7 @@ class TripConnSummary extends Component {
                     </div>
                     <div className="form-group">
                       <label className="summaryLabelHeader-long">
-                        Net Cash Flow $
+                        Net Cash Flow
                       </label>
                       <label className="summaryLabel" id="txtNetFlow">
                         {this.state.NetFlow}
@@ -934,25 +934,25 @@ class TripConnSummary extends Component {
               <div className="row">
                 <div className="col-lg-6">
                   <br />
-                  <label className="summaryLabelHeader-long">
+                  <label className="summaryLabelHeader-long mr-3">
                     Slips to Slip Time
                   </label>
                   <span>
                     <NumericTextBox
                       format="n2"
-                      width="100px"
+                      width="80px"
                       value={this.state.STSBenchMark}
                       onChange={(event) => {
                         this.setState({ STSBenchMark: event.target.value });
                       }}
                     />
-                    minutes
+                    <label className="ml-3"> minutes</label>
                   </span>
 
                   <br />
                 </div>
                 <div className="col-lg-6">
-                  <label className="summaryLabelHeader-long">
+                  <label className="summaryLabelHeader-long mr-3">
                     Target Conn. Time
                   </label>
                   <span className="mr-3">
@@ -964,11 +964,11 @@ class TripConnSummary extends Component {
                         this.setState({ TargetTime: event.target.value });
                       }}
                     />
-                    minutes
+                    <label className="ml-3"> minutes</label>
                   </span>
                   <br />
-                  <label className="summaryLabelHeader-long">
-                    Rig Cost/Day $
+                  <label className="summaryLabelHeader-long mr-3">
+                    Rig Cost/Day
                   </label>
                   <span>
                     <NumericTextBox

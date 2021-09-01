@@ -18,7 +18,6 @@ import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
-
 import { axisLabelStyle, Axis } from "../../../eVuMaxObjects/Chart/Axis";
 import { exit } from "process";
 //import Moment from "react-moment";
@@ -158,7 +157,7 @@ export class DrillingSummary extends Component {
     this.objChart.rightAxis().Visible = false;
 
     this.objChart.MarginLeft = 10;
-    this.objChart.MarginBottom = 40;
+    this.objChart.MarginBottom = 20;
     this.objChart.MarginTop = 20;
     this.objChart.MarginRight = 10;
 
@@ -200,8 +199,8 @@ export class DrillingSummary extends Component {
     this.objChart_Distance.rightAxis().ShowLabels = false;
     this.objChart_Distance.rightAxis().ShowTitle = false;
 
-    this.objChart_Distance.MarginLeft = 70;
-    this.objChart_Distance.MarginBottom = 40;
+    this.objChart_Distance.MarginLeft = 20;
+    this.objChart_Distance.MarginBottom = 20;
     this.objChart_Distance.MarginTop = 20;
     this.objChart_Distance.MarginRight = 10;
 
@@ -244,8 +243,8 @@ export class DrillingSummary extends Component {
     this.objChart_Time.rightAxis().ShowLabels = false;
     this.objChart_Time.rightAxis().ShowTitle = false;
 
-    this.objChart_Time.MarginLeft = 70;
-    this.objChart_Time.MarginBottom = 40;
+    this.objChart_Time.MarginLeft = 20;
+    this.objChart_Time.MarginBottom = 20;
     this.objChart_Time.MarginTop = 20;
     this.objChart_Time.MarginRight = 10;
 
@@ -321,7 +320,7 @@ export class DrillingSummary extends Component {
     this.objChart_ROPLine.rightAxis().Visible = false;
     this.objChart_ROPLine.rightAxis().ShowLabels = false;
 
-    this.objChart_ROPLine.MarginLeft = 70;
+    this.objChart_ROPLine.MarginLeft = 20;
     this.objChart_ROPLine.MarginBottom = 10;
     this.objChart_ROPLine.MarginTop = 10;
     this.objChart_ROPLine.MarginRight = 10;
@@ -644,7 +643,7 @@ export class DrillingSummary extends Component {
       objDistancePoint.x = 0;
       objDistancePoint.y = eval(this.state.objSummaryData.RotaryFootage);
       objDistancePoint.color = this.getRigStateColor(0);
-      objDistancePoint.label = "Rotary";
+      objDistancePoint.labelX = "Rotary";
       objDistance.Data.push(objDistancePoint);
 
       this.objChart_Distance.bottomAxis().Labels.push("Rotary");
@@ -654,7 +653,7 @@ export class DrillingSummary extends Component {
       objDistancePoint.x = 1;
       objDistancePoint.y = eval(this.state.objSummaryData.RotaryFootageOffset);
       objDistancePoint.color = this.getRigStateColor(0);
-      objDistancePoint.label = "Rotary";
+      objDistancePoint.labelX = "Rotary Offset";
       objDistance.Data.push(objDistancePoint);
       this.objChart_Distance.bottomAxis().Labels.push("Rotary Offset");
 
@@ -663,7 +662,7 @@ export class DrillingSummary extends Component {
       objDistancePoint.x = 2;
       objDistancePoint.y = eval(this.state.objSummaryData.SlideFootage);
       objDistancePoint.color = this.getRigStateColor(1);
-      objDistancePoint.label = "Slide";
+      objDistancePoint.labelX = "Slide";
       objDistance.Data.push(objDistancePoint);
       this.objChart_Distance.bottomAxis().Labels.push("Slide");
 
@@ -674,7 +673,7 @@ export class DrillingSummary extends Component {
         formatNumber(this.state.objSummaryData.SlideFootageOffset, "n2")
       );
       objDistancePoint.color = this.getRigStateColor(1);
-      objDistancePoint.label = "Slide";
+      objDistancePoint.labelX = "Slide Offset";
       objDistance.Data.push(objDistancePoint);
       this.objChart_Distance.bottomAxis().Labels.push("Slide Offset");
 
@@ -727,6 +726,7 @@ export class DrillingSummary extends Component {
       let objROPPoint = new ChartData();
       objROPPoint.x = 0;
       objROPPoint.y = eval(this.state.objNumericData.ROP_Rotary);
+      objROPPoint.labelX = "Rotary";
       objROPPoint.color = this.getRigStateColor(0);
       this.objChart.bottomAxis().Labels.push("Rotary");
 
@@ -738,6 +738,7 @@ export class DrillingSummary extends Component {
       objROPPoint.y = eval(
         formatNumber(this.state.objOffsetNumericData.ROP_Rotary, "n2")
       );
+      objROPPoint.labelX = "Rotary Offset";
       objROPPoint.color = this.getRigStateColor(0);
       objROP.Data.push(objROPPoint);
       this.objChart.bottomAxis().Labels.push("Rotary Offset");
@@ -747,6 +748,7 @@ export class DrillingSummary extends Component {
       objROPPoint.x = 2;
       objROPPoint.y = eval(this.state.objNumericData.ROP_Slide);
       objROPPoint.color = this.getRigStateColor(1);
+      objROPPoint.labelX = "Slide";
       objROP.Data.push(objROPPoint);
       this.objChart.bottomAxis().Labels.push("Slide");
 
@@ -756,6 +758,7 @@ export class DrillingSummary extends Component {
       objROPPoint.y = eval(
         formatNumber(this.state.objOffsetNumericData.ROP_Slide, "n2")
       );
+      objROPPoint.labelX = "Slide Offset";
       objROPPoint.color = this.getRigStateColor(1);
       this.objChart.bottomAxis().Labels.push("Slide Offset");
 
@@ -811,9 +814,6 @@ export class DrillingSummary extends Component {
 
       this.objChart_Time.DataSeries.set(objTime.Id, objTime);
 
-      // let timeArr: any = this.state.objNumericData.Time_Rotary.substring(1, this.state.objNumericData.Time_Rotary.length - 1).split(":");
-      // let timeInSec: number = (eval(timeArr[0]) * 24 * 60 * 60 + eval(timeArr[1]) * 60 * 60 + eval(timeArr[2]) * 60 + eval(timeArr[3]));
-
       //Fill up the data for data series
       let objROPPoint = new ChartData();
 
@@ -821,6 +821,8 @@ export class DrillingSummary extends Component {
       objROPPoint.y = Number(
         Number(this.state.objSummaryData.RotaryTime / (60 * 60)).toFixed(2)
       ); // in hrs;
+      objROPPoint.labelX = "Rotary";
+      objROPPoint.labelY = utilFunc.convertSecondsToDayHrsMin(this.state.objSummaryData.RotaryTime);
       objROPPoint.color = this.getRigStateColor(0);
       objTime.Data.push(objROPPoint);
       this.objChart_Time.bottomAxis().Labels.push("Rotary");
@@ -833,28 +835,23 @@ export class DrillingSummary extends Component {
           2
         )
       ); // in hrs;
-
-
-      //wip 31-08-2021 prath  99999999999
-      let timeInHrs: number = Number(Number(this.state.objSummaryData.RotaryTimeOffset / (60 * 60)).toFixed(2));
-      let days: number = Number(Number(timeInHrs / 24).toFixed(0));
-      timeInHrs = timeInHrs - (days * 24);
-      //let hrs :number  = Number(timeInHrs / 24).toFixed(0);
-
-
-      //
-
-
+      objROPPoint.labelX = "Rotary Offset";
+      objROPPoint.labelY = utilFunc.convertSecondsToDayHrsMin(this.state.objSummaryData.RotaryTimeOffset);
       objROPPoint.color = this.getRigStateColor(0);
       this.objChart_Time.bottomAxis().Labels.push("Rotary Offset");
       objTime.Data.push(objROPPoint);
 
+
+
+      //Slide Time 
       //Fill up the data for data series
       objROPPoint = new ChartData();
       objROPPoint.x = 2;
       objROPPoint.y = Number(
         Number(this.state.objSummaryData.SlideTime / (60 * 60)).toFixed(2)
       ); // in hrs;
+      objROPPoint.labelX = "Slide";
+      objROPPoint.labelY = utilFunc.convertSecondsToDayHrsMin(this.state.objSummaryData.SlideTime);
 
       objROPPoint.color = this.getRigStateColor(1);
       objTime.Data.push(objROPPoint);
@@ -866,6 +863,8 @@ export class DrillingSummary extends Component {
       objROPPoint.y = Number(
         Number(this.state.objSummaryData.SlideTimeOffset / (60 * 60)).toFixed(2)
       ); // in hrs;
+      objROPPoint.labelX = "Slide Offset";
+      objROPPoint.labelY = utilFunc.convertSecondsToDayHrsMin(this.state.objSummaryData.SlideTimeOffset);
 
       objROPPoint.color = this.getRigStateColor(1);
       this.objChart_Time.bottomAxis().Labels.push("Slide Offset");
@@ -915,14 +914,14 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     let objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.RotaryTimePercent);
-    objPieData1.label = "RotaryTime : " + objPieData1.y + "%";
+    objPieData1.label = "RotaryTime: " + objPieData1.y + "%";
     objPieData1.color = this.getRigStateColor(0);
     objPieSeries.Data.push(objPieData1);
 
     //Fill up the data for data series
     objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.SlideTimePercent);
-    objPieData1.label = "SlideTime : " + objPieData1.y + "%";
+    objPieData1.label = "SlideTime: " + objPieData1.y + "%";
 
     objPieData1.color = this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData1);
@@ -953,14 +952,14 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     let objPieData2 = new ChartData();
     objPieData2.y = eval(this.state.objSummaryData.DrillingTimePercent);
-    objPieData2.label = "DrlgTime : " + objPieData2.y + "%";
+    objPieData2.label = "DrlgTime: " + objPieData2.y + "%";
     objPieData2.color = "green"; //this.getRigStateColor(0);
     objPieSeries.Data.push(objPieData2);
 
     //Fill up the data for data series
     objPieData2 = new ChartData();
     objPieData2.y = eval(this.state.objSummaryData.NonDrillingTimePercent);
-    objPieData2.label = "NonDrlgTime : " + objPieData2.y + "%";
+    objPieData2.label = "NonDrlgTime: " + objPieData2.y + "%";
 
     objPieData2.color = "blue"; //this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData2);
@@ -991,7 +990,7 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     let objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.OffsetRotaryTimePercent);
-    objPieData1.label = "RotaryTime : " + objPieData1.y + "%";
+    objPieData1.label = "RotaryTime: " + objPieData1.y + "%";
 
     objPieData1.color = this.getRigStateColor(0);
     objPieSeries.Data.push(objPieData1);
@@ -999,7 +998,7 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.OffsetSlideTimePercent);
-    objPieData1.label = "SlideTime : " + objPieData1.y + "%";
+    objPieData1.label = "SlideTime: " + objPieData1.y + "%";
 
     objPieData1.color = this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData1);
@@ -1030,7 +1029,7 @@ export class DrillingSummary extends Component {
     //Fill up the data for data series
     let objPieData1 = new ChartData();
     objPieData1.y = eval(this.state.objSummaryData.OffsetDrillingTimePercent);
-    objPieData1.label = "RotaryTime : " + objPieData1.y + "%";
+    objPieData1.label = "RotaryTime: " + objPieData1.y + "%";
 
     objPieData1.color = "green";
     objPieSeries.Data.push(objPieData1);
@@ -1040,7 +1039,7 @@ export class DrillingSummary extends Component {
     objPieData1.y = eval(
       this.state.objSummaryData.OffsetNonDrillingTimePercent
     );
-    objPieData1.label = "SlideTime : " + objPieData1.y + "%";
+    objPieData1.label = "SlideTime: " + objPieData1.y + "%";
 
     objPieData1.color = "blue";
     objPieSeries.Data.push(objPieData1);

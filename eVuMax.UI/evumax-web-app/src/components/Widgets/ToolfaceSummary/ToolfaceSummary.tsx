@@ -1025,8 +1025,8 @@ class ToolfaceSummary extends Component {
               "stroke",
               util.rgb2hex(this.objUserSettings.GeoDrlgWindowColor)
             ) //Nishant 28/07/2021
-            .style("filter", "opacity("+ ( 100 -this.objUserSettings.GeoDrlgWindowTrans )+"%)"); //Kuldip 28/08/2021
-            
+            .style("filter", "opacity(" + (100 - this.objUserSettings.GeoDrlgWindowTrans) + "%)"); //Kuldip 28/08/2021
+
         }
 
       }
@@ -1233,7 +1233,7 @@ class ToolfaceSummary extends Component {
               util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
             )
             //.style("opacity", (this.objUserSettings.ROPDrlgWindowTrans / 100)); //Nishant 28/07/2021
-            .style("filter", "opacity("+ ( 100 -this.objUserSettings.ROPDrlgWindowTrans )+"%)"); //Kuldip 28/08/2021
+            .style("filter", "opacity(" + (100 - this.objUserSettings.ROPDrlgWindowTrans) + "%)"); //Kuldip 28/08/2021
         }
       }
 
@@ -2474,7 +2474,8 @@ class ToolfaceSummary extends Component {
 
     return (
       <>
-        <div className="row">
+        <div className="row ml-1 mr-1">
+
           <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>

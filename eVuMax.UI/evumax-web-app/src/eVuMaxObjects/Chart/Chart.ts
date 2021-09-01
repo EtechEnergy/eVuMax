@@ -2171,13 +2171,25 @@ export class Chart {
                 //   "</p>";
 
               } else {
-                strText =
-                  strText +
-                  " <p style='color:white;padding:0px;margin:0px'>" +
-                  objAxis.Title +
-                  ":  " +
-                  objSeries.Data[index].x +
-                  "</p>";
+
+                if (objSeries.Data[index].labelX != "") {
+
+                  strText =
+                    strText +
+                    " <p style='color:white;padding:0px;margin:0px'>" +
+
+                    objSeries.Data[index].labelX +
+                    "</p>";
+                } else {
+                  strText =
+                    strText +
+                    " <p style='color:white;padding:0px;margin:0px'>" +
+                    objAxis.Title +
+                    ":  " +
+                    objSeries.Data[index].x +
+                    "</p>";
+                }
+
               }
 
 
@@ -2192,15 +2204,29 @@ export class Chart {
 
         if (objSeries.XAxisId == axisId) {
           if (index >= 0 && index < objSeries.Data.length) {
-            strText =
-              strText +
-              " <p style='color:" +
-              objSeries.Color +
-              ";padding:0px;margin:0px '>" +
-              objSeries.Title +
-              ":  " +
-              objSeries.Data[index].y +
-              "</p>";
+
+            if (objSeries.Data[index].labelY != "") {
+
+              strText =
+                strText +
+                " <p style='color:" +
+                objSeries.Color +
+                ";padding:0px;margin:0px '>" +
+                objSeries.Data[index].labelY +
+                "</p>";
+            } else {
+              strText =
+                strText +
+                " <p style='color:" +
+                objSeries.Color +
+                ";padding:0px;margin:0px '>" +
+                objSeries.Title +
+                ":  " +
+                objSeries.Data[index].y +
+                "</p>";
+            }
+
+
           }
         }
       }

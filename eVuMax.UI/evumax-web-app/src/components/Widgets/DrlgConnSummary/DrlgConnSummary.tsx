@@ -685,7 +685,7 @@ class DrlgConnSummary extends Component {
   render() {
     return (
       <>
-        <div className="row">
+        <div className="row ml-1 mr-1">
           <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
@@ -918,7 +918,7 @@ class DrlgConnSummary extends Component {
                       <div className="form-group">
                         <div className="form-group">
                           <label className="summaryLabelHeader-long">
-                            Positive Cash Flow $
+                            Positive Cash Flow
                           </label>
                           <label className="summaryLabel" id="txtPositiveFlow">
                             {this.state.PositiveFlow}
@@ -926,7 +926,7 @@ class DrlgConnSummary extends Component {
                         </div>
                         <div className="form-group">
                           <label className="summaryLabelHeader-long">
-                            Negative Cash Flow $
+                            Negative Cash Flow
                           </label>
                           <label className="summaryLabel" id="txtNegativeFlow">
                             {this.state.NegativeFlow}
@@ -934,7 +934,7 @@ class DrlgConnSummary extends Component {
                         </div>
                         <div className="form-group">
                           <label className="summaryLabelHeader-long">
-                            Net Cash Flow $
+                            Net Cash Flow
                           </label>
                           <label className="summaryLabel" id="txtNetFlow">
                             {this.state.NetFlow}
@@ -944,7 +944,7 @@ class DrlgConnSummary extends Component {
                       <h6 className="summaryGroupHeader">STS Flow</h6>
                       <div className="form-group">
                         <label className="summaryLabelHeader-long">
-                          Positive Cash Flow $
+                          Positive Cash Flow
                         </label>
                         <label className="summaryLabel" id="txtSTSPositiveFlow">
                           {this.state.PositiveSTSFlow}
@@ -952,7 +952,7 @@ class DrlgConnSummary extends Component {
                       </div>
                       <div className="form-group">
                         <label className="summaryLabelHeader-long">
-                          Negative Cash Flow $
+                          Negative Cash Flow
                         </label>
                         <label className="summaryLabel" id="txtSTSNegativeFlow">
                           {this.state.NegativeSTSFlow}
@@ -960,7 +960,7 @@ class DrlgConnSummary extends Component {
                       </div>
                       <div className="form-group">
                         <label className="summaryLabelHeader-long">
-                          Net Cash Flow $
+                          Net Cash Flow
                         </label>
                         <label className="summaryLabel" id="txtSTSNetFlow">
                           {this.state.NetSTSFlow}
@@ -1383,10 +1383,10 @@ class DrlgConnSummary extends Component {
                       <label className="summaryLabelHeader-long">
                         Connection Time
                       </label>
-                      <span>
+                      <span style={{ marginLeft: "10px" }}>
                         <NumericTextBox
                           format="n2"
-                          width="100px"
+                          width="80px"
                           value={this.state.DrlgBenchMark}
                           onChange={(event) => {
                             this.setState({
@@ -1394,39 +1394,40 @@ class DrlgConnSummary extends Component {
                             });
                           }}
                         />
-                        minutes
+                        <label className="ml-3"> minutes</label>
+
                       </span>
                       <br />
 
                       <label className="summaryLabelHeader-long">
                         Bottom to Slips Time
                       </label>
-                      <span>
+                      <span style={{ marginLeft: "10px" }}>
                         <NumericTextBox
                           format="n2"
-                          width="100px"
+                          width="80px"
                           value={this.state.BTSBenchMark}
                           onChange={(event) => {
                             this.setState({ BTSBenchMark: event.target.value });
                           }}
                         />
-                        minutes
+                        <label className="ml-3"> minutes</label>
                       </span>
 
                       <br />
                       <label className="summaryLabelHeader-long">
                         Slips to Slip Time
                       </label>
-                      <span>
+                      <span style={{ marginLeft: "10px" }}>
                         <NumericTextBox
                           format="n2"
-                          width="100px"
+                          width="80px"
                           value={this.state.STSBenchMark}
                           onChange={(event) => {
                             this.setState({ STSBenchMark: event.target.value });
                           }}
                         />
-                        minutes
+                        <label className="ml-3"> minutes</label>
                       </span>
 
                       <br />
@@ -1434,41 +1435,41 @@ class DrlgConnSummary extends Component {
                       <label className="summaryLabelHeader-long">
                         Slip To Bottom Time
                       </label>
-                      <span>
+                      <span style={{ marginLeft: "10px" }}>
                         <NumericTextBox
                           format="n2"
-                          width="100px"
+                          width="80px"
                           value={this.state.STBBenchMark}
                           onChange={(event) => {
                             this.setState({ STBBenchMark: event.target.value });
                           }}
                         />
-                        minutes
+                        <label className="ml-3"> minutes</label>
                       </span>
                     </div>
                     <div className="col-lg-6">
                       <label className="summaryLabelHeader-long">
                         Target Conn. Time
                       </label>
-                      <span className="mr-3">
+                      <span style={{ marginLeft: "10px" }} className="mr-3">
                         <NumericTextBox
                           format="n2"
-                          width="100px"
+                          width="80px"
                           value={this.state.TargetTime}
                           onChange={(event) => {
                             this.setState({ TargetTime: event.target.value });
                           }}
                         />
-                        minutes
+                        <label className="ml-3"> minutes</label>
                       </span>
                       <br />
                       <label className="summaryLabelHeader-long">
-                        Rig Cost/Day $
+                        Rig Cost/Day
                       </label>
-                      <span>
+                      <span style={{ marginLeft: "10px" }}>
                         <NumericTextBox
                           format="n2"
-                          width="100px"
+                          width="80px"
                           value={this.state.RigCost}
                           onChange={(event) => {
                             this.setState({ RigCost: event.target.value });
@@ -1971,7 +1972,7 @@ class DrlgConnSummary extends Component {
             .attr("width", x2 - x1)
             .attr("height", y2 - y1)
             .style("fill", "#189AB4");
-            // .style("opacity", 0.5);
+          // .style("opacity", 0.5);
         }
       }
     } catch (error) { }
