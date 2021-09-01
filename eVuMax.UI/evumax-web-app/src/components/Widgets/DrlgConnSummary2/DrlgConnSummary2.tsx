@@ -564,7 +564,7 @@ class DrlgConnSummary2 extends Component {
   render() {
     return (
       <>
-        <div className="row">
+        <div className="row ml-1 mr-1">
           <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
@@ -823,7 +823,7 @@ class DrlgConnSummary2 extends Component {
                   <div className="form-group">
                     <div className="form-group">
                       <label className="summaryLabelHeader-long">
-                        Positive Cash Flow $
+                        Positive Cash Flow
                       </label>
                       <label className="summaryLabel" id="txtPositiveFlow">
                         {this.state.PositiveFlow}
@@ -831,7 +831,7 @@ class DrlgConnSummary2 extends Component {
                     </div>
                     <div className="form-group">
                       <label className="summaryLabelHeader-long">
-                        Negative Cash Flow $
+                        Negative Cash Flow
                       </label>
                       <label className="summaryLabel" id="txtNegativeFlow">
                         {this.state.NegativeFlow}
@@ -839,7 +839,7 @@ class DrlgConnSummary2 extends Component {
                     </div>
                     <div className="form-group">
                       <label className="summaryLabelHeader-long">
-                        Net Cash Flow $
+                        Net Cash Flow
                       </label>
                       <label className="summaryLabel" id="txtNetFlow">
                         {this.state.NetFlow}
@@ -850,7 +850,7 @@ class DrlgConnSummary2 extends Component {
 
                   <div className="form-group">
                     <label className="summaryLabelHeader-long">
-                      Positive Cash Flow $
+                      Positive Cash Flow
                     </label>
                     <label className="summaryLabel" id="txtSTSPositiveFlow">
                       {this.state.PositiveSTSFlow}
@@ -858,7 +858,7 @@ class DrlgConnSummary2 extends Component {
                   </div>
                   <div className="form-group">
                     <label className="summaryLabelHeader-long">
-                      Negative Cash Flow $
+                      Negative Cash Flow
                     </label>
                     <label className="summaryLabel" id="txtSTSNegativeFlow">
                       {this.state.NegativeSTSFlow}
@@ -867,7 +867,7 @@ class DrlgConnSummary2 extends Component {
 
                   <div className="form-group">
                     <label className="summaryLabelHeader-long">
-                      Net Cash Flow $
+                      Net Cash Flow
                     </label>
                     <label className="summaryLabel" id="txtSTSNetFlow">
                       {this.state.NetSTSFlow}
@@ -1251,7 +1251,7 @@ class DrlgConnSummary2 extends Component {
                   <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
-                      width="100px"
+                      width="80px"
                       value={this.state.DrlgBenchMark}
                       onChange={(event) => {
                         this.setState({ DrlgBenchMark: event.target.value });
@@ -1267,7 +1267,7 @@ class DrlgConnSummary2 extends Component {
                   <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
-                      width="100px"
+                      width="80px"
                       value={this.state.BTSBenchMark}
                       onChange={(event) => {
                         this.setState({ BTSBenchMark: event.target.value });
@@ -1283,7 +1283,7 @@ class DrlgConnSummary2 extends Component {
                   <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
-                      width="100px"
+                      width="80px"
                       value={this.state.STSBenchMark}
                       onChange={(event) => {
                         this.setState({ STSBenchMark: event.target.value });
@@ -1300,7 +1300,7 @@ class DrlgConnSummary2 extends Component {
                   <span style={{ paddingLeft: "15px" }}>
                     <NumericTextBox
                       format="n2"
-                      width="100px"
+                      width="80px"
                       value={this.state.STBBenchMark}
                       onChange={(event) => {
                         this.setState({ STBBenchMark: event.target.value });
@@ -1338,8 +1338,6 @@ class DrlgConnSummary2 extends Component {
                       }}
                     />
                   </span>
-                  <span style={{ paddingLeft: "15px" }} > $</span>
-
                   <br />
                   <br />
                   <span>
