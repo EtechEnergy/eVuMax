@@ -36,6 +36,7 @@ export class StackedBarSeries {
 			}
 
 			if (isDateTimeScale) {
+
 				this.redrawDateTime();
 			} else {
 				this.redrawNumeric();
