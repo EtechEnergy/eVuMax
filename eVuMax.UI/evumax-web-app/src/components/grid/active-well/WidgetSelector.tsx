@@ -170,7 +170,7 @@ export default class WidgetSelector extends React.Component<IProps> {
     utilFunc.launchWidget(props.id, this.currentWellID);
   };
   AddtoFavourite = (props) => {
-    debugger;
+
     try {
       //values are stored in this.state.value as array
 

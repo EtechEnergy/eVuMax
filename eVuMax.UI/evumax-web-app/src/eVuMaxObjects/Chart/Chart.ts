@@ -2173,7 +2173,7 @@ export class Chart {
               } else {
 
                 if (objSeries.Data[index].labelX != "") {
-                  debugger;
+
                   strText =
                     strText +
                     " <p style='color:white;padding:0px;margin:0px'>" +
@@ -2204,9 +2204,9 @@ export class Chart {
 
         if (objSeries.XAxisId == axisId) {
           if (index >= 0 && index < objSeries.Data.length) {
-            debugger;
+
             if (objSeries.Data[index].labelY != "") {
-              debugger;
+
               strText =
                 strText +
                 " <p style='color:" +
