@@ -1057,6 +1057,7 @@ class TripConnSummary extends Component {
       Util.StatusInfo("Please wait, plotting data");
       this.objChart.DataSeries.clear();
       this.objChart.updateChart();
+      this.objChart.ShowLegend = true;
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;
@@ -1155,6 +1156,7 @@ class TripConnSummary extends Component {
 
       this.objChart.DataSeries.clear();
       this.objChart.updateChart();
+      this.objChart.ShowLegend = false;
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;
@@ -1177,6 +1179,9 @@ class TripConnSummary extends Component {
       this.objChart.rightAxis().ShowTitle = false;
       this.objChart.rightAxis().Title = "Cost";
       this.objChart.rightAxis().Inverted = true;
+
+
+
 
       //Add new serieses
 
@@ -1230,6 +1235,7 @@ class TripConnSummary extends Component {
 
       this.objChart.DataSeries.clear();
       //this.objChart.updateChart();
+      this.objChart.ShowLegend = true;
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;
@@ -1335,6 +1341,7 @@ class TripConnSummary extends Component {
 
       this.objChart.DataSeries.clear();
       this.objChart.updateChart();
+      this.objChart.ShowLegend = false;
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;

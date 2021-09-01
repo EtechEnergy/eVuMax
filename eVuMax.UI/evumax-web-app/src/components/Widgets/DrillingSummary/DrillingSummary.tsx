@@ -833,6 +833,18 @@ export class DrillingSummary extends Component {
           2
         )
       ); // in hrs;
+
+
+      //wip 31-08-2021 prath  99999999999
+      let timeInHrs: number = Number(Number(this.state.objSummaryData.RotaryTimeOffset / (60 * 60)).toFixed(2));
+      let days: number = Number(Number(timeInHrs / 24).toFixed(0));
+      timeInHrs = timeInHrs - (days * 24);
+      //let hrs :number  = Number(timeInHrs / 24).toFixed(0);
+
+
+      //
+
+
       objROPPoint.color = this.getRigStateColor(0);
       this.objChart_Time.bottomAxis().Labels.push("Rotary Offset");
       objTime.Data.push(objROPPoint);

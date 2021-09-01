@@ -159,7 +159,7 @@ export class TripSpeedPlot2 extends Component {
     objSeries.XAxisId = this.objChart_TripSpeed2.bottomAxis().Id;
     objSeries.YAxisId = this.objChart_TripSpeed2.leftAxis().Id;
     objSeries.Title = "Trip Speed W/o Connection";
-    objSeries.Color = "#228B22" ;//"#69F0AE";
+    objSeries.Color = "#228B22";//"#69F0AE";
     objSeries.ShowInLegend = true;
     this.objChart_TripSpeed2.DataSeries.set(objSeries.Id, objSeries);
 
@@ -410,7 +410,7 @@ export class TripSpeedPlot2 extends Component {
                       style={{
                         textAlign: "center",
                         height: "40px",
-                        width: "calc(80vw )",
+                        width: "calc(90vw )",
                         backgroundColor: "transparent",
                         display: "inline-block",
                       }}
