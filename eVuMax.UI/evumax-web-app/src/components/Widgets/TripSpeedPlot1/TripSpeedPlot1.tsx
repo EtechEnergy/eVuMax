@@ -116,9 +116,9 @@ export class TripSpeedPlot1 extends Component {
       this.objChart_TripSpeed.bottomAxis().IsDateTime = false;
       this.objChart_TripSpeed.bottomAxis().Visible = true;
 
-      this.objChart_TripSpeed.MarginLeft = 55;
-      this.objChart_TripSpeed.MarginBottom = 75;
-      this.objChart_TripSpeed.MarginTop = 50;
+      this.objChart_TripSpeed.MarginLeft = 10;
+      this.objChart_TripSpeed.MarginBottom = 5;
+      this.objChart_TripSpeed.MarginTop = 10;
       this.objChart_TripSpeed.MarginRight = 20;
 
       this.objChart_TripSpeed.initialize();
@@ -263,7 +263,7 @@ export class TripSpeedPlot1 extends Component {
 
       let maxBenchMarkWO = this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection
       let maxBenchMarkWithConn = this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection
-      
+
       let max = 0;
       if (maxTripSpeed > maxTripSpeedWO) {
         max = maxTripSpeed;
@@ -965,7 +965,7 @@ export class TripSpeedPlot1 extends Component {
                     <div
                       id="ChartTripSpeed"
                       style={{
-                        height: "calc(75vh)",
+                        height: "calc(70vh)",
 
                         width: "calc(30vw)",
 
@@ -979,7 +979,7 @@ export class TripSpeedPlot1 extends Component {
                       style={{
                         textAlign: "justify",
                         height: "40px",
-                        marginLeft:"10px",
+                        marginLeft: "10px",
                         width: "calc(30vw)",
                         backgroundColor: "transparent",
                         display: "inline-block",
@@ -990,7 +990,7 @@ export class TripSpeedPlot1 extends Component {
                     <div
                       id="BarWOConn"
                       style={{
-                        height: "calc(75vh)",
+                        height: "calc(70vh)",
                         width: "calc(30vw)",
                         // float: "left",
                         backgroundColor: "transparent",
@@ -1013,7 +1013,7 @@ export class TripSpeedPlot1 extends Component {
                     <div
                       id="BarWithConn"
                       style={{
-                        height: "calc(75vh)",
+                        height: "calc(70vh)",
 
                         width: "calc(30vw)",
                         backgroundColor: "transparent",
