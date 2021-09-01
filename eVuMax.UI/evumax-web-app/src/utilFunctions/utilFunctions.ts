@@ -14,7 +14,7 @@ export function setComboValue(paramComboBox: any, paramValue: string) {
       }
       index += 1;
     });
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export function convertMapToDictionaryJSON(paramValue: any, keyField?: string) {
@@ -54,9 +54,9 @@ export function rgb2hex(rgb: any) {
   );
   return rgb && rgb.length === 4
     ? "#" +
-        ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2)
+    ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+    ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+    ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2)
     : "";
 }
 
@@ -131,7 +131,7 @@ export function getWidgetList() {
     ];
 
     return WidgetList;
-  } catch (error) {}
+  } catch (error) { }
 }
 export function launchWidget(interfaceID: string, wellID: string) {
   try {
@@ -169,7 +169,7 @@ export function launchWidget(interfaceID: string, wellID: string) {
     if (interfaceID === "Broomstick") {
       history.push("Broomstick/" + wellID);
     }
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export function parseJSON(pString: string) {
@@ -190,15 +190,40 @@ export function getRandomColor() {
   return color;
 }
 
-export function convertSecondsToDayHoursMinSec(paramSeconds:string){
+export function convertSecondsToDayHoursMinSec(paramSeconds: string) {
   var seconds = parseInt(paramSeconds, 10);
 
-  var days = Math.floor(seconds / (3600*24));
-  seconds  -= days*3600*24;
-  var hrs   = Math.floor(seconds / 3600);
-  seconds  -= hrs*3600;
+  var days = Math.floor(seconds / (3600 * 24));
+  seconds -= days * 3600 * 24;
+  var hrs = Math.floor(seconds / 3600);
+  seconds -= hrs * 3600;
   var mnts = Math.floor(seconds / 60);
-  seconds  -= mnts*60;
-    
-  return days +" days, "+hrs+" Hrs, "+mnts+" Minutes, "+seconds+" Seconds";
+  seconds -= mnts * 60;
+
+  return days + " days, " + hrs + " Hrs, " + mnts + " Minutes, " + seconds + " Seconds";
+}
+
+export function convertSecondsToDayHrsMin(seconds) {
+  seconds = seconds || 0;
+  seconds = Number(seconds);
+  seconds = Math.abs(seconds);
+
+  const d = Math.floor(seconds / (3600 * 24));
+  const h = Math.floor(seconds % (3600 * 24) / 3600);
+  const m = Math.floor(seconds % 3600 / 60);
+  const s = Math.floor(seconds % 60);
+  const parts = [];
+
+
+  //parts.push(d + ' day' + (d > 1 ? 's' : ''));
+  parts.push(d);
+  parts.push(h);
+  parts.push(m);
+
+
+  // if (s > 0) {
+  //   parts.push(s);
+  // }
+
+  return "[" + parts.join(':') + "]";
 }
