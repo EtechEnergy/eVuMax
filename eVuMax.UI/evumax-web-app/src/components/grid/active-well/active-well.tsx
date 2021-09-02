@@ -943,7 +943,7 @@ export default class ActiveWell extends React.Component {
                 orderIndex={this.getColumnOrderIndex("HOLE_DEPTH")}
               />
             )}
-            {true && (
+            {false && (
               <Column
                 locked
                 title="Open Fav. Interface"
