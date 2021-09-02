@@ -1364,6 +1364,8 @@ class TripConnSummary extends Component {
       this.objChart.rightAxis().Title = "Cost";
       this.objChart.rightAxis().Inverted = false;
 
+          
+      
       //Add new serieses
 
       let objHistogram = new DataSeries();
@@ -1374,6 +1376,8 @@ class TripConnSummary extends Component {
       objHistogram.Color = "#cf7500";
       objHistogram.XAxisId = this.objChart.bottomAxis().Id;
       objHistogram.YAxisId = this.objChart.leftAxis().Id;
+      objHistogram.ShowLabelOnSeries = true;
+
       this.objChart.DataSeries.set(objHistogram.Id, objHistogram);
 
       //Fill up the data for data series
@@ -1384,9 +1388,11 @@ class TripConnSummary extends Component {
         let objPoint = new ChartData();
         objPoint.x = this.objSummaryData.histogramData[i]["X"];
         objPoint.y = this.objSummaryData.histogramData[i]["Y"];
-
         objHistogram.Data.push(objPoint);
       }
+
+
+     
 
       this.objChart.reDraw();
     } catch (error) { }
