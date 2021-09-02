@@ -73,18 +73,23 @@ loadUserFav = ()=>{
       params: { paramRequest: JSON.stringify(objBrokerRequest) },
     })
     .then((res) => {
-       
+       debugger;
       let userFav: any = utilFunc.parseJSON(res.data.Response);
 
       let newWidgetList= [];
-      if(userFav == false){
+      if(userFav == false && this.openAsEditor == false){
 
         newWidgetList.push({ id: "None", name: "No Favorites available",isFav:false },)
         this.setState({
           data: newWidgetList
         })
-        return;
       }
+
+      if(userFav == false && this.openAsEditor == true){
+        userFav = WidgetList;     
+      }
+
+
       if(userFav!= undefined || userFav!="" ){
        
         for (let index = 0; index < WidgetList.length; index++) {
