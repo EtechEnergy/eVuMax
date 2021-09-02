@@ -21,6 +21,7 @@ import {
   faDownload,
   faTeeth,
   faInfo,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Route, NavLink, Switch } from "react-router-dom";
@@ -179,7 +180,7 @@ export class Dashboard extends React.Component<Props> {
                     <FontAwesomeIcon icon={faInfo} className="mr-2" /> About
                   </a>
                   <a className="nav-link" onClick={this.LogOut}>
-                    <FontAwesomeIcon icon={faPlug} className="mr-2" /> Logout
+                    <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" /> Logout
                   </a>
                  
                 </div>
