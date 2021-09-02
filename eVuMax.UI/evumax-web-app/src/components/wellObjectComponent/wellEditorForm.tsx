@@ -972,7 +972,7 @@ export default class WellEditorForm extends React.Component<IProps> {
 
 
 
-                <div className="pane-content ml-3" id="rightPanel">
+                <div className="pane-content ml-5" id="rightPanel">
                   Click on Node to Edit Logs
                   {/* <Window
                     id="EditorWindow"

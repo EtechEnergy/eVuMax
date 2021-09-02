@@ -1137,7 +1137,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
                             <TabStrip selected={this.state.selected} onSelect={this.handleTabSelect} keepTabsMounted={true} >
                                 {/* <TabStrip selected={this.state.selected} onSelect={this.handleSelect} > */}
                                 <TabStripTab title="Log Information">
-                                    <div id="tabWellInfo1">
+                                    <div id="tabWellInfo1" style={{marginLeft:"23px"}}>
 
                                         <div>
                                             <div className="row pb-3">

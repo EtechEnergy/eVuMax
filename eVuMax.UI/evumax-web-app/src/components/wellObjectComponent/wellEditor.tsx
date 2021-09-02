@@ -730,7 +730,7 @@ export default class WellEditor extends React.Component<IProps> {
                                 {/* <TabStrip selected={this.state.selected} onSelect={this.handleSelect} > */}
                                 <TabStripTab title="Well Information">
 
-                                    <div id="tabWellInfo1">
+                                    <div id="tabWellInfo1" style={{marginLeft:"23px"}}>
                                         {/*  */}
                                         <div className="row">
                                             <div className="col-md-6 col-lg-6 col-xl-6 col-xs-12">
