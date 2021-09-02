@@ -83,7 +83,7 @@ export default class ManageDashboardWell extends React.Component {
 
 
     componentDidMount() {
-
+        document.title= "eVuMax";//Nishant 02/09/2021
         this.loadDashBoardWells();
     }
 

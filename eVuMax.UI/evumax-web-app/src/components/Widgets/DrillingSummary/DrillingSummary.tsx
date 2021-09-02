@@ -96,6 +96,7 @@ export class DrillingSummary extends Component {
   componentDidUpdate() {
     try {
       this.refreshChart();
+      
     } catch (error) { }
   }
 
@@ -1199,6 +1200,8 @@ export class DrillingSummary extends Component {
 
           this.prepareGrdNumericTable(); //Vimal 06-02-2021
           this.prepareOffsetNumericTable(); //vimal
+          document.title = "Drilling Summary - " +  this.state.objSummaryData.WellName; //Nishant 02/09/2021
+
           this.forceUpdate();
           this.refreshChart();
         })

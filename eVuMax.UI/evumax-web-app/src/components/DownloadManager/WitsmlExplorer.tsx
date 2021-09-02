@@ -128,7 +128,7 @@ export default class WitsmlExplorer extends React.Component {
     }
 
     componentDidMount() {
-
+        document.title= "eVuMax";//Nishant 02/09/2021
         this.setState({ isProcess: false });
         this.loadServer();
     }

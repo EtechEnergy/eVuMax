@@ -220,7 +220,7 @@ export class LoginPage extends React.Component<Props> {
         >
           {/* <img src={EtechLogo} style={{ width: '40px' }} /> */}
           <label style={{ opacity: 0.4 }} className="text-white pl-3">
-            Copyright © 2020, ETECH International Inc.
+            Copyright ©{new Date().getFullYear()}, ETECH International Inc.
           </label>
         </div>
       </div>

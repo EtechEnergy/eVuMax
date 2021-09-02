@@ -24,11 +24,15 @@ let objBrokerRequest = new BrokerRequest();
 export const ThemeContext = React.createContext<{ Id: string }>({ Id: "" });
 
 class App extends Component {
+  
+
+
   state = {
     _pId: "",
   };
 
   componentDidMount() {
+    
     this.loadTheme();
   }
 

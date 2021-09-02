@@ -166,9 +166,10 @@ export default class ActiveWell extends React.Component {
   }
 
   componentWillMount() {
+    document.title = "eVuMax"; //Nishant 02/09/2021
     this.loadUserFav();
     this.getColumnWell();
-    console.log(this.state.columnWell);
+    
 
     this.intervalID = setInterval(this.getActiveWellList.bind(this), 5000);
 

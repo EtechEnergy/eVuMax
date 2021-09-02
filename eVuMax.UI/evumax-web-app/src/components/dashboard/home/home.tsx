@@ -14,10 +14,6 @@ let objParameter = new BrokerParameter("odata","odata");
 
 export default class Home extends React.Component {
 
-    state = {
-        //activeWellList : [], //Nishant 08-06-2020
-    }
-
 
 
     render(){

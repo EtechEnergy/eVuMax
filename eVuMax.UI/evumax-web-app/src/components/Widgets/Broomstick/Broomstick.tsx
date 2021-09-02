@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Button } from "@progress/kendo-react-all";
-import { Chart, lineStyle } from "../../../eVuMaxObjects/Chart/Chart";
+import { Chart} from "../../../eVuMaxObjects/Chart/Chart";
 import {
   DataSeries,
   dataSeriesType,
@@ -10,30 +9,13 @@ import {
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
-import { axisLabelStyle, Axis } from "../../../eVuMaxObjects/Chart/Axis";
-import { exit } from "process";
-import Moment from "react-moment";
 import ProcessLoader from "../../loader/loader";
-import moment from "moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import "./Broomstick.css";
 import GlobalMod from "../../../objects/global";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 
-import {
-  faPlug,
-  faUserCircle,
-  faCog,
-  faListAlt,
-  faExchangeAlt,
-  faHome,
-  faBars,
-  faCocktail,
-  faFileDownload,
-  faDownload,
-  faTeeth,
-} from "@fortawesome/free-solid-svg-icons";
 import { Util } from "../../../Models/eVuMax";
 let _gMod = new GlobalMod();
 
@@ -168,6 +150,8 @@ class Broomstick extends Component {
           }
 
           Util.StatusReady();
+          
+          document.title = "Broomstick Plot- " +  this.state.objBroomstickData.WellName; //Nishant 02/09/2021
         })
         .catch((error) => {
           Util.StatusError(error.message);

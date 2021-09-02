@@ -126,6 +126,7 @@ class DrlgConnSummary extends Component {
 
   componentDidMount() {
     try {
+      
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");
       this.objChart.ContainerId = "drlgConnections";
@@ -181,6 +182,7 @@ class DrlgConnSummary extends Component {
 
   setData = () => {
     try {
+      
       this.objUserSettings = JSON.parse(this.objSummaryData.userSettings);
 
 
@@ -222,6 +224,8 @@ class DrlgConnSummary extends Component {
         RigCost: this.objUserSettings.RigCost,
       });
 
+
+      document.title = "Drilling Conn. Summary - " +  this.state.WellName; //Nishant 02/09/2021
       this.refreshChart();
     } catch (error) { }
   };

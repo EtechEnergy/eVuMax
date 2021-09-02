@@ -336,8 +336,7 @@ export class TripSpeedPlot2 extends Component {
             isProcess: false,
           });
           Util.StatusReady();
-          // this.forceUpdate();
-          // this.refreshChart();
+          document.title = "Trip Speed-2- " +  this.state.WellName; //Nishant 02/09/2021
         })
         .catch((error) => {
           // this.setState({

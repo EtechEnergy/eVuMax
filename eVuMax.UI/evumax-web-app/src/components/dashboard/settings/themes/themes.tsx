@@ -50,6 +50,7 @@ export default class Themes extends React.Component {
     ThemeList: [] as any,
   };
   componentDidMount() {
+    document.title= "eVuMax";//Nishant 02/09/2021 
     this.test();
     this.getThemesList();
   }

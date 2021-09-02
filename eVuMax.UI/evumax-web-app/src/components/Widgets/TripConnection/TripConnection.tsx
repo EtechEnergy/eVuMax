@@ -199,8 +199,9 @@ class TripConnSummary extends Component {
                 TargetTime: this.objUserSettings.TargetTime,
                 RigCost: this.objUserSettings.RigCost,
             });
-
-            //this.refreshChart();
+            
+            document.title = "Trip Connections- " +  this.state.WellName; //Nishant 02/09/2021
+            
         } catch (error) { }
     };
 

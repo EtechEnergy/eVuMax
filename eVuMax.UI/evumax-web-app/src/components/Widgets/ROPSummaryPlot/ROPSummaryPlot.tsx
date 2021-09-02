@@ -853,14 +853,13 @@ export class ROPSummaryPlot extends Component {
             objData.offsetDepthOut = -1;
 
           }
-          console.log("objROPSummaryData", objData);
+          
           this.setState({
             objROPSummaryData: objData,
             isProcess: false,
           });
-
-          // this.forceUpdate();
-          // this.refreshChart();
+          document.title = "ROP Summary - " +  this.state.objROPSummaryData.WellName; //Nishant 02/09/2021
+          
         })
         .catch((error) => {
           Util.StatusError(error.message);

@@ -29,6 +29,7 @@ export default class UserPref extends React.Component {
   };
 
   componentDidMount() {
+    document.title= "eVuMax";//Nishant 02/09/2021
     this.Load();
   }
 

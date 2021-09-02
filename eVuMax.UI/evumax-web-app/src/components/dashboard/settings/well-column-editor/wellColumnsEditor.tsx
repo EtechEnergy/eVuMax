@@ -54,6 +54,7 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
 
 
     componentDidMount() {
+        document.title= "eVuMax";//Nishant 02/09/2021
         this.getColumnWell();
 
     }

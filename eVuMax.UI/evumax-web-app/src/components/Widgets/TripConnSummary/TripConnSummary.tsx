@@ -203,7 +203,8 @@ class TripConnSummary extends Component {
         RigCost: this.objUserSettings.RigCost,
       });
 
-      //this.refreshChart();
+      document.title = "Trip Conn. Summary- " +  this.state.WellName; //Nishant 02/09/2021
+      
     } catch (error) { }
   };
 

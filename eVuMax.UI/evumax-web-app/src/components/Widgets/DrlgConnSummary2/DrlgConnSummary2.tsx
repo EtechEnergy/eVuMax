@@ -44,30 +44,20 @@ import {
 import {
   TabStrip,
   TabStripTab,
-  Splitter,
-  TreeView,
-  processTreeViewItems,
-  Menu,
-  MenuItem,
-  Popup,
-  Window,
-  Field,
-  FormElement,
-  DropDownList,
   Button,
-  Form,
+  
 } from "@progress/kendo-react-all";
 
-import { axisBottom, gray, json } from "d3";
+
 import moment from "moment";
-import { stat } from "fs";
+
 import "./DrlgConnSummary2.css";
-import { faMoon, faSun, faUnderline } from "@fortawesome/free-solid-svg-icons";
+import { faMoon, faSun} from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
-import { util } from "typescript-collections";
+
 let _gMod = new GlobalMod();
 
 class DrlgConnSummary2 extends Component {
@@ -75,7 +65,7 @@ class DrlgConnSummary2 extends Component {
     super(props);
     this.WellId = props.match.params.WellId;
   }
-
+  
   state = {
     WellName: "",
     selected: 0,
@@ -327,6 +317,7 @@ class DrlgConnSummary2 extends Component {
         RigCost: this.objUserSettings.RigCost,
       });
 
+      document.title = "Drilling Conn.Summary (Split View) - " +  this.state.WellName; //Nishant 02/09/2021
       this.refreshChart();
     } catch (error) { }
   };
