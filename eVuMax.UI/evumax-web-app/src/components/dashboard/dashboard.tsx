@@ -175,12 +175,13 @@ export class Dashboard extends React.Component<Props> {
                     Another action
                   </a>
                   <div className="dropdown-divider"></div> */}
-                  <a className="nav-link" onClick={this.LogOut}>
-                    <FontAwesomeIcon icon={faPlug} className="mr-2" /> Logout
-                  </a>
                   <a className="nav-link" onClick={this.ShowAboutDialog}>
                     <FontAwesomeIcon icon={faInfo} className="mr-2" /> About
                   </a>
+                  <a className="nav-link" onClick={this.LogOut}>
+                    <FontAwesomeIcon icon={faPlug} className="mr-2" /> Logout
+                  </a>
+                 
                 </div>
               </li>
             </ul>
