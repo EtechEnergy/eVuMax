@@ -22,7 +22,7 @@ import {
   faEdit,
   faPen,
   faCircle,
-  faSearch,
+  faStar
 } from "@fortawesome/free-solid-svg-icons";
 import { Input, Checkbox } from "@progress/kendo-react-inputs";
 import { filterBy } from "@progress/kendo-data-query";
@@ -98,6 +98,7 @@ export default class ActiveWell extends React.Component {
     currentWellID: "",
     showOpenInterfaceDialog: false,
     OpenInterfaceID: "",
+    showOpenInterfaceDialogAsEditor:false //Nishant 02/09/2021
   };
   //Nishant 07-10-2020
   loadUserFav = () => {
@@ -234,6 +235,17 @@ export default class ActiveWell extends React.Component {
     //history.push("/dashboard/WellEditorForm/" + objRow.WELL_ID);
     history.push("wellEditorForm/" + objRow.WELL_ID);
   };
+
+  //Nishant Fav 01/09/2021
+  cmdEditFavorite_click = (event: any, rowData: any) => {
+    let objRow = rowData;
+    this.setState({
+      showOpenInterfaceDialog: true,
+      currentWellID: rowData.WELL_ID,
+      showOpenInterfaceDialogAsEditor:true
+
+    });
+  }
 
   handleGridDataStateChange = (e: any) => {
     this.setState({ gridDataState: e.data });
@@ -528,6 +540,7 @@ export default class ActiveWell extends React.Component {
     this.setState({
       showOpenInterfaceDialog: true,
       currentWellID: dataItem.WELL_ID,
+      showOpenInterfaceDialogAsEditor:false
     });
 
     this.forceUpdate();
@@ -976,6 +989,28 @@ export default class ActiveWell extends React.Component {
                 </td>
               )}
             />
+
+<Column
+              width="100px"
+              locked
+              headerClassName="text-center"
+              resizable={false}
+              orderIndex={this.getColumnOrderIndex("EDIT_WELL")}
+              field="AddFav"
+              title="Edit Favorites"
+              cell={(props) => (
+                <td
+                  style={props.style}
+                  className={"text-center k-command-cell " + props.className}
+                  onClick={(e) => this.cmdEditFavorite_click(e, props.dataItem)}
+                >
+                  <span>
+                    <FontAwesomeIcon icon={faStar} />
+                  </span>
+                </td>
+              )}
+            />
+
           </Grid>
         </div>
 

@@ -20,7 +20,9 @@ let objParameter = new BrokerParameter("odata", "odata");
 
 const WidgetList = utilFunc.getWidgetList();
 
-interface IProps { }
+interface IProps {
+  
+}
 
 interface IState {
   currentWellID: string;
@@ -31,62 +33,90 @@ export default class WidgetSelector extends React.Component<IProps> {
   constructor(parentRef, props: any) {
     super(props);
     this.__parentRef = parentRef;
-    this.currentWellID = parentRef.state.currentWellID;
+    this.currentWellID =  parentRef.state.currentWellID;
+    this.openAsEditor = parentRef.state.showOpenInterfaceDialogAsEditor;
     clearInterval(parentRef.intervalID);
   }
 
   __parentRef: any;
   currentWellID: string = "";
+  openAsEditor:boolean = false;
 
   state = {
     value: [],
-    data: WidgetList,
+    data:[],
     addToFav: false,
-    userFav: [] as any,
+    userFav:[] as any
   };
 
   //Nishant 24/08/2021
-  loadUserFav = () => {
-    try {
-      objBrokerRequest = new BrokerRequest();
-      objBrokerRequest.Module = "Well.Data.Objects";
-      objBrokerRequest.Function = "getUserFav";
-      objBrokerRequest.Broker = "ActiveWellProfile";
+loadUserFav = ()=>{
+  try {
 
-      objParameter = new BrokerParameter("UserName", _gMod._userId);
+    objBrokerRequest = new BrokerRequest();
+    objBrokerRequest.Module = "Well.Data.Objects";
+    objBrokerRequest.Function = "getUserFav";
+    objBrokerRequest.Broker = "ActiveWellProfile";
 
-      objBrokerRequest.Parameters.push(objParameter);
+    objParameter = new BrokerParameter("UserName", _gMod._userId);
+    objBrokerRequest.Parameters.push(objParameter);
 
-      axios
-        .get(_gMod._getData, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=UTF-8",
-          },
-          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+    objParameter = new BrokerParameter("WellID", this.currentWellID);
+    objBrokerRequest.Parameters.push(objParameter);
+    
+    axios
+    .get(_gMod._getData, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      params: { paramRequest: JSON.stringify(objBrokerRequest) },
+    })
+    .then((res) => {
+       
+      let userFav: any = utilFunc.parseJSON(res.data.Response);
+
+      let newWidgetList= [];
+      if(userFav == false){
+
+        newWidgetList.push({ id: "None", name: "No Favorites available",isFav:false },)
+        this.setState({
+          data: newWidgetList
         })
-        .then((res) => {
-          let userFav: any = utilFunc.parseJSON(res.data.Response);
-          if (userFav != undefined || userFav != "") {
-            for (let index = 0; index < WidgetList.length; index++) {
-              const element = WidgetList[index];
-              let i = userFav.findIndex((x) => x.Id === element.id);
-              if (i < 0) {
-                //not found
-                WidgetList[index].isFav = false;
-              } else {
-                WidgetList[index].isFav = true;
-              }
-            }
+        return;
+      }
+      if(userFav!= undefined || userFav!="" ){
+       
+        for (let index = 0; index < WidgetList.length; index++) {
+           
+          const element = WidgetList[index];
+          let i = userFav.findIndex((x) => x.Id === element.id);
+          if (i < 0) {
+            //not found
+            WidgetList[index].isFav = false;
+          } else {
+            WidgetList[index].isFav = true;
+            newWidgetList.push(WidgetList[index]);
           }
+          
+        }
+      }
 
-          this.setState({
-            data: WidgetList,
-          });
-        })
-        .catch(function (error) { });
-    } catch (error) { }
-  };
+      if(this.openAsEditor){
+        newWidgetList = WidgetList;
+      }
+      
+      
+      this.setState({
+        data: newWidgetList
+      })
+
+    })
+    .catch(function (error) {});
+  } catch (error) {}
+    
+  
+}
 
   componentDidMount() {
     try {
@@ -96,7 +126,7 @@ export default class WidgetSelector extends React.Component<IProps> {
         });
         this.loadUserFav();
       }
-    } catch (error) { }
+    } catch (error) {}
   }
 
   itemRender = (li, itemProps) => {
@@ -144,33 +174,16 @@ export default class WidgetSelector extends React.Component<IProps> {
     }
 
     utilFunc.launchWidget(interfaceID, this.currentWellID);
-    // if (interfaceID === "DrlgSummary") {
-    //     history.push("DrillingSummary/" + this.currentWellID);
-    // }
-    // if (interfaceID === "DrlgConnSummary") {
-    //     history.push("DrlgConnSummary/" + this.currentWellID);
-    // }
-
-    // if (interfaceID === "DrlgConnSummary2") {
-    //     history.push("DrlgConnSummary2/" + this.currentWellID);
-    // }
-
-    // if (interfaceID === "TripConnSummary") {
-    //     history.push("TripConnSummary/" + this.currentWellID);
-    // }
-
-    // if (interfaceID === "ToolfaceSummary") {
-    //     history.push("ToolfaceSummary/" + this.currentWellID);
-    // }
-
+   
     this.__parentRef.CloseOpenInterfaceDialog();
   };
 
   OpenWidget = (props) => {
+     
     utilFunc.launchWidget(props.id, this.currentWellID);
   };
   AddtoFavourite = (props) => {
-
+     
     try {
       //values are stored in this.state.value as array
 
@@ -181,20 +194,24 @@ export default class WidgetSelector extends React.Component<IProps> {
       // }
 
       let FunctionName = "";
-      if (props.isFav == true) {
-        FunctionName = "removeUserFav";
-      } else {
-        FunctionName = "updateUserFav";
+      if(props.isFav == true){
+        FunctionName = "removeUserFav"
+      }else{
+        FunctionName = "updateUserFav"
       }
 
+      
       objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Well.Data.Objects";
       objBrokerRequest.Function = FunctionName; // "updateUserFav";
       objBrokerRequest.Broker = "ActiveWellProfile";
 
       objParameter = new BrokerParameter("UserName", _gMod._userId);
-
       objBrokerRequest.Parameters.push(objParameter);
+
+      objParameter = new BrokerParameter("WellID", this.currentWellID);
+      objBrokerRequest.Parameters.push(objParameter);
+
       objParameter = new BrokerParameter("favList", favList);
       objBrokerRequest.Parameters.push(objParameter);
 
@@ -204,41 +221,45 @@ export default class WidgetSelector extends React.Component<IProps> {
         })
         .then((response) => {
           //this.__parentRef.CloseOpenInterfaceDialog(true);
-
+           
           let i = WidgetList.findIndex((x) => x.id === props.id);
           if (i < 0) {
             //not found do nothing
+            
           } else {
-            if (FunctionName === "removeUserFav") {
+            if(FunctionName == "removeUserFav"){
               WidgetList[i].isFav = false;
-            } else {
+            }else{
               WidgetList[i].isFav = true;
             }
+            
           }
 
           this.setState({
-            data: WidgetList,
+            data: WidgetList
           });
+
         })
-        .catch(function (error) { });
-    } catch (error) { }
+        .catch(function (error) {});
+    } catch (error) {}
   };
   onAddToFavoritesCheckbox = (e) => {
     try {
-      console.log(e.target.checked);
+      
       this.setState({
         addToFav: e.target.checked,
       });
-    } catch (error) { }
+    } catch (error) {}
   };
 
   MyItemRender = (props) => {
+    
     let item = props.dataItem;
-    console.log("item", item);
+    
     return (
       <div className="row p-2 border-bottom align-middle" style={{ margin: 0 }}>
         <div className="col-6" style={{ paddingTop: 6 }}>
-          <a
+        <a
             {...item}
             onClick={(e) => this.OpenWidget(item)}
             style={{
@@ -253,30 +274,26 @@ export default class WidgetSelector extends React.Component<IProps> {
           </a>
         </div>
 
-        <div className="col-2">
-          <div
+     <div className="col-2">
+     {item.id != "None"  &&  <div
             {...item}
             onClick={(e) => this.OpenWidget(item)}
             className="k-chip k-chip-filled"
           >
-            <div className="k-chip-content">Open</div>
-          </div>
+           <div className="k-chip-content">Open</div>
+          </div>}
         </div>
 
-        <div className="col-3">
+       {this.openAsEditor && <div className="col-3">
           <div
             {...item}
             style={{ cursor: "pointer" }}
             onClick={(e) => this.AddtoFavourite(item)}
             className="k-chip k-chip-filled"
           >
-            {item.isFav == true ? (
-              <div className="k-chip-content">Remove from favourite</div>
-            ) : (
-              <div className="k-chip-content">Add to favourite</div>
-            )}
+          {item.isFav ==true?<div className="k-chip-content">Remove from favourite</div>:<div className="k-chip-content">Add to favourite</div>}
           </div>
-        </div>
+        </div> }
       </div>
     );
   };
@@ -297,8 +314,11 @@ export default class WidgetSelector extends React.Component<IProps> {
       objBrokerRequest.Broker = "ActiveWellProfile";
 
       objParameter = new BrokerParameter("UserName", _gMod._userId);
-
       objBrokerRequest.Parameters.push(objParameter);
+
+      objParameter = new BrokerParameter("WellID", this.currentWellID);
+      objBrokerRequest.Parameters.push(objParameter);
+
       objParameter = new BrokerParameter("favList", favList);
       objBrokerRequest.Parameters.push(objParameter);
 
@@ -309,8 +329,8 @@ export default class WidgetSelector extends React.Component<IProps> {
         .then((response) => {
           this.__parentRef.CloseOpenInterfaceDialog(true);
         })
-        .catch(function (error) { });
-    } catch (error) { }
+        .catch(function (error) {});
+    } catch (error) {}
   };
 
   render() {
@@ -323,7 +343,7 @@ export default class WidgetSelector extends React.Component<IProps> {
         onClose={() => this.__parentRef.CloseOpenInterfaceDialog()} // this.setState({ showOpenInterfaceDialog: false })}
         // width = {'80vw'}
         // height = {300}
-        style={{ width: "690px", height: "590px" }}
+        style={{ width: "650px", height: "540px" }}
         resizable={false}
         modal={true}
         minimizeButton={() => null}
@@ -331,7 +351,45 @@ export default class WidgetSelector extends React.Component<IProps> {
         initialTop={100}
         initialLeft={600}
       >
-        <div style={{ padding: 20 }}>
+        {/* <div style={{ padding: 20 }}>
+          <MultiSelect
+            tags={
+              selected > 0
+                ? [
+                    {
+                      text: `Selected (${selected} Widgets)`,
+                      data: [...value],
+                    },
+                  ]
+                : []
+            }
+            filterable={true}
+            data={this.state.data}
+            onChange={this.onChange}
+            onFilterChange={this.filterChange}
+            value={this.state.value}
+            itemRender={this.itemRender}
+            autoClose={false}
+            textField="name"
+            dataItemKey="id"
+          />
+        </div> */}
+
+        <div>
+          {/* <input
+            className="mr-3 mt-3"
+            type="checkbox"
+            onClick={this.onAddToFavoritesCheckbox}
+          />
+          Add To Favorites
+          {this.state.addToFav && (
+            <button
+              className="btn-custom btn-custom-primary ml-3 "
+              onClick={this.SaveFavorites}
+            >
+              Save
+            </button>
+          )} */}
           {
             <ListView
               data={this.state.data}
