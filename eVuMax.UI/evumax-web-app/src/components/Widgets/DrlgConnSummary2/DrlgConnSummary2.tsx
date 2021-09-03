@@ -71,6 +71,7 @@ class DrlgConnSummary2 extends Component {
     selected: 0,
     summaryData: [],
     currentDepth: 0,
+    AvgTimeD: 0,
     AvgTime: 0,
     AvgBTS: 0,
     AvgSTS: 0,
@@ -281,6 +282,7 @@ class DrlgConnSummary2 extends Component {
       this.objUserSettings = JSON.parse(this.objSummaryData.userSettings);
 
       this.setState({
+        
         WellName: this.objSummaryData.WellName,
         summaryData: this.objSummaryData.connData,
         AvgTime: this.objSummaryData.avgTime,
@@ -756,7 +758,7 @@ class DrlgConnSummary2 extends Component {
                     <div className="form-group">
                       <label className="summaryLabelHeader">Avg. Time</label>
                       <label className="summaryLabel" id="txtAvgTimeD">
-                        {this.state.AvgDayTime}
+                        {this.state.AvgTimeD}
                       </label>
                     </div>
                     <div className="form-group">
