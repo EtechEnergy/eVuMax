@@ -21,6 +21,7 @@ import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 
 import GlobalMod from "../../../objects/global";
 import CustomLoader from "../../loader/loader";
+import { PureComponent } from "react";
 let _gMod = new GlobalMod();
 
 
@@ -61,7 +62,7 @@ interface IProps {
 //************************************ */
 
 
-export default class BenchMrksEditor extends Component<IProps> {
+export default class BenchMrksEditor extends PureComponent<IProps> {
     constructor(parentRef, props: any) {
         super(props);
         this.__parentRef = parentRef;

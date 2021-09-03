@@ -1200,7 +1200,7 @@ export class DrillingSummary extends Component {
 
           this.prepareGrdNumericTable(); //Vimal 06-02-2021
           this.prepareOffsetNumericTable(); //vimal
-          document.title = this.state.objSummaryData.WellName = " -Drilling Summary" ; //Nishant 02/09/2021
+          document.title = this.state.objSummaryData.WellName + " -Drilling Summary" ; //Nishant 02/09/2021
 
           this.forceUpdate();
           this.refreshChart();

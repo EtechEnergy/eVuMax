@@ -43,6 +43,7 @@ import CustomLoader from "../../loader/loader";
 import { confirmAlert } from "react-confirm-alert";
 import { isObjectBindingPattern, isThisTypeNode, JsxEmit } from "typescript";
 import { values } from "d3";
+import { PureComponent } from "react";
 let _gMod = new GlobalMod();
 
 interface IProps {
@@ -95,7 +96,7 @@ interface IProps {
 
 //************************************ */
 
-export default class TripAnalyzerSelection extends Component<IProps> {
+export default class TripAnalyzerSelection extends PureComponent<IProps> {
   public static defaultProps: Partial<IProps> = {
     showBenchMarks: true,
   };
