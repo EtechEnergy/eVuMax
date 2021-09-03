@@ -317,7 +317,7 @@ class DrlgConnSummary2 extends Component {
         RigCost: this.objUserSettings.RigCost,
       });
 
-      document.title = "Drilling Conn.Summary (Split View) - " +  this.state.WellName; //Nishant 02/09/2021
+      document.title = this.state.WellName + " -Drilling Conn.Summary (Split View)"; //Nishant 02/09/2021
       this.refreshChart();
     } catch (error) { }
   };

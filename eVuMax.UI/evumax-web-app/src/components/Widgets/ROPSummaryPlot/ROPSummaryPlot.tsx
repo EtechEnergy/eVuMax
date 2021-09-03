@@ -858,7 +858,7 @@ export class ROPSummaryPlot extends Component {
             objROPSummaryData: objData,
             isProcess: false,
           });
-          document.title = "ROP Summary - " +  this.state.objROPSummaryData.WellName; //Nishant 02/09/2021
+          document.title = this.state.objROPSummaryData.WellName + " -ROP Summary" ; //Nishant 02/09/2021
           
         })
         .catch((error) => {
