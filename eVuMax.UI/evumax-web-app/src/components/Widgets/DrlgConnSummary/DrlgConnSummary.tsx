@@ -55,7 +55,7 @@ import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import { faComment, faEraser, faMoon, faPencilAlt, faPencilRuler, faSun } from "@fortawesome/free-solid-svg-icons";
 import { confirmAlert } from "react-confirm-alert";
 let _gMod = new GlobalMod();
 
@@ -126,7 +126,7 @@ class DrlgConnSummary extends Component {
 
   componentDidMount() {
     try {
-      
+
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");
       this.objChart.ContainerId = "drlgConnections";
@@ -182,7 +182,7 @@ class DrlgConnSummary extends Component {
 
   setData = () => {
     try {
-      
+
       this.objUserSettings = JSON.parse(this.objSummaryData.userSettings);
 
 
@@ -225,7 +225,7 @@ class DrlgConnSummary extends Component {
       });
 
 
-      document.title = "Drilling Conn. Summary - " +  this.state.WellName; //Nishant 02/09/2021
+      document.title = "Drilling Conn. Summary - " + this.state.WellName; //Nishant 02/09/2021
       this.refreshChart();
     } catch (error) { }
   };
@@ -974,10 +974,10 @@ class DrlgConnSummary extends Component {
                   </div>
 
                   <div className="row mb-3">
-                    <div className="col-xl-1">
-                      <h6 className="summaryGroupHeader">Connection Details</h6>
-                    </div>
                     <div className="col-xl-2">
+                      <h6 className="summaryGroupHeader" style={{ float: "right" }}>Connection Details</h6>
+                    </div>
+                    <div className="col-xl-1">
 
                       <Button
                         id="cmdAddComment"
@@ -985,6 +985,9 @@ class DrlgConnSummary extends Component {
                           this.addComment();
                         }}
                       >
+                        {/* <FontAwesomeIcon icon={faPencilAlt} onClick={() => {
+                        this.addComment();
+                      }} /> */}
                         Add Comment
                       </Button>
                     </div>
@@ -994,9 +997,11 @@ class DrlgConnSummary extends Component {
                         onClick={() => {
                           this.removeComment();
                         }}
-                      >
-                        Remove Comment
+
+                      >Remove Comment
                       </Button>
+
+
 
                     </div>
                   </div>

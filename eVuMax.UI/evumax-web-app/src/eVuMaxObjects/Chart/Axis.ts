@@ -174,21 +174,21 @@ export class Axis {
     } catch (error) { }
   };
 
-//Prathmesh : 28-08-2021 (to resolve trip speed plot spacing between legend & bottom axes title)
-  getLongestLableValue=(lblArr:any)=>{
-  try {
-    if(lblArr.length>0){
-      let longest = this.Labels.sort(
-        function (a, b) {
+  //Prathmesh : 28-08-2021 (to resolve trip speed plot spacing between legend & bottom axes title)
+  getLongestLableValue = (lblArr: any) => {
+    try {
+      if (lblArr.length > 0) {
+        let longest = this.Labels.sort(
+          function (a, b) {
             return b.length - a.length;
-        }
-    )[0];
-      return longest;
+          }
+        )[0];
+        return longest;
+      }
+    } catch (error) {
+      return "";
     }
-  } catch (error) {
-    return "";
   }
-}
 
   //Calculates the axis width that includes axis labels + axis title
   calculateAxisWidth = () => {
@@ -202,12 +202,12 @@ export class Axis {
 
         let objAxisRange: AxisDateRange = this.getAxisRange();
         let maxLabel: string = formatFunc(objAxisRange.Max);
-        
+
         //added by prath on 28-08-2021 (to resolve trip speed plot spacing between legend & bottom axes title)
-        if(this.Labels.length>0){
-               maxLabel=this.getLongestLableValue(this.Labels).toString();
+        if (this.Labels.length > 0) {
+          maxLabel = this.getLongestLableValue(this.Labels).toString();
         }
-      
+
 
         maxLabelWidth = this.ChartRef.calculateWidth(
           maxLabel,
@@ -216,9 +216,9 @@ export class Axis {
         );
 
         //keep in condition by prath on 28-08-2021
-         if(this.Labels.length==0){
-            maxLabelWidth = (maxLabelWidth * 70) / 100;
-         }
+        if (this.Labels.length == 0) {
+          maxLabelWidth = (maxLabelWidth * 70) / 100;
+        }
 
         maxLabelHeight = this.ChartRef.calculateHeight(
           maxLabel,
@@ -508,7 +508,6 @@ export class Axis {
         requiredTicks = this.__axisSize / textWidth;
       }
     } else {
-
       if (this.LabelAngel == 0) {
         requiredTicks = this.__axisSize / textWidth;
       } else {
@@ -867,6 +866,13 @@ export class Axis {
       } else {
         if (this.LabelAngel == 0) {
           noOfTicks = this.__axisSize / (textWidth + 5); //5 px gap between ticks
+
+          //Add by prath (Drilling summary (ROP Line chart) to control overwrite ticks while zoom)
+          if (this.Labels.length > 0) {
+            noOfTicks = noOfTicks / 2;
+            noOfTicks = Math.floor(noOfTicks);
+          }
+          //===========================
         } else {
           noOfTicks = this.__axisSize / (textHeight + 5); //5 px gap between ticks
         }
@@ -1121,13 +1127,7 @@ export class Axis {
     } else {
       try {
 
-        //
-        if (this.Id == "RigState_Summary-bottom") {
 
-
-        }
-
-        //
 
 
         let sel = this.ChartRef.SVGRef.select("#" + this.Id).selectAll(
