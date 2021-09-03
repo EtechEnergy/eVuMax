@@ -425,7 +425,7 @@ export class TripSpeedPlot1 extends Component {
 
         objSeries.CurveStyle = curveStyle.step;
 
-        objSeries.Title = "Trip Speed W/o Connection";
+        objSeries.Title = "BenchMark W/o Connection";
         objSeries.Color = "#69F0AE";
         objSeries.ShowInLegend = true;
 
@@ -463,7 +463,7 @@ export class TripSpeedPlot1 extends Component {
         objSeries.CurveStyle = curveStyle.step;
         objSeries.LineWidth = 3;
 
-        objSeries.Title = "Trip Speed With Connection";
+        objSeries.Title = "Benchmark With Connection";
         objSeries.Color = "#FFC400"; // borwn -->"#362419";
         objSeries.ShowInLegend = true;
 
@@ -602,88 +602,88 @@ export class TripSpeedPlot1 extends Component {
     } catch (error) { }
   }
 
-//New Code Nishant 02/09/2021
-onBeforeDrawTripSpeedSeries= (e: ChartEventArgs, i: number) => {
-try {
-debugger;
-  d3.select(".tripSpeedWithConn_benchmark").remove();
-  d3.select(".tripSpeedWoConn_benchmark").remove();
+  //New Code Nishant 02/09/2021
+  onBeforeDrawTripSpeedSeries = (e: ChartEventArgs, i: number) => {
+    try {
+      debugger;
+      d3.select(".tripSpeedWithConn_benchmark").remove();
+      d3.select(".tripSpeedWoConn_benchmark").remove();
 
-  let BenchMarks = Object.values( this.state.objUserSettings.objBenchMarks.speedProfile);
-  
-  if (BenchMarks.length>0){
-    for (i = 0; i < BenchMarks.length; i++) {
-      const item:any = BenchMarks[i];
-      // Depth	8000	double
-      // SpeedWithConnection	13000	double
-      // SpeedWithoutConnection	9000	double
-      // SrNo	4	double
-      if(item.SpeedWithConnection>0){
-        console.log("item.SpeedWithConnection",item.SpeedWithConnection);
-        let x1 = this.objChart_TripSpeed.__chartRect.left;
-        let x2 = this.objChart_TripSpeed.__chartRect.right;
-        let y1 = this.objChart_TripSpeed.leftAxis().ScaleRef(item.SpeedWithConnection);
-        let y2 = y1 + 4;
-    
-        this.objChart_TripSpeed.SVGRef.append("g")
-          .attr("class", "tripSpeed_benchmark")
-          .append("rect")
-          .attr("id", "tripSpeedWithConn_benchmark")
-          .attr("x", x1)
-          .attr("y", y1)
-          .attr("width", x2 - x1)
-          .attr("height", y2 - y1)
-          .style("fill", "red")
-          .style("opacity", 0.5);
+      let BenchMarks = Object.values(this.state.objUserSettings.objBenchMarks.speedProfile);
+
+      if (BenchMarks.length > 0) {
+        for (i = 0; i < BenchMarks.length; i++) {
+          const item: any = BenchMarks[i];
+          // Depth	8000	double
+          // SpeedWithConnection	13000	double
+          // SpeedWithoutConnection	9000	double
+          // SrNo	4	double
+          if (item.SpeedWithConnection > 0) {
+            console.log("item.SpeedWithConnection", item.SpeedWithConnection);
+            let x1 = this.objChart_TripSpeed.__chartRect.left;
+            let x2 = this.objChart_TripSpeed.__chartRect.right;
+            let y1 = this.objChart_TripSpeed.leftAxis().ScaleRef(item.SpeedWithConnection);
+            let y2 = y1 + 4;
+
+            this.objChart_TripSpeed.SVGRef.append("g")
+              .attr("class", "tripSpeed_benchmark")
+              .append("rect")
+              .attr("id", "tripSpeedWithConn_benchmark")
+              .attr("x", x1)
+              .attr("y", y1)
+              .attr("width", x2 - x1)
+              .attr("height", y2 - y1)
+              .style("fill", "red")
+              .style("opacity", 0.5);
+          }
+
+          if (item.SpeedWithoutConnection > 0) {
+            let x1 = this.objChart_TripSpeed.__chartRect.left;
+            let x2 = this.objChart_TripSpeed.__chartRect.right;
+            let y1 = this.objChart_TripSpeed.leftAxis().ScaleRef(item.SpeedWithoutConnection);
+            let y2 = y1 + 4;
+
+
+            this.objChart_TripSpeed.SVGRef.append("g")
+              .attr("class", "tripSpeed_benchmark")
+              .append("rect")
+              .attr("id", "tripSpeedWoConn_benchmark")
+              .attr("x", x1)
+              .attr("y", y1)
+              .attr("width", x2 - x1)
+              .attr("height", y2 - y1)
+              .style("fill", "green")
+              .style("opacity", 0.5);
+          }
+
+        };
       }
 
-      if(item.SpeedWithoutConnection>0){
-        let x1 = this.objChart_TripSpeed.__chartRect.left;
-        let x2 = this.objChart_TripSpeed.__chartRect.right;
-        let y1 = this.objChart_TripSpeed.leftAxis().ScaleRef(item.SpeedWithoutConnection);
-        let y2 = y1 + 4;
-        
-    
-        this.objChart_TripSpeed.SVGRef.append("g")
-          .attr("class", "tripSpeed_benchmark")
-          .append("rect")
-          .attr("id", "tripSpeedWoConn_benchmark")
-          .attr("x", x1)
-          .attr("y", y1)
-          .attr("width", x2 - x1)
-          .attr("height", y2 - y1)
-          .style("fill", "green")
-          .style("opacity", 0.5);
-      }
-  
-    };
+      // if (lnBenchMarkWOConn > 0) {
+      //   let x1 = this.objChart_BarWOConn.__chartRect.left;
+      //   let x2 = this.objChart_BarWOConn.__chartRect.right;
+      //   let y1 = this.objChart_BarWOConn.leftAxis().ScaleRef(lnBenchMarkWOConn);
+      //   let y2 = y1 + 4;
+
+      //   this.objChart_BarWOConn.SVGRef.append("g")
+      //     .attr("class", "tripSpeed_benchmark")
+      //     .append("rect")
+      //     .attr("id", "tripSpeed_benchmark")
+      //     .attr("x", x1)
+      //     .attr("y", y1)
+      //     .attr("width", x2 - x1)
+      //     .attr("height", y2 - y1)
+      //     .style("fill", "red")
+      //     .style("opacity", 0.5);
+      // }
+
+
+    } catch (error) {
+
+    }
   }
 
-  // if (lnBenchMarkWOConn > 0) {
-  //   let x1 = this.objChart_BarWOConn.__chartRect.left;
-  //   let x2 = this.objChart_BarWOConn.__chartRect.right;
-  //   let y1 = this.objChart_BarWOConn.leftAxis().ScaleRef(lnBenchMarkWOConn);
-  //   let y2 = y1 + 4;
-
-  //   this.objChart_BarWOConn.SVGRef.append("g")
-  //     .attr("class", "tripSpeed_benchmark")
-  //     .append("rect")
-  //     .attr("id", "tripSpeed_benchmark")
-  //     .attr("x", x1)
-  //     .attr("y", y1)
-  //     .attr("width", x2 - x1)
-  //     .attr("height", y2 - y1)
-  //     .style("fill", "red")
-  //     .style("opacity", 0.5);
-  // }
-
-  
-} catch (error) {
-  
-}
-}
-
-//End new Code
+  //End new Code
 
   refreshBarWOConnChart() {
     this.objChart_BarWOConn.initialize();
@@ -772,7 +772,7 @@ debugger;
     this.objChart_BarWOConn.onBeforeSeriesDraw.subscribe((e, i) => {
       this.onBeforeDrawWOConnSeries(e, i);
     });
-    
+
 
     this.objChart_BarWOConn.reDraw();
   }
@@ -980,7 +980,7 @@ debugger;
             //isProcess: false,
           });
           Util.StatusSuccess("Data successfully retrived  ");
-          document.title = "Trip Speed-1- " +  this.state.WellName; //Nishant 02/09/2021
+          document.title = "Trip Speed-1- " + this.state.WellName; //Nishant 02/09/2021
         })
         .catch((error) => {
           // this.setState({

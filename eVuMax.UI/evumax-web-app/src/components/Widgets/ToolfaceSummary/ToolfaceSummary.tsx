@@ -1243,8 +1243,8 @@ class ToolfaceSummary extends Component {
   displayData = () => {
     try {
       this.objUserSettings = JSON.parse(this.objToolfaceData.userSettings);
-      
-      
+
+
       let newGeoDrlgWindowData: any = Object.values(
         this.objUserSettings.GeoDrlgWindowData
       ).map((item: any, key: number) => ({ ...item, SRNO: key }));
@@ -1326,7 +1326,7 @@ class ToolfaceSummary extends Component {
       this.plotAdnlChart();
       this.plotToolfaceDial();
 
-      document.title = "Toolface Summary- " +  this.state.WellName; //Nishant 02/09/2021
+      document.title = "Toolface Summary- " + this.state.WellName; //Nishant 02/09/2021
     } catch (error) { }
   };
 

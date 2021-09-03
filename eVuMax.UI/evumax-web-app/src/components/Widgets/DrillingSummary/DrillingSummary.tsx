@@ -96,7 +96,7 @@ export class DrillingSummary extends Component {
   componentDidUpdate() {
     try {
       this.refreshChart();
-      
+
     } catch (error) { }
   }
 
@@ -1200,7 +1200,7 @@ export class DrillingSummary extends Component {
 
           this.prepareGrdNumericTable(); //Vimal 06-02-2021
           this.prepareOffsetNumericTable(); //vimal
-          document.title = "Drilling Summary - " +  this.state.objSummaryData.WellName; //Nishant 02/09/2021
+          document.title = "Drilling Summary - " + this.state.objSummaryData.WellName; //Nishant 02/09/2021
 
           this.forceUpdate();
           this.refreshChart();
@@ -1795,7 +1795,7 @@ export class DrillingSummary extends Component {
                           //vimal
                           className="mb-3 col-xl-12 col-lg-12 col-md-12 col-sm-12 numericGrid"
                           // style={{ height: "100%", width: "calc(100vw - 100px)" }}
-                          style={{ height: "200px", width: "calc(100vw)" }}
+                          style={{ height: "155px", width: "calc(100vw)" }}
                           resizable={true}
                           scrollable={"scrollable"}
                           sortable={false}
@@ -1808,26 +1808,31 @@ export class DrillingSummary extends Component {
                             headerClassName="text-center"
                             className="summaryLabelHeader"
                             field="col_1"
+                            width="100px"
                           />
                           <Column
                             headerClassName="text-center"
                             className="summaryLabel1"
                             field="value_1"
+                            width="150px"
                           />
                           <Column
                             headerClassName="text-center"
                             className="summaryLabelHeader"
                             field="col_2"
+                            width="100px"
                           />
                           <Column
                             headerClassName="text-center"
                             className="summaryLabel1"
                             field="value_2"
+                            width="150px"
                           />
                           <Column
                             headerClassName="text-center"
                             className="summaryLabelHeader"
                             field="col_3"
+                            width="120px"
                           />
                           <Column
                             headerClassName="text-center"
@@ -1838,6 +1843,7 @@ export class DrillingSummary extends Component {
                             headerClassName="text-center"
                             className="summaryLabelHeader1"
                             field="col_4"
+                            width="100px"
                           />
                           <Column
                             headerClassName="text-center"
@@ -1914,10 +1920,11 @@ export class DrillingSummary extends Component {
                   <div
                     id="roplinechart"
                     style={{
-                      height: "calc(54vh)",
-                      width: "calc(92vw)",
+                      height: "54vh",
+                      width: "92vw",
                       float: "left",
                       backgroundColor: "transparent",
+
                     }}
                   ></div>
                   :

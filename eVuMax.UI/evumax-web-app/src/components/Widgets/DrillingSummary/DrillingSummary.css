@@ -5,7 +5,7 @@
   text-align: right;
   margin-bottom: 0.1rem;
   width: 140px !important;
-  /* font-size: 1px !important; */
+  font-size: 11px !important;
   vertical-align: center;
   font-weight: bold !important;
 }
@@ -40,14 +40,14 @@
 .summaryLabel {
   width: 85px !important;
   height: 25px;
-  font-size: 14px;
+  font-size: 11px;
   text-align: right;
   margin-bottom: 0.3rem;
 }
 .summaryLabel1 {
   width: 190px !important;
   height: 25px;
-  font-size: 14px;
+  font-size: 11px;
   text-align: right;
   margin-bottom: 0.3rem;
   font-weight: bold !important;
@@ -57,7 +57,7 @@
   color: #f6ab6c;
   width: 100px !important;
   height: 25px;
-  font-size: 14px;
+  font-size: 11px;
   text-align: right;
   margin-bottom: 0.3rem;
   font-weight: bold !important;
@@ -66,7 +66,7 @@
 .summaryLabel2 {
   width: 100px !important;
   height: 25px;
-  font-size: 14px;
+  font-size: 11px;
   text-align: left;
   margin-bottom: 0.3rem;
 }
@@ -74,7 +74,7 @@
   text-align: right;
   margin-bottom: 0.1rem;
   width: 160px !important;
-  /* font-size: 1px !important; */
+  font-size: 11px !important;
   vertical-align: center;
   font-weight: bold !important;
 }
