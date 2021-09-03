@@ -980,7 +980,7 @@ export class TripSpeedPlot1 extends Component {
             //isProcess: false,
           });
           Util.StatusSuccess("Data successfully retrived  ");
-          document.title = "Trip Speed-1- " + this.state.WellName; //Nishant 02/09/2021
+          document.title = this.state.WellName + " -Trip Speed-1"; //Nishant 02/09/2021
         })
         .catch((error) => {
           // this.setState({

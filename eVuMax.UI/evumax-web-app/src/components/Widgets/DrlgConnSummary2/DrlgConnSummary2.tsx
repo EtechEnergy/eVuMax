@@ -71,6 +71,7 @@ class DrlgConnSummary2 extends Component {
     selected: 0,
     summaryData: [],
     currentDepth: 0,
+    AvgDayD:0,
     AvgTime: 0,
     AvgBTS: 0,
     AvgSTS: 0,
@@ -317,7 +318,7 @@ class DrlgConnSummary2 extends Component {
         RigCost: this.objUserSettings.RigCost,
       });
 
-      document.title = "Drilling Conn.Summary (Split View) - " +  this.state.WellName; //Nishant 02/09/2021
+      document.title =  this.state.WellName + " -Drilling Conn.Summary (Split View)"; //Nishant 02/09/2021
       this.refreshChart();
     } catch (error) { }
   };
@@ -756,7 +757,7 @@ class DrlgConnSummary2 extends Component {
                     <div className="form-group">
                       <label className="summaryLabelHeader">Avg. Time</label>
                       <label className="summaryLabel" id="txtAvgTimeD">
-                        {this.state.AvgDayTime}
+                        {this.state.AvgDayD}
                       </label>
                     </div>
                     <div className="form-group">

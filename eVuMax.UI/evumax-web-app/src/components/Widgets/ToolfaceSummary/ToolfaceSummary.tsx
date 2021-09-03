@@ -1326,7 +1326,7 @@ class ToolfaceSummary extends Component {
       this.plotAdnlChart();
       this.plotToolfaceDial();
 
-      document.title = "Toolface Summary- " + this.state.WellName; //Nishant 02/09/2021
+      document.title =  this.state.WellName + " -Toolface Summary"; //Nishant 02/09/2021
     } catch (error) { }
   };
 
