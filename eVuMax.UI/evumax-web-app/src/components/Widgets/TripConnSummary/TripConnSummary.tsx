@@ -1355,7 +1355,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().LabelAngel = 90;
       this.objChart.bottomAxis().ShowSelector = false;
       this.objChart.bottomAxis().IsDateTime = false;
-      this.objChart.bottomAxis().bandScale = true;
+      //this.objChart.bottomAxis().bandScale = true;
       this.objChart.bottomAxis().LabelStyle = axisLabelStyle.values;
 
       this.objChart.rightAxis().ShowLabels = false;

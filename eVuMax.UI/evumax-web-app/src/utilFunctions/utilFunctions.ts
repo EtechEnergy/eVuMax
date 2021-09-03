@@ -153,7 +153,11 @@ export function launchWidget(interfaceID: string, wellID: string) {
     if (interfaceID === "TripConnSummary") {
       history.push("TripConnSummary/" + wellID);
     }
-
+    
+    if (interfaceID === "DrlgConnSummarySplitView") {
+      history.push("DrlgConnSummary2/" + wellID);
+    }
+    
     if (interfaceID === "ToolfaceSummary") {
       history.push("ToolfaceSummary/" + wellID);
     }
