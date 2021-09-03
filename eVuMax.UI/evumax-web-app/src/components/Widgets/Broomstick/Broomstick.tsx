@@ -151,7 +151,7 @@ class Broomstick extends Component {
 
           Util.StatusReady();
           
-          document.title = "Broomstick Plot- " +  this.state.objBroomstickData.WellName; //Nishant 02/09/2021
+          document.title =this.state.objBroomstickData.WellName +  " -Broomstick Plot" ; //Nishant 03/09/2021
         })
         .catch((error) => {
           Util.StatusError(error.message);
