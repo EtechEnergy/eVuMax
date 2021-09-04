@@ -203,8 +203,8 @@ class TripConnSummary extends Component {
         RigCost: this.objUserSettings.RigCost,
       });
 
-      document.title = this.state.WellName + " -Trip Conn. Summary" ; //Nishant 02/09/2021
-      
+      document.title = this.state.WellName + " -Trip Conn. Summary"; //Nishant 02/09/2021
+
     } catch (error) { }
   };
 
@@ -309,7 +309,7 @@ class TripConnSummary extends Component {
         .then((res) => {
 
           this.objSummaryData = JSON.parse(res.data.Response);
-
+          debugger;
 
           this.Warnings = res.data.Warnings;
 
@@ -1110,7 +1110,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Labels = [];
 
       //Fill up the data for data series
-
+      debugger;
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
 
@@ -1122,6 +1122,9 @@ class TripConnSummary extends Component {
         );
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
         //objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
+
+        objSTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
+
 
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
@@ -1141,6 +1144,7 @@ class TripConnSummary extends Component {
         );
         objCostPoint.y = this.objSummaryData.connData[i]["COST"];
         //objCostPoint.x = this.objSummaryData.connData[i]["DEPTH"];
+        objCostPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         objCost.Data.push(objCostPoint);
       }
 
@@ -1364,8 +1368,8 @@ class TripConnSummary extends Component {
       this.objChart.rightAxis().Title = "Cost";
       this.objChart.rightAxis().Inverted = false;
 
-          
-      
+
+
       //Add new serieses
 
       let objHistogram = new DataSeries();
@@ -1392,7 +1396,7 @@ class TripConnSummary extends Component {
       }
 
 
-     
+
 
       this.objChart.reDraw();
     } catch (error) { }

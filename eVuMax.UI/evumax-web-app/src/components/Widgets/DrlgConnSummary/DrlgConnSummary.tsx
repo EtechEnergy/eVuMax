@@ -467,7 +467,7 @@ class DrlgConnSummary extends Component {
     { label: "Time Log Remarks", value: "Time Log Remarks", className: "" },
   ];
 
-  handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
+  //handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
 
   addComment = () => {
     try {

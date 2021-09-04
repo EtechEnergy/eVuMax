@@ -140,6 +140,7 @@ export class StackedBarSeries {
 				let prevYpos = 0;
 				let prevHeight = 0;
 
+				debugger;
 				for (let s = 0; s < stackValues.length; s++) {
 					let yPos = 0;
 					let height = 0;
@@ -358,6 +359,7 @@ export class StackedBarSeries {
 		try {
 			//Remove existing data
 			let xValues = new Array<Date>();
+			let customLabels = new Array<string>();
 			for (let key of this.ChartRef.DataSeries.keys()) {
 				let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
 
@@ -378,6 +380,7 @@ export class StackedBarSeries {
 
 						if (xValues.find((o) => o == objData.datetime) == undefined) {
 							xValues.push(objData.datetime);
+							customLabels.push(objData.label);
 						}
 					}
 				}
