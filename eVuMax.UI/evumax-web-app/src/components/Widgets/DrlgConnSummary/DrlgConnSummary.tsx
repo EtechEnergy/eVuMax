@@ -1603,6 +1603,7 @@ class DrlgConnSummary extends Component {
       this.objChart.DataSeries.clear();
       this.objChart.ShowLegend = true;
       this.objChart.updateChart();
+      this.objChart.ShowCustomComments = this.state.ShowComments;
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;
@@ -1626,7 +1627,7 @@ class DrlgConnSummary extends Component {
       this.objChart.rightAxis().Title = "Cost";
       this.objChart.rightAxis().Inverted = false;
 
-      this.objChart.ShowCustomComments = true;  //prath 04-08-2021
+
       //Add new serieses
 
       let objBTS = new DataSeries();
@@ -1741,6 +1742,7 @@ class DrlgConnSummary extends Component {
 
       this.objChart.DataSeries.clear();
       this.objChart.ShowLegend = false;
+      this.objChart.ShowCustomComments = this.state.ShowComments;
       this.objChart.updateChart();
 
       //Configure Axes
@@ -1804,6 +1806,7 @@ class DrlgConnSummary extends Component {
 
       this.objChart.DataSeries.clear();
       this.objChart.ShowLegend = true;
+      this.objChart.ShowCustomComments = this.state.ShowComments;
       this.objChart.updateChart();
 
       //Configure Axes

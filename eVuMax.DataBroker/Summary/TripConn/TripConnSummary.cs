@@ -211,6 +211,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                 rigStateData.Columns.Add(new DataColumn("DEPTH", typeof(System.Double)));
                 rigStateData.Columns.Add(new DataColumn("FROM_DATE", typeof(System.DateTime)));
                 rigStateData.Columns.Add(new DataColumn("TIMES", typeof(System.String))); //Comma separated values
+                rigStateData.Columns.Add(new DataColumn("COMMENTS", typeof(System.String))); //04-09-2021
 
                 DataTable histogramData = new DataTable();
                 histogramData.Columns.Add(new DataColumn("X", typeof(System.Double)));
@@ -519,6 +520,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
+                        string connComments = DataService.checkNull(objRow["COMMENTS"], "").ToString();
 
                         lnFromDate = lnFromDate.ToUniversalTime();
                         lnToDate = lnToDate.ToUniversalTime();
@@ -574,6 +576,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         newRow["DEPTH"] = Math.Round(connDepth, 2);
                         newRow["FROM_DATE"] = lnFromDate.ToLocalTime();
                         newRow["TIMES"] = strTimes;
+                        newRow["COMMENTS"] = DataService.checkNull(connComments, "").ToString();
 
                         rigStateData.Rows.Add(newRow);
 

@@ -102,7 +102,7 @@ class TripConnSummary extends Component {
     STSBenchMark: 0,
     TargetTime: 0,
     RigCost: 0,
-    ShowComments: false,
+    ShowComments: true,
   };
 
   WellId: string = "";
@@ -828,6 +828,7 @@ class TripConnSummary extends Component {
                     label={"Show Comments"}
                     checked={this.state.ShowComments}
                     onChange={(event) => {
+
                       this.setState({ ShowComments: event.value });
                     }}
                   />
@@ -1059,6 +1060,7 @@ class TripConnSummary extends Component {
       this.objChart.DataSeries.clear();
       this.objChart.updateChart();
       this.objChart.ShowLegend = true;
+      this.objChart.ShowCustomComments = this.state.ShowComments;
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;
@@ -1095,6 +1097,7 @@ class TripConnSummary extends Component {
       objSTS.XAxisId = this.objChart.bottomAxis().Id;
       objSTS.YAxisId = this.objChart.leftAxis().Id;
       objSTS.ColorEach = true;
+
       this.objChart.DataSeries.set(objSTS.Id, objSTS);
 
       let objCost = new DataSeries();
@@ -1162,6 +1165,7 @@ class TripConnSummary extends Component {
       this.objChart.DataSeries.clear();
       this.objChart.updateChart();
       this.objChart.ShowLegend = false;
+      this.objChart.ShowCustomComments = this.state.ShowComments;
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;
@@ -1241,6 +1245,7 @@ class TripConnSummary extends Component {
       this.objChart.DataSeries.clear();
       //this.objChart.updateChart();
       this.objChart.ShowLegend = true;
+      this.objChart.ShowCustomComments = this.state.ShowComments;
 
       //Configure Axes
       this.objChart.leftAxis().Inverted = false;
@@ -1278,6 +1283,7 @@ class TripConnSummary extends Component {
       }
 
       //Fill up the data for each series
+      debugger;
       for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
         let arrRigStates: string[] = this.objSummaryData.rigStateData[i][
           "TIMES"
@@ -1301,6 +1307,8 @@ class TripConnSummary extends Component {
             );
             //objDataPoint.x=this.objSummaryData.rigStateData[i]["DEPTH"];
             objDataPoint.y = Number.parseFloat(arrRigStates[j]);
+            objDataPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
+
             objSeries.Data.push(objDataPoint);
           }
         }

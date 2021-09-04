@@ -592,6 +592,40 @@ export class StackedBarSeries {
 							//   let index=c[0].getAttribute("index");
 							//this.ChartRef.triggerSeriesClickEvent(seriesId,index);
 						});
+
+
+
+
+					// // Show lables on Bar //Parth 26-07-2021
+					debugger;
+					if (s == stackValues.length - 1 && this.ChartRef.ShowCustomComments) {
+
+
+						if (isNaN(xPos + barWidth / 2) || isNaN(this.ChartRef.__chartRect.height - 20)) {
+
+						}
+						else {
+
+							this.ChartRef.SVGRect
+								//.append("g")
+								//.attr("transform", "translate(" + (xPos + barWidth / 2) + "," + (yPos - 25) + ")")
+								.append('text')
+								.style('background-color', 'green')
+								.attr('class', 'axis-title')
+								//.style("fill", "blue")
+								.attr('dy', '.75em')
+								.attr(
+									'transform',
+									//										'translate(' + (xPos + barWidth / 2) + ',' + (yPos - 25) + ') rotate(-90)'
+									'translate(' + (xPos + barWidth / 2) + ',' + (this.ChartRef.__chartRect.height - 20) + ') rotate(-90)'
+								)
+								.text(function (d) {
+									return customLabels[i];
+								});
+
+						}
+
+					}
 				}
 			}
 		} catch (error) { }
