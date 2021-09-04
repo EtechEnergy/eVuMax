@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Chart} from "../../../eVuMaxObjects/Chart/Chart";
+import { Chart } from "../../../eVuMaxObjects/Chart/Chart";
 import {
   DataSeries,
   dataSeriesType,
@@ -39,18 +39,18 @@ class Broomstick extends Component {
   fromDepth: number = 0;
   toDepth: number = 0;
 
-  runlist=[];
-  
-  selRunNo='';
+  runlist = [];
+
+  selRunNo = '';
 
   runChanged = (item: any) => {
     //Do refresh
-      
-    
-    this.selRunNo=item.target.value;
-        
+
+
+    this.selRunNo = item.target.value;
+
     this.loadConnections();
-    
+
 
   };
 
@@ -128,9 +128,9 @@ class Broomstick extends Component {
 
           let objData = JSON.parse(res.data.Response);
 
-          this.runlist=objData.RunList;
+          this.runlist = objData.RunList;
 
-          this.selRunNo=objData.RunNo;
+          this.selRunNo = objData.RunNo;
 
 
           this.setState({
@@ -150,8 +150,8 @@ class Broomstick extends Component {
           }
 
           Util.StatusReady();
-          
-          document.title =this.state.objBroomstickData.WellName +  " -Broomstick Plot" ; //Nishant 03/09/2021
+
+          document.title = this.state.objBroomstickData.WellName + " -Broomstick Plot"; //Nishant 03/09/2021
         })
         .catch((error) => {
           Util.StatusError(error.message);
@@ -219,14 +219,14 @@ class Broomstick extends Component {
   };
 
 
-  
+
   componentDidUpdate() {
     try {
 
       //Set run no.
 
 
-      
+
 
       this.refreshChart();
     } catch (error) { }
@@ -513,19 +513,19 @@ class Broomstick extends Component {
 
         <div className="row">
           <label
-          style={{paddingLeft: "20px",paddingRight: "15px"}}
+            style={{ paddingLeft: "20px", paddingRight: "15px" }}
           >Run No.</label>
 
 
           <DropDownList
-                      style={{ width: "200px" }}
-                      onChange={(e) =>
-                        this.runChanged(e)
-                      }
-                      value={this.state.RunNo}
+            style={{ width: "200px" }}
+            onChange={(e) =>
+              this.runChanged(e)
+            }
+            value={this.state.RunNo}
 
-                      data={this.runlist}
-                    />
+            data={this.runlist}
+          />
 
         </div>
         <div className="clearfix"></div>

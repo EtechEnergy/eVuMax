@@ -230,6 +230,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 DataTable rigStateData = new DataTable();
                 rigStateData.Columns.Add(new DataColumn("DEPTH", typeof(System.Double)));
                 rigStateData.Columns.Add(new DataColumn("TIMES", typeof(System.String))); //Comma separated values
+                rigStateData.Columns.Add(new DataColumn("COMMENTS", typeof(System.String))); //prath 04-09-2021
 
                 DataTable histogramData = new DataTable();
                 histogramData.Columns.Add(new DataColumn("X", typeof(System.Double)));
@@ -723,6 +724,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     {
 
                         double connDepth = DataService.checkNumericNull(objRow["DEPTH"]);
+                        string connComments = DataService.checkNull(objRow["COMMENTS"],"").ToString();
 
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
@@ -780,6 +782,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                         newRow["DEPTH"] = Math.Round(connDepth, 2);
                         newRow["TIMES"] = strTimes;
+                        newRow["COMMENTS"] = connComments;
 
                         rigStateData.Rows.Add(newRow);
 
