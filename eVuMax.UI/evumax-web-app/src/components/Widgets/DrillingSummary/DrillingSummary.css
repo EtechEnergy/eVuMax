@@ -1,10 +1,10 @@
 .summaryLabelHeader {
-  /* width: 300px; */
+  /* width: 10px !important; */
   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
 
   text-align: right;
   margin-bottom: 0.1rem;
-  width: 140px !important;
+  width: 100px !important;
   font-size: 11px !important;
   vertical-align: center;
   font-weight: bold !important;

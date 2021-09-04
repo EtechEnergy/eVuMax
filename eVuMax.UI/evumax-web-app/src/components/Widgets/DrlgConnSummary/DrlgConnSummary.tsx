@@ -593,14 +593,21 @@ class DrlgConnSummary extends Component {
 
 
 
+      //for ConnectionData
       let index = this.state.summaryData.findIndex((d: any) => d.DEPTH === this.state.currentDepth); //find index in your array
       let edited = this.state.summaryData;
 
+      //for RigstateData
+      let indexRigstate = this.objSummaryData.rigStateData.findIndex((d: any) => d.DEPTH === this.state.currentDepth); //find index in your array
+      let editedRigstate = this.objSummaryData.rigStateData;
+
       if (isAddComment) {
         edited[index]["COMMENTS"] = this.state.Comment;
+        editedRigstate[indexRigstate]["COMMENTS"] = this.state.Comment;
       } else {
         this.setState({ Comment: "" });
         edited[index]["COMMENTS"] = "";
+        editedRigstate[indexRigstate]["COMMENTS"] = "";
       }
 
       this.setState({ showCommentDialog: false });
@@ -1769,10 +1776,12 @@ class DrlgConnSummary extends Component {
       this.objChart.DataSeries.set(objCost.Id, objCost);
 
       //Fill up the data for data series
+
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let objPoint = new ChartData();
         objPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objPoint.y = this.objSummaryData.connData[i]["DIFF"];
+        objPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
 
         if (objPoint.y >= 0) {
           objPoint.color = "#79d70f";
@@ -1820,7 +1829,6 @@ class DrlgConnSummary extends Component {
       this.objSummaryData.rigStateData.sort(function (a, b) {
         return a.DEPTH - b.DEPTH;
       });
-
       //Create series for each rig state
       for (let i = 0; i < this.objSummaryData.rigStates.length; i++) {
         let objSeries = new DataSeries();
@@ -1856,6 +1864,7 @@ class DrlgConnSummary extends Component {
             let objDataPoint = new ChartData();
             objDataPoint.x = this.objSummaryData.rigStateData[i]["DEPTH"];
             objDataPoint.y = Number.parseFloat(arrRigStates[j]);
+            objDataPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
             objSeries.Data.push(objDataPoint);
           }
         }

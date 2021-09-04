@@ -1656,16 +1656,17 @@ export class DrillingSummary extends Component {
             </TabStripTab>
             <TabStripTab title="Page-2 ">
               <div style={{ marginTop: "10px" }}>
-                <div className="row mb-3" style={{ maxHeight: "160px" }}>
+                <div className="row mb-3">
+                  {/* style={{ maxHeight: "160px" }} for upper div */}
                   <div
                     //vimal
                     className="row mb-3 col-xl-8 col-lg-12 col-md-12 col-sm-12"
                     style={{
                       backgroundColor: "transparent",
                       width: "calc(100vw - 100px)",
-                      height: "calc(20vh)",
-                      minHeight: "180px",
-                      minWidth: "500px",
+                      height: "100px",
+                      minHeight: "100px",//180px
+                      minWidth: "500px",//350px
                     }}
                   >
                     <Grid
@@ -1674,9 +1675,9 @@ export class DrillingSummary extends Component {
 
                       className="mb-3 col-xl-12 col-lg-12 col-md-12 col-sm-12 numericGrid"
                       // style={{ height: "100%", width: "calc(100vw - 100px)" }}
-                      style={{ height: "110px", width: "calc(100vw)" }}
+                      style={{ height: "130px", width: "calc(100vw)" }}//height:120px Vimal
                       resizable={true}
-                      //scrollable={"scrollable"}
+                      scrollable={"scrollable"}//make commented
                       sortable={false}
                       //onRowClick={this.grdNumSummaryRowClick}
                       // editField="inEdit"
@@ -1739,8 +1740,8 @@ export class DrillingSummary extends Component {
                     className="col-xl-2 col-lg-6 col-md-6 col-sm-6"
                     style={{
                       marginBlock: "auto",
-                      minWidth: "300px",
-                      minHeight: "300px",
+                      minWidth: "200px",
+                      minHeight: "200px",
                     }}
                   >
                     {/* <h1 className="title ">Rotary Vs Slide</h1> */}
@@ -1748,8 +1749,10 @@ export class DrillingSummary extends Component {
                     <div
                       id="piechart1"
                       style={{
-                        height: "100px",
-                        width: "300px",
+                        height: "200px",//100px
+                        width: "300px",//300px
+                        minWidth: "300px",
+                        minHeight: "200px",//100px
                       }}
                     ></div>
                   </div>
@@ -1759,15 +1762,17 @@ export class DrillingSummary extends Component {
                     className="col-xl-2 col-lg-6 col-md-6 col-sm-6"
                     style={{
                       marginBlock: "auto",
-                      minWidth: "300px",
-                      minHeight: "300px",
+                      minWidth: "150px",//300px
+                      minHeight: "150px",//300px
                     }}
                   >
                     <div
                       id="piechart2"
                       style={{
-                        height: "100px",
+                        height: "200px",//300px
                         width: "300px",
+                        minHeight: "200px",//100px
+                        minWidth: "300px"
                       }}
                     ></div>
                   </div>
@@ -1779,7 +1784,8 @@ export class DrillingSummary extends Component {
                   ""
                 ) : (
                   <div>
-                    <div className="row mb-3" style={{ maxHeight: "230px" }}>
+                    <div className="row mb-3" >
+                      {/* for upprer div style={{ maxHeight: "230px" }} */}
                       <div
                         //vimal
                         className="row mb-3 col-xl-8 col-lg-12 col-md-12 col-sm-12"
@@ -1788,14 +1794,14 @@ export class DrillingSummary extends Component {
                           width: "calc(100vw - 100px)",
                           height: "calc(15vh)",
                           minHeight: "200px",
-                          minWidth: "500px",
+                          minWidth: "500px",//350px
                         }}
                       >
                         <Grid
                           //vimal
                           className="mb-3 col-xl-12 col-lg-12 col-md-12 col-sm-12 numericGrid"
-                          // style={{ height: "100%", width: "calc(100vw - 100px)" }}
-                          style={{ height: "155px", width: "calc(100vw)" }}
+                          style={{ height: "100%", width: "calc(100vw - 100px)" }}
+                          // style={{ height: "180px", width: "calc(100vw)" }}
                           resizable={true}
                           scrollable={"scrollable"}
                           sortable={false}
@@ -1808,7 +1814,6 @@ export class DrillingSummary extends Component {
                             headerClassName="text-center"
                             className="summaryLabelHeader"
                             field="col_1"
-                            width="100px"
                           />
                           <Column
                             headerClassName="text-center"
@@ -1820,7 +1825,6 @@ export class DrillingSummary extends Component {
                             headerClassName="text-center"
                             className="summaryLabelHeader"
                             field="col_2"
-                            width="100px"
                           />
                           <Column
                             headerClassName="text-center"
@@ -1843,7 +1847,7 @@ export class DrillingSummary extends Component {
                             headerClassName="text-center"
                             className="summaryLabelHeader1"
                             field="col_4"
-                            width="100px"
+                            width="120px"
                           />
                           <Column
                             headerClassName="text-center"
@@ -1854,6 +1858,7 @@ export class DrillingSummary extends Component {
                             headerClassName="text-center"
                             className="summaryLabelHeader1"
                             field="col_5"
+                            width="120px"
                           />
                           <Column
                             headerClassName="text-center"
@@ -1868,14 +1873,14 @@ export class DrillingSummary extends Component {
                         style={{
                           marginBlock: "auto",
                           minWidth: "300px",
-                          minHeight: "300px",
+                          minHeight: "100px",
                         }}
                       >
                         <div
                           id="offsetpiechart1"
                           style={{
-                            height: "100px",
-                            width: "300px",
+                            minHeight: "100px",//100px
+                            minWidth: "300px",
                           }}
                         ></div>
                       </div>
@@ -1885,14 +1890,14 @@ export class DrillingSummary extends Component {
                         style={{
                           marginBlock: "auto",
                           minWidth: "300px",
-                          minHeight: "300px",
+                          minHeight: "100px",
                         }}
                       >
                         <div
                           id="offsetpiechart2"
                           style={{
-                            height: "100px",
-                            width: "300px",
+                            minHeight: "100px",//100px
+                            minWidth: "300px",
                           }}
                         ></div>
                       </div>
@@ -1920,19 +1925,21 @@ export class DrillingSummary extends Component {
                   <div
                     id="roplinechart"
                     style={{
-                      height: "54vh",
-                      width: "92vw",
+                      height: "calc(50vh)",
+                      width: "calc(95vw)",
+                      marginLeft: "-100px",
                       float: "left",
                       backgroundColor: "transparent",
-
                     }}
                   ></div>
                   :
                   <div
                     id="roplinechart"
                     style={{
-                      height: "calc(28vh)",
-                      width: "calc(92vw)",
+                      height: "calc(25vh)",
+                      width: "calc(95vw)",
+                      marginRight: "50px",
+                      marginLeft: "-60px",
                       float: "left",
                       backgroundColor: "transparent",
                     }}
