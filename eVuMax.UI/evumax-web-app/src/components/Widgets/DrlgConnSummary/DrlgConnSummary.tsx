@@ -225,7 +225,7 @@ class DrlgConnSummary extends Component {
       });
 
 
-      document.title = "Drilling Conn. Summary - " + this.state.WellName; //Nishant 02/09/2021
+      document.title = this.state.WellName + " -Drilling Conn. Summary"; //Nishant 02/09/2021
       this.refreshChart();
     } catch (error) { }
   };
