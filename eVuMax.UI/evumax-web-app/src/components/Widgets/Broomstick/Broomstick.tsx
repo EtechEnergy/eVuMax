@@ -531,12 +531,12 @@ class Broomstick extends Component {
         <div className="clearfix"></div>
 
         <div className="row">
-          <div className="col-lg-10 col-sm-7">
-          {/* <div style={{ width: "70%" }}> */}
+          <div className="col-xl-10 col-lg-9 col-md-7 col-sm-7">
+            {/* <div style={{ width: "70%" }}> */}
             <div
               id="Broomstick"
               style={{
-                height: "calc(100vh - 130px)",
+                height: "calc(100vh - 150px)",
                 //width: "calc(70vw)",
                 width: "auto",
                 backgroundColor: "transparent",
@@ -545,8 +545,8 @@ class Broomstick extends Component {
             ></div>
           </div>
 
-          <div className="col-lg-2 col-sm-5">
-          {/* <div style={{ width: "18%" }}> */}
+          <div className="col-xl-2 col-lg-3 col-md-5 col-sm-5">
+            {/* <div style={{ width: "18%" }}> */}
             <div
               id="Broomstick_legend"
               style={{
