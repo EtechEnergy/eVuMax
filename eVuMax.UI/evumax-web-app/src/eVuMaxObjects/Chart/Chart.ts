@@ -1839,7 +1839,7 @@ export class Chart {
               ';height:15px;width:15px"><p style="color:transparent">x</p> </div> ';
             legendString =
               legendString +
-              '<div style="white-space:nowrap;margin-left:3px;margin-right:3px;display:inline-block;background-color:transparent;height:15px;width:auto"><p >' +
+              '<div style="white-space:nowrap; overflow: hidden;margin-left:3px;margin-right:3px;display:inline-block;background-color:transparent;height:15px;width:auto"><p style="white-space:nowrap; overflow: hidden; text-overflow: ellipsis;width:180px" >' +
               objSeries.Title +
               "</p></div> ";
             legendString = legendString + "</div>";
