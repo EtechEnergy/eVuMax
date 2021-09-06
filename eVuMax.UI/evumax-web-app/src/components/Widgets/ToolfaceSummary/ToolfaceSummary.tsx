@@ -49,31 +49,23 @@ import {
 import {
   TabStrip,
   TabStripTab,
-  Splitter,
-  TreeView,
-  processTreeViewItems,
-  Menu,
-  MenuItem,
-  Popup,
-  Window,
-  Field,
-  FormElement,
+
   DropDownList,
   Button,
-  Form,
+
   ListView,
   ListViewHeader,
 } from "@progress/kendo-react-all";
 
-import { axisBottom, event, gray, json, values } from "d3";
+
 import moment from "moment";
-import { stat } from "fs";
+
 import "./ToolfaceSummary.css";
 import {
   faPlus,
-  faPlusCircle,
+
   faTrash,
-  faUnderline,
+
   faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
@@ -83,7 +75,7 @@ import { confirmAlert } from "react-confirm-alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import STDChannels from "../../standardChannels/stdChannels";
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
-import { debug } from "console";
+
 import { Util } from "../../../Models/eVuMax";
 //Nishant 28/07/2021
 import * as util from "../../../utilFunctions/utilFunctions";
@@ -110,13 +102,13 @@ class ToolfaceSummary extends Component {
     //GEO
     ShowDrillingWindow: false,
     GeoDrlgWindowData: [],
-    GeoDrlgWindowColor: "",
+    GeoDrlgWindowColor: util.getRandomColor(),
     GeoDrlgWindowTrans: 50,
 
     // ROP
     ShowROPDrillingWindow: false,
     ROPDrlgWindowData: [],
-    ROPDrlgWindowColor: "",
+    ROPDrlgWindowColor: util.getRandomColor(),
     ROPDrlgWindowTrans: 50,
 
     GTF: {
@@ -1549,7 +1541,7 @@ class ToolfaceSummary extends Component {
           Mnemonic: selectedChannel.id,
           lineStyle: 0,
           lineWidth: 2,
-          lineColor: "rgba(239, 10, 10, 1)", // Default Color when add New Channel  Nishant 28/07/2021,
+          lineColor: util.getRandomColor(), // Default Color when add New Channel  Nishant 06/09/2021,
           // visible:"true" // Nishant 28/07/2021
         });
       }
