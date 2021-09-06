@@ -11,6 +11,7 @@ import {
 } from "../../../eVuMaxObjects/Chart/Axis";
 import DataSelector from "../../Common/DataSelector";
 import { Moment } from "moment";
+import { confirmAlert } from "react-confirm-alert";
 import {
   DataSeries,
   dataSeriesType,
@@ -39,6 +40,7 @@ import {
   Grid,
   GridColumn as Column,
   GridColumn,
+  GridSelectionChangeEvent,
   GridToolbar,
 } from "@progress/kendo-react-grid";
 import {
@@ -56,7 +58,9 @@ import {
   DropDownList,
   Button,
   Form,
+  Dialog
 } from "@progress/kendo-react-all";
+
 
 import { axisBottom, gray, json } from "d3";
 import moment from "moment";
@@ -79,6 +83,7 @@ class TripConnSummary extends Component {
 
   state = {
     WellName: "",
+    showCommentDialog: false,
     selected: 0,
     summaryData: [],
     currentDepth: 0,
@@ -102,7 +107,8 @@ class TripConnSummary extends Component {
     STSBenchMark: 0,
     TargetTime: 0,
     RigCost: 0,
-    ShowComments: true,
+    ShowComments: false,
+    Comment: ""
   };
 
   WellId: string = "";
@@ -309,7 +315,7 @@ class TripConnSummary extends Component {
         .then((res) => {
 
           this.objSummaryData = JSON.parse(res.data.Response);
-          debugger;
+
 
           this.Warnings = res.data.Warnings;
 
@@ -460,8 +466,233 @@ class TripConnSummary extends Component {
     { label: "Time Log Remarks", value: "Time Log Remarks", className: "" },
   ];
 
-  handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
+  //handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
 
+
+  addComment = () => {
+    try {
+      if (this.state.currentDepth == null) {
+        confirmAlert({
+          //title: 'eVuMax',
+          message: 'Please select depth from list ..',
+          childrenElement: () => <div />,
+          buttons: [
+            // {
+            //   // label: 'Ok',
+            //   // onClick: () => {
+            //   //   return
+            //   // }
+
+            // },
+            {
+              label: 'Ok',
+              onClick: () => null
+            }
+          ]
+        });
+        return;
+      }
+
+      this.setState({ showCommentDialog: true });
+
+
+
+    } catch (error) {
+
+    }
+  }
+
+
+  removeComment = () => {
+    try {
+      if (this.state.currentDepth == null) {
+
+
+        return;
+      }
+
+
+      confirmAlert({
+        //title: 'eVuMax',
+        message: 'Are you sure want to delete comment ?',
+        childrenElement: () => <div />,
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: async () => {
+              //this.setState({ Comment: "" });
+              await this.setState((prevState, props) => ({
+                Comment: ""
+              }));
+
+              this.cmdSaveComment_click(false);
+            }
+
+          },
+          {
+            label: 'No',
+            onClick: () => null
+          }
+        ]
+      });
+
+
+
+
+    } catch (error) {
+
+    }
+  }
+
+  cmdSaveComment_click = (isAddComment: boolean) => {
+    try {
+
+      if (this.state.Comment == "" && isAddComment) {
+        confirmAlert({
+          //title: 'eVuMax',
+          message: 'Please enter comment',
+          childrenElement: () => <div />,
+          buttons: [
+            {
+              label: 'Ok',
+              onClick: () => {
+                return;
+                //
+                // let sideTrackList = this.state.grdSideTrackList;
+                // let objRow = rowData;
+                // let ID = objRow.SideTrackID;
+                // let index = sideTrackList.findIndex((d: any) => d.SideTrackID === ID); //find index in your array
+                // sideTrackList.splice(index, 1);//remove element from array
+                // this.setState({
+                //     grdSideTrackList: sideTrackList
+                // });
+                // this.forceUpdate();
+              }
+
+            },
+            // {
+            //     label: 'No',
+            //     onClick: () => null
+            // }
+          ]
+        });
+      }
+
+
+
+      //for ConnectionData
+      let index = this.state.summaryData.findIndex((d: any) => d.DEPTH === this.state.currentDepth); //find index in your array
+      let edited = this.state.summaryData;
+
+      //for RigstateData
+      let indexRigstate = this.objSummaryData.rigStateData.findIndex((d: any) => d.DEPTH === this.state.currentDepth); //find index in your array
+      let editedRigstate = this.objSummaryData.rigStateData;
+
+      if (isAddComment) {
+        edited[index]["COMMENTS"] = this.state.Comment;
+        editedRigstate[indexRigstate]["COMMENTS"] = this.state.Comment;
+      } else {
+        this.setState({ Comment: "" });
+        edited[index]["COMMENTS"] = "";
+        editedRigstate[indexRigstate]["COMMENTS"] = "";
+      }
+
+      this.setState({ showCommentDialog: false });
+
+
+      Util.StatusInfo("Getting data from the server  ");
+      let objBrokerRequest = new BrokerRequest();
+      objBrokerRequest.Module = "Summary.Manager";
+      objBrokerRequest.Broker = "DrlgConn";
+      objBrokerRequest.Function = "updateComments";
+
+      let paramuserid: BrokerParameter = new BrokerParameter(
+        "UserId",
+        _gMod._userId
+      );
+      objBrokerRequest.Parameters.push(paramuserid);
+
+      let paramwellId: BrokerParameter = new BrokerParameter(
+        "WellId",
+        this.WellId
+      );
+      objBrokerRequest.Parameters.push(paramwellId);
+
+
+      let paramDepth: BrokerParameter = new BrokerParameter(
+        "Depth",
+        this.state.currentDepth.toString()
+      );
+      objBrokerRequest.Parameters.push(paramDepth);
+
+
+      let paramComment: BrokerParameter = new BrokerParameter(
+        "Comments",
+        this.state.Comment.toString()
+      );
+      objBrokerRequest.Parameters.push(paramComment);
+
+      axios
+        .get(_gMod._performTask, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+        })
+        .then((res) => {
+          Util.StatusSuccess("Data successfully retrived  ");
+          Util.StatusReady();
+          this.objSummaryData = JSON.parse(res.data.Response);
+          this.setData();
+        })
+        .catch((error) => {
+          Util.StatusError(error.message);
+          Util.StatusReady();
+          if (error.response) {
+          } else if (error.request) {
+
+            console.log("error.request");
+          } else {
+
+            console.log("Error", error);
+          }
+
+          console.log("rejected");
+          this.setState({ isProcess: false });
+        });
+    } catch (error) {
+
+    }
+  }
+
+
+  grdRowClick = (event: GridSelectionChangeEvent) => {
+    try {
+
+      debugger;
+      this.setState({
+        currentDepth: event.dataItem.DEPTH,
+        Comment: event.dataItem.COMMENTS
+      });
+
+    } catch (error) {
+
+    }
+  }
+
+  cmdCancelComment_click = () => {
+    try {
+
+
+      this.setState({
+        Comment: "",
+        showCommentDialog: false
+      });
+    } catch (error) {
+
+    }
+  }
   render() {
     return (
       <>
@@ -647,6 +878,42 @@ class TripConnSummary extends Component {
                 </div>
               </div>
 
+
+              <br />
+
+
+              <div className="row mb-3">
+                <div className="col-xl-2">
+                  <h6 className="summaryGroupHeader" style={{ float: "right" }}>Connection Details</h6>
+                </div>
+                <div className="col-xl-1">
+
+                  <Button
+                    id="cmdAddComment"
+                    onClick={() => {
+                      this.addComment();
+                    }}
+                  >
+                    {/* <FontAwesomeIcon icon={faPencilAlt} onClick={() => {
+          this.addComment();
+        }} /> */}
+                    Add Comment
+                  </Button>
+                </div>
+                <div className="col-xl-2">
+                  <Button
+                    id="cmdAddComment"
+                    onClick={() => {
+                      this.removeComment();
+                    }}
+
+                  >Remove Comment
+                  </Button>
+
+
+
+                </div>
+              </div>
               <br />
 
               <h6 className="summaryGroupHeader">Connection Details</h6>
@@ -675,7 +942,7 @@ class TripConnSummary extends Component {
                   }
                   resizable={true}
                   sortable={true}
-                  //onRowClick={this.grdNumSummaryRowClick}
+                  onRowClick={this.grdRowClick}
                   editField="inEdit"
                   selectedField="selected"
                 >
@@ -925,8 +1192,8 @@ class TripConnSummary extends Component {
               </div>
               <div className="clearfix"></div>
 
-              <br />
 
+              <br />
               <div className="row">
                 <div className="col-lg-12">
                   <h6 className="mb-3 summaryGroupHeader">Benchmarks </h6>
@@ -1019,6 +1286,51 @@ class TripConnSummary extends Component {
         <div id="warning" style={{ padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
 
 
+        {this.state.showCommentDialog && (
+          //style={{ height: '100%', width: '500px', top: 0, left: 0 }}
+          <Dialog title={"Comment for Depth " + this.state.currentDepth}
+            onClose={(e: any) => {
+              this.setState({
+                showCommentDialog: false
+              })
+            }}
+          // modal={true}
+          >
+            <div className="row" >
+              <div className="col-9">
+
+                <Input
+                  name="comment"
+                  // style={{ width: "100%" }}
+                  label="Comment"
+
+                  value={this.state.Comment}
+                  // onChange={this.handleChange}
+                  onChange={(event) => {
+
+
+                    this.setState({
+                      Comment: event.target.value,
+                    });
+                  }}
+                />
+
+
+              </div>
+
+            </div>
+            <div className="row">
+              <legend>
+
+                <span className="float-left">  <button type="button" onClick={() => this.cmdSaveComment_click(true)} className="btn-custom btn-custom-primary mr-1">
+                  Save</button>
+                  <button type="button" onClick={this.cmdCancelComment_click} className="btn-custom btn-custom-primary ml-1">
+                    Cancel</button>
+                </span></legend>
+            </div>
+
+          </Dialog>
+        )}
 
       </>
     );
@@ -1113,7 +1425,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Labels = [];
 
       //Fill up the data for data series
-      debugger;
+
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
 
@@ -1219,7 +1531,7 @@ class TripConnSummary extends Component {
         );
         //objPoint.x=this.objSummaryData.connData[i]["DEPTH"];
         objPoint.y = this.objSummaryData.connData[i]["DIFF"];
-
+        objPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         if (objPoint.y >= 0) {
           objPoint.color = "#79d70f";
         } else {
@@ -1283,7 +1595,7 @@ class TripConnSummary extends Component {
       }
 
       //Fill up the data for each series
-      debugger;
+
       for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
         let arrRigStates: string[] = this.objSummaryData.rigStateData[i][
           "TIMES"
@@ -1341,6 +1653,7 @@ class TripConnSummary extends Component {
         );
         //objCostPoint.x=this.objSummaryData.connData[i]["DEPTH"];
         objCostPoint.y = this.objSummaryData.connData[i]["COST"];
+        objCostPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         objCost.Data.push(objCostPoint);
       }
 

@@ -1988,7 +1988,6 @@ export class Chart {
       }
 
       if (stackedBarChartsFound) {
-        debugger;
         let objStackedBarSeries: StackedBarSeries = new StackedBarSeries();
         objStackedBarSeries.ChartRef = this;
         objStackedBarSeries.redrawSeries();
