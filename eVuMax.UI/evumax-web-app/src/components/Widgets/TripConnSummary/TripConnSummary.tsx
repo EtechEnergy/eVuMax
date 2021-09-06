@@ -46,18 +46,9 @@ import {
 import {
   TabStrip,
   TabStripTab,
-  Splitter,
-  TreeView,
-  processTreeViewItems,
-  Menu,
-  MenuItem,
-  Popup,
-  Window,
-  Field,
-  FormElement,
-  DropDownList,
+
   Button,
-  Form,
+
   Dialog
 } from "@progress/kendo-react-all";
 
@@ -88,6 +79,7 @@ class TripConnSummary extends Component {
     summaryData: [],
     currentDepth: 0,
     AvgTime: 0,
+    AvgTimeD: 0,//Nishant 06-09-2021
     AvgDayTime: 0,
     AvgNightTime: 0,
     PositiveFlow: 0,
@@ -830,7 +822,8 @@ class TripConnSummary extends Component {
                     <div className="form-group">
                       <label className="summaryLabelHeader">Avg. Time</label>
                       <label className="summaryLabel" id="txtAvgTimeD">
-                        {this.state.AvgDayTime}
+                        {/* Nishant 06-09-2021 */}
+                        {this.state.AvgTimeD}
                       </label>
                     </div>
                   </div>
