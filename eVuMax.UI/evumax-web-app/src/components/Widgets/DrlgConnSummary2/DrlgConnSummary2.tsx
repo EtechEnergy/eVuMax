@@ -45,14 +45,14 @@ import {
   TabStrip,
   TabStripTab,
   Button,
-  
+
 } from "@progress/kendo-react-all";
 
 
 import moment from "moment";
 
 import "./DrlgConnSummary2.css";
-import { faMoon, faSun} from "@fortawesome/free-solid-svg-icons";
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -65,13 +65,13 @@ class DrlgConnSummary2 extends Component {
     super(props);
     this.WellId = props.match.params.WellId;
   }
-  
+
   state = {
     WellName: "",
     selected: 0,
     summaryData: [],
     currentDepth: 0,
-    AvgDayD:0,
+    AvgDayD: 0,
     AvgTime: 0,
     AvgBTS: 0,
     AvgSTS: 0,
@@ -318,7 +318,7 @@ class DrlgConnSummary2 extends Component {
         RigCost: this.objUserSettings.RigCost,
       });
 
-      document.title =  this.state.WellName + " -Drilling Conn.Summary (Split View)"; //Nishant 02/09/2021
+      document.title = this.state.WellName + " -Drilling Conn.Summary (Split View)"; //Nishant 02/09/2021
       this.refreshChart();
     } catch (error) { }
   };
@@ -1362,6 +1362,10 @@ class DrlgConnSummary2 extends Component {
 
   refreshChart = () => {
     try {
+      this.objBTSChart.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)
+      this.objSTSChart.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)
+      this.objSTBChart.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)
+
       this.objBTSChart.initialize();
       this.objSTSChart.initialize();
       this.objSTBChart.initialize();

@@ -1000,6 +1000,11 @@ export class Axis {
     ) {
       x = this.IRelativePos;
       y = this.StartPos;
+      if (this.Position == axisPosition.left) {
+        this.ChartRef.__chartRect.LeftEdge = this.IRelativePos;
+        console.log("update left pos =" + this.Id, this.IRelativePos);
+      }
+
     } else {
       x = this.StartPos;
       y = this.IRelativePos;

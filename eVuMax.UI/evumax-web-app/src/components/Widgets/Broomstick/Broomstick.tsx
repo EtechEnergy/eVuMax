@@ -175,6 +175,7 @@ class Broomstick extends Component {
   };
   initilizeCharts = () => {
     this.objChart_Broomstick = new Chart(this, "Broom_Stick");
+
     this.objChart_Broomstick.ContainerId = "Broomstick";
     this.objChart_Broomstick.Title = "";
     this.objChart_Broomstick.leftAxis().AutoScale = true;
@@ -236,6 +237,7 @@ class Broomstick extends Component {
     try {
       this.objChart_Broomstick.initialize();
 
+      this.objChart_Broomstick.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)
       //Clear all the series
       this.objChart_Broomstick.DataSeries.clear();
       this.objChart_Broomstick.updateChart();

@@ -51,7 +51,7 @@ export class TripSpeedPlot1 extends Component {
   componentDidMount() {
     try {
       //initialize chart
-      
+
       this.initilizeCharts();
 
       this.loadConnections();
@@ -291,7 +291,7 @@ export class TripSpeedPlot1 extends Component {
   refreshTripSpeedChart() {
     try {
       this.objChart_TripSpeed.initialize();
-
+      this.objChart_TripSpeed.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       //Clear all the series
 
       this.objChart_TripSpeed.DataSeries.clear();
@@ -602,7 +602,7 @@ export class TripSpeedPlot1 extends Component {
   //New Code Nishant 02/09/2021
   onBeforeDrawTripSpeedSeries = (e: ChartEventArgs, i: number) => {
     try {
-      debugger;
+
       d3.select(".tripSpeedWithConn_benchmark").remove();
       d3.select(".tripSpeedWoConn_benchmark").remove();
 
@@ -684,7 +684,7 @@ export class TripSpeedPlot1 extends Component {
 
   refreshBarWOConnChart() {
     this.objChart_BarWOConn.initialize();
-
+    this.objChart_BarWOConn.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
     //Clear all the series
     this.objChart_BarWOConn.DataSeries.clear();
     this.objChart_BarWOConn.updateChart();
@@ -777,7 +777,7 @@ export class TripSpeedPlot1 extends Component {
   refreshBarWithConn() {
     try {
       this.objChart_BarWithConn.initialize();
-
+      this.objChart_BarWithConn.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       //Clear all the series
       this.objChart_BarWithConn.DataSeries.clear();
       this.objChart_BarWithConn.updateChart();
@@ -1040,7 +1040,7 @@ export class TripSpeedPlot1 extends Component {
           <TabStrip
             selected={this.state.selectedTab}
             onSelect={this.handleSelect}
-            // keepTabsMounted={true}
+          // keepTabsMounted={true}
           >
             <TabStripTab title="Trip Speed Summary">
               <div id="tabTripSpeedPlot">
@@ -1064,7 +1064,7 @@ export class TripSpeedPlot1 extends Component {
                         textAlign: "justify",
                         height: "40px",
                         marginLeft: "10px",
-                        width: "calc(30vw)",
+                        //width: "calc(30vw)",
                         backgroundColor: "transparent",
                         display: "inline-block",
                       }}
@@ -1116,7 +1116,7 @@ export class TripSpeedPlot1 extends Component {
                       }}
                     ></div>
                   </div>
-                
+
                 </div>
               </div>
             </TabStripTab>
@@ -1134,8 +1134,8 @@ export class TripSpeedPlot1 extends Component {
                   plotID="TripSpeed1"
                 ></TripAnalyzerSelection> */}
                 <TripAnalyzerSelection
-                  WellID= {this.WellId}
-                  onSaveApply = {this.loadConnections}
+                  WellID={this.WellId}
+                  onSaveApply={this.loadConnections}
                   plotID="TripSpeed1"
                 ></TripAnalyzerSelection>
               </div>

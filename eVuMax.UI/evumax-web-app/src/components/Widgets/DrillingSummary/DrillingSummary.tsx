@@ -1915,7 +1915,7 @@ export class DrillingSummary extends Component {
                   style={{
                     textAlign: "center",
                     height: "40px",
-                    width: "calc(100vw - 90px)",
+                    //width: "calc(100vw - 90px)",
                     backgroundColor: "transparent",
                     display: "inline-block",
                   }}

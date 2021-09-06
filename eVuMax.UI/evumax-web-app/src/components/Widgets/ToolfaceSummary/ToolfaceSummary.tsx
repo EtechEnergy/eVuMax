@@ -542,6 +542,7 @@ class ToolfaceSummary extends Component {
 
       //initialize chart
       this.objChart = new Chart(this, "Toolface");
+
       this.objChart.ContainerId = "toolface";
 
       this.objChart.leftAxis().AutoScale = false;
@@ -585,6 +586,7 @@ class ToolfaceSummary extends Component {
       this.objChart.MarginRight = 30;
 
       this.objChart.initialize();
+      this.objChart.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart.reDraw();
       this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
         this.onBeforeDrawSeries(e, i);
@@ -1326,7 +1328,7 @@ class ToolfaceSummary extends Component {
       this.plotAdnlChart();
       this.plotToolfaceDial();
 
-      document.title =  this.state.WellName + " -Toolface Summary"; //Nishant 02/09/2021
+      document.title = this.state.WellName + " -Toolface Summary"; //Nishant 02/09/2021
     } catch (error) { }
   };
 
@@ -2608,7 +2610,7 @@ class ToolfaceSummary extends Component {
               style={{
                 textAlign: "center",
                 height: "40px",
-                width: "calc(100vw - 90px)",
+                //width: "calc(100vw - 90px)",
                 backgroundColor: "transparent",
                 display: "inline-block",
               }}

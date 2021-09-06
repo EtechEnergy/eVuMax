@@ -813,7 +813,7 @@ class DrlgConnSummary extends Component {
                   style={{
                     textAlign: "center",
                     height: "40px",
-                    width: "calc(100vw - 130px)",
+                    //width: "calc(100vw - 130px)",
                     backgroundColor: "transparent",
                     display: "inline-block",
                   }}
@@ -1576,6 +1576,7 @@ class DrlgConnSummary extends Component {
   refreshChart = () => {
     try {
       this.objChart.initialize();
+      this.objChart.LegendPosition = 4; // 1 (left), 2 (right), 3 (top), 4 (bottom)
 
       if (this.state.CurrentView == 0) {
         this.plotChartRegular();

@@ -799,7 +799,7 @@ class TripConnSummary extends Component {
               style={{
                 textAlign: "center",
                 height: "30px",
-                width: "calc(100vw - 200px)",
+                //width: "calc(100vw - 200px)",
                 backgroundColor: "transparent",
                 display: "inline-block",
                 minWidth: "800",
@@ -1344,6 +1344,7 @@ class TripConnSummary extends Component {
 
 
       this.objChart.initialize();
+      this.objChart.LegendPosition = 2;  //1 (left), 2 (right), 3 (top), 4 (bottom)
 
       if (this.state.CurrentView == 0) {
         this.plotChartRegular();
