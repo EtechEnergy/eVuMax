@@ -232,12 +232,12 @@ class ToolfaceSummary extends Component {
       this.fromDepth = pfromDepth;
       this.toDepth = ptoDepth;
 
-      console.log(
-        "From Date " +
-        moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-        " To Date " +
-        moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-      );
+      // console.log(
+      //   "From Date " +
+      //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
+      //   " To Date " +
+      //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
+      // );
 
       this.loadData();
     } catch (error) { }
@@ -369,7 +369,7 @@ class ToolfaceSummary extends Component {
     let newData: any = Object.values([...this.state.GeoDrlgWindowData]);
     let index = newData.findIndex((item: any) => item.SRNO === e.dataItem.SRNO); // use unique value like ID
     newData[index][e.field] = e.value;
-    console.log("index", index);
+    //console.log("index", index);
     if (index > 0) {
       if (e.field == "StartMD") {
         newData[index - 1]["EndMD"] = e.value;
@@ -385,7 +385,7 @@ class ToolfaceSummary extends Component {
     let newData: any = Object.values([...this.state.ROPDrlgWindowData]);
     let index = newData.findIndex((item: any) => item.SRNO === e.dataItem.SRNO); // use unique value like ID
     newData[index][e.field] = e.value;
-    console.log("index", index);
+    //console.log("index", index);
     if (index > 0) {
       if (e.field == "StartMD") {
         newData[index - 1]["EndMD"] = e.value;
@@ -618,7 +618,7 @@ class ToolfaceSummary extends Component {
 
       this.loadData();
 
-      console.log("lineStyle", this.state.LineStyle);
+      //console.log("lineStyle", this.state.LineStyle);
     } catch (error) { }
   }
 
