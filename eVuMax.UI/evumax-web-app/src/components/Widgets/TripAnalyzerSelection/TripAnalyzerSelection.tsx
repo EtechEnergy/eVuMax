@@ -6,22 +6,20 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "@progress/kendo-react-intl";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import "react-router-dom";
-import ProcessLoader from "../../loader/loader";
+
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import axios from "axios";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faIndent,
-  faChartArea,
-  fas,
+
   faTrash,
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
-  DateTimePicker,
+  
   Grid,
   GridToolbar,
   GridColumn as Column,
@@ -41,69 +39,23 @@ import { TripDepthRange } from "../../../eVuMaxObjects/dataObjects/DataObjects/t
 import GlobalMod from "../../../objects/global";
 import CustomLoader from "../../loader/loader";
 import { confirmAlert } from "react-confirm-alert";
-import { isObjectBindingPattern, isThisTypeNode, JsxEmit } from "typescript";
-import { values } from "d3";
+
 let _gMod = new GlobalMod();
 
 interface IProps {
   plotID: string;
-  showBenchMarks?: boolean | true;
+  onSaveApply: any;
+  WellID: string;
+  // showBenchMarks?: boolean | true;
 }
-
-// interface IState {
-//     tripAnalyzerSelection?: any;
-//     showCustomTagList?: false,
-// }
-
-//API TripAnalyzerSelection Class object
-//***************************************** */
-
-//  UseCustomTags { get; set; } = false;
-//  DataTable TagSourceData { get; set; } = new DataTable();
-//  DataTable grdTripTagData { get; set; } = new DataTable();
-//  double DepthInterval { get; set; } = 0;
-//  TripAnalyzer.enumTripDirection TripDirection { get; set; } = TripAnalyzer.enumTripDirection.TripIn;
-
-//  bool UseDepthRange { get; set; } = false;
-//  bool RemoveFillupTime { get; set; } = false;
-//  bool IncludePipeMovement { get; set; } = false;
-//  string DepthVumaxUnitID { get; set; } = "";
-//  Dictionary<int, TripDepthRange> DepthRanges { get; set; } = new Dictionary<int, TripDepthRange>();
-
-//public TripSpeedBenchMark objBenchMarks = new TripSpeedBenchMark();
-//  double BenchMarkSpeedWOConnection { get; set; } = 0;
-//  double BenchMarkSpeedWithConnection { get; set; } = 0;
-
-// grdTripTagData.Columns.Add("PHASE_INDEX", typeof(System.Int64));
-// grdTripTagData.Columns.Add("PHASE_ID", typeof(System.Int64));
-// grdTripTagData.Columns.Add("PHASE_NAME", typeof(System.String));
-// grdTripTagData.Columns.Add("STEP_ID", typeof(System.String));
-// grdTripTagData.Columns.Add("STEP_NAME", typeof(System.String));
-
-// grdTripTagData.Columns.Add("EMPH_ID", typeof(System.String));
-// grdTripTagData.Columns.Add("EMPH_NAME", typeof(System.String));
-
-// grdTripTagData.Columns.Add("TIMELOG_ID", typeof(System.String));
-// grdTripTagData.Columns.Add("TIMELOG_NAME", typeof(System.String));
-
-// grdTripTagData.Columns.Add("START_DATE", typeof(System.String));
-// grdTripTagData.Columns.Add("END_DATE", typeof(System.String));
-
-//Tag Source Data
-//  TagSourceData.Columns.Add("SOURCE_ID", typeof(System.String));
-//  TagSourceData.Columns.Add("SOURCE_NAME", typeof(System.String));
-
-//************************************ */
-
 export default class TripAnalyzerSelection extends Component<IProps> {
-  public static defaultProps: Partial<IProps> = {
-    showBenchMarks: true,
-  };
-  constructor(parentRef, props: any) {
-    super(props);
-    this.__parentRef = parentRef;
 
-    this.WellId = parentRef.WellId;
+  //constructor(parentRef, props: any) {
+    constructor(props: any) {
+    super(props);
+    //this.__parentRef =  parentRef;
+    // this.WellId = parentRef.WellId;
+    this.WellId = this.props.WellID;
   }
   WellId: string = "";
   selectedTab: number = 0;
@@ -166,7 +118,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
       this.setState({
         objBenchMarks: edited,
       });
-      this.forceUpdate();
+      //this.forceUpdate();//Nishant Commented 06/09/2021
 
       return;
     }
@@ -176,7 +128,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
     this.setState({
       objTripAnalyzerSelection: edited,
     });
-    this.forceUpdate();
+    //this.forceUpdate();//Nishant Commented 06/09/2021
 
     if (field == "UseCustomTags") {
       //load Drilling Tag List
@@ -229,70 +181,11 @@ export default class TripAnalyzerSelection extends Component<IProps> {
               objTripAnalyzerSelection: edited,
               selectedTag: [],
               selectedCustomTag: new comboData("", ""),
-
-              // objTagDepthInformation: objGrdData
             });
 
-            this.forceUpdate();
+            //this.forceUpdate();//Nishant Commented 06/09/2021
 
-            // let customTagList: comboData[] = [];
-            // for (let index = 0; index < objData.TagSourceData.length; index++) {
-            //     const element = objData.TagSourceData[index];
-            //     let objItem: comboData = new comboData();
-            //     objItem.id = element.SOURCE_ID;
-            //     objItem.text = element.SOURCE_NAME;
-            //     customTagList.push(objItem);
-            // }
-            // if (customTagList.length > 0) {
-            //     this.setState({
-            //         customTagList: customTagList
-            //     });
-            // }
-
-            // //load grdTripTagData
-            // objData.grdTripTagData = objData.grdTripTagData.map((dataItem: any) => Object.assign({ selected: false }, dataItem));
-            // let selectedTag = [];
-
-            // if (Object.values(objData.objUserSettings.TagSelection).length > 0) {
-            //     selectedTag = Object.values(objData.objUserSettings.TagSelection)
-            // } else {
-            //     selectedTag = [];
-            // }
-
-            // // let grdDepthRange = Object.values(objData.objUserSettings.TagDepthInformation.map((dataItem: any) => Object.assign({ PhaseIndex: 0 }, dataItem))); //Object.values(objData.objUserSettings.TagDepthInformation);
-            // // if (grdDepthRange.length == 0) {
-            // //     grdDepthRange = [];
-            // // }
-
-            // //load BenchMarks
-            // let objBenchMarks = objData.objUserSettings.objBenchMarks;
-
-            // let grdSpeedProfile = Object.values(objData.objUserSettings.objBenchMarks.speedProfile);
-            // if (grdSpeedProfile.length == 0) {
-            //     grdSpeedProfile = [];
-            // }
-
-            // this.setState({
-            //     objTripAnalyzerSelection: objData.objUserSettings,
-            //     grdData: objData.grdTripTagData,
-            //     objBenchMarks: objBenchMarks,
-            //     grdSpeedProfile: grdSpeedProfile,
-            //     objTagDepthInformation: Object.values(objData.objUserSettings.TagDepthInformation),
-            //     selectedTag: selectedTag
-
-            // });
-
-            // this.forceUpdate();
-            // let index = this.state.grdData.findIndex((value: any) => value.PHASE_INDEX == selectedTag[0]);
-            // if (index > -1) {
-            //     let edited = this.state.grdData;
-            //     edited[index].selected = true;
-
-            //     this.setState({
-            //         grdData: edited
-            //     });
-            // }
-            // this.forceUpdate();
+           
           })
           .catch((error) => {
             $("#loader").hide();
@@ -325,7 +218,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
     this.setState({
       selectedTag: [],
     });
-    this.forceUpdate();
+    //this.forceUpdate();//Nishant Commented 06/09/2021
 
     let value = event.value;
     const name = field;
@@ -386,7 +279,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
             grdData: objGrdData,
             selectedTag: [],
           });
-          this.forceUpdate();
+          //this.forceUpdate();//Nishant Commented 06/09/2021
         })
         .catch((error) => {
           $("#loader").hide();
@@ -412,7 +305,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
 
   SaveSettings = () => {
     try {
-      //Save to DB pending
+      
 
       if (this.state.selectedTag.length == 0) {
         confirmAlert({
@@ -464,8 +357,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
       newBenchMarks.speedProfile = newSpeedProfile;
       newUserSettings.objBenchMarks = newBenchMarks;
 
-      //pending
-      //depthRange to Dictionary this is unique for each Phase Index
+     
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Summary.Manager";
@@ -503,10 +395,8 @@ export default class TripAnalyzerSelection extends Component<IProps> {
           params: { paramRequest: JSON.stringify(objBrokerRequest) },
         })
         .then((res) => {
-          let hold = true;
-
-          //pending
-          //this.__parentRef.loadTripSpeed();
+          //this.__parentRef.loadConnections();
+          this.props.onSaveApply();
         })
         .catch((error) => {
           if (error.response) {
@@ -516,7 +406,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
           this.setState({ isProcess: false });
         });
 
-      this.__parentRef.loadConnections();
+      //this.__parentRef.loadConnections(); //Nishant 06/09/2021 
     } catch (error) { }
   };
   handleTabSelect = (e: any) => {
@@ -638,7 +528,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
       selectedTag: selectedTag,
     });
 
-    this.forceUpdate();
+    //this.forceUpdate();//Nishant Commented 06/09/2021
   };
   grdDepthRangesItemChange = (e: any) => {
     //code for inLine Editing...
@@ -655,7 +545,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
     let index = newData.findIndex((item: any) => item.SrNo === e.dataItem.SrNo); // use unique value like ID
     newData[index][e.field] = e.value;
     this.setState({ grdDepthRange: newData });
-    this.forceUpdate();
+    //this.forceUpdate();//Nishant Commented 06/09/2021
   };
 
   grdSpeedProfileRow_Click = (event: any) => {
@@ -688,7 +578,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
       this.setState({
         grdSpeedProfile: edited,
       });
-      this.forceUpdate();
+      //this.forceUpdate();//Nishant Commented 06/09/2021
     } catch (error) { }
   };
   removeSpeedProfile_Click = (event: any, rowData: any) => {
@@ -710,7 +600,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
             this.setState({
               grdSpeedProfile: SpeedProfileList,
             });
-            this.forceUpdate();
+            //this.forceUpdate();//Nishant Commented 06/09/2021
           },
         },
         {
@@ -801,7 +691,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
             this.setState({
               grdDepthRange: grdDepthRangeList,
             });
-            this.forceUpdate();
+            //this.forceUpdate();//Nishant Commented 06/09/2021
           },
         },
         {
@@ -817,7 +707,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
       this.setState({
         currentDepthRangeSrNo: event.dataItem.SrNo,
       });
-      this.forceUpdate();
+      //this.forceUpdate();//Nishant Commented 06/09/2021
     } catch (error) { }
   };
   saveDepthRangeToDB = () => {
@@ -895,7 +785,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
         })
         .then((res) => {
           this.loadData();
-          this.forceUpdate();
+          //this.forceUpdate();//Nishant Commented 06/09/2021
         })
         .catch((error) => {
           $("#loader").hide();
@@ -922,12 +812,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
       <React.Fragment>
         <div className="mr-5" style={{ height: "100vh", width: "100%" }}>
           <div className="row ml-2">
-            {/* <div className="col lg-12" style={{ float: "right" }}  >
-                            <button onClick={this.SaveSettings}
-                                className="btn-custom btn-custom-primary ml-1 mr-1">Save & Apply</button>
-                        </div> */}
-
-            <div className="col-lg-2 offset-md-6">
+           <div className="col-lg-2 offset-md-6">
               <button
                 onClick={this.SaveSettings}
                 className="btn-custom btn-custom-primary ml-1 mr-1"
@@ -1680,7 +1565,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
             selectedTag: selectedTag,
           });
 
-          this.forceUpdate();
+          //this.forceUpdate();//Nishant Commented 06/09/2021
           //set selected tags in Grid pending
           let edited = this.state.grdData;
           for (let i = 0; i < selectedTag.length; i++) {
@@ -1696,7 +1581,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
           this.setState({
             grdData: edited,
           });
-          this.forceUpdate();
+          //this.forceUpdate();//Nishant Commented 06/09/2021
         })
         .catch((error) => {
           $("#loader").hide();

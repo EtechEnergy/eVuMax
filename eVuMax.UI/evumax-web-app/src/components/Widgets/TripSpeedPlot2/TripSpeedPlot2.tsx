@@ -427,9 +427,14 @@ export class TripSpeedPlot2 extends Component {
                   backgroundColor: "transparent",
                 }}
               >
-                <TripAnalyzerSelection
+                {/* <TripAnalyzerSelection
                   {...this}
                   plotID="TripSpeed2"
+                ></TripAnalyzerSelection> */}
+                   <TripAnalyzerSelection
+                  WellID={this.WellId}
+                  plotID="TripSpeed2"
+                  onSaveApply = {this.loadConnections}
                 ></TripAnalyzerSelection>
               </div>
             </TabStripTab>

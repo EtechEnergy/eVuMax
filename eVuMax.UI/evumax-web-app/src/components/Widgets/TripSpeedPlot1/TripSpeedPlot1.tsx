@@ -10,15 +10,12 @@ import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import {
   DataSeries,
   dataSeriesType,
-  pointStyle,
+
 } from "../../../eVuMaxObjects/Chart/DataSeries";
-import DataSelector from "../../Common/DataSelector";
-import ProcessLoader from "../../loader/loader";
+
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import "./TripSpeedPlot1.css";
-
-import * as utilFunc from "../../../utilFunctions/utilFunctions";
 import GlobalMod from "../../../objects/global";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-all";
@@ -27,7 +24,6 @@ import { axisLabelStyle } from "../../../eVuMaxObjects/Chart/Axis";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
-//import * as utilFunc from '../../../../../utilFunctions/utilFunctions';
 
 let _gMod = new GlobalMod();
 
@@ -55,6 +51,7 @@ export class TripSpeedPlot1 extends Component {
   componentDidMount() {
     try {
       //initialize chart
+      
       this.initilizeCharts();
 
       this.loadConnections();
@@ -937,7 +934,7 @@ export class TripSpeedPlot1 extends Component {
         //   isProcess: true,
         selectedTab: 0,
       });
-      this.forceUpdate();
+      //this.forceUpdate();//Nishant Commented 06/09/2021
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Summary.Manager";
@@ -979,7 +976,7 @@ export class TripSpeedPlot1 extends Component {
             objUserSettings: objData.objUserSettings,
             //isProcess: false,
           });
-          Util.StatusSuccess("Data successfully retrived  ");
+          Util.StatusSuccess("Data successfully retrived");
           document.title = this.state.WellName + " -Trip Speed-1"; //Nishant 02/09/2021
         })
         .catch((error) => {
@@ -1043,7 +1040,7 @@ export class TripSpeedPlot1 extends Component {
           <TabStrip
             selected={this.state.selectedTab}
             onSelect={this.handleSelect}
-            keepTabsMounted={true}
+            // keepTabsMounted={true}
           >
             <TabStripTab title="Trip Speed Summary">
               <div id="tabTripSpeedPlot">
@@ -1119,16 +1116,7 @@ export class TripSpeedPlot1 extends Component {
                       }}
                     ></div>
                   </div>
-                  {/* <div
-                    id="BarWithConn_legend"
-                    style={{
-                      textAlign: "center",
-                      height: "40px",
-                      width: "calc(33vw )",
-                      backgroundColor: "transparent",
-                      display: "inline-block",
-                    }}
-                  ></div> */}
+                
                 </div>
               </div>
             </TabStripTab>
@@ -1141,8 +1129,13 @@ export class TripSpeedPlot1 extends Component {
                   backgroundColor: "transparent",
                 }}
               >
-                <TripAnalyzerSelection
+                {/* <TripAnalyzerSelection
                   {...this}
+                  plotID="TripSpeed1"
+                ></TripAnalyzerSelection> */}
+                <TripAnalyzerSelection
+                  WellID= {this.WellId}
+                  onSaveApply = {this.loadConnections}
                   plotID="TripSpeed1"
                 ></TripAnalyzerSelection>
               </div>
