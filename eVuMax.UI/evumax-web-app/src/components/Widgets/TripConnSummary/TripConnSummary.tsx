@@ -670,7 +670,7 @@ class TripConnSummary extends Component {
   grdRowClick = (event: GridSelectionChangeEvent) => {
     try {
 
-      debugger;
+
       this.setState({
         currentDepth: event.dataItem.DEPTH,
         Comment: event.dataItem.COMMENTS
@@ -1344,7 +1344,7 @@ class TripConnSummary extends Component {
 
 
       this.objChart.initialize();
-      this.objChart.LegendPosition = 2;  //1 (left), 2 (right), 3 (top), 4 (bottom)
+      this.objChart.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
 
       if (this.state.CurrentView == 0) {
         this.plotChartRegular();

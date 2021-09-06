@@ -21,7 +21,7 @@ let objParameter = new BrokerParameter("odata", "odata");
 const WidgetList = utilFunc.getWidgetList();
 
 interface IProps {
-  
+
 }
 
 interface IState {
@@ -33,95 +33,95 @@ export default class WidgetSelector extends React.Component<IProps> {
   constructor(parentRef, props: any) {
     super(props);
     this.__parentRef = parentRef;
-    this.currentWellID =  parentRef.state.currentWellID;
+    this.currentWellID = parentRef.state.currentWellID;
     this.openAsEditor = parentRef.state.showOpenInterfaceDialogAsEditor;
     clearInterval(parentRef.intervalID);
   }
 
   __parentRef: any;
   currentWellID: string = "";
-  openAsEditor:boolean = false;
+  openAsEditor: boolean = false;
 
   state = {
     value: [],
-    data:[],
+    data: [],
     addToFav: false,
-    userFav:[] as any
+    userFav: [] as any
   };
 
   //Nishant 24/08/2021
-loadUserFav = ()=>{
-  try {
+  loadUserFav = () => {
+    try {
 
-    objBrokerRequest = new BrokerRequest();
-    objBrokerRequest.Module = "Well.Data.Objects";
-    objBrokerRequest.Function = "getUserFav";
-    objBrokerRequest.Broker = "ActiveWellProfile";
+      objBrokerRequest = new BrokerRequest();
+      objBrokerRequest.Module = "Well.Data.Objects";
+      objBrokerRequest.Function = "getUserFav";
+      objBrokerRequest.Broker = "ActiveWellProfile";
 
-    objParameter = new BrokerParameter("UserName", _gMod._userId);
-    objBrokerRequest.Parameters.push(objParameter);
+      objParameter = new BrokerParameter("UserName", _gMod._userId);
+      objBrokerRequest.Parameters.push(objParameter);
 
-    objParameter = new BrokerParameter("WellID", this.currentWellID);
-    objBrokerRequest.Parameters.push(objParameter);
-    
-    axios
-    .get(_gMod._getData, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-      params: { paramRequest: JSON.stringify(objBrokerRequest) },
-    })
-    .then((res) => {
-       debugger;
-      let userFav: any = utilFunc.parseJSON(res.data.Response);
+      objParameter = new BrokerParameter("WellID", this.currentWellID);
+      objBrokerRequest.Parameters.push(objParameter);
 
-      let newWidgetList= [];
-      if(userFav == false && this.openAsEditor == false){
-
-        newWidgetList.push({ id: "None", name: "No Favorites available",isFav:false },)
-        this.setState({
-          data: newWidgetList
+      axios
+        .get(_gMod._getData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
         })
-      }
+        .then((res) => {
 
-      if(userFav == false && this.openAsEditor == true){
-        userFav = WidgetList;     
-      }
+          let userFav: any = utilFunc.parseJSON(res.data.Response);
 
+          let newWidgetList = [];
+          if (userFav == false && this.openAsEditor == false) {
 
-      if(userFav!= undefined || userFav!="" ){
-       
-        for (let index = 0; index < WidgetList.length; index++) {
-           
-          const element = WidgetList[index];
-          let i = userFav.findIndex((x) => x.Id === element.id);
-          if (i < 0) {
-            //not found
-            WidgetList[index].isFav = false;
-          } else {
-            WidgetList[index].isFav = true;
-            newWidgetList.push(WidgetList[index]);
+            newWidgetList.push({ id: "None", name: "No Favorites available", isFav: false },)
+            this.setState({
+              data: newWidgetList
+            })
           }
-          
-        }
-      }
 
-      if(this.openAsEditor){
-        newWidgetList = WidgetList;
-      }
-      
-      
-      this.setState({
-        data: newWidgetList
-      })
+          if (userFav == false && this.openAsEditor == true) {
+            userFav = WidgetList;
+          }
 
-    })
-    .catch(function (error) {});
-  } catch (error) {}
-    
-  
-}
+
+          if (userFav != undefined || userFav != "") {
+
+            for (let index = 0; index < WidgetList.length; index++) {
+
+              const element = WidgetList[index];
+              let i = userFav.findIndex((x) => x.Id === element.id);
+              if (i < 0) {
+                //not found
+                WidgetList[index].isFav = false;
+              } else {
+                WidgetList[index].isFav = true;
+                newWidgetList.push(WidgetList[index]);
+              }
+
+            }
+          }
+
+          if (this.openAsEditor) {
+            newWidgetList = WidgetList;
+          }
+
+
+          this.setState({
+            data: newWidgetList
+          })
+
+        })
+        .catch(function (error) { });
+    } catch (error) { }
+
+
+  }
 
   componentDidMount() {
     try {
@@ -131,7 +131,7 @@ loadUserFav = ()=>{
         });
         this.loadUserFav();
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   itemRender = (li, itemProps) => {
@@ -179,16 +179,16 @@ loadUserFav = ()=>{
     }
 
     utilFunc.launchWidget(interfaceID, this.currentWellID);
-   
+
     this.__parentRef.CloseOpenInterfaceDialog();
   };
 
   OpenWidget = (props) => {
-     
+
     utilFunc.launchWidget(props.id, this.currentWellID);
   };
   AddtoFavourite = (props) => {
-     
+
     try {
       //values are stored in this.state.value as array
 
@@ -199,13 +199,13 @@ loadUserFav = ()=>{
       // }
 
       let FunctionName = "";
-      if(props.isFav == true){
+      if (props.isFav == true) {
         FunctionName = "removeUserFav"
-      }else{
+      } else {
         FunctionName = "updateUserFav"
       }
 
-      
+
       objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Well.Data.Objects";
       objBrokerRequest.Function = FunctionName; // "updateUserFav";
@@ -226,18 +226,18 @@ loadUserFav = ()=>{
         })
         .then((response) => {
           //this.__parentRef.CloseOpenInterfaceDialog(true);
-           
+
           let i = WidgetList.findIndex((x) => x.id === props.id);
           if (i < 0) {
             //not found do nothing
-            
+
           } else {
-            if(FunctionName == "removeUserFav"){
+            if (FunctionName == "removeUserFav") {
               WidgetList[i].isFav = false;
-            }else{
+            } else {
               WidgetList[i].isFav = true;
             }
-            
+
           }
 
           this.setState({
@@ -245,26 +245,26 @@ loadUserFav = ()=>{
           });
 
         })
-        .catch(function (error) {});
-    } catch (error) {}
+        .catch(function (error) { });
+    } catch (error) { }
   };
   onAddToFavoritesCheckbox = (e) => {
     try {
-      
+
       this.setState({
         addToFav: e.target.checked,
       });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   MyItemRender = (props) => {
-    
+
     let item = props.dataItem;
-    
+
     return (
       <div className="row p-2 border-bottom align-middle" style={{ margin: 0 }}>
         <div className="col-6" style={{ paddingTop: 6 }}>
-        <a
+          <a
             {...item}
             onClick={(e) => this.OpenWidget(item)}
             style={{
@@ -279,26 +279,26 @@ loadUserFav = ()=>{
           </a>
         </div>
 
-     <div className="col-2">
-     {item.id != "None"  &&  <div
+        <div className="col-2">
+          {item.id != "None" && <div
             {...item}
             onClick={(e) => this.OpenWidget(item)}
             className="k-chip k-chip-filled"
           >
-           <div className="k-chip-content">Open</div>
+            <div className="k-chip-content">Open</div>
           </div>}
         </div>
 
-       {this.openAsEditor && <div className="col-3">
+        {this.openAsEditor && <div className="col-3">
           <div
             {...item}
             style={{ cursor: "pointer" }}
             onClick={(e) => this.AddtoFavourite(item)}
             className="k-chip k-chip-filled"
           >
-          {item.isFav ==true?<div className="k-chip-content">Remove from favourite</div>:<div className="k-chip-content">Add to favourite</div>}
+            {item.isFav == true ? <div className="k-chip-content">Remove from favourite</div> : <div className="k-chip-content">Add to favourite</div>}
           </div>
-        </div> }
+        </div>}
       </div>
     );
   };
@@ -334,8 +334,8 @@ loadUserFav = ()=>{
         .then((response) => {
           this.__parentRef.CloseOpenInterfaceDialog(true);
         })
-        .catch(function (error) {});
-    } catch (error) {}
+        .catch(function (error) { });
+    } catch (error) { }
   };
 
   render() {

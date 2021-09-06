@@ -385,6 +385,7 @@ export class DrillingSummary extends Component {
   refreshROPLineChart = () => {
     try {
       this.objChart_ROPLine.initialize();
+      this.objChart_ROPLine.LegendPosition = 3;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart_ROPLine.DataSeries.clear();
       this.objChart_ROPLine.updateChart();
 

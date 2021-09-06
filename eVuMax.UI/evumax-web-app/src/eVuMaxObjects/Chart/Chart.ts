@@ -1850,7 +1850,7 @@ export class Chart {
 
       $("#" + this.ContainerId + "_legend").html(legendString);
       //added by prath
-      if (this.LegendPosition === 4) {
+      if (this.LegendPosition === 3 || this.LegendPosition === 4) {
         $("#" + this.ContainerId + "_legend").css("marginLeft", this.__chartRect.LeftEdge);
         $("#" + this.ContainerId + "_legend").css("width", this.__chartRect.width);
       }
