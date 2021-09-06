@@ -526,6 +526,7 @@ class ToolfaceSummary extends Component {
 
   componentDidMount() {
     try {
+      window.addEventListener("resize", this.displayData);
       this.getPrimaryList();
       // this.getLineStyle();
 
@@ -623,7 +624,7 @@ class ToolfaceSummary extends Component {
 
   componentDidUpdate() {
     try {
-      this.refreshChart();
+      // this.refreshChart();
     } catch (error) { }
   }
 
@@ -2497,7 +2498,7 @@ class ToolfaceSummary extends Component {
           <TabStripTab title="Toolface Evaluation Plot">
             <div
               style={{
-                height: "calc(100vh - 355px)",
+                height: "calc(100vh - 400px)",
                 width: "calc(100vw - 110px)",
                 backgroundColor: "transparent",
               }}
@@ -3546,10 +3547,10 @@ class ToolfaceSummary extends Component {
 
   onClick_SaveCancel = () => { };
 
-  refreshChart = () => {
-    try {
-    } catch (error) { }
-  };
+  // refreshChart = () => {
+  //   try {
+  //   } catch (error) { }
+  // };
 
   saveSettings = () => {
     try {

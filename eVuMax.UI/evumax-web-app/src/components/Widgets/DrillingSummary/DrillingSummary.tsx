@@ -1656,7 +1656,21 @@ export class DrillingSummary extends Component {
               </div>
             </TabStripTab>
             <TabStripTab title="Page-2 ">
-              <div style={{ marginTop: "10px" }}>
+              <div style={{ marginTop: "5px" }}>
+
+
+                <div className="col-lg-12">
+                  <div className="float-right mr-2">
+                    <FontAwesomeIcon
+                      icon={faUndo}
+                      onClick={() => {
+                        this.refreshROPLineChart();
+                      }}
+                    />
+                  </div>
+                </div>
+
+
                 <div className="row mb-3">
                   {/* style={{ maxHeight: "160px" }} for upper div */}
                   <div

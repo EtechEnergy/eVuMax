@@ -72,6 +72,7 @@ class DrlgConnSummary2 extends Component {
     summaryData: [],
     currentDepth: 0,
     AvgDayD: 0,
+    AvgTimeD: 0,
     AvgTime: 0,
     AvgBTS: 0,
     AvgSTS: 0,
@@ -757,7 +758,7 @@ class DrlgConnSummary2 extends Component {
                     <div className="form-group">
                       <label className="summaryLabelHeader">Avg. Time</label>
                       <label className="summaryLabel" id="txtAvgTimeD">
-                        {this.state.AvgDayD}
+                        {this.state.AvgTimeD}
                       </label>
                     </div>
                     <div className="form-group">

@@ -57,7 +57,7 @@ import { axisBottom, gray, json } from "d3";
 import moment from "moment";
 import { stat } from "fs";
 import "./TripConnSummary.css";
-import { faMoon, faSun, faUnderline } from "@fortawesome/free-solid-svg-icons";
+import { faMoon, faSun, faUnderline, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -696,7 +696,6 @@ class TripConnSummary extends Component {
             </div>
           </div>
         </div>
-
 
         <TabStrip selected={this.state.selected} onSelect={this.handleSelect}  >
           <TabStripTab title="Trip Connections Summary">
