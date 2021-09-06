@@ -140,7 +140,7 @@ export class StackedBarSeries {
 				let prevYpos = 0;
 				let prevHeight = 0;
 
-				debugger;
+
 				for (let s = 0; s < stackValues.length; s++) {
 					let yPos = 0;
 					let height = 0;
@@ -597,7 +597,7 @@ export class StackedBarSeries {
 
 
 					// // Show lables on Bar //Parth 26-07-2021
-					debugger;
+
 					if (s == stackValues.length - 1 && this.ChartRef.ShowCustomComments) {
 
 
