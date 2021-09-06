@@ -1743,8 +1743,9 @@ class TripConnSummary extends Component {
             .attr("y", y1)
             .attr("width", x2 - x1)
             .attr("height", y2 - y1)
-            .style("fill", "red")
-            .style("opacity", 0.5);
+            .style("fill", "#00A19D")
+            .style("z-index", 1000)
+          // .style("opacity", 0.5);
         }
 
         //Highlight Trip Directions

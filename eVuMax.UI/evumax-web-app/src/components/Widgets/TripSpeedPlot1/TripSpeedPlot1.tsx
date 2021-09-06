@@ -591,7 +591,7 @@ export class TripSpeedPlot1 extends Component {
 
       this.objChart_TripSpeed.leftAxis().setMinMax(min, max);
 
-      //this.objChart_TripSpeed.onBeforeSeriesDraw.subscribe((e, i) => {this.onBeforeDrawTripSpeedSeries(e,i);}); //Nishant 02/09/2021
+
 
 
       this.objChart_TripSpeed.drawLegend();
@@ -599,88 +599,7 @@ export class TripSpeedPlot1 extends Component {
     } catch (error) { }
   }
 
-  //New Code Nishant 02/09/2021
-  onBeforeDrawTripSpeedSeries = (e: ChartEventArgs, i: number) => {
-    try {
 
-      d3.select(".tripSpeedWithConn_benchmark").remove();
-      d3.select(".tripSpeedWoConn_benchmark").remove();
-
-      let BenchMarks = Object.values(this.state.objUserSettings.objBenchMarks.speedProfile);
-
-      if (BenchMarks.length > 0) {
-        for (i = 0; i < BenchMarks.length; i++) {
-          const item: any = BenchMarks[i];
-          // Depth	8000	double
-          // SpeedWithConnection	13000	double
-          // SpeedWithoutConnection	9000	double
-          // SrNo	4	double
-          if (item.SpeedWithConnection > 0) {
-            console.log("item.SpeedWithConnection", item.SpeedWithConnection);
-            let x1 = this.objChart_TripSpeed.__chartRect.left;
-            let x2 = this.objChart_TripSpeed.__chartRect.right;
-            let y1 = this.objChart_TripSpeed.leftAxis().ScaleRef(item.SpeedWithConnection);
-            let y2 = y1 + 4;
-
-            this.objChart_TripSpeed.SVGRef.append("g")
-              .attr("class", "tripSpeed_benchmark")
-              .append("rect")
-              .attr("id", "tripSpeedWithConn_benchmark")
-              .attr("x", x1)
-              .attr("y", y1)
-              .attr("width", x2 - x1)
-              .attr("height", y2 - y1)
-              .style("fill", "red")
-              .style("opacity", 0.5);
-          }
-
-          if (item.SpeedWithoutConnection > 0) {
-            let x1 = this.objChart_TripSpeed.__chartRect.left;
-            let x2 = this.objChart_TripSpeed.__chartRect.right;
-            let y1 = this.objChart_TripSpeed.leftAxis().ScaleRef(item.SpeedWithoutConnection);
-            let y2 = y1 + 4;
-
-
-            this.objChart_TripSpeed.SVGRef.append("g")
-              .attr("class", "tripSpeed_benchmark")
-              .append("rect")
-              .attr("id", "tripSpeedWoConn_benchmark")
-              .attr("x", x1)
-              .attr("y", y1)
-              .attr("width", x2 - x1)
-              .attr("height", y2 - y1)
-              .style("fill", "green")
-              .style("opacity", 0.5);
-          }
-
-        };
-      }
-
-      // if (lnBenchMarkWOConn > 0) {
-      //   let x1 = this.objChart_BarWOConn.__chartRect.left;
-      //   let x2 = this.objChart_BarWOConn.__chartRect.right;
-      //   let y1 = this.objChart_BarWOConn.leftAxis().ScaleRef(lnBenchMarkWOConn);
-      //   let y2 = y1 + 4;
-
-      //   this.objChart_BarWOConn.SVGRef.append("g")
-      //     .attr("class", "tripSpeed_benchmark")
-      //     .append("rect")
-      //     .attr("id", "tripSpeed_benchmark")
-      //     .attr("x", x1)
-      //     .attr("y", y1)
-      //     .attr("width", x2 - x1)
-      //     .attr("height", y2 - y1)
-      //     .style("fill", "red")
-      //     .style("opacity", 0.5);
-      // }
-
-
-    } catch (error) {
-
-    }
-  }
-
-  //End new Code
 
   refreshBarWOConnChart() {
     this.objChart_BarWOConn.initialize();
@@ -885,8 +804,8 @@ export class TripSpeedPlot1 extends Component {
           .attr("y", y1)
           .attr("width", x2 - x1)
           .attr("height", y2 - y1)
-          .style("fill", "red")
-          .style("opacity", 0.5);
+          .style("fill", "#00A19D");
+
       }
     } catch (error) { }
   };
@@ -921,8 +840,8 @@ export class TripSpeedPlot1 extends Component {
           .attr("y", y1)
           .attr("width", x2 - x1)
           .attr("height", y2 - y1)
-          .style("fill", "red")
-          .style("opacity", 0.5);
+          .style("fill", "#00A19D");
+
       }
     } catch (error) { }
   };
