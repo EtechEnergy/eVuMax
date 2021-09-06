@@ -21,14 +21,14 @@ namespace eVuMax.DataBroker.Summary.Toolface
         public bool FilterGTFMTF { get; set; } = true;
         public bool ShowDrillingWindow { get; set; } = false;
         public DataTable GeoDrlgWindowData { get; set; } = new DataTable();
-        public string GeoDrlgWindowColor { get; set; } = "";
+        public string GeoDrlgWindowColor { get; set; } = "Orange"; //Nishant 06-09-2021
         public float GeoDrlgWindowTrans { get; set; } = 50;
         public bool ShowROPDrillingWindow { get; set; } = false;
         public DataTable ROPDrlgWindowData { get; set; } = new DataTable();
-        public string ROPDrlgWindowColor { get; set; } = "";
+        public string ROPDrlgWindowColor { get; set; } = "Red"; //Nishant 06-09-2021;
         public float ROPDrlgWindowTrans { get; set; } = 50;
         public bool convertScale { get; set; } = false;
-        public string HighlightColor { get; set; } = "";
+        public string HighlightColor { get; set; } = "Green";
         public float HighlightTrans { get; set; } = 80;
         public int Direction { get; set; } = 0;
 

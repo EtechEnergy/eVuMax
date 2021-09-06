@@ -8,7 +8,7 @@ namespace eVuMax.DataBroker.Summary.Toolface
 {
     public class ToolfaceChannel
     {
-
+        
         public bool visible { get; set; } = true;
         public string Mnemonic { get; set; } = "";
         public string dataMnemonic { get; set; } = "";
@@ -17,9 +17,19 @@ namespace eVuMax.DataBroker.Summary.Toolface
         public String lineColor { get; set; } = "";
 
        public ToolfaceChannel(string pMnemonic) {
+            //Nishant 06-09-2021
+            Random Random_ = new Random();
             this.Mnemonic = pMnemonic;
+            this.lineColor = String.Format("#{0:X6}", Random_.Next(0x1000000));
         }
-        
+
+        public ToolfaceChannel()
+        {
+            //Nishant 06-09-2021
+            Random Random_ = new Random();
+            this.lineColor = String.Format("#{0:X6}", Random_.Next(0x1000000));
+        }
+
 
     }
 }
