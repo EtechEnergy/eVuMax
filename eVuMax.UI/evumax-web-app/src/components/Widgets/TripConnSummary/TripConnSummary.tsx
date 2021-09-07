@@ -776,9 +776,10 @@ class TripConnSummary extends Component {
             </div>
 
             <div
+            className="row mt-5"
               id="tripConnections"
               style={{
-                height: "calc(100vh - 420px)",
+                height: "calc(100vh - 450px)",
                 width: "calc(100vw - 200px)",
                 backgroundColor: "transparent",
               }}
@@ -876,9 +877,9 @@ class TripConnSummary extends Component {
 
               <div className="row mb-3">
                 <div className="col-xl-2">
-                  <h6 className="summaryGroupHeader" style={{ float: "right" }}>Connection Details</h6>
+                  <h6 className="summaryGroupHeader">Connection Details</h6>
                 </div>
-                <div className="col-xl-1">
+                <div className="col-xl-1 mb-1 mr-1">
 
                   <Button
                     id="cmdAddComment"
@@ -906,9 +907,7 @@ class TripConnSummary extends Component {
 
                 </div>
               </div>
-              <br />
-
-              <h6 className="summaryGroupHeader">Connection Details</h6>
+            
               <div
                 className="row mb-3"
                 style={{
