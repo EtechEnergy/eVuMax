@@ -343,7 +343,7 @@ export default class WidgetSelector extends React.Component<IProps> {
     // const selected = value.length;
     return (
       <Window
-        title={"Select Interface To Open"}
+        title={"Select favourite Interface To Open"}
         //onClose={() => this.setState({ showOpenInterfaceDialog: false })}
         onClose={() => this.__parentRef.CloseOpenInterfaceDialog()} // this.setState({ showOpenInterfaceDialog: false })}
         // width = {'80vw'}

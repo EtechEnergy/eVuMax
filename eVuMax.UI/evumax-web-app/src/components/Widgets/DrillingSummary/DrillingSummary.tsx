@@ -1592,49 +1592,61 @@ export class DrillingSummary extends Component {
                 <div className="clearfix"></div>
 
                 <div className="row">
-                  <div
-                    id="drlgSummary"
-                    style={{
-                      //height: "calc(100vh - 700px)",
-                      height: "calc(30vh)",
-                      width: "calc(30vw)",
-                      minWidth: "500px",
-                      float: "left",
-                      backgroundColor: "transparent",
-                      // marginLeft: "-50px",
-                      marginRight: "10px",
-                      //paddingLeft: "45px"
-                    }}
-                  ></div>
+                  <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+                    <div
+                      id="drlgSummary"
+                      style={{
+                        //height: "calc(100vh - 700px)",
+                        height: "calc(30vh)",
+                        //width: "calc(30vw)",
+                        width: "100%",
+                        //minWidth: "500px",
+                        float: "left",
+                        backgroundColor: "transparent",
+                        // marginLeft: "-50px",
+                        marginRight: "10px",
+                        //paddingLeft: "45px"
+                      }}
+                    ></div>
+                  </div>
 
-                  <div
-                    id="drlgSummary2"
-                    style={{
-                      //height: "calc(100vh - 700px)",
-                      height: "calc(30vh)",
-                      width: "calc(30vw)",
-                      minWidth: "500px",
-                      backgroundColor: "transparent",
-                      float: "left",
-                      //marginLeft: "-50px",
-                      marginRight: "10px",
-                    }}
-                  ></div>
+                  <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+                    <div
+                      id="drlgSummary2"
+                      style={{
+                        //height: "calc(100vh - 700px)",
+                        height: "calc(30vh)",
+                        //width: "calc(30vw)",
+                        width: "100%",
+                        //minWidth: "500px",
+                        backgroundColor: "transparent",
+                        float: "left",
+                        //marginLeft: "-50px",
+                        marginRight: "10px",
+                      }}
+                    ></div>
 
-                  <div
-                    id="drlgSummary3"
-                    style={{
-                      //height: "calc(100vh - 700px)",
-                      height: "calc(30vh)",
-                      width: "calc(30vw)",
-                      minWidth: "500px",
-                      backgroundColor: "transparent",
-                      float: "right",
-                      //  marginLeft: "-50px",
-                      marginRight: "10px",
-                    }}
-                  ></div>
+                  </div>
+
+
+                  <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+                    <div
+                      id="drlgSummary3"
+                      style={{
+                        //height: "calc(100vh - 700px)",
+                        height: "calc(30vh)",
+                        //width: "calc(30vw)",
+                        width: "100%",
+                        //minWidth: "500px",
+                        backgroundColor: "transparent",
+                        float: "right",
+                        //  marginLeft: "-50px",
+                        marginRight: "10px",
+                      }}
+                    ></div>
+                  </div>
                 </div>
+
 
                 <div className="row">
                   <div

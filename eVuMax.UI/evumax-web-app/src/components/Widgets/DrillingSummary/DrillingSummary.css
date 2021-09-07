@@ -95,12 +95,12 @@ hr {
 }
 
 /* vimal */
-/* @media (max-width: "550px") {
-  .Data {
-    width: 80% !important;
-    min-width: 500px;
+/* @media (max-width: "800px") {
+  .drlgSummary {
+    width: 90vw !important;
   }
-}
+} */
+/*
 @media (min-width: "550px") {
   .Data {
     width: 95vw !important;
