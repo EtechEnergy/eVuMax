@@ -322,13 +322,12 @@ export class TripSpeedPlot1 extends Component {
       this.objChart_TripSpeed.topAxis().Title = "Delta T (Hrs.)";
       this.objChart_TripSpeed.topAxis().DisplayOrder = 1;
       this.objChart_TripSpeed.topAxis().LabelAngel = 45;
-      //this.objChart_TripSpeed.topAxis().LabelAngel = 90;
+
       this.objChart_TripSpeed.topAxis().GridVisible = false;
 
       this.objChart_TripSpeed.bottomAxis().AutoScale = true;
       this.objChart_TripSpeed.bottomAxis().bandScale = false; //Important Line .. somewhere its again initializing to true..
-      // this.objChart_TripSpeed.bottomAxis().Min = 100;
-      // this.objChart_TripSpeed.bottomAxis().Max = 200;
+
       this.objChart_TripSpeed.bottomAxis().Title =
         "Trip Speed (" + this.state.objTripSpeedData.DepthVumaxUnitID + "/hr)";
       this.objChart_TripSpeed.bottomAxis().ShowLabels = true;
@@ -346,6 +345,8 @@ export class TripSpeedPlot1 extends Component {
         ...this.state.objTripSpeedData.line1Data.map((item) => item.Y)
       );
       //=====================
+
+      debugger;
 
       let objSeries = new DataSeries();
       objSeries.Id = "TripSpeedWOConnection";
@@ -395,18 +396,10 @@ export class TripSpeedPlot1 extends Component {
 
         for (let i = 0; i < this.state.objTripSpeedData.line2Data.length; i++) {
           let objVal: ChartData = new ChartData();
-          //Need to bypass data when outof range Line1 Y value
-          if (
-            this.state.objTripSpeedData.line2Data[i].Y > max ||
-            this.state.objTripSpeedData.line2Data[i].Y < min
-          ) {
-            continue;
-          }
-          {
-            objVal.x = this.state.objTripSpeedData.line2Data[i].X;
-            objVal.y = this.state.objTripSpeedData.line2Data[i].Y;
-            objSeries.Data.push(objVal);
-          }
+
+          objVal.x = this.state.objTripSpeedData.line2Data[i].X;
+          objVal.y = this.state.objTripSpeedData.line2Data[i].Y;
+          objSeries.Data.push(objVal);
         }
       }
       //Line3
@@ -431,21 +424,12 @@ export class TripSpeedPlot1 extends Component {
         //Populate the data series with this data
 
         objSeries.Data.slice(0, objSeries.Data.length);
-
+        debugger;
         for (let i = 0; i < this.state.objTripSpeedData.line3Data.length; i++) {
           let objVal: ChartData = new ChartData();
-          //Need to bypass data when outof range Line1 Y value
-          if (
-            this.state.objTripSpeedData.line3Data[i].Y > max ||
-            this.state.objTripSpeedData.line3Data[i].Y < min
-          ) {
-            continue;
-          }
-          {
-            objVal.x = this.state.objTripSpeedData.line3Data[i].X;
-            objVal.y = this.state.objTripSpeedData.line3Data[i].Y;
-            objSeries.Data.push(objVal);
-          }
+          objVal.x = this.state.objTripSpeedData.line3Data[i].X;
+          objVal.y = this.state.objTripSpeedData.line3Data[i].Y;
+          objSeries.Data.push(objVal);
         }
       }
 
@@ -471,18 +455,11 @@ export class TripSpeedPlot1 extends Component {
 
         for (let i = 0; i < this.state.objTripSpeedData.line4Data.length; i++) {
           let objVal: ChartData = new ChartData();
-          //Need to bypass data when outof range Line1 Y value
-          if (
-            this.state.objTripSpeedData.line4Data[i].Y > max ||
-            this.state.objTripSpeedData.line4Data[i].Y < min
-          ) {
-            continue;
-          }
-          {
-            objVal.x = this.state.objTripSpeedData.line4Data[i].X;
-            objVal.y = this.state.objTripSpeedData.line4Data[i].Y;
-            objSeries.Data.push(objVal);
-          }
+
+          objVal.x = this.state.objTripSpeedData.line4Data[i].X;
+          objVal.y = this.state.objTripSpeedData.line4Data[i].Y;
+          objSeries.Data.push(objVal);
+
         }
       }
 
@@ -526,8 +503,6 @@ export class TripSpeedPlot1 extends Component {
               0
             )
           );
-
-          //console.log("X " + objVal.x + " -Y " + objVal.y);
           objSeries.Data.push(objVal);
         }
       }
@@ -561,10 +536,6 @@ export class TripSpeedPlot1 extends Component {
           i++
         ) {
 
-
-
-
-
           let objVal: ChartData = new ChartData();
           objVal.x = Number(
             Number(this.state.objTripSpeedData.deltaWOConnData[i].X).toFixed(5)
@@ -574,25 +545,14 @@ export class TripSpeedPlot1 extends Component {
           objVal.y = Number(
             Number(this.state.objTripSpeedData.deltaWOConnData[i].Y).toFixed(0)
           );
-
-          // if (objVal.y == 3241) {
-          //   alert(objVal.x + " - " + this.state.objTripSpeedData.deltaWOConnData[i].X);
-          //
-
-          // }
           objSeries.Data.push(objVal);
         }
       }
 
       //set min & max as per Line1 data
       //Check BanchMark Value if greater then Max value of Axis then set
-
       this.objChart_TripSpeed.leftAxis().AutoScale = false;
-
       this.objChart_TripSpeed.leftAxis().setMinMax(min, max);
-
-
-
 
       this.objChart_TripSpeed.drawLegend();
       this.objChart_TripSpeed.reDraw();
@@ -884,7 +844,7 @@ export class TripSpeedPlot1 extends Component {
 
           let objData = JSON.parse(res.data.Response);
 
-
+          debugger;
           console.log(objData);
 
 
