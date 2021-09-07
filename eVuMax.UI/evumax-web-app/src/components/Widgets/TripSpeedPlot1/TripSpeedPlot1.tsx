@@ -969,7 +969,7 @@ export class TripSpeedPlot1 extends Component {
                       id="ChartTripSpeed"
                       style={{
                         height: "calc(70vh)",
-
+                        minWidth: "500px",
                         width: "calc(30vw)",
 
                         backgroundColor: "transparent",
@@ -996,6 +996,7 @@ export class TripSpeedPlot1 extends Component {
                         height: "calc(70vh)",
                         width: "calc(30vw)",
                         // float: "left",
+                        minWidth: "500px",
                         backgroundColor: "transparent",
                       }}
                     ></div>
@@ -1017,7 +1018,7 @@ export class TripSpeedPlot1 extends Component {
                       id="BarWithConn"
                       style={{
                         height: "calc(70vh)",
-
+                        minWidth: "500px",
                         width: "calc(30vw)",
                         backgroundColor: "transparent",
                         // float: "right",

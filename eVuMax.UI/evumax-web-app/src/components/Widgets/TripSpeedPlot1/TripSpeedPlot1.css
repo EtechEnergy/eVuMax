@@ -1,0 +1,11 @@
+@media (max-width: "550px") {
+    #Chart3{
+width: 100% !important;
+    }
+    #Chart1{
+        width: 100% !important;
+    }
+    #chart2{
+        width: 100% !important;
+    }
+  }

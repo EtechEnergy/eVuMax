@@ -2907,7 +2907,7 @@ class ToolfaceSummary extends Component {
           </TabStripTab>
           <TabStripTab title="Drlg Window">
             <div className="row">
-              <div className="col-lg-12">
+              <div className="col-lg-12 col-md-12 col-sm-11 col-xs-2">
                 <div className="float-right mr-2 mb-3">
                   <Button id="cmdsave" onClick={this.onClick_Save}>
                     Save
@@ -2934,7 +2934,7 @@ class ToolfaceSummary extends Component {
 
                 <div className="row mb-3">
                   <div
-                    className="col-xl-12 col-lg-12 col-md-6 col-sm-8"
+                    className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xl-10"
                     style={{ width: "80vw" }}
                   >
                     <Grid
@@ -3092,7 +3092,7 @@ class ToolfaceSummary extends Component {
 
                 <div className="row mb-3">
                   <div
-                    className="col-xl-12 col-lg-12 col-md-6 col-sm-8"
+                    className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-10"
                     style={{ width: "80vw" }}
                   >
                     {/* <div className="col-lg-12"> */}
