@@ -349,6 +349,16 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
+*.wxs 
+
 # rar,zip
 .rar
 .zip
+
+# MSI
+**/*.msi
+
+# WIX
+
+
+

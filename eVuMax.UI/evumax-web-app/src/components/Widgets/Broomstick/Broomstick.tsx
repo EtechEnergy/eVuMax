@@ -89,7 +89,7 @@ class Broomstick extends Component {
       objBrokerRequest.Parameters.push(paramwellId);
 
 
-      debugger
+
       let paramRunNo: BrokerParameter = new BrokerParameter(
         "RunNo",
         this.selRunNo

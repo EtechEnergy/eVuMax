@@ -903,7 +903,7 @@ export class TripSpeedPlot1 extends Component {
           //   isProcess: false,
           // });
           Util.StatusError(error.message);
-          this.forceUpdate();
+          // this.forceUpdate();
 
           if (error.response) {
             // return <CustomeNotifications Key="success" Icon={false}  />

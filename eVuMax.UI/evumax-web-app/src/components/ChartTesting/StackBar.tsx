@@ -376,7 +376,7 @@ export default class StackBar extends Component {
     plotChartRigStateView = () => {
         try {
 
-            debugger
+
             //Clear all the series
 
             this.objChartBar.DataSeries.clear();

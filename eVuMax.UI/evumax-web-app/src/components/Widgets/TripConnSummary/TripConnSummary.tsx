@@ -442,12 +442,12 @@ class TripConnSummary extends Component {
       this.fromDepth = pfromDepth;
       this.toDepth = ptoDepth;
 
-      console.log(
-        "From Date " +
-        moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-        " To Date " +
-        moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-      );
+      // console.log(
+      //   "From Date " +
+      //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
+      //   " To Date " +
+      //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
+      // );
 
       this.loadConnections();
     } catch (error) { }

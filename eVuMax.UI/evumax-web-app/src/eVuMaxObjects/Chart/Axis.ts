@@ -1002,7 +1002,6 @@ export class Axis {
       y = this.StartPos;
       if (this.Position == axisPosition.left) {
         this.ChartRef.__chartRect.LeftEdge = this.IRelativePos;
-        console.log("update left pos =" + this.Id, this.IRelativePos);
       }
 
     } else {
