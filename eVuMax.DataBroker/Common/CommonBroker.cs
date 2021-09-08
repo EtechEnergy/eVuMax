@@ -55,7 +55,13 @@ namespace eVuMax.DataBroker.Common
 		{
 			try
 			{
-				return null;
+				if (paramRequest.Broker == Global.Brk_Authentication)
+				{
+					authentication.UserAuthentication objAuth = new authentication.UserAuthentication();
+					return objAuth.performTask(paramRequest);
+				}
+
+				return new Broker.BrokerResponse();
 			}
 			catch (Exception ex)
 			{

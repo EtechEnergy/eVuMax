@@ -352,3 +352,4 @@ MigrationBackup/
 # rar,zip
 .rar
 .zip
+/scripts/eVuMaxUserFavorites 09-07-2021.sql

@@ -8,24 +8,8 @@ import "./dashboard.css";
 import VuMaxLogo from "../../images/VuMaxLogo_Small.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlug,
-  faUserCircle,
-  faCog,
-  faListAlt,
-  faExchangeAlt,
-  faHome,
-  faBars,
-  faCocktail,
-  faFileDownload,
-  faDownload,
-  faTeeth,
-  faInfo,
-  faSignOutAlt,
-} from "@fortawesome/free-solid-svg-icons";
-
+import {faUserCircle, faCog, faListAlt, faHome,  faDownload,  faInfo,  faSignOutAlt,faKey} from "@fortawesome/free-solid-svg-icons";
 import { Route, NavLink, Switch } from "react-router-dom";
-
 import { AppState } from "../../redux/store/configureStore";
 import { connect } from "react-redux";
 import * as Types from "../../redux/types/types";
@@ -37,6 +21,7 @@ import routes from "../../routes/routes";
 import AboutPage from "../../components/About/about";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import ETECHLogo from "../../images/etechSVG.svg";
+
 
 type Props = LinkStateProps & LinkDispatchProps;
 
@@ -60,9 +45,12 @@ export class Dashboard extends React.Component<Props> {
   state = {
     //showPopupMenu: true
     showAboutDialog: false,
+    
   }
-
+ 
   LogOut = () => {
+    sessionStorage.clear();
+    localStorage.clear();
     let objLogin: Partial<Types.ILogin> = {};
     this.props.startLog_Out(objLogin);
   };
@@ -113,6 +101,8 @@ export class Dashboard extends React.Component<Props> {
   render() {
     return (
       <div>
+
+          
         {this.state.showAboutDialog && <Dialog height="390px" width="800px" title="About"
           onClose={() => { this.setState({ showAboutDialog: false }); }}
         >
@@ -168,14 +158,13 @@ export class Dashboard extends React.Component<Props> {
                 <div
                   className="dropdown-menu dropdown-menu-right"
                   aria-labelledby="navbarDropdown"
+                  style={{width:"190px"}}
                 >
-                  {/* <a className="dropdown-item" href="#">
-                    Action
-                  </a>
-                  <a className="dropdown-item" href="#">
-                    Another action
-                  </a>
-                  <div className="dropdown-divider"></div> */}
+                  <NavLink className="nav-link" exact to="/dashboard/changePassword">
+                  <FontAwesomeIcon icon={faKey} className="mr-2" /> Change Password
+                </NavLink>
+                 
+                 
                   <a className="nav-link" onClick={this.ShowAboutDialog}>
                     <FontAwesomeIcon icon={faInfo} className="mr-2" /> About
                   </a>
@@ -211,13 +200,9 @@ export class Dashboard extends React.Component<Props> {
                   <FontAwesomeIcon icon={faListAlt} />
                 </NavLink>
               </li>
-              {/* <li className="nav-item">
-                                <NavLink className="nav-link" exact to="/dashboard/theme-loader">
-                                    <FontAwesomeIcon icon={faExchangeAlt} />
-                                </NavLink>
-                            </li> */}
+             
               <li className="nav-item">
-                {/* <NavLink className="nav-link" exact to="/dashboard/settings"> */}
+             
                 <a
                   data-leftmenu="settings"
                   //onClick={this.getMenu}

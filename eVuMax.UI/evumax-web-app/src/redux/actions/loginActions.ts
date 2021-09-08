@@ -51,7 +51,7 @@ export const startLog_Out = (login: Partial<Types.ILogin>) => {
 
 export const startLog_In = (login: Partial<Types.ILogin>) => {
   return (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
-
+debugger;
     objStatus = {};
     objStatus._statusMsg = "Please wait, connecting to the API....";
     objStatus._isLoading = true;
@@ -61,15 +61,24 @@ export const startLog_In = (login: Partial<Types.ILogin>) => {
     objBrokerResponse.Module = "Common";
     objBrokerResponse.Function = "ValidateUser";
     objBrokerResponse.Broker = "Authentication";
+    
+    objBrokerResponse.Parameters.length=0;
+
     let objParameter = new BrokerParameter("login", JSON.stringify(login));
     objBrokerResponse.Parameters.push(objParameter);
 
+    objParameter = new BrokerParameter("UserName", login._userName);
+    objBrokerResponse.Parameters.push(objParameter);
+
+    objParameter = new BrokerParameter("Password", login._pwd);
+    objBrokerResponse.Parameters.push(objParameter);
+  
     axios
       .get(_gMod._getData, {
         params: { paramRequest: JSON.stringify(objBrokerResponse) },
       })
       .then((res) => {
-
+debugger;
         if (res.data.RequestSuccessfull) {
           objStatus = {};
           // objStatus._statusMsg =  "Succesfully Log In";
@@ -81,10 +90,12 @@ export const startLog_In = (login: Partial<Types.ILogin>) => {
           return dispatch(Log_In(login));
         } else {
           objStatus = {};
-          objStatus._statusMsg = res.data.Errors;
+          objStatus._statusMsg = res.data.Warnings;
           objStatus._isLoading = false;
           dispatch(setStatus(objStatus));
+          
           return dispatch(Log_In(objLogin));
+          
         }
       })
       .catch((error) => {

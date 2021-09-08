@@ -21,6 +21,7 @@ import Broomstick from "../components/Widgets/Broomstick/Broomstick";
 
 
 import ChartTesting from "../components/ChartTesting/ChartTesting";
+import ChangePassword from "../components/login/changePassword";
 
 
 
@@ -183,6 +184,14 @@ const dashbordRoutes = [
     name: "Broomstick",
     icon: "",
     component: Broomstick,
+    layout: "/dashboard",
+  },
+
+  {
+    path: "/changePassword",
+    name: "Change Password",
+    icon: "",
+    component: ChangePassword,
     layout: "/dashboard",
   },
 ];
