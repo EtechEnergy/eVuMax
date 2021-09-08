@@ -772,11 +772,14 @@ class DrlgConnSummary extends Component {
 
                   <div
                     //vimal
-                    className="form-inline eVumaxPanelChart"
+                    className="form-inline eVumaxPanelChart mb-1"
                     style={{
+                      marginTop: "10px",
+                      marginRight: "50px",
                       float: "right",
-
-                      padding: "5px",
+                      height: "32px",
+                      padding: "3px",
+                      minWidth:"200px",
                     }}
                   >
                     <label className="connInfo" style={{ marginRight: "20px" }}>
@@ -795,7 +798,8 @@ class DrlgConnSummary extends Component {
                 <div
                   id="drlgConnections"
                   style={{
-                    height: "calc(100vh - 390px)",
+                    marginTop:"50px",
+                    height: "calc(100vh - 450px)",
                     width: "calc(100vw - 130px)",
                     backgroundColor: "transparent",
                   }}
@@ -813,7 +817,7 @@ class DrlgConnSummary extends Component {
                   style={{
                     textAlign: "center",
                     height: "40px",
-                    width: "calc(100vw - 130px)",
+                    //width: "calc(100vw - 130px)",
                     backgroundColor: "transparent",
                     display: "inline-block",
                   }}
@@ -982,9 +986,9 @@ class DrlgConnSummary extends Component {
 
                   <div className="row mb-3">
                     <div className="col-xl-2">
-                      <h6 className="summaryGroupHeader" style={{ float: "right" }}>Connection Details</h6>
+                      <h6 className="summaryGroupHeader">Connection Details</h6>
                     </div>
-                    <div className="col-xl-1">
+                    <div className="col-xl-1 mr-1 mb-1">
 
                       <Button
                         id="cmdAddComment"
@@ -1576,6 +1580,7 @@ class DrlgConnSummary extends Component {
   refreshChart = () => {
     try {
       this.objChart.initialize();
+      this.objChart.LegendPosition = 4; // 1 (left), 2 (right), 3 (top), 4 (bottom)
 
       if (this.state.CurrentView == 0) {
         this.plotChartRegular();

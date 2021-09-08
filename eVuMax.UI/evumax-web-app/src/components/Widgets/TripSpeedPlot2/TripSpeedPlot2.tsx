@@ -116,7 +116,7 @@ export class TripSpeedPlot2 extends Component {
 
   refreshTripSpeed2Chart() {
     this.objChart_TripSpeed2.initialize();
-
+    this.objChart_TripSpeed2.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
     //Clear all the series
     this.objChart_TripSpeed2.DataSeries.clear();
     this.objChart_TripSpeed2.updateChart();
@@ -409,7 +409,7 @@ export class TripSpeedPlot2 extends Component {
                       style={{
                         textAlign: "center",
                         height: "40px",
-                        width: "calc(90vw )",
+                        //width: "calc(90vw )",
                         backgroundColor: "transparent",
                         display: "inline-block",
                       }}
@@ -431,10 +431,10 @@ export class TripSpeedPlot2 extends Component {
                   {...this}
                   plotID="TripSpeed2"
                 ></TripAnalyzerSelection> */}
-                   <TripAnalyzerSelection
+                <TripAnalyzerSelection
                   WellID={this.WellId}
                   plotID="TripSpeed2"
-                  onSaveApply = {this.loadConnections}
+                  onSaveApply={this.loadConnections}
                 ></TripAnalyzerSelection>
               </div>
             </TabStripTab>

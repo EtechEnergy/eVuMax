@@ -64,7 +64,7 @@ class charttest extends Component {
         try {
 
             //initialize chart
-            this.objChart = new Chart(this,"ConnectionChart");
+            this.objChart = new Chart(this, "ConnectionChart");
             this.objChart.ContainerId = "container";
 
             this.objChart.MarginLeft = 0;
@@ -339,7 +339,7 @@ class charttest extends Component {
         try {
 
 
-            debugger
+
             if (this.edgeDragging) {
 
                 this.edgeDragging = false;

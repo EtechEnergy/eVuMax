@@ -349,7 +349,16 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
+*.wxs 
+
 # rar,zip
 .rar
 .zip
-/scripts/eVuMaxUserFavorites 09-07-2021.sql
+
+# MSI
+**/*.msi
+
+# WIX
+
+
+

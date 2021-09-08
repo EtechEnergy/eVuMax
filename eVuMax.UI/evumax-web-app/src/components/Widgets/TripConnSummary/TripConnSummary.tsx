@@ -46,18 +46,9 @@ import {
 import {
   TabStrip,
   TabStripTab,
-  Splitter,
-  TreeView,
-  processTreeViewItems,
-  Menu,
-  MenuItem,
-  Popup,
-  Window,
-  Field,
-  FormElement,
-  DropDownList,
+
   Button,
-  Form,
+
   Dialog
 } from "@progress/kendo-react-all";
 
@@ -66,7 +57,7 @@ import { axisBottom, gray, json } from "d3";
 import moment from "moment";
 import { stat } from "fs";
 import "./TripConnSummary.css";
-import { faMoon, faSun, faUnderline } from "@fortawesome/free-solid-svg-icons";
+import { faMoon, faSun, faUnderline, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -88,6 +79,7 @@ class TripConnSummary extends Component {
     summaryData: [],
     currentDepth: 0,
     AvgTime: 0,
+    AvgTimeD: 0,//Nishant 06-09-2021
     AvgDayTime: 0,
     AvgNightTime: 0,
     PositiveFlow: 0,
@@ -450,12 +442,12 @@ class TripConnSummary extends Component {
       this.fromDepth = pfromDepth;
       this.toDepth = ptoDepth;
 
-      console.log(
-        "From Date " +
-        moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-        " To Date " +
-        moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-      );
+      // console.log(
+      //   "From Date " +
+      //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
+      //   " To Date " +
+      //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
+      // );
 
       this.loadConnections();
     } catch (error) { }
@@ -670,7 +662,7 @@ class TripConnSummary extends Component {
   grdRowClick = (event: GridSelectionChangeEvent) => {
     try {
 
-      debugger;
+
       this.setState({
         currentDepth: event.dataItem.DEPTH,
         Comment: event.dataItem.COMMENTS
@@ -704,7 +696,6 @@ class TripConnSummary extends Component {
             </div>
           </div>
         </div>
-
 
         <TabStrip selected={this.state.selected} onSelect={this.handleSelect}  >
           <TabStripTab title="Trip Connections Summary">
@@ -785,9 +776,10 @@ class TripConnSummary extends Component {
             </div>
 
             <div
+            className="row mt-5"
               id="tripConnections"
               style={{
-                height: "calc(100vh - 420px)",
+                height: "calc(100vh - 450px)",
                 width: "calc(100vw - 200px)",
                 backgroundColor: "transparent",
               }}
@@ -799,7 +791,7 @@ class TripConnSummary extends Component {
               style={{
                 textAlign: "center",
                 height: "30px",
-                width: "calc(100vw - 200px)",
+                //width: "calc(100vw - 200px)",
                 backgroundColor: "transparent",
                 display: "inline-block",
                 minWidth: "800",
@@ -830,7 +822,8 @@ class TripConnSummary extends Component {
                     <div className="form-group">
                       <label className="summaryLabelHeader">Avg. Time</label>
                       <label className="summaryLabel" id="txtAvgTimeD">
-                        {this.state.AvgDayTime}
+                        {/* Nishant 06-09-2021 */}
+                        {this.state.AvgTimeD}
                       </label>
                     </div>
                   </div>
@@ -884,9 +877,9 @@ class TripConnSummary extends Component {
 
               <div className="row mb-3">
                 <div className="col-xl-2">
-                  <h6 className="summaryGroupHeader" style={{ float: "right" }}>Connection Details</h6>
+                  <h6 className="summaryGroupHeader">Connection Details</h6>
                 </div>
-                <div className="col-xl-1">
+                <div className="col-xl-1 mb-1 mr-1">
 
                   <Button
                     id="cmdAddComment"
@@ -914,9 +907,7 @@ class TripConnSummary extends Component {
 
                 </div>
               </div>
-              <br />
-
-              <h6 className="summaryGroupHeader">Connection Details</h6>
+            
               <div
                 className="row mb-3"
                 style={{
@@ -1344,6 +1335,7 @@ class TripConnSummary extends Component {
 
 
       this.objChart.initialize();
+      this.objChart.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
 
       if (this.state.CurrentView == 0) {
         this.plotChartRegular();
@@ -1749,8 +1741,9 @@ class TripConnSummary extends Component {
             .attr("y", y1)
             .attr("width", x2 - x1)
             .attr("height", y2 - y1)
-            .style("fill", "red")
-            .style("opacity", 0.5);
+            .style("fill", "#00A19D")
+            .style("z-index", 1000)
+          // .style("opacity", 0.5);
         }
 
         //Highlight Trip Directions

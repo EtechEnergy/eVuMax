@@ -311,6 +311,7 @@ export class ROPSummaryPlot extends Component {
   };
   refreshRotaryChart = () => {
     try {
+      this.objChart_Rotary.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart_Rotary.initialize();
       this.objChart_Rotary.DataSeries.clear();
       this.objChart_Rotary.updateChart();
@@ -406,6 +407,7 @@ export class ROPSummaryPlot extends Component {
   refreshSlideChart = () => {
     try {
       this.objChart_Slide.initialize();
+      this.objChart_Slide.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart_Slide.DataSeries.clear();
       this.objChart_Slide.updateChart();
       this.objChart_Slide.Title = "ROP (Slide)";
@@ -574,6 +576,7 @@ export class ROPSummaryPlot extends Component {
         this.onAfterSeriesDraw(e, i);
       });
       this.objChart_Combine.initialize();
+      this.objChart_Combine.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart_Combine.DataSeries.clear();
       this.objChart_Combine.updateChart();
       this.objChart_Combine.Title = "ROP (Rotary & Slide)";
@@ -853,13 +856,13 @@ export class ROPSummaryPlot extends Component {
             objData.offsetDepthOut = -1;
 
           }
-          
+
           this.setState({
             objROPSummaryData: objData,
             isProcess: false,
           });
-          document.title = this.state.objROPSummaryData.WellName + " -ROP Summary" ; //Nishant 02/09/2021
-          
+          document.title = this.state.objROPSummaryData.WellName + " -ROP Summary"; //Nishant 02/09/2021
+
         })
         .catch((error) => {
           Util.StatusError(error.message);
@@ -1082,7 +1085,7 @@ export class ROPSummaryPlot extends Component {
               style={{
                 textAlign: "center",
                 height: "20px",
-                width: "100%",
+                //width: "100%",
                 backgroundColor: "transparent",
                 display: "inline-block",
               }}

@@ -51,7 +51,7 @@ export class TripSpeedPlot1 extends Component {
   componentDidMount() {
     try {
       //initialize chart
-      
+
       this.initilizeCharts();
 
       this.loadConnections();
@@ -291,7 +291,7 @@ export class TripSpeedPlot1 extends Component {
   refreshTripSpeedChart() {
     try {
       this.objChart_TripSpeed.initialize();
-
+      this.objChart_TripSpeed.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       //Clear all the series
 
       this.objChart_TripSpeed.DataSeries.clear();
@@ -322,13 +322,12 @@ export class TripSpeedPlot1 extends Component {
       this.objChart_TripSpeed.topAxis().Title = "Delta T (Hrs.)";
       this.objChart_TripSpeed.topAxis().DisplayOrder = 1;
       this.objChart_TripSpeed.topAxis().LabelAngel = 45;
-      //this.objChart_TripSpeed.topAxis().LabelAngel = 90;
+
       this.objChart_TripSpeed.topAxis().GridVisible = false;
 
       this.objChart_TripSpeed.bottomAxis().AutoScale = true;
       this.objChart_TripSpeed.bottomAxis().bandScale = false; //Important Line .. somewhere its again initializing to true..
-      // this.objChart_TripSpeed.bottomAxis().Min = 100;
-      // this.objChart_TripSpeed.bottomAxis().Max = 200;
+
       this.objChart_TripSpeed.bottomAxis().Title =
         "Trip Speed (" + this.state.objTripSpeedData.DepthVumaxUnitID + "/hr)";
       this.objChart_TripSpeed.bottomAxis().ShowLabels = true;
@@ -346,6 +345,8 @@ export class TripSpeedPlot1 extends Component {
         ...this.state.objTripSpeedData.line1Data.map((item) => item.Y)
       );
       //=====================
+
+      debugger;
 
       let objSeries = new DataSeries();
       objSeries.Id = "TripSpeedWOConnection";
@@ -395,18 +396,10 @@ export class TripSpeedPlot1 extends Component {
 
         for (let i = 0; i < this.state.objTripSpeedData.line2Data.length; i++) {
           let objVal: ChartData = new ChartData();
-          //Need to bypass data when outof range Line1 Y value
-          if (
-            this.state.objTripSpeedData.line2Data[i].Y > max ||
-            this.state.objTripSpeedData.line2Data[i].Y < min
-          ) {
-            continue;
-          }
-          {
-            objVal.x = this.state.objTripSpeedData.line2Data[i].X;
-            objVal.y = this.state.objTripSpeedData.line2Data[i].Y;
-            objSeries.Data.push(objVal);
-          }
+
+          objVal.x = this.state.objTripSpeedData.line2Data[i].X;
+          objVal.y = this.state.objTripSpeedData.line2Data[i].Y;
+          objSeries.Data.push(objVal);
         }
       }
       //Line3
@@ -431,21 +424,12 @@ export class TripSpeedPlot1 extends Component {
         //Populate the data series with this data
 
         objSeries.Data.slice(0, objSeries.Data.length);
-
+        debugger;
         for (let i = 0; i < this.state.objTripSpeedData.line3Data.length; i++) {
           let objVal: ChartData = new ChartData();
-          //Need to bypass data when outof range Line1 Y value
-          if (
-            this.state.objTripSpeedData.line3Data[i].Y > max ||
-            this.state.objTripSpeedData.line3Data[i].Y < min
-          ) {
-            continue;
-          }
-          {
-            objVal.x = this.state.objTripSpeedData.line3Data[i].X;
-            objVal.y = this.state.objTripSpeedData.line3Data[i].Y;
-            objSeries.Data.push(objVal);
-          }
+          objVal.x = this.state.objTripSpeedData.line3Data[i].X;
+          objVal.y = this.state.objTripSpeedData.line3Data[i].Y;
+          objSeries.Data.push(objVal);
         }
       }
 
@@ -471,18 +455,11 @@ export class TripSpeedPlot1 extends Component {
 
         for (let i = 0; i < this.state.objTripSpeedData.line4Data.length; i++) {
           let objVal: ChartData = new ChartData();
-          //Need to bypass data when outof range Line1 Y value
-          if (
-            this.state.objTripSpeedData.line4Data[i].Y > max ||
-            this.state.objTripSpeedData.line4Data[i].Y < min
-          ) {
-            continue;
-          }
-          {
-            objVal.x = this.state.objTripSpeedData.line4Data[i].X;
-            objVal.y = this.state.objTripSpeedData.line4Data[i].Y;
-            objSeries.Data.push(objVal);
-          }
+
+          objVal.x = this.state.objTripSpeedData.line4Data[i].X;
+          objVal.y = this.state.objTripSpeedData.line4Data[i].Y;
+          objSeries.Data.push(objVal);
+
         }
       }
 
@@ -526,8 +503,6 @@ export class TripSpeedPlot1 extends Component {
               0
             )
           );
-
-          //console.log("X " + objVal.x + " -Y " + objVal.y);
           objSeries.Data.push(objVal);
         }
       }
@@ -561,10 +536,6 @@ export class TripSpeedPlot1 extends Component {
           i++
         ) {
 
-
-
-
-
           let objVal: ChartData = new ChartData();
           objVal.x = Number(
             Number(this.state.objTripSpeedData.deltaWOConnData[i].X).toFixed(5)
@@ -574,117 +545,25 @@ export class TripSpeedPlot1 extends Component {
           objVal.y = Number(
             Number(this.state.objTripSpeedData.deltaWOConnData[i].Y).toFixed(0)
           );
-
-          // if (objVal.y == 3241) {
-          //   alert(objVal.x + " - " + this.state.objTripSpeedData.deltaWOConnData[i].X);
-          //
-
-          // }
           objSeries.Data.push(objVal);
         }
       }
 
       //set min & max as per Line1 data
       //Check BanchMark Value if greater then Max value of Axis then set
-
       this.objChart_TripSpeed.leftAxis().AutoScale = false;
-
       this.objChart_TripSpeed.leftAxis().setMinMax(min, max);
-
-      //this.objChart_TripSpeed.onBeforeSeriesDraw.subscribe((e, i) => {this.onBeforeDrawTripSpeedSeries(e,i);}); //Nishant 02/09/2021
-
 
       this.objChart_TripSpeed.drawLegend();
       this.objChart_TripSpeed.reDraw();
     } catch (error) { }
   }
 
-  //New Code Nishant 02/09/2021
-  onBeforeDrawTripSpeedSeries = (e: ChartEventArgs, i: number) => {
-    try {
-      debugger;
-      d3.select(".tripSpeedWithConn_benchmark").remove();
-      d3.select(".tripSpeedWoConn_benchmark").remove();
 
-      let BenchMarks = Object.values(this.state.objUserSettings.objBenchMarks.speedProfile);
-
-      if (BenchMarks.length > 0) {
-        for (i = 0; i < BenchMarks.length; i++) {
-          const item: any = BenchMarks[i];
-          // Depth	8000	double
-          // SpeedWithConnection	13000	double
-          // SpeedWithoutConnection	9000	double
-          // SrNo	4	double
-          if (item.SpeedWithConnection > 0) {
-            console.log("item.SpeedWithConnection", item.SpeedWithConnection);
-            let x1 = this.objChart_TripSpeed.__chartRect.left;
-            let x2 = this.objChart_TripSpeed.__chartRect.right;
-            let y1 = this.objChart_TripSpeed.leftAxis().ScaleRef(item.SpeedWithConnection);
-            let y2 = y1 + 4;
-
-            this.objChart_TripSpeed.SVGRef.append("g")
-              .attr("class", "tripSpeed_benchmark")
-              .append("rect")
-              .attr("id", "tripSpeedWithConn_benchmark")
-              .attr("x", x1)
-              .attr("y", y1)
-              .attr("width", x2 - x1)
-              .attr("height", y2 - y1)
-              .style("fill", "red")
-              .style("opacity", 0.5);
-          }
-
-          if (item.SpeedWithoutConnection > 0) {
-            let x1 = this.objChart_TripSpeed.__chartRect.left;
-            let x2 = this.objChart_TripSpeed.__chartRect.right;
-            let y1 = this.objChart_TripSpeed.leftAxis().ScaleRef(item.SpeedWithoutConnection);
-            let y2 = y1 + 4;
-
-
-            this.objChart_TripSpeed.SVGRef.append("g")
-              .attr("class", "tripSpeed_benchmark")
-              .append("rect")
-              .attr("id", "tripSpeedWoConn_benchmark")
-              .attr("x", x1)
-              .attr("y", y1)
-              .attr("width", x2 - x1)
-              .attr("height", y2 - y1)
-              .style("fill", "green")
-              .style("opacity", 0.5);
-          }
-
-        };
-      }
-
-      // if (lnBenchMarkWOConn > 0) {
-      //   let x1 = this.objChart_BarWOConn.__chartRect.left;
-      //   let x2 = this.objChart_BarWOConn.__chartRect.right;
-      //   let y1 = this.objChart_BarWOConn.leftAxis().ScaleRef(lnBenchMarkWOConn);
-      //   let y2 = y1 + 4;
-
-      //   this.objChart_BarWOConn.SVGRef.append("g")
-      //     .attr("class", "tripSpeed_benchmark")
-      //     .append("rect")
-      //     .attr("id", "tripSpeed_benchmark")
-      //     .attr("x", x1)
-      //     .attr("y", y1)
-      //     .attr("width", x2 - x1)
-      //     .attr("height", y2 - y1)
-      //     .style("fill", "red")
-      //     .style("opacity", 0.5);
-      // }
-
-
-    } catch (error) {
-
-    }
-  }
-
-  //End new Code
 
   refreshBarWOConnChart() {
     this.objChart_BarWOConn.initialize();
-
+    this.objChart_BarWOConn.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
     //Clear all the series
     this.objChart_BarWOConn.DataSeries.clear();
     this.objChart_BarWOConn.updateChart();
@@ -777,7 +656,7 @@ export class TripSpeedPlot1 extends Component {
   refreshBarWithConn() {
     try {
       this.objChart_BarWithConn.initialize();
-
+      this.objChart_BarWithConn.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       //Clear all the series
       this.objChart_BarWithConn.DataSeries.clear();
       this.objChart_BarWithConn.updateChart();
@@ -885,8 +764,8 @@ export class TripSpeedPlot1 extends Component {
           .attr("y", y1)
           .attr("width", x2 - x1)
           .attr("height", y2 - y1)
-          .style("fill", "red")
-          .style("opacity", 0.5);
+          .style("fill", "#00A19D");
+
       }
     } catch (error) { }
   };
@@ -921,8 +800,8 @@ export class TripSpeedPlot1 extends Component {
           .attr("y", y1)
           .attr("width", x2 - x1)
           .attr("height", y2 - y1)
-          .style("fill", "red")
-          .style("opacity", 0.5);
+          .style("fill", "#00A19D");
+
       }
     } catch (error) { }
   };
@@ -965,7 +844,7 @@ export class TripSpeedPlot1 extends Component {
 
           let objData = JSON.parse(res.data.Response);
 
-
+          debugger;
           console.log(objData);
 
 
@@ -984,7 +863,7 @@ export class TripSpeedPlot1 extends Component {
           //   isProcess: false,
           // });
           Util.StatusError(error.message);
-          this.forceUpdate();
+          // this.forceUpdate();
 
           if (error.response) {
             // return <CustomeNotifications Key="success" Icon={false}  />
@@ -1040,7 +919,7 @@ export class TripSpeedPlot1 extends Component {
           <TabStrip
             selected={this.state.selectedTab}
             onSelect={this.handleSelect}
-            // keepTabsMounted={true}
+          // keepTabsMounted={true}
           >
             <TabStripTab title="Trip Speed Summary">
               <div id="tabTripSpeedPlot">
@@ -1050,7 +929,7 @@ export class TripSpeedPlot1 extends Component {
                       id="ChartTripSpeed"
                       style={{
                         height: "calc(70vh)",
-
+                        minWidth: "500px",
                         width: "calc(30vw)",
 
                         backgroundColor: "transparent",
@@ -1064,7 +943,7 @@ export class TripSpeedPlot1 extends Component {
                         textAlign: "justify",
                         height: "40px",
                         marginLeft: "10px",
-                        width: "calc(30vw)",
+                        //width: "calc(30vw)",
                         backgroundColor: "transparent",
                         display: "inline-block",
                       }}
@@ -1077,6 +956,7 @@ export class TripSpeedPlot1 extends Component {
                         height: "calc(70vh)",
                         width: "calc(30vw)",
                         // float: "left",
+                        minWidth: "500px",
                         backgroundColor: "transparent",
                       }}
                     ></div>
@@ -1098,7 +978,7 @@ export class TripSpeedPlot1 extends Component {
                       id="BarWithConn"
                       style={{
                         height: "calc(70vh)",
-
+                        minWidth: "500px",
                         width: "calc(30vw)",
                         backgroundColor: "transparent",
                         // float: "right",
@@ -1116,7 +996,7 @@ export class TripSpeedPlot1 extends Component {
                       }}
                     ></div>
                   </div>
-                
+
                 </div>
               </div>
             </TabStripTab>
@@ -1134,8 +1014,8 @@ export class TripSpeedPlot1 extends Component {
                   plotID="TripSpeed1"
                 ></TripAnalyzerSelection> */}
                 <TripAnalyzerSelection
-                  WellID= {this.WellId}
-                  onSaveApply = {this.loadConnections}
+                  WellID={this.WellId}
+                  onSaveApply={this.loadConnections}
                   plotID="TripSpeed1"
                 ></TripAnalyzerSelection>
               </div>

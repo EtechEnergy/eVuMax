@@ -49,31 +49,23 @@ import {
 import {
   TabStrip,
   TabStripTab,
-  Splitter,
-  TreeView,
-  processTreeViewItems,
-  Menu,
-  MenuItem,
-  Popup,
-  Window,
-  Field,
-  FormElement,
+
   DropDownList,
   Button,
-  Form,
+
   ListView,
   ListViewHeader,
 } from "@progress/kendo-react-all";
 
-import { axisBottom, event, gray, json, values } from "d3";
+
 import moment from "moment";
-import { stat } from "fs";
+
 import "./ToolfaceSummary.css";
 import {
   faPlus,
-  faPlusCircle,
+
   faTrash,
-  faUnderline,
+
   faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
@@ -83,7 +75,7 @@ import { confirmAlert } from "react-confirm-alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import STDChannels from "../../standardChannels/stdChannels";
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
-import { debug } from "console";
+
 import { Util } from "../../../Models/eVuMax";
 //Nishant 28/07/2021
 import * as util from "../../../utilFunctions/utilFunctions";
@@ -110,13 +102,13 @@ class ToolfaceSummary extends Component {
     //GEO
     ShowDrillingWindow: false,
     GeoDrlgWindowData: [],
-    GeoDrlgWindowColor: "",
+    GeoDrlgWindowColor: util.getRandomColor(),
     GeoDrlgWindowTrans: 50,
 
     // ROP
     ShowROPDrillingWindow: false,
     ROPDrlgWindowData: [],
-    ROPDrlgWindowColor: "",
+    ROPDrlgWindowColor: util.getRandomColor(),
     ROPDrlgWindowTrans: 50,
 
     GTF: {
@@ -240,12 +232,12 @@ class ToolfaceSummary extends Component {
       this.fromDepth = pfromDepth;
       this.toDepth = ptoDepth;
 
-      console.log(
-        "From Date " +
-        moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-        " To Date " +
-        moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-      );
+      // console.log(
+      //   "From Date " +
+      //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
+      //   " To Date " +
+      //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
+      // );
 
       this.loadData();
     } catch (error) { }
@@ -377,7 +369,7 @@ class ToolfaceSummary extends Component {
     let newData: any = Object.values([...this.state.GeoDrlgWindowData]);
     let index = newData.findIndex((item: any) => item.SRNO === e.dataItem.SRNO); // use unique value like ID
     newData[index][e.field] = e.value;
-    console.log("index", index);
+    //console.log("index", index);
     if (index > 0) {
       if (e.field == "StartMD") {
         newData[index - 1]["EndMD"] = e.value;
@@ -393,7 +385,7 @@ class ToolfaceSummary extends Component {
     let newData: any = Object.values([...this.state.ROPDrlgWindowData]);
     let index = newData.findIndex((item: any) => item.SRNO === e.dataItem.SRNO); // use unique value like ID
     newData[index][e.field] = e.value;
-    console.log("index", index);
+    //console.log("index", index);
     if (index > 0) {
       if (e.field == "StartMD") {
         newData[index - 1]["EndMD"] = e.value;
@@ -534,6 +526,7 @@ class ToolfaceSummary extends Component {
 
   componentDidMount() {
     try {
+      window.addEventListener("resize", this.displayData);
       this.getPrimaryList();
       // this.getLineStyle();
 
@@ -542,6 +535,7 @@ class ToolfaceSummary extends Component {
 
       //initialize chart
       this.objChart = new Chart(this, "Toolface");
+
       this.objChart.ContainerId = "toolface";
 
       this.objChart.leftAxis().AutoScale = false;
@@ -585,6 +579,7 @@ class ToolfaceSummary extends Component {
       this.objChart.MarginRight = 30;
 
       this.objChart.initialize();
+      this.objChart.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart.reDraw();
       this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
         this.onBeforeDrawSeries(e, i);
@@ -623,13 +618,13 @@ class ToolfaceSummary extends Component {
 
       this.loadData();
 
-      console.log("lineStyle", this.state.LineStyle);
+      //console.log("lineStyle", this.state.LineStyle);
     } catch (error) { }
   }
 
   componentDidUpdate() {
     try {
-      this.refreshChart();
+      // this.refreshChart();
     } catch (error) { }
   }
 
@@ -1326,7 +1321,7 @@ class ToolfaceSummary extends Component {
       this.plotAdnlChart();
       this.plotToolfaceDial();
 
-      document.title =  this.state.WellName + " -Toolface Summary"; //Nishant 02/09/2021
+      document.title = this.state.WellName + " -Toolface Summary"; //Nishant 02/09/2021
     } catch (error) { }
   };
 
@@ -1547,7 +1542,7 @@ class ToolfaceSummary extends Component {
           Mnemonic: selectedChannel.id,
           lineStyle: 0,
           lineWidth: 2,
-          lineColor: "rgba(239, 10, 10, 1)", // Default Color when add New Channel  Nishant 28/07/2021,
+          lineColor: util.getRandomColor(), // Default Color when add New Channel  Nishant 06/09/2021,
           // visible:"true" // Nishant 28/07/2021
         });
       }
@@ -2503,7 +2498,7 @@ class ToolfaceSummary extends Component {
           <TabStripTab title="Toolface Evaluation Plot">
             <div
               style={{
-                height: "calc(100vh - 355px)",
+                height: "calc(100vh - 400px)",
                 width: "calc(100vw - 110px)",
                 backgroundColor: "transparent",
               }}
@@ -2608,7 +2603,7 @@ class ToolfaceSummary extends Component {
               style={{
                 textAlign: "center",
                 height: "40px",
-                width: "calc(100vw - 90px)",
+                //width: "calc(100vw - 90px)",
                 backgroundColor: "transparent",
                 display: "inline-block",
               }}
@@ -2912,7 +2907,7 @@ class ToolfaceSummary extends Component {
           </TabStripTab>
           <TabStripTab title="Drlg Window">
             <div className="row">
-              <div className="col-lg-12">
+              <div className="col-lg-12 col-md-12 col-sm-11 col-xs-2">
                 <div className="float-right mr-2 mb-3">
                   <Button id="cmdsave" onClick={this.onClick_Save}>
                     Save
@@ -2939,7 +2934,7 @@ class ToolfaceSummary extends Component {
 
                 <div className="row mb-3">
                   <div
-                    className="col-xl-12 col-lg-12 col-md-6 col-sm-8"
+                    className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xl-10"
                     style={{ width: "80vw" }}
                   >
                     <Grid
@@ -3097,7 +3092,7 @@ class ToolfaceSummary extends Component {
 
                 <div className="row mb-3">
                   <div
-                    className="col-xl-12 col-lg-12 col-md-6 col-sm-8"
+                    className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-10"
                     style={{ width: "80vw" }}
                   >
                     {/* <div className="col-lg-12"> */}
@@ -3552,10 +3547,10 @@ class ToolfaceSummary extends Component {
 
   onClick_SaveCancel = () => { };
 
-  refreshChart = () => {
-    try {
-    } catch (error) { }
-  };
+  // refreshChart = () => {
+  //   try {
+  //   } catch (error) { }
+  // };
 
   saveSettings = () => {
     try {

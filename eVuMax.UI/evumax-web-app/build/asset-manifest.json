@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/evumaxapp/static/css/main.c1fb2208.chunk.css",
-    "main.js": "/evumaxapp/static/js/main.76b3f354.chunk.js",
-    "main.js.map": "/evumaxapp/static/js/main.76b3f354.chunk.js.map",
+    "main.css": "/evumaxapp/static/css/main.0124f32d.chunk.css",
+    "main.js": "/evumaxapp/static/js/main.f56206cf.chunk.js",
+    "main.js.map": "/evumaxapp/static/js/main.f56206cf.chunk.js.map",
     "runtime-main.js": "/evumaxapp/static/js/runtime-main.582f3784.js",
     "runtime-main.js.map": "/evumaxapp/static/js/runtime-main.582f3784.js.map",
     "static/css/2.6f9ce932.chunk.css": "/evumaxapp/static/css/2.6f9ce932.chunk.css",
-    "static/js/2.1cc65ac8.chunk.js": "/evumaxapp/static/js/2.1cc65ac8.chunk.js",
-    "static/js/2.1cc65ac8.chunk.js.map": "/evumaxapp/static/js/2.1cc65ac8.chunk.js.map",
+    "static/js/2.b294224c.chunk.js": "/evumaxapp/static/js/2.b294224c.chunk.js",
+    "static/js/2.b294224c.chunk.js.map": "/evumaxapp/static/js/2.b294224c.chunk.js.map",
     "index.html": "/evumaxapp/index.html",
     "static/css/2.6f9ce932.chunk.css.map": "/evumaxapp/static/css/2.6f9ce932.chunk.css.map",
-    "static/css/main.c1fb2208.chunk.css.map": "/evumaxapp/static/css/main.c1fb2208.chunk.css.map",
-    "static/js/2.1cc65ac8.chunk.js.LICENSE.txt": "/evumaxapp/static/js/2.1cc65ac8.chunk.js.LICENSE.txt",
+    "static/css/main.0124f32d.chunk.css.map": "/evumaxapp/static/css/main.0124f32d.chunk.css.map",
+    "static/js/2.b294224c.chunk.js.LICENSE.txt": "/evumaxapp/static/js/2.b294224c.chunk.js.LICENSE.txt",
     "static/media/downloading-blue.gif": "/evumaxapp/static/media/downloading-blue.1d117764.gif",
     "static/media/etechSVG.08de06c8.svg": "/evumaxapp/static/media/etechSVG.08de06c8.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.582f3784.js",
     "static/css/2.6f9ce932.chunk.css",
-    "static/js/2.1cc65ac8.chunk.js",
-    "static/css/main.c1fb2208.chunk.css",
-    "static/js/main.76b3f354.chunk.js"
+    "static/js/2.b294224c.chunk.js",
+    "static/css/main.0124f32d.chunk.css",
+    "static/js/main.f56206cf.chunk.js"
   ]
 }

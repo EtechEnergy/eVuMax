@@ -385,6 +385,7 @@ export class DrillingSummary extends Component {
   refreshROPLineChart = () => {
     try {
       this.objChart_ROPLine.initialize();
+      this.objChart_ROPLine.LegendPosition = 3;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart_ROPLine.DataSeries.clear();
       this.objChart_ROPLine.updateChart();
 
@@ -1591,49 +1592,61 @@ export class DrillingSummary extends Component {
                 <div className="clearfix"></div>
 
                 <div className="row">
-                  <div
-                    id="drlgSummary"
-                    style={{
-                      //height: "calc(100vh - 700px)",
-                      height: "calc(30vh)",
-                      width: "calc(30vw)",
-                      minWidth: "500px",
-                      float: "left",
-                      backgroundColor: "transparent",
-                      // marginLeft: "-50px",
-                      marginRight: "10px",
-                      //paddingLeft: "45px"
-                    }}
-                  ></div>
+                  <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+                    <div
+                      id="drlgSummary"
+                      style={{
+                        //height: "calc(100vh - 700px)",
+                        height: "calc(30vh)",
+                        //width: "calc(30vw)",
+                        width: "100%",
+                        //minWidth: "500px",
+                        float: "left",
+                        backgroundColor: "transparent",
+                        // marginLeft: "-50px",
+                        marginRight: "10px",
+                        //paddingLeft: "45px"
+                      }}
+                    ></div>
+                  </div>
 
-                  <div
-                    id="drlgSummary2"
-                    style={{
-                      //height: "calc(100vh - 700px)",
-                      height: "calc(30vh)",
-                      width: "calc(30vw)",
-                      minWidth: "500px",
-                      backgroundColor: "transparent",
-                      float: "left",
-                      //marginLeft: "-50px",
-                      marginRight: "10px",
-                    }}
-                  ></div>
+                  <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+                    <div
+                      id="drlgSummary2"
+                      style={{
+                        //height: "calc(100vh - 700px)",
+                        height: "calc(30vh)",
+                        //width: "calc(30vw)",
+                        width: "100%",
+                        //minWidth: "500px",
+                        backgroundColor: "transparent",
+                        float: "left",
+                        //marginLeft: "-50px",
+                        marginRight: "10px",
+                      }}
+                    ></div>
 
-                  <div
-                    id="drlgSummary3"
-                    style={{
-                      //height: "calc(100vh - 700px)",
-                      height: "calc(30vh)",
-                      width: "calc(30vw)",
-                      minWidth: "500px",
-                      backgroundColor: "transparent",
-                      float: "right",
-                      //  marginLeft: "-50px",
-                      marginRight: "10px",
-                    }}
-                  ></div>
+                  </div>
+
+
+                  <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+                    <div
+                      id="drlgSummary3"
+                      style={{
+                        //height: "calc(100vh - 700px)",
+                        height: "calc(30vh)",
+                        //width: "calc(30vw)",
+                        width: "100%",
+                        //minWidth: "500px",
+                        backgroundColor: "transparent",
+                        float: "right",
+                        //  marginLeft: "-50px",
+                        marginRight: "10px",
+                      }}
+                    ></div>
+                  </div>
                 </div>
+
 
                 <div className="row">
                   <div
@@ -1655,7 +1668,21 @@ export class DrillingSummary extends Component {
               </div>
             </TabStripTab>
             <TabStripTab title="Page-2 ">
-              <div style={{ marginTop: "10px" }}>
+              <div style={{ marginTop: "5px" }}>
+
+
+                <div className="col-lg-12">
+                  <div className="float-right mr-2">
+                    <FontAwesomeIcon
+                      icon={faUndo}
+                      onClick={() => {
+                        this.refreshROPLineChart();
+                      }}
+                    />
+                  </div>
+                </div>
+
+
                 <div className="row mb-3">
                   {/* style={{ maxHeight: "160px" }} for upper div */}
                   <div
@@ -1915,7 +1942,7 @@ export class DrillingSummary extends Component {
                   style={{
                     textAlign: "center",
                     height: "40px",
-                    width: "calc(100vw - 90px)",
+                    //width: "calc(100vw - 90px)",
                     backgroundColor: "transparent",
                     display: "inline-block",
                   }}
