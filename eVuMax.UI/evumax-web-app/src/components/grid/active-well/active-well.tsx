@@ -4,7 +4,7 @@ import $ from "jquery";
 import {
   Grid,
   GridColumn as Column,
-  GridColumn,
+
   GridToolbar,
   GridColumnReorderEvent,
 } from "@progress/kendo-react-grid";
@@ -16,10 +16,10 @@ import { DropDownButton, Button } from "@progress/kendo-react-buttons";
 
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
-import ReactDOM from "react-dom";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEdit,
+
   faPen,
   faCircle,
   faStar
@@ -27,7 +27,7 @@ import {
 import { Input, Checkbox } from "@progress/kendo-react-inputs";
 import { filterBy } from "@progress/kendo-data-query";
 import CustomLoader from "../../loader/loader";
-import CustomeNotifications from "../../notifications/notification";
+
 
 import {
   Window,
@@ -96,6 +96,7 @@ export default class ActiveWell extends React.Component {
     dataForDropDown: [{ id: "NA", name: "No favourites" }],
     showDownloadStatusDialog: false,
     currentWellID: "",
+    currentWellName:"", //Nishant 08-09-2021
     showOpenInterfaceDialog: false,
     OpenInterfaceID: "",
     showOpenInterfaceDialogAsEditor:false //Nishant 02/09/2021
@@ -242,7 +243,8 @@ export default class ActiveWell extends React.Component {
     this.setState({
       showOpenInterfaceDialog: true,
       currentWellID: rowData.WELL_ID,
-      showOpenInterfaceDialogAsEditor:true
+      showOpenInterfaceDialogAsEditor:true,
+      currentWellName:rowData.WELL_NAME
 
     });
   }
@@ -537,13 +539,15 @@ export default class ActiveWell extends React.Component {
 
   ////18-08-2020
   showOpenInterfaceDialog = (dataItem: any) => {
+    
     this.setState({
       showOpenInterfaceDialog: true,
       currentWellID: dataItem.WELL_ID,
-      showOpenInterfaceDialogAsEditor:false
+      showOpenInterfaceDialogAsEditor:false,
+      currentWellName:dataItem.WELL_NAME //Nishant 08-09-2021
     });
-
-    this.forceUpdate();
+ 
+    //this.forceUpdate();
   };
 
   handleChangeOpenInterface = (event: any) => {
@@ -1086,45 +1090,7 @@ export default class ActiveWell extends React.Component {
 
         {/* show Open Interface Window */}
         {this.state.showOpenInterfaceDialog && (
-          // <Window
-          //     title={"Select Interface To Open"}
-          //     onClose={() => this.setState({ showOpenInterfaceDialog: false })}
-          //     // width = {'80vw'}
-          //     // height = {300}
-          //     style={{ width: '400px', height: '220px' }}
-          //     resizable={false}
-          //     modal={true}
-          //     minimizeButton={() => null}
-          //     maximizeButton={() => null}
-          // >
-
-          //     <div className="row">
-          //         <div className="col lg-10 sm-6 mr-6 ml-6 mt-4 ">
-
-          //             <DropDownList
-          //                 style={{ width: "300px" }}
-          //                 data={[{ id: "DrlgSummary", name: "Drilling Summary" }, { id: "DrlgConnSummary", name: "Drlg. Conn. Summary" }, { id: "DrlgConnSummary2", name: "Drlg. Conn. Summary (Split View)" }, { id: "TripConnSummary", name: "Trip Conn. Summary" }, { id: "ToolfaceSummary", name: "Toolface Summary" }]}
-          //                 textField="name"
-          //                 dataItemKey="id"
-          //                 value={this.state.OpenInterfaceID}
-          //                 onChange={this.handleChangeOpenInterface}
-          //             />
-
-          //         </div>
-
-          //     </div>
-
-          //     <div className="row">
-          //         <div className="col lg-10 sm-5 mr-5 ml-5 mt-3 ">
-          //             <button className="btn-custom btn-custom-primary mr-2 " onClick={this.OpenInterfaceClicked}>Open</button>
-          //             <button className="btn-custom btn-custom-primary " onClick={() => this.setState({ showOpenInterfaceDialog: false })}>Close</button>
-
-          //         </div>
-
-          //     </div>
-
-          // </Window>
-          <WidgetSelector {...this} />
+                 <WidgetSelector {...this} />
         )}
       </>
     );

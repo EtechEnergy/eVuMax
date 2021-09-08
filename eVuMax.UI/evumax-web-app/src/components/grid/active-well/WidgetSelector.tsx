@@ -1,16 +1,14 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { MultiSelect } from "@progress/kendo-react-dropdowns";
+
 import { filterBy } from "@progress/kendo-data-query";
 import { Window } from "@progress/kendo-react-dialogs";
-import history from "../../../history/history";
+
 import GlobalMod from "../../../objects/global";
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import axios from "axios";
 import * as utilFunc from "../../../utilFunctions/utilFunctions"; //Nishant 07-10-2020
-import { util } from "typescript-collections";
-import WidgetSelection from "../../dashboard/WidgetSelection";
+
 import { ListView } from "@progress/kendo-react-listview";
 
 let _gMod = new GlobalMod();
@@ -34,6 +32,7 @@ export default class WidgetSelector extends React.Component<IProps> {
     super(props);
     this.__parentRef = parentRef;
     this.currentWellID = parentRef.state.currentWellID;
+    this.currentWellName = parentRef.state.currentWellName; //Nishant
     this.openAsEditor = parentRef.state.showOpenInterfaceDialogAsEditor;
     clearInterval(parentRef.intervalID);
   }
@@ -41,12 +40,14 @@ export default class WidgetSelector extends React.Component<IProps> {
   __parentRef: any;
   currentWellID: string = "";
   openAsEditor: boolean = false;
+  currentWellName:string= "";
 
   state = {
     value: [],
     data: [],
     addToFav: false,
-    userFav: [] as any
+    userFav: [] as any,
+    title:"Favorite Interface :"
   };
 
   //Nishant 24/08/2021
@@ -116,6 +117,12 @@ export default class WidgetSelector extends React.Component<IProps> {
             data: newWidgetList
           })
 
+          if(this.openAsEditor){
+            this.setState({
+              title : "Favorite Interface Editor :"
+            })
+          }
+
         })
         .catch(function (error) { });
     } catch (error) { }
@@ -130,6 +137,9 @@ export default class WidgetSelector extends React.Component<IProps> {
           value: WidgetList[0],
         });
         this.loadUserFav();
+       
+       
+        
       }
     } catch (error) { }
   }
@@ -343,7 +353,7 @@ export default class WidgetSelector extends React.Component<IProps> {
     // const selected = value.length;
     return (
       <Window
-        title={"Select favourite Interface To Open"}
+        title={this.state.title + " "+ this.currentWellName } 
         //onClose={() => this.setState({ showOpenInterfaceDialog: false })}
         onClose={() => this.__parentRef.CloseOpenInterfaceDialog()} // this.setState({ showOpenInterfaceDialog: false })}
         // width = {'80vw'}
@@ -356,45 +366,10 @@ export default class WidgetSelector extends React.Component<IProps> {
         initialTop={100}
         initialLeft={600}
       >
-        {/* <div style={{ padding: 20 }}>
-          <MultiSelect
-            tags={
-              selected > 0
-                ? [
-                    {
-                      text: `Selected (${selected} Widgets)`,
-                      data: [...value],
-                    },
-                  ]
-                : []
-            }
-            filterable={true}
-            data={this.state.data}
-            onChange={this.onChange}
-            onFilterChange={this.filterChange}
-            value={this.state.value}
-            itemRender={this.itemRender}
-            autoClose={false}
-            textField="name"
-            dataItemKey="id"
-          />
-        </div> */}
+       
 
         <div>
-          {/* <input
-            className="mr-3 mt-3"
-            type="checkbox"
-            onClick={this.onAddToFavoritesCheckbox}
-          />
-          Add To Favorites
-          {this.state.addToFav && (
-            <button
-              className="btn-custom btn-custom-primary ml-3 "
-              onClick={this.SaveFavorites}
-            >
-              Save
-            </button>
-          )} */}
+       
           {
             <ListView
               data={this.state.data}
@@ -408,4 +383,4 @@ export default class WidgetSelector extends React.Component<IProps> {
   }
 }
 
-// ReactDOM.render(<AppComponent />, document.querySelector("my-app"));
+

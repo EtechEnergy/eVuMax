@@ -745,7 +745,7 @@ class TripConnSummary extends Component {
                   name="opgView2"
                   value={3}
                   checked={this.state.CurrentView === 3}
-                  label="Histogram"
+                  label="Time Distribution"
                   onChange={() => {
                     this.setState({ CurrentView: 3 });
                   }}
