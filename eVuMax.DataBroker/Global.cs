@@ -9,7 +9,7 @@ namespace eVuMax.DataBroker
 {
     public static class Global
     {
-
+        public const string EncryptionKey = "V12Mx&*DR@!!(^-29287*263#"; //Copied from VuMaxDR.Common.Global //Nishant 08-09-2021
         #region Module String Constants
 
         public const string Mod_Common = "Common";

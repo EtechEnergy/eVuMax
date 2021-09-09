@@ -45,10 +45,18 @@ namespace eVuMax.API
         {
             try
             {
+                string AuthType = System.Configuration.ConfigurationManager.AppSettings["AuthType"];
 
                 //Parse the request to Broker request
                 BrokerRequest objRequest = JsonConvert.DeserializeObject<BrokerRequest>(paramRequest);
-
+                
+                //Nishant 08-09-2021
+                //This will be used to validate User from DB or Windows
+                BrokerParameter objParameter = new BrokerParameter();
+                objParameter.ParamName = "AuthType";
+                objParameter.ParamValue = AuthType;
+                objRequest.Parameters.Add(objParameter);
+                //****************************************
 
                 string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
                 DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
@@ -67,6 +75,7 @@ namespace eVuMax.API
                     //Assign data service
                     objRequest.objDataService = objDataService;
                     IBroker objBrokder = BrokerFactory.createBroker(objRequest);
+                    
                     var objResponse = objBrokder.getData(objRequest);
 
                     if (objRequest != null)
@@ -121,6 +130,14 @@ namespace eVuMax.API
                 
                 BrokerRequest objRequest = JsonConvert.DeserializeObject<BrokerRequest>(paramRequest);
 
+                //Nishant 08-09-2021
+                //This will be used to validate User from DB or Windows
+                string AuthType = System.Configuration.ConfigurationManager.AppSettings["AuthType"];
+                BrokerParameter objParameter = new BrokerParameter();
+                objParameter.ParamName = "AuthType";
+                objParameter.ParamValue = AuthType;
+                objRequest.Parameters.Add(objParameter);
+                //****************************************
 
                 string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
                 DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
@@ -180,6 +197,9 @@ namespace eVuMax.API
             }
 
         }
+
+
+     
 
         /// <summary>
         /// Returns Assembly version

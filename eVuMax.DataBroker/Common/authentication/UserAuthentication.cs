@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
+using VuMaxDR.Data;
 
 namespace eVuMax.DataBroker.Common.authentication
 {
     public class UserAuthentication: IBroker		
     {
 
+		const string ValidateUser = "ValidateUser";
+		const string ChangePassword_ = "ChangePassword";
+
 		public Broker.BrokerResponse getData(Broker.BrokerRequest paramRequest)
 		{
 			try
 			{
+				
 
-
-				if (paramRequest.Function=="ValidateUser")
+				if (paramRequest.Function== ValidateUser)
 				{
 					//TO-DO -- Validate the user with or without AD Integration and return the result
 					return isValidUser(paramRequest);
@@ -46,8 +48,25 @@ namespace eVuMax.DataBroker.Common.authentication
 		{
 			try
 			{
+
+
 				//Not implemented anything yet... return blank object
-				return paramRequest.createResponseObject();
+				//return paramRequest.createResponseObject();
+
+				if (paramRequest.Function == ChangePassword_)
+				{
+					//TO-DO -- Validate the user with or without AD Integration and return the result
+					return ChangePassword(paramRequest);
+				}
+
+
+
+
+				//No matching function found ...
+				Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
+				objResponse.RequestSuccessfull = false;
+				objResponse.Errors = "Invalid Request Function. Use proper function name in the Broker Request";
+				return objResponse;
 			}
 			catch (Exception ex)
 			{
@@ -56,7 +75,62 @@ namespace eVuMax.DataBroker.Common.authentication
 		}
 
 
+		private Broker.BrokerResponse ChangePassword(Broker.BrokerRequest objRequest)
+		{
+			try
+			{
 
+				string LastError = "";
+				string UserName = "";
+				string Password = "";
+				string AuthType_ = "";
+				try
+				{
+					UserName = @objRequest.Parameters.Where(x => x.ParamName.Contains("UserName")).FirstOrDefault().ParamValue;
+					Password = @objRequest.Parameters.Where(x => x.ParamName.Contains("Password")).FirstOrDefault().ParamValue;
+					AuthType_ = @objRequest.Parameters.Where(x => x.ParamName.Contains("AuthType")).FirstOrDefault().ParamValue;
+				}
+				catch (Exception ex)
+				{
+					Broker.BrokerResponse objBadResponse = objRequest.createResponseObject();
+					objBadResponse.RequestSuccessfull = false;
+					objBadResponse.Errors = "Invalid Request Parameter.Use proper function name in the Broker Request i.e UserName/Password/AuthType " + ex.Message + ex.StackTrace;
+					return objBadResponse;
+				}
+
+			
+
+				if (AuthType_ == "VuMaxDBUser")
+				{
+					AES objAES = new AES();
+
+					string encPwd = objAES.Encrypt(Password, Global.EncryptionKey, 128);
+
+					string strSQL = "UPDATE VMX_USER SET ";
+					strSQL += "PASSWORD = '" + encPwd + "' WHERE USER_NAME ='" + UserName + "'";
+
+					objRequest.objDataService.executeNonQuery(strSQL);
+				}
+			
+
+				//TO-DO Authenticate the user and create response
+
+				Broker.BrokerResponse objResponse = objRequest.createResponseObject();
+				objResponse.RequestSuccessfull = true;
+				objResponse.Warnings = LastError;
+				objResponse.Response = JsonConvert.SerializeObject(true);
+
+				return objResponse;
+			}
+			catch (Exception ex)
+			{
+
+				Broker.BrokerResponse objResponse = objRequest.createResponseObject();
+				objResponse.RequestSuccessfull = false;
+				objResponse.Response = JsonConvert.SerializeObject(ex.Message + ex.StackTrace);
+				return objResponse;
+			}
+		}
 
 
 
@@ -72,16 +146,53 @@ namespace eVuMax.DataBroker.Common.authentication
 			try
 			{
 
-				List<Broker.BrokerParameter> paramList = Global.getParameters(objRequest);
+				//List<Broker.BrokerParameter> paramList = Global.getParameters(objRequest);
 
-				string UserName = Global.getParameterValue(paramList, "UserName");
-				string Password = Global.getParameterValue(paramList, "Password");
+				//string UserName = Global.getParameterValue(paramList, "UserName");
+				//string Password = Global.getParameterValue(paramList, "Password");
+
+				string LastError = "";
+				string UserName = "";
+				string Password= "";
+				string AuthType_ = "";
+				try
+				{
+					UserName = @objRequest.Parameters.Where(x => x.ParamName.Contains("UserName")).FirstOrDefault().ParamValue;
+					Password = @objRequest.Parameters.Where(x => x.ParamName.Contains("Password")).FirstOrDefault().ParamValue;
+					AuthType_ = @objRequest.Parameters.Where(x => x.ParamName.Contains("AuthType")).FirstOrDefault().ParamValue;
+				}
+				catch (Exception ex)
+				{
+					Broker.BrokerResponse objBadResponse = objRequest.createResponseObject();
+					objBadResponse.RequestSuccessfull = false;
+					objBadResponse.Errors = "Invalid Request Parameter.Use proper function name in the Broker Request i.e UserName/Password/AuthType " + ex.Message + ex.StackTrace;
+					return objBadResponse;
+				}
+
+				LDAP objLDAP = new LDAP(UserName, Password);
+
+				Boolean isValidUser = false;
+
+				if (AuthType_ == "WindowsUser")
+				{
+					//isValidUser = objLDAP.isValidLDAPUser();
+
+					isValidUser = objLDAP.isValidWindowUser();
+                }
+                else
+                {
+					isValidUser = isValidDBUser(ref objRequest.objDataService, UserName, Password, ref LastError);
+				}
+
+				
+
 
 				//TO-DO Authenticate the user and create response
 
 				Broker.BrokerResponse objResponse = objRequest.createResponseObject();
-				objResponse.RequestSuccessfull = true;
-				objResponse.Response = JsonConvert.SerializeObject("True");
+				objResponse.RequestSuccessfull = isValidUser;
+				objResponse.Warnings = LastError;
+				objResponse.Response = JsonConvert.SerializeObject(isValidUser);
 
 				return objResponse;
 			}
@@ -94,45 +205,44 @@ namespace eVuMax.DataBroker.Common.authentication
 				return objResponse;
 			}
         }
-		//public static bool isValidUser(ref DataService objDataService, string UserId, string Passwd, ref string lastError)
-		//{
-		//	try
-		//	{
+        public bool isValidDBUser(ref DataService objDataService, string UserName, string Passwd, ref string lastError)
+        {
+            try
+            {
+				
 
+				//Check connection status
+				if (!objDataService.checkConnection())
+                {
+                    //Connection is not open
+                    lastError = "Database connection is not open";
+                    return false;
+                }
 
-		//		//Check connection status
-		//		if (!objDataService.checkConnection())
-		//		{
-		//			//Connection is not open
-		//			lastError = "Database connection is not open";
-		//			return false;
-		//		}
+                AES objAES = new AES();
 
-		//		AES objAES = new AES();
+                string encPwd = objAES.Encrypt(Passwd, Global.EncryptionKey, 128);
 
-		//		string encPwd = objAES.Encrypt(Passwd, EncriptionKey, 128);
+                bool isValidUser = false;
+                isValidUser = objDataService.IsRecordExist("SELECT user_id FROM VMX_USER WHERE USER_NAME='" + UserName + "' AND PASSWORD='" + encPwd + "'");
+                if (isValidUser)
+                {
+                    
+                    return true;
+                }
+                else
+                {
+                    lastError = "invalid User Name or Password";
+                    return false;
+                }
 
-		//		bool isValidUser = false;
-		//		isValidUser = objDataService.IsRecordExist("SELECT user_id FROM user_master WHERE user_id='" + UserId + "' AND PASSWD='" + encPwd + "'");
-		//		if (isValidUser)
-		//		{
-		//			objDataService.closeConnection();
-		//			return true;
-		//		}
-		//		else
-		//		{
-		//			objDataService.closeConnection();
-		//			lastError = "invalid User Name or Password";
-		//			return false;
-		//		}
+            }
+            catch (Exception ex)
+            {
+                lastError = ex.Message + " - " + ex.StackTrace;
+                return false;
+            }
 
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		lastError = ex.Message + " - " + ex.StackTrace;
-		//		return false;
-		//	}
-
-		//}
-	}
+        }
+    }
 }
