@@ -1589,7 +1589,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
         {
             try
             {
-
+                objLogger.LogMessage("PolulateTripSpeed1Data:ENTERED");
 
                 //Copy RefreshChart function from vb here and populate TripSpeedData 
 
@@ -1647,7 +1647,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 // objData.BenchMarkWOConn = objBenchMarks.TripSpeedWOConnection;
                 //objData.BenchMarkWithConn = objBenchMarks.TripSpeedWithConnection;
 
-
+                objLogger.LogMessage("objBenchMarks.speedProfile.Count "+ objBenchMarks.speedProfile.Count);
                 if (objBenchMarks.speedProfile.Count > 0)
                 {
                     TripSpeed[] arrItems = objBenchMarks.speedProfile.Values.ToArray();
@@ -1798,6 +1798,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("error : PopulateTripSpeed1Data " +ex.Message + " " + ex.StackTrace);
                 return new TripSpeedData();
 
             }

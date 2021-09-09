@@ -19,8 +19,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
         const string getTagListCustom_ = "getTagListCustom";
 
         const string setDepthRange_ = "setDepthRange";
-            
-        
+        public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
+
         public DataTable TagSourceData { get; set; } = new DataTable();
         public DataTable grdTripTagData { get; set; } = new DataTable();
 
@@ -139,7 +139,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
-
+                objLogger.LogMessage("TripAnalyzerSelection getData " + ex.Message + ex.StackTrace);
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.Response = ex.Message + ex.StackTrace;
                 return objResponse;
@@ -180,6 +180,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("TripAnalyzerSelection performTask " + ex.Message + ex.StackTrace);
                 return paramRequest.createResponseObject();
             }
         }
@@ -189,7 +190,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             try
             {
                 //save to evumaxUserSettings
-                //pending
+
+                objLogger.LogMessage("TripAnalyzerSelection SaveToDB entered ");
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 string wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
@@ -224,7 +226,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
                 }
                 else
                 {
-
+                    
                     Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
                     objBadResponse.RequestSuccessfull = false;
                     objBadResponse.Errors = "Error saving user settings " + objMgr.LastError;
@@ -235,7 +237,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
-
+                objLogger.LogMessage("TripAnalyzerSelection SaveToDB " + ex.Message + ex.StackTrace);
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.Response = ex.Message + ex.StackTrace;
                 return objResponse;
@@ -247,6 +249,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
         {
             try
             {
+                objLogger.LogMessage("TripAnalyzerSelection SaveToDBDepthRange entered ");
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 string wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
@@ -313,6 +316,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("Error ->>TripAnalyzerSelection SaveToDBDepthRange " + ex.Message + ex.StackTrace );
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.Response = ex.Message + ex.StackTrace;
                 return objResponse;
@@ -326,7 +330,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
         {
             try
             {
-                //TripAnalyzerSelection objSelection = new TripAnalyzerSelection();
+                objLogger.LogMessage("TripAnalyzerSelection - loadSelection ");
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 string wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
@@ -454,7 +458,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
-
+                objLogger.LogMessage("TripAnalyzerSelection loadSelection " + ex.Message + ex.StackTrace);
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.Response = ex.Message + ex.StackTrace;
                 return objResponse;
@@ -466,6 +470,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
         {
             try
             {
+                objLogger.LogMessage("TripAnalyzerSelection loadBenchMarks enter");
                 TripSpeedBenchMark objBenckMarks = new TripSpeedBenchMark();
                 Dictionary<Double, TripSpeed> speedProfile = new Dictionary<double, TripSpeed>();
 
@@ -494,7 +499,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
-
+                objLogger.LogMessage("TripAnalyzerSelection loadBenchMarks " + ex.Message + ex.StackTrace);
                 return new TripSpeedBenchMark();
             }
         }
@@ -503,7 +508,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
         {
             try
             {
-                
+                objLogger.LogMessage("TripAnalyzerSelection getTagSourceList enter");
                 var objData = new DataTable();
                 objData = objDataService.getTable("SELECT SOURCE_ID,SOURCE_NAME FROM VMX_TAG_SOURCES ORDER BY SOURCE_NAME");
                 if (objData.Rows.Count > 0)
@@ -525,6 +530,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("TripAnalyzerSelection getTagSourceList " + ex.Message + ex.StackTrace);
                 return TagSourceData;
             }
         }
@@ -646,7 +652,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
-                
+                objLogger.LogMessage("TripAnalyzerSelection getDrillingTagList " + ex.Message + ex.StackTrace);
+
             }
         }
 
@@ -758,7 +765,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed.TripAnalyzerSelection
             }
             catch (Exception ex)
             {
-                
+                objLogger.LogMessage("TripAnalyzerSelection getTagListCustom" + ex.Message + ex.StackTrace);
+
             }
         }
 

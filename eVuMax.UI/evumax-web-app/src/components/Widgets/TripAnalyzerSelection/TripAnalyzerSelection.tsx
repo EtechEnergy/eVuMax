@@ -19,7 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
-  
+
   Grid,
   GridToolbar,
   GridColumn as Column,
@@ -51,7 +51,7 @@ interface IProps {
 export default class TripAnalyzerSelection extends Component<IProps> {
 
   //constructor(parentRef, props: any) {
-    constructor(props: any) {
+  constructor(props: any) {
     super(props);
     //this.__parentRef =  parentRef;
     // this.WellId = parentRef.WellId;
@@ -185,7 +185,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
 
             //this.forceUpdate();//Nishant Commented 06/09/2021
 
-           
+
           })
           .catch((error) => {
             $("#loader").hide();
@@ -305,7 +305,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
 
   SaveSettings = () => {
     try {
-      
+
 
       if (this.state.selectedTag.length == 0) {
         confirmAlert({
@@ -357,7 +357,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
       newBenchMarks.speedProfile = newSpeedProfile;
       newUserSettings.objBenchMarks = newBenchMarks;
 
-     
+
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Summary.Manager";
@@ -812,7 +812,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
       <React.Fragment>
         <div className="mr-5" style={{ height: "100vh", width: "100%" }}>
           <div className="row ml-2">
-           <div className="col-lg-2 offset-md-6">
+            <div className="col-lg-2 offset-md-6">
               <button
                 onClick={this.SaveSettings}
                 className="btn-custom btn-custom-primary ml-1 mr-1"
@@ -1504,7 +1504,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
         })
         .then((res) => {
           const objData = JSON.parse(res.data.Response);
-          console.log("trip Analy", objData);
+          console.log("tripAnalyzerSelection Data", objData);
 
           let customTagList: comboData[] = [];
 
