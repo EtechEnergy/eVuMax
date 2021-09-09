@@ -1591,29 +1591,34 @@ export class DrillingSummary extends Component {
 
                 <div className="clearfix"></div>
 
-                <div className="row">
+                <div className="row" style={{display:"flex",flexFlow:"row wrap",flexWrap:"wrap",alignItems:"stretch",alignContent:"stretch"}}>
                   <div
+                  className="flex-item"
                     id="drlgSummary"
                     style={{
+                      
                       //height: "calc(100vh - 700px)",
                       height: "calc(30vh)",
                       width: "calc(30vw)",
-                      minWidth: "500px",
+                     minWidth: "400px",
                       float: "left",
                       backgroundColor: "transparent",
                       // marginLeft: "-50px",
                       marginRight: "10px",
+                      flex:1,
                       //paddingLeft: "45px"
                     }}
                   ></div>
 
                   <div
+                  className="flex-item"
                     id="drlgSummary2"
                     style={{
                       //height: "calc(100vh - 700px)",
                       height: "calc(30vh)",
                       width: "calc(30vw)",
-                      minWidth: "500px",
+                      minWidth: "400px",
+                      flex:1,
                       backgroundColor: "transparent",
                       float: "left",
                       //marginLeft: "-50px",
@@ -1625,9 +1630,10 @@ export class DrillingSummary extends Component {
                     id="drlgSummary3"
                     style={{
                       //height: "calc(100vh - 700px)",
+                      flex:1,
                       height: "calc(30vh)",
                       width: "calc(30vw)",
-                      minWidth: "500px",
+                      minWidth: "400px",
                       backgroundColor: "transparent",
                       float: "right",
                       //  marginLeft: "-50px",
@@ -1636,14 +1642,17 @@ export class DrillingSummary extends Component {
                   ></div>
                 </div>
 
-                <div className="row">
+                <div className="row" style={{display:"flex",alignContent:"space-around"}}>
                   <div
+                  className="flex-item"
                     id="ChartRigStateSummary"
                     style={{
+                      flex:1,
+                      flexBasis:100,
                       //height: "calc(40vh)",
                       height: "calc(33vh)",
-                      width: "calc(90vw)",
-                      minWidth: "500px",
+                      //width: "calc(90vw)",
+                     minWidth: "400px",
                       // marginLeft: "-50px",
                       backgroundColor: "transparent",
                     }}
