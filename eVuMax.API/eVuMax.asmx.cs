@@ -14,6 +14,7 @@ using System.Web.Script.Services;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO;
+using log4net;
 
 namespace eVuMax.API
 {
@@ -31,6 +32,10 @@ namespace eVuMax.API
     {
 
         string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
+       
+      
+
+
         //  DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
 
 
@@ -45,6 +50,11 @@ namespace eVuMax.API
         {
             try
             {
+                ILog APILogger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+                APILogger =  log4net.LogManager.GetLogger("eVuMaxAPILog");
+                
+
+
                 string AuthType = System.Configuration.ConfigurationManager.AppSettings["AuthType"];
 
                 //Parse the request to Broker request
@@ -74,9 +84,10 @@ namespace eVuMax.API
                 {
                     //Assign data service
                     objRequest.objDataService = objDataService;
-                    IBroker objBrokder = BrokerFactory.createBroker(objRequest);
+                    IBroker objBroker = BrokerFactory.createBroker(objRequest);
                     
-                    var objResponse = objBrokder.getData(objRequest);
+                    
+                    var objResponse = objBroker.getData(objRequest);
 
                     if (objRequest != null)
                     {
@@ -125,9 +136,11 @@ namespace eVuMax.API
 
             try
             {
-                //UseHttpGet = true,
+                ILog APILogger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+                APILogger = log4net.LogManager.GetLogger("eVuMaxAPILog");
+
                 //Parse the request to Broker request
-                
+
                 BrokerRequest objRequest = JsonConvert.DeserializeObject<BrokerRequest>(paramRequest);
 
                 //Nishant 08-09-2021
@@ -138,6 +151,8 @@ namespace eVuMax.API
                 objParameter.ParamValue = AuthType;
                 objRequest.Parameters.Add(objParameter);
                 //****************************************
+
+                             
 
                 string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
                 DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
@@ -155,9 +170,10 @@ namespace eVuMax.API
                 //Assign data service
                 objRequest.objDataService = objDataService;
 
-                IBroker objBrokder = BrokerFactory.createBroker(objRequest);
+                IBroker objBroker = BrokerFactory.createBroker(objRequest);
+                
 
-                var objResponse = objBrokder.performTask(objRequest);
+                var objResponse = objBroker.performTask(objRequest);
 
                 if (objRequest != null)
                 {

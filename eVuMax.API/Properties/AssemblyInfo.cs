@@ -33,3 +33,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyFileVersion(version: "1.0.*.*")]
+// Let log4net know that it can look for configuration in the default application config file
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "Web.config", Watch = true)]

@@ -6,12 +6,14 @@ using VuMaxDR.Common;
 using VuMaxDR.Data;
 using System.Data;
 using System.Collections.ObjectModel;
+using eVuMax.DataBroker.eVuMaxLogger;
+using Newtonsoft.Json;
 
 namespace eVuMax.DataBroker.Summary.TripSpeed
 {
     public class TripAnalyzer
     {
-
+        public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
         public bool UseDepthRanges = false;
         public Dictionary<double, double> TagSelection = new Dictionary<double, double>();
         public Dictionary<double, TripDepthInformation> TagDepthInformation = new Dictionary<double, TripDepthInformation>();
@@ -35,18 +37,18 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
         public DataTable HorizLine1 = new DataTable();
         public DataTable HorizLine2 = new DataTable();
 
-        
+
 
         double[] tripSpeedWithConnectionX;
         double[] tripSpeedWithConnectionY;
 
-        
+
 
         public double AvgTripSpeedWOConnections = 0;
         public double AvgTripSpeedWithConnections = 0;
 
         //public bool RefreshRequired = false;
-         int ProcessStatus = 0;
+        int ProcessStatus = 0;
 
         public bool UseCustomTags = false;
         public string TagSourceID = "";
@@ -66,15 +68,18 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
 
 
-        public TripSpeedSettings objUserSettings  = new TripSpeedSettings();
+        public TripSpeedSettings objUserSettings = new TripSpeedSettings();
         string userID = "";
 
         private TimeLog objTimeLog = new TimeLog();
 
-        public TripAnalyzer() {
+        public TripAnalyzer()
+        {
         }
         public TripAnalyzer(DataService objDataService, string paramWellID, string paramUserID)
         {
+
+            objLogger.LogMessage("TripAnalyzer Constructor Called");
             this.objDataService = objDataService;
             WellID = paramWellID;
             objRigState = rigState.loadWellRigStateSetup(ref this.objDataService, paramWellID); //Well specific
@@ -87,7 +92,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
             objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref objDataService, paramWellID);
 
-            
+
             tripSpeedWOConnectionData.Columns.Add("X", typeof(System.Double));
             tripSpeedWOConnectionData.Columns.Add("Y", typeof(System.Double));
 
@@ -98,8 +103,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
             benchMarkWOConnectionData.Columns.Add("X", typeof(System.Double));
             benchMarkWOConnectionData.Columns.Add("Y", typeof(System.Double));
 
-            
-                benchMarkWithConnectionData.Columns.Add("X", typeof(System.Double));
+
+            benchMarkWithConnectionData.Columns.Add("X", typeof(System.Double));
             benchMarkWithConnectionData.Columns.Add("Y", typeof(System.Double));
 
             deltaWithConn.Columns.Add("X", typeof(System.Double));
@@ -127,20 +132,21 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
         public string DepthVumaxUnitID = "";
 
-   
 
-        public void processTripSpeed1Data(ref TripSpeedData  objTripSpeedData )
+
+        public void processTripSpeed1Data(ref TripSpeedData objTripSpeedData)
         {
             try
             {
+                objLogger.LogMessage("processTripSpeed1Data Called");
                 //load tagSelection from evumaxUserSettings table
-                
-                objUserSettings= objUserSettings.loadUserSetings(ref objDataService, userID, WellID, "TripSpeed1");
+
+                objUserSettings = objUserSettings.loadUserSetings(ref objDataService, userID, WellID, "TripSpeed1");
 
                 TagSelection = objUserSettings.TagSelection;
                 UseDepthRanges = objUserSettings.UseDepthRanges;
                 DepthThreshold = objUserSettings.DepthThreshold;
-                TripDirection =(enumTripDirection) objUserSettings.TripDirection;
+                TripDirection = (enumTripDirection)objUserSettings.TripDirection;
                 UseCustomTags = objUserSettings.UseCustomTags;
                 TagSourceID = objUserSettings.TagSourceID;
                 RemoveFillUpTime = objUserSettings.RemoveFillUpTime;
@@ -148,7 +154,9 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 objBenchMarks = objUserSettings.objBenchMarks;
 
 
-            
+                objLogger.LogMessage("objUserSettings loaded as:***************** " + JsonConvert.SerializeObject(objUserSettings));
+
+
                 //if (TagSelection.Count <= 0)
                 //{
                 //    DataTable objData = new DataTable();
@@ -159,7 +167,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 //        TagSelection.Add(phaseIndex_, phaseIndex_);
                 //    }
                 //}
-                    
+
 
                 double phaseIndex = TagSelection.Values.First();
 
@@ -175,6 +183,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 if (objTag == null)
                     return;
 
+                objLogger.LogMessage("objTag loaded as: " + JsonConvert.SerializeObject(objTag));
+
 
                 // 'Determine the time log based on the 
                 objTimeLog = getTimeLogFromDateRange(objTag.StartDate, objTag.EndDate);
@@ -188,6 +198,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 // 'Determine Trip Direction ...
                 // // TripDirection = getTripDirection(objTimeLog.__dataTableName, objTag.StartDate, objTag.EndDate) ''No need to determine Trip Direction ... It will be specified by the user ...
 
+                objLogger.LogMessage("objTimeLog loaded as: " + JsonConvert.SerializeObject(objTimeLog));
 
                 DateTime processStartDate = objTag.StartDate;
                 DateTime processEndDate = objTag.EndDate;
@@ -256,14 +267,14 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
                 ProcessStatus = 0;
 
-                
-                objTripSpeedData =  this.PolulateTripSpeed1Data();
 
-                
+                objTripSpeedData = this.PolulateTripSpeed1Data();
+
+
             }
             catch (Exception ex)
             {
-               ProcessStatus = 0;
+                ProcessStatus = 0;
 
             }
         }
@@ -273,12 +284,11 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
             try
             {
 
-                // 'Dim objFile As New StreamWriter("c:\output\tripspeed.csv")
-                // 'objFile.WriteLine("DATETIME,DEPTH,TIME_DURATION,FOOTAGE,SPEED")
+
 
                 DataTable objData = objDataService.getTable("SELECT DATETIME,DEPTH,TIME_DURATION,RIG_STATE FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND (RIG_STATE IS NOT NULL) ORDER BY DATETIME");
 
-
+                objLogger.LogMessage("calculateContTripSpeedWOConnection started");
                 if (objData.Rows.Count == 0)
                     return;
 
@@ -473,8 +483,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
                 if (xData.Count() > 0 & yData.Count() > 0)
                 {
-                    paramX = new double[xData.Count()  ];
-                    paramY = new double[yData.Count()  ];
+                    paramX = new double[xData.Count()];
+                    paramY = new double[yData.Count()];
 
                     for (int i = 0; i < xData.Count(); i++)
                     {
@@ -503,7 +513,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                     }
                 }
 
-            
+
 
             }
 
@@ -514,6 +524,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
             catch (Exception ex)
             {
+
+                objLogger.LogMessage("Error in calculateContTripSpeedWOConnection  at" + ex.Message + ex.StackTrace);
             }
         }
 
@@ -522,7 +534,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
             try
             {
                 DataTable objData = objDataService.getTable("SELECT DATETIME,DEPTH,TIME_DURATION,RIG_STATE,HKLD,SPPA FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND (RIG_STATE IS NOT NULL) ORDER BY DATETIME");
-
+                objLogger.LogMessage("calculateContTripSpeedWithConnection Entered");
                 bool startRecorded = false;
                 double startDepth = 0;
                 int startIndex = 0;
@@ -624,7 +636,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                             // 'Continue ahead  with calculation ...
                             bool halt = true;
                         }
-                        else {
+                        else
+                        {
                             continue;
                         }
 
@@ -722,11 +735,12 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
                 tripSpeedWithConnectionData.DefaultView.Sort = "Y"; //desc
                 tripSpeedWithConnectionData = tripSpeedWithConnectionData.DefaultView.ToTable();
-                int a = 5;
-                //
+
+                objLogger.LogMessage("calculateContTripSpeedWithConnection End");
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("Error in calculateContTripSpeedWithConnection " + ex.Message + ex.StackTrace);
             }
         }
 
@@ -740,6 +754,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 double minDepth = 0;
                 double maxDepth = 0;
 
+                objLogger.LogMessage("calcTripSpeedWithoutConnectionsByDepthRange Entered");
 
                 // '(1) Find the Depth Range ...
                 strSQL = "SELECT MAX(DEPTH) AS MAX_DEPTH,MIN(DEPTH) AS MIN_DEPTH FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 AND DEPTH>=" + paramFromDepth.ToString() + " AND DEPTH<=" + paramToDepth.ToString() + " ";
@@ -802,9 +817,11 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 }
                 else
                     return 0;
+                objLogger.LogMessage("calcTripSpeedWithoutConnectionsByDepthRange End");
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("Error in calcTripSpeedWithoutConnectionsByDepthRange " + ex.Message + ex.StackTrace);
                 return 0;
             }
         }
@@ -813,6 +830,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
         {
             try
             {
+                objLogger.LogMessage("Error in calcTripSpeedWithConnectionsByDepthRange entered" );
+
                 double TotalFootage = 0;
                 string strSQL = "";
 
@@ -929,7 +948,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
                 double TotalTripInTime = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["SUMTIME"], 0));
 
-                TimeSpan objTimeSpan1 = new TimeSpan(0, 0, Convert.ToInt32( TotalRigStateTime));
+                TimeSpan objTimeSpan1 = new TimeSpan(0, 0, Convert.ToInt32(TotalRigStateTime));
                 TimeSpan objTimeSpan2 = new TimeSpan(0, 0, Convert.ToInt32(TotalTripInTime));
 
                 double TripPercent = Math.Round((TotalTripInTime * 100) / TotalRigStateTime, 2);
@@ -985,7 +1004,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 {
                     // 'Trip Out
                     //return TripDirection.TripOut;
-                   return enumTripDirection.TripOut;                }
+                    return enumTripDirection.TripOut;
+                }
                 else
                 {
                     // 'Trip In, By default ... Couldn't determine
@@ -1212,7 +1232,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
             try
             {
                 TripSpeedData objData = new TripSpeedData();
-               objUserSettings =  objUserSettings.loadUserSetings(ref objDataService, userID, WellID, "TripSpeed2");
+                objUserSettings = objUserSettings.loadUserSetings(ref objDataService, userID, WellID, "TripSpeed2");
 
                 TagSelection = objUserSettings.TagSelection;
                 UseDepthRanges = objUserSettings.UseDepthRanges;
@@ -1264,12 +1284,12 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                             DepthVumaxUnitID = objTimeLog.logCurves["DEPTH"].VuMaxUnitID;
                         }
                     }
-                 
+
 
                     DateTime processStartDate = objTag.StartDate;
                     DateTime processEndDate = objTag.EndDate;
-                    
-                  
+
+
 
 
                     if (!TagDepthInformation.ContainsKey(lnPhaseIndex))
@@ -1290,7 +1310,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                             objItem.TripSpeedWithConnection = calcTripSpeedWithConnectionsByDepthRange(objTimeLog.__dataTableName, objTag.StartDate, objTag.EndDate, objItem.FromDepth, objItem.ToDepth);
                             double tripStartDepth = 0;
                             double tripEndDepth = 0;
-                            enumTripDirection tripDirection = getTripDirection2(objTimeLog.__dataTableName, objTag.StartDate, objTag.EndDate,ref tripStartDepth, ref tripEndDepth);
+                            enumTripDirection tripDirection = getTripDirection2(objTimeLog.__dataTableName, objTag.StartDate, objTag.EndDate, ref tripStartDepth, ref tripEndDepth);
                             if (tripDirection == enumTripDirection.TripIn)
                             {
                                 TagDepthInformation[lnPhaseIndex].TripDirection = "Trip In";
@@ -1311,7 +1331,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                         TagDepthInformation[lnPhaseIndex].TimeLogName = objTimeLog.nameLog;
                         double tripStartDepth = 0;
                         double tripEndDepth = 0;
-                        enumTripDirection tripDirection = getTripDirection2(objTimeLog.__dataTableName, objTag.StartDate, objTag.EndDate, ref tripStartDepth, ref  tripEndDepth);
+                        enumTripDirection tripDirection = getTripDirection2(objTimeLog.__dataTableName, objTag.StartDate, objTag.EndDate, ref tripStartDepth, ref tripEndDepth);
                         if (tripDirection == enumTripDirection.TripIn)
                         {
                             TagDepthInformation[lnPhaseIndex].TripDirection = "Trip In";
@@ -1381,7 +1401,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                     }
                 }
                 objTripSpeedData = objData;
-                
+
 
             }
             catch (Exception ex)
@@ -1392,9 +1412,9 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
 
 
-   
 
-       
+
+
 
 
 
@@ -1624,7 +1644,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 }
 
                 //============== BenchMark
-               // objData.BenchMarkWOConn = objBenchMarks.TripSpeedWOConnection;
+                // objData.BenchMarkWOConn = objBenchMarks.TripSpeedWOConnection;
                 //objData.BenchMarkWithConn = objBenchMarks.TripSpeedWithConnection;
 
 
@@ -1632,19 +1652,19 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 {
                     TripSpeed[] arrItems = objBenchMarks.speedProfile.Values.ToArray();
                     Array.Sort(arrItems);
-                    
-                    for (int i = 0; i < arrItems.Length;  i++)
+
+                    for (int i = 0; i < arrItems.Length; i++)
                     {
                         DataRow objNewRow = benchMarkWOConnectionData.NewRow();
                         DataRow objNewRow1 = benchMarkWithConnectionData.NewRow();
 
                         var objItem = arrItems[i];
-                       
+
                         objNewRow["X"] = objItem.SpeedWithoutConnection;
                         objNewRow["Y"] = objItem.Depth;
                         benchMarkWOConnectionData.Rows.Add(objNewRow);
 
-                     
+
                         objNewRow1["X"] = objItem.SpeedWithConnection;
                         objNewRow1["Y"] = objItem.Depth;
 
@@ -1659,7 +1679,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                     arrBenchmarkSpeed = objBenchMarks.speedProfile.Values.ToArray();
                 }
                 // '**Now Calculate Delta *****
-                for (int i = 0; i< this.tripSpeedWithConnectionX.Length ; i++)
+                for (int i = 0; i < this.tripSpeedWithConnectionX.Length; i++)
                 {
                     double tripSpeed = this.tripSpeedWithConnectionX[i];
                     double tripDepth = this.tripSpeedWithConnectionY[i];
@@ -1705,12 +1725,12 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                     }
 
                     DataRow objNewRow = deltaWithConn.NewRow();
-                        objNewRow["X"] = Delta;
-                        objNewRow["Y"] = tripDepth;
-                        deltaWithConn.Rows.Add(objNewRow);
+                    objNewRow["X"] = Delta;
+                    objNewRow["Y"] = tripDepth;
+                    deltaWithConn.Rows.Add(objNewRow);
                 }
 
-                for (int i = 0; i< this.tripSpeedWOConnectionX.Length ; i++)
+                for (int i = 0; i < this.tripSpeedWOConnectionX.Length; i++)
                 {
                     double tripSpeed = this.tripSpeedWOConnectionX[i];
                     double tripDepth = this.tripSpeedWOConnectionY[i];
@@ -1760,7 +1780,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                     deltaWOConn.Rows.Add(objNewRow);
                 }
 
-              
+
                 //refreshChart code
                 objData.line1Data = this.tripSpeedWOConnectionData;
                 objData.line2Data = this.tripSpeedWithConnectionData;
@@ -1779,13 +1799,13 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
             catch (Exception ex)
             {
                 return new TripSpeedData();
-                
+
             }
         }
 
-      
+
 
 
 
     }//Class
-    }//NameSpace
+}//NameSpace
