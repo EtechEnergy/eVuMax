@@ -367,9 +367,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
         }
       });
 
-      if (!isValidBenchMark) {
-
-
+      if (!isValidBenchMark && Object.values(newSpeedProfile).length > 0) {
         confirmAlert({
           //title: 'eVuMax',
           message: "Invalid Benchmarks : Depth, Speed With/WO Connection..",
