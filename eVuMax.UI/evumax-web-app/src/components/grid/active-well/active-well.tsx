@@ -96,10 +96,10 @@ export default class ActiveWell extends React.Component {
     dataForDropDown: [{ id: "NA", name: "No favourites" }],
     showDownloadStatusDialog: false,
     currentWellID: "",
-    currentWellName:"", //Nishant 08-09-2021
+    currentWellName: "", //Nishant 08-09-2021
     showOpenInterfaceDialog: false,
     OpenInterfaceID: "",
-    showOpenInterfaceDialogAsEditor:false //Nishant 02/09/2021
+    showOpenInterfaceDialogAsEditor: false //Nishant 02/09/2021
   };
   //Nishant 07-10-2020
   loadUserFav = () => {
@@ -159,8 +159,8 @@ export default class ActiveWell extends React.Component {
           });
           this.forceUpdate();
         })
-        .catch(function (error) {});
-    } catch (error) {}
+        .catch(function (error) { });
+    } catch (error) { }
   };
 
   componentWillUnmount() {
@@ -171,7 +171,7 @@ export default class ActiveWell extends React.Component {
     document.title = "eVuMax"; //Nishant 02/09/2021
     this.loadUserFav();
     this.getColumnWell();
-    
+
 
     this.intervalID = setInterval(this.getActiveWellList.bind(this), 5000);
 
@@ -218,7 +218,7 @@ export default class ActiveWell extends React.Component {
       } else {
         return this.state.columnWell[index].ORDER_NO - 1;
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   //**************** */
 
@@ -243,8 +243,8 @@ export default class ActiveWell extends React.Component {
     this.setState({
       showOpenInterfaceDialog: true,
       currentWellID: rowData.WELL_ID,
-      showOpenInterfaceDialogAsEditor:true,
-      currentWellName:rowData.WELL_NAME
+      showOpenInterfaceDialogAsEditor: true,
+      currentWellName: rowData.WELL_NAME
 
     });
   }
@@ -305,7 +305,7 @@ export default class ActiveWell extends React.Component {
           console.log("rejected");
           this.setState({ isProcess: false });
         });
-    } catch {}
+    } catch { }
   };
 
   getActiveWellList = () => {
@@ -361,7 +361,7 @@ export default class ActiveWell extends React.Component {
       // this.setState({
       //     currentWellID:""
       // });
-    } catch {}
+    } catch { }
   };
 
   filterData = (e: any) => {
@@ -476,7 +476,7 @@ export default class ActiveWell extends React.Component {
 
       this.setState({ removeWells: false });
       this.setState({ showDeleteDialog: false });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   cmdRemoveWell_click = () => {
@@ -539,14 +539,14 @@ export default class ActiveWell extends React.Component {
 
   ////18-08-2020
   showOpenInterfaceDialog = (dataItem: any) => {
-    
+
     this.setState({
       showOpenInterfaceDialog: true,
       currentWellID: dataItem.WELL_ID,
-      showOpenInterfaceDialogAsEditor:false,
-      currentWellName:dataItem.WELL_NAME //Nishant 08-09-2021
+      showOpenInterfaceDialogAsEditor: false,
+      currentWellName: dataItem.WELL_NAME //Nishant 08-09-2021
     });
- 
+
     //this.forceUpdate();
   };
 
@@ -604,7 +604,7 @@ export default class ActiveWell extends React.Component {
       if (this.state.OpenInterfaceID === "Broomstick") {
         history.push("Broomstick/" + this.state.currentWellID);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   render() {
@@ -994,14 +994,14 @@ export default class ActiveWell extends React.Component {
               )}
             />
 
-<Column
+            <Column
               width="100px"
               locked
               headerClassName="text-center"
               resizable={false}
               orderIndex={this.getColumnOrderIndex("EDIT_WELL")}
               field="AddFav"
-              title="Edit Favorites"
+              title="Edit Favourites"
               cell={(props) => (
                 <td
                   style={props.style}
@@ -1027,7 +1027,7 @@ export default class ActiveWell extends React.Component {
             minimizeButton={() => null}
             maximizeButton={() => null}
             restoreButton={() => null}
-            // closeButton={() => this.ApplyWellColumns(false)}
+          // closeButton={() => this.ApplyWellColumns(false)}
           >
             <div>
               {/* <WellColumnsEditor actionOnClick={this.ApplyWellColumns} ></WellColumnsEditor> */}
@@ -1090,7 +1090,7 @@ export default class ActiveWell extends React.Component {
 
         {/* show Open Interface Window */}
         {this.state.showOpenInterfaceDialog && (
-                 <WidgetSelector {...this} />
+          <WidgetSelector {...this} />
         )}
       </>
     );

@@ -40,14 +40,14 @@ export default class WidgetSelector extends React.Component<IProps> {
   __parentRef: any;
   currentWellID: string = "";
   openAsEditor: boolean = false;
-  currentWellName:string= "";
+  currentWellName: string = "";
 
   state = {
     value: [],
     data: [],
     addToFav: false,
     userFav: [] as any,
-    title:"Favorite Interface :"
+    title: "Favourite Interface :"
   };
 
   //Nishant 24/08/2021
@@ -117,9 +117,9 @@ export default class WidgetSelector extends React.Component<IProps> {
             data: newWidgetList
           })
 
-          if(this.openAsEditor){
+          if (this.openAsEditor) {
             this.setState({
-              title : "Favorite Interface Editor :"
+              title: "Favorite Interface Editor :"
             })
           }
 
@@ -137,9 +137,9 @@ export default class WidgetSelector extends React.Component<IProps> {
           value: WidgetList[0],
         });
         this.loadUserFav();
-       
-       
-        
+
+
+
       }
     } catch (error) { }
   }
@@ -353,7 +353,7 @@ export default class WidgetSelector extends React.Component<IProps> {
     // const selected = value.length;
     return (
       <Window
-        title={this.state.title + " "+ this.currentWellName } 
+        title={this.state.title + " " + this.currentWellName}
         //onClose={() => this.setState({ showOpenInterfaceDialog: false })}
         onClose={() => this.__parentRef.CloseOpenInterfaceDialog()} // this.setState({ showOpenInterfaceDialog: false })}
         // width = {'80vw'}
@@ -366,10 +366,10 @@ export default class WidgetSelector extends React.Component<IProps> {
         initialTop={100}
         initialLeft={600}
       >
-       
+
 
         <div>
-       
+
           {
             <ListView
               data={this.state.data}
