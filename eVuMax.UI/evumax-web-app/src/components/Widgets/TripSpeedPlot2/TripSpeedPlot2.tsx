@@ -49,7 +49,17 @@ export class TripSpeedPlot2 extends Component {
       //alert("Component Mount");
       this.loadConnections();
       window.addEventListener("resize", this.refreshChart);
+
     } catch (error) { }
+  }
+
+  realTime = () => {
+    try {
+      setTimeout(function () { alert("Hello"); }, 3000);
+
+    } catch (error) {
+
+    }
   }
 
   componentDidUpdate() {

@@ -346,7 +346,7 @@ export class TripSpeedPlot1 extends Component {
       );
       //=====================
 
-      debugger;
+
 
       let objSeries = new DataSeries();
       objSeries.Id = "TripSpeedWOConnection";
@@ -424,7 +424,7 @@ export class TripSpeedPlot1 extends Component {
         //Populate the data series with this data
 
         objSeries.Data.slice(0, objSeries.Data.length);
-        debugger;
+
         for (let i = 0; i < this.state.objTripSpeedData.line3Data.length; i++) {
           let objVal: ChartData = new ChartData();
           objVal.x = this.state.objTripSpeedData.line3Data[i].X;
@@ -844,7 +844,7 @@ export class TripSpeedPlot1 extends Component {
 
           let objData = JSON.parse(res.data.Response);
 
-          debugger;
+
           console.log(objData);
 
 
