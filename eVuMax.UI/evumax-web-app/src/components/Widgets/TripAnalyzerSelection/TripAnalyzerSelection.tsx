@@ -306,7 +306,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
   SaveSettings = () => {
     try {
 
-debugger;
+
       if (this.state.selectedTag.length == 0) {
         confirmAlert({
           //title: 'eVuMax',
@@ -354,37 +354,55 @@ debugger;
         "SrNo"
       );
 
-//Validate TripSpeed Profile data for null values
+      //Validate TripSpeed Profile data for null values
 
-Object.values(newSpeedProfile).forEach((objItem:any) => {
-  debugger;
-  if(objItem.Depth<0 || objItem.Depth == null){
-    objItem.Depth = 0;
-  }
-  if (objItem.SpeedWithConnection <0 || objItem.SpeedWithConnection == null){
-    objItem.SpeedWithConnection=0;
-  }
+      let isValidBenchMark: Boolean = false;
 
-  if (objItem.SpeedWithoutConnection <0 || objItem.SpeedWithoutConnection == null){
-    objItem.SpeedWithoutConnection=0;
-  }
-});
+      Object.values(newSpeedProfile).forEach((objItem: any) => {
+
+        if ((objItem.Depth >= 0 && objItem.Depth != null && objItem.Depth != "") && (objItem.SpeedWithConnection >= 0 && objItem.SpeedWithConnection != null && objItem.SpeedWithConnection != "") && (objItem.SpeedWithoutConnection >= 0 && objItem.SpeedWithoutConnection != null && objItem.SpeedWithoutConnection != "")) {
+          isValidBenchMark = true;
+        } else {
+          isValidBenchMark = false;
+        }
+      });
+
+      if (!isValidBenchMark) {
 
 
-//Validate BenchMarksdata for null values
-if(newBenchMarks.DepthVumaxUnitID == null){
-  newBenchMarks.DepthVumaxUnitID="";
-}
-if(newBenchMarks.TripSpeedWOConnection == null || newBenchMarks.TripSpeedWOConnection<0){
-  newBenchMarks.TripSpeedWOConnection=0;
-}
+        confirmAlert({
+          //title: 'eVuMax',
+          message: "Invalid Benchmarks : Depth, Speed With/WO Connection..",
+          childrenElement: () => <div />,
+          buttons: [
+            {
+              label: "Ok",
+              onClick: () => { },
+            },
+            // {
+            //     label: 'No',
+            //     onClick: () => null
+            // }
+          ],
+        });
+        return;
 
-if(newBenchMarks.TripSpeedWithConnection == null || newBenchMarks.TripSpeedWithConnection<0){
-  newBenchMarks.TripSpeedWithConnection =0;
-}
+      }
 
-debugger;     
-newBenchMarks.speedProfile = newSpeedProfile;
+      //Validate BenchMarksdata for null values
+      if (newBenchMarks.DepthVumaxUnitID == null) {
+        newBenchMarks.DepthVumaxUnitID = "";
+      }
+      if (newBenchMarks.TripSpeedWOConnection == null || newBenchMarks.TripSpeedWOConnection < 0) {
+        newBenchMarks.TripSpeedWOConnection = 0;
+      }
+
+      if (newBenchMarks.TripSpeedWithConnection == null || newBenchMarks.TripSpeedWithConnection < 0) {
+        newBenchMarks.TripSpeedWithConnection = 0;
+      }
+
+
+      newBenchMarks.speedProfile = newSpeedProfile;
       newUserSettings.objBenchMarks = newBenchMarks;
 
 
