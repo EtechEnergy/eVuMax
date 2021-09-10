@@ -306,7 +306,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
   SaveSettings = () => {
     try {
 
-
+debugger;
       if (this.state.selectedTag.length == 0) {
         confirmAlert({
           //title: 'eVuMax',
@@ -354,7 +354,37 @@ export default class TripAnalyzerSelection extends Component<IProps> {
         "SrNo"
       );
 
-      newBenchMarks.speedProfile = newSpeedProfile;
+//Validate TripSpeed Profile data for null values
+
+Object.values(newSpeedProfile).forEach((objItem:any) => {
+  debugger;
+  if(objItem.Depth<0 || objItem.Depth == null){
+    objItem.Depth = 0;
+  }
+  if (objItem.SpeedWithConnection <0 || objItem.SpeedWithConnection == null){
+    objItem.SpeedWithConnection=0;
+  }
+
+  if (objItem.SpeedWithoutConnection <0 || objItem.SpeedWithoutConnection == null){
+    objItem.SpeedWithoutConnection=0;
+  }
+});
+
+
+//Validate BenchMarksdata for null values
+if(newBenchMarks.DepthVumaxUnitID == null){
+  newBenchMarks.DepthVumaxUnitID="";
+}
+if(newBenchMarks.TripSpeedWOConnection == null || newBenchMarks.TripSpeedWOConnection<0){
+  newBenchMarks.TripSpeedWOConnection=0;
+}
+
+if(newBenchMarks.TripSpeedWithConnection == null || newBenchMarks.TripSpeedWithConnection<0){
+  newBenchMarks.TripSpeedWithConnection =0;
+}
+
+debugger;     
+newBenchMarks.speedProfile = newSpeedProfile;
       newUserSettings.objBenchMarks = newBenchMarks;
 
 

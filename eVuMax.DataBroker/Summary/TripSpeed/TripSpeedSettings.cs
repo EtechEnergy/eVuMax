@@ -50,7 +50,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
                 UserSettings.UserSettings objSettings = objSettingsMgr.loadUserSettings(userId, settingsId, wellId);
 
-                TripSpeedSettings objTripSpeedSettings = null;
+                TripSpeedSettings objTripSpeedSettings = new TripSpeedSettings();//Nishant (Nis-PC) 10-069-2021 (it was assigned null)
 
                 if (objSettings == null)
                 {
