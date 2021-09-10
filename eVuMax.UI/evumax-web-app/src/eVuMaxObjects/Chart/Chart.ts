@@ -1831,8 +1831,10 @@ export class Chart {
 
         if (objSeries != null) {
           if (objSeries.Visible && objSeries.ShowInLegend) {
+            debugger;
             legendString =
-              legendString + '<div style="display:inline-block;text-al">';
+              legendString.trim() + '<div style="display:inline-block;text-al">';
+            debugger;
             legendString =
               legendString +
               '<div style="margin-left:3px;display:inline-block;background-color:' +
@@ -1840,7 +1842,7 @@ export class Chart {
               ';height:15px;width:15px"><p style="color:transparent">x</p> </div> ';
             legendString =
               legendString +
-              '<div style="white-space:nowrap; overflow: hidden;margin-left:3px;margin-right:3px;display:inline-block;background-color:transparent;height:18px;width:auto"><p style="white-space:nowrap; overflow: hidden; text-overflow: ellipsis;width:200px;text-align:left" >' +
+              '<div style="white-space:nowrap; overflow: hidden;margin-left:3px;margin-right:3px;display:inline-block;background-color:transparent;height:18px;width:auto"><p style="white-space:nowrap; overflow: hidden; text-overflow: ellipsis;max-width:200px;text-align:left" >' +
               objSeries.Title +
               "</p></div> ";
             legendString = legendString + "</div>";
