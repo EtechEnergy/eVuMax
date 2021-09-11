@@ -61,6 +61,8 @@ import { Util } from "../../../Models/eVuMax";
 let _gMod = new GlobalMod();
 
 class DrlgConnSummary2 extends Component {
+
+  intervalID: NodeJS.Timeout | undefined;
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
@@ -107,6 +109,8 @@ class DrlgConnSummary2 extends Component {
     TargetTime: 0,
     RigCost: 0,
     ShowComments: false,
+    isRealTime: false as boolean
+
   };
 
   WellId: string = "";
@@ -126,8 +130,15 @@ class DrlgConnSummary2 extends Component {
   fromDepth: number = 0;
   toDepth: number = 0;
 
+
+  componentWillUnmount() {
+    clearInterval(this.intervalID);
+  }
   componentDidMount() {
     try {
+
+      //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
+
       //initialize charts
 
       //### BTS Chart ##############################################
@@ -265,6 +276,7 @@ class DrlgConnSummary2 extends Component {
       window.addEventListener("resize", this.refreshChart);
 
       this.loadConnections();
+      //this.realTime();
     } catch (error) { }
   }
 
@@ -413,6 +425,17 @@ class DrlgConnSummary2 extends Component {
         this.toDepth.toString()
       );
       objBrokerRequest.Parameters.push(paramToDepth);
+
+      let paramIsRealTime: BrokerParameter = new BrokerParameter(
+        "isRealTime", this.state.isRealTime.toString()
+      );
+      objBrokerRequest.Parameters.push(paramIsRealTime);
+
+      let paramLastHrs: BrokerParameter = new BrokerParameter(
+        "lastHrs", "1"
+      );
+      objBrokerRequest.Parameters.push(paramLastHrs);
+
 
       axios
         .get(_gMod._getData, {
@@ -1363,6 +1386,7 @@ class DrlgConnSummary2 extends Component {
 
   refreshChart = () => {
     try {
+
       this.objBTSChart.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objSTSChart.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objSTBChart.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)

@@ -143,12 +143,19 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                 toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
 
+                bool isRealTime = false;
+                int lastHrs = 24;
+                               
+
                 try
                 {
                     //Nishant
                     SideTrackKey = paramRequest.Parameters.Where(x => x.ParamName.Contains("SideTrackKey")).FirstOrDefault().ParamValue.ToString();
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
+
+                    isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
+                    lastHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("lastHrs")).FirstOrDefault().ParamValue);
 
                 }
                 catch (Exception ex)
@@ -220,9 +227,15 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                         double diff = (secondsDiff * 10) / 100; //10% data for slider
                         minDate = maxDate.AddSeconds(-1 * diff);
-                       
+
                         //only to test for 1 day data
                         // minDate = maxDate.AddDays(-1);
+                        if (isRealTime)
+                        {
+                            minDate = maxDate.AddHours(-lastHrs);
+                            //secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                            //minDate = maxDate.AddSeconds(-1 * secondsDiff);
+                        }
 
 
                         fromDate = minDate;

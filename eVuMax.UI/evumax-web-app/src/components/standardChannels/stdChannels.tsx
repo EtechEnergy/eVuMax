@@ -97,7 +97,7 @@ class STDChannels extends PureComponent<IProps>{
             this.setState({
               lstChannels: channelList
             });
-            this.forceUpdate();
+            //this.forceUpdate();
 
 
 
@@ -151,7 +151,7 @@ class STDChannels extends PureComponent<IProps>{
     this.setState({
       selectedChannel: value
     });
-    this.forceUpdate();
+    //this.forceUpdate();
 
   }
 

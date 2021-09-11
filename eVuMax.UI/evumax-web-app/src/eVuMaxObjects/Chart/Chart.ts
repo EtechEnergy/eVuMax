@@ -1831,10 +1831,8 @@ export class Chart {
 
         if (objSeries != null) {
           if (objSeries.Visible && objSeries.ShowInLegend) {
-            debugger;
             legendString =
               legendString.trim() + '<div style="display:inline-block;text-al">';
-            debugger;
             legendString =
               legendString +
               '<div style="margin-left:3px;display:inline-block;background-color:' +

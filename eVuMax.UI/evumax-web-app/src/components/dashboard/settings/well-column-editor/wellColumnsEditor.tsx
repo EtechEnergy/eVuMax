@@ -54,7 +54,7 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
 
 
     componentDidMount() {
-        document.title= "eVuMax";//Nishant 02/09/2021
+        document.title = "eVuMax";//Nishant 02/09/2021
         this.getColumnWell();
 
     }
@@ -234,7 +234,8 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
 
         e.dataItem.selected = !e.dataItem.selected;
         this.setState({ selectedItem: e.dataItem });
-        this.forceUpdate();
+        // this.forceUpdate();
+        // alert("abc");
 
         let index = this.state.columnWell.findIndex((item: any) => item["COLUMN_ID"] === e.dataItem.COLUMN_ID
         );

@@ -38,7 +38,7 @@ export default class TimeLogChannelInLineEditor extends Component<IProps> {
             showExpressionEditor: false
         };
 
-        this.forceUpdate();
+        //this.forceUpdate();
 
     }
 
@@ -88,7 +88,7 @@ export default class TimeLogChannelInLineEditor extends Component<IProps> {
             showExpressionEditor: false
         });
 
-        this.forceUpdate();
+        //this.forceUpdate();
         // this.setComboData(this.props.dataItem.VuMaxUnitID);
         this.setComboData(this.__parentRef.state.channelInEdit.VuMaxUnitID);
 

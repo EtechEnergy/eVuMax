@@ -211,7 +211,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
                     }
                 }
                 this.setState({ grdlogCurves: grdChannels });
-                this.forceUpdate();
+                //this.forceUpdate();
 
             })
                 .catch((error) => {
@@ -232,7 +232,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
         }
 
         this.setState({ showUnitProfileSelector: false });
-        this.forceUpdate();
+        //this.forceUpdate();
     }
 
     displayData = () => {
@@ -427,7 +427,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
 
 
 
-        this.forceUpdate();
+        //this.forceUpdate();
 
     }
 
@@ -491,7 +491,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
                         this.setState({
                             grdlogCurves: Channels
                         });
-                        this.forceUpdate();
+                        // this.forceUpdate();
                     }
 
                 },
@@ -573,7 +573,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
         this.setState({
             grdImageLogDataSets: imgDataset
         });
-        this.forceUpdate();
+        //  this.forceUpdate();
 
     }
     cmdRemoveDataSetChannel = (event: any, rowData: any) => {
@@ -599,7 +599,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
                         const edited = this.state.grdImageLogDataSets;
                         index = edited.findIndex((d: any) => d.DataSetID === this.state.currentDataSet.DataSetID);
                         edited[index].channels = this.state.grdDataSetChannelList;
-                        this.forceUpdate();
+                        //    this.forceUpdate();
                     }
                 },
 
@@ -630,7 +630,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
                             grdImageLogDataSets: DataSetList,
                             grdDataSetChannelList: [] as ImageLogChannels[],
                         });
-                        this.forceUpdate();
+                        //    this.forceUpdate();
                     }
 
                 },
@@ -1137,7 +1137,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
                             <TabStrip selected={this.state.selected} onSelect={this.handleTabSelect} keepTabsMounted={true} >
                                 {/* <TabStrip selected={this.state.selected} onSelect={this.handleSelect} > */}
                                 <TabStripTab title="Log Information">
-                                    <div id="tabWellInfo1" style={{marginLeft:"23px"}}>
+                                    <div id="tabWellInfo1" style={{ marginLeft: "23px" }}>
 
                                         <div>
                                             <div className="row pb-3">

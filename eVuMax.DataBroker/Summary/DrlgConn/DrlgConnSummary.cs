@@ -108,6 +108,12 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 string selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
                 double fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                 double toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
+
+                bool isRealTime = false;
+                int lastHrs = 24;
+
+
+
                 DateTime fromDate = DateTime.Now;
                 DateTime toDate = DateTime.Now;
 
@@ -115,6 +121,8 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 {
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
+                    isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
+                    lastHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("lastHrs")).FirstOrDefault().ParamValue);
 
                 }
                 catch (Exception)
@@ -139,10 +147,19 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         DateTime maxDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref paramRequest.objDataService));
 
                         double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
-
                         double diff = (secondsDiff * 10) / 100;
-
                         minDate = maxDate.AddSeconds(-1 * diff);
+
+
+
+                        if (isRealTime)
+                        {
+                            minDate = maxDate.AddHours(-lastHrs);
+                            //secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                            //minDate = maxDate.AddSeconds(-1 * secondsDiff);
+                        }
+                        
+                        
 
                         fromDate = minDate;
                         toDate = maxDate;

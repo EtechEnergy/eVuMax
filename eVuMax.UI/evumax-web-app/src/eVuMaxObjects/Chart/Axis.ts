@@ -868,10 +868,11 @@ export class Axis {
           noOfTicks = this.__axisSize / (textWidth + 5); //5 px gap between ticks
 
           //Add by prath (Drilling summary(ROP Line chart) to control overwrite ticks while zoom)
-          if (this.Labels.length > 0) {
-            noOfTicks = noOfTicks / 2;
-            noOfTicks = Math.floor(noOfTicks);
-          }
+          //fuck
+          // if (this.Labels.length > 0) {
+          //   noOfTicks = noOfTicks / 2;
+          //   noOfTicks = Math.floor(noOfTicks);
+          // }
           //===========================
         } else {
           noOfTicks = this.__axisSize / (textHeight + 5); //5 px gap between ticks

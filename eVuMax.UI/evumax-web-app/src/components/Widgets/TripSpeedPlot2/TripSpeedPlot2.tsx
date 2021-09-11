@@ -53,14 +53,6 @@ export class TripSpeedPlot2 extends Component {
     } catch (error) { }
   }
 
-  realTime = () => {
-    try {
-      setTimeout(function () { alert("Hello"); }, 3000);
-
-    } catch (error) {
-
-    }
-  }
 
   componentDidUpdate() {
     try {

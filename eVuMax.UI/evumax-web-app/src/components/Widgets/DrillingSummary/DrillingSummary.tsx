@@ -47,6 +47,7 @@ const headerlabel = {
 };
 
 export class DrillingSummary extends Component {
+  intervalID: NodeJS.Timeout | undefined;
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
@@ -67,6 +68,7 @@ export class DrillingSummary extends Component {
     isProcess: false,
     grdNumericSummary: [] as any,
     grdOffsetNumericSummary: [] as any,
+    isRealTime: false as boolean
   };
 
   objChart: Chart;
@@ -82,7 +84,7 @@ export class DrillingSummary extends Component {
 
   componentDidMount() {
     //initialize chart
-
+    //this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     this.initilizeCharts();
     this.setState({
       objChart_ROP: this.objChart,
@@ -384,6 +386,9 @@ export class DrillingSummary extends Component {
 
   refreshROPLineChart = () => {
     try {
+
+      // this.objChart_ROPLine = new Chart(this, "ROPLine_Chart");
+      // this.objChart_ROPLine.ContainerId = "roplinechart";
       this.objChart_ROPLine.initialize();
       this.objChart_ROPLine.LegendPosition = 3;  //1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart_ROPLine.DataSeries.clear();
@@ -433,7 +438,7 @@ export class DrillingSummary extends Component {
       objROPLine.Color = "#1762ad";
       objROPLine.LineStyle = lineStyle.solid;
       objROPLine.LineWidth = 2;
-
+      //objROPLine.CurveStyle = curveStyle.normal;
       objROPLine.ShowInLegend = true;
 
       this.objChart_ROPLine.DataSeries.set(objROPLine.Id, objROPLine);
@@ -443,6 +448,8 @@ export class DrillingSummary extends Component {
 
       console.log(this.state.objSummaryData.ROPData);
 
+      Util.StatusSuccess("Last Depth retrived  " + this.state.objSummaryData.ROPData[this.state.objSummaryData.ROPData.length - 1].X);
+      Util.StatusReady();
 
       for (let i = 0; i < this.state.objSummaryData.ROPData.length; i++) {
         let objVal: ChartData = new ChartData();
@@ -878,6 +885,7 @@ export class DrillingSummary extends Component {
 
   refreshChart = () => {
     try {
+      //alert("refresh chart");
       this.refreshROPChart();
       this.refreshDistanceChart();
       this.refreshTimeChart();
@@ -1109,7 +1117,7 @@ export class DrillingSummary extends Component {
       this.setState({
         isProcess: true,
       });
-      this.forceUpdate();
+
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Summary.Manager";
@@ -1167,6 +1175,14 @@ export class DrillingSummary extends Component {
       );
       objBrokerRequest.Parameters.push(paramSideTrackKey);
 
+      let paramIsRealTime: BrokerParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
+      objBrokerRequest.Parameters.push(paramIsRealTime);
+
+      let paramLastHrs: BrokerParameter = new BrokerParameter(
+        "lastHrs", "1"
+      );
+      objBrokerRequest.Parameters.push(paramLastHrs);
+
       axios
         .get(_gMod._getData, {
           headers: {
@@ -1203,7 +1219,8 @@ export class DrillingSummary extends Component {
           this.prepareOffsetNumericTable(); //vimal
           document.title = this.state.objSummaryData.WellName + " -Drilling Summary"; //Nishant 02/09/2021
 
-          this.forceUpdate();
+
+
           this.refreshChart();
         })
         .catch((error) => {
@@ -1592,34 +1609,34 @@ export class DrillingSummary extends Component {
                 <div className="clearfix"></div>
 
 
-                <div className="row" style={{display:"flex",flexFlow:"row wrap",flexWrap:"wrap",alignItems:"stretch",alignContent:"stretch"}}>
+                <div className="row" style={{ display: "flex", flexFlow: "row wrap", flexWrap: "wrap", alignItems: "stretch", alignContent: "stretch" }}>
                   <div
-                  className="flex-item"
+                    className="flex-item"
                     id="drlgSummary"
                     style={{
-                      
+
                       //height: "calc(100vh - 700px)",
                       height: "calc(30vh)",
                       width: "calc(30vw)",
-                     minWidth: "400px",
+                      minWidth: "400px",
                       float: "left",
                       backgroundColor: "transparent",
                       // marginLeft: "-50px",
                       marginRight: "10px",
-                      flex:1,
+                      flex: 1,
                       //paddingLeft: "45px"
                     }}
                   ></div>
 
                   <div
-                  className="flex-item"
+                    className="flex-item"
                     id="drlgSummary2"
                     style={{
                       //height: "calc(100vh - 700px)",
                       height: "calc(30vh)",
                       width: "calc(30vw)",
                       minWidth: "400px",
-                      flex:1,
+                      flex: 1,
                       backgroundColor: "transparent",
                       float: "left",
                       //marginLeft: "-50px",
@@ -1631,7 +1648,7 @@ export class DrillingSummary extends Component {
                     id="drlgSummary3"
                     style={{
                       //height: "calc(100vh - 700px)",
-                      flex:1,
+                      flex: 1,
                       height: "calc(30vh)",
                       width: "calc(30vw)",
                       minWidth: "400px",
@@ -1643,18 +1660,18 @@ export class DrillingSummary extends Component {
                   ></div>
                 </div>
 
-                <div className="row" style={{display:"flex",alignContent:"space-around"}}>
+                <div className="row" style={{ display: "flex", alignContent: "space-around" }}>
 
                   <div
-                  className="flex-item"
+                    className="flex-item"
                     id="ChartRigStateSummary"
                     style={{
-                      flex:1,
-                      flexBasis:100,
+                      flex: 1,
+                      flexBasis: 100,
                       //height: "calc(40vh)",
                       height: "calc(33vh)",
                       //width: "calc(90vw)",
-                     minWidth: "400px",
+                      minWidth: "400px",
                       // marginLeft: "-50px",
                       backgroundColor: "transparent",
                     }}

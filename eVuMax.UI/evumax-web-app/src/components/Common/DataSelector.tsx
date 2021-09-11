@@ -144,8 +144,9 @@ class DataSelector extends Component<IProps, IState> {
 
   reRenderChart = () => {
     try {
+      //alert("rerender");
       this.forceUpdate();
-      window.addEventListener("resize", this.reRenderChart);
+      //window.addEventListener("resize", this.reRenderChart);
 
     } catch (error) { }
   };
@@ -230,7 +231,7 @@ class DataSelector extends Component<IProps, IState> {
   render() {
     return (
       <React.Fragment>
-        <div style={{ height: "90px",display:"flex"}}>
+        <div style={{ height: "90px", display: "flex" }}>
           <div
             style={{
               height: "100%",
@@ -289,7 +290,7 @@ class DataSelector extends Component<IProps, IState> {
               style={{
                 //height: "100%",
                 height: "90px",
-                flex:1,
+                flex: 1,
                 //width: "98%",
                 padding: "10px",
               }}

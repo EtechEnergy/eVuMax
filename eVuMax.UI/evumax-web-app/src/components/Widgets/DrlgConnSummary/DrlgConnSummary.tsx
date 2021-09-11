@@ -60,6 +60,7 @@ import { confirmAlert } from "react-confirm-alert";
 let _gMod = new GlobalMod();
 
 class DrlgConnSummary extends Component {
+  intervalID: NodeJS.Timeout | undefined;
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
@@ -105,7 +106,8 @@ class DrlgConnSummary extends Component {
     TargetTime: 0,
     RigCost: 0,
     ShowComments: false,
-    Comment: ""
+    Comment: "",
+    isRealTime: false as boolean
   };
 
   WellId: string = "";
@@ -126,6 +128,7 @@ class DrlgConnSummary extends Component {
 
   componentDidMount() {
     try {
+      //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
 
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");
@@ -274,6 +277,7 @@ class DrlgConnSummary extends Component {
 
   loadConnections = () => {
     try {
+
       Util.StatusInfo("Getting data from the server  ");
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Summary.Manager";
@@ -322,6 +326,17 @@ class DrlgConnSummary extends Component {
       );
       objBrokerRequest.Parameters.push(paramToDepth);
 
+
+      let paramIsRealTime: BrokerParameter = new BrokerParameter(
+        "isRealTime", this.state.isRealTime.toString()
+      );
+      objBrokerRequest.Parameters.push(paramIsRealTime);
+
+      let paramLastHrs: BrokerParameter = new BrokerParameter(
+        "lastHrs", "1"
+      );
+      objBrokerRequest.Parameters.push(paramLastHrs);
+
       axios
         .get(_gMod._getData, {
           headers: {
@@ -334,6 +349,8 @@ class DrlgConnSummary extends Component {
           Util.StatusSuccess("Data successfully retrived  ");
           Util.StatusReady();
           this.objSummaryData = JSON.parse(res.data.Response);
+
+          console.log("Summary data" + this.objSummaryData);
           this.setData();
         })
         .catch((error) => {
@@ -779,7 +796,7 @@ class DrlgConnSummary extends Component {
                       float: "right",
                       height: "32px",
                       padding: "3px",
-                      minWidth:"200px",
+                      minWidth: "200px",
                     }}
                   >
                     <label className="connInfo" style={{ marginRight: "20px" }}>
@@ -798,7 +815,7 @@ class DrlgConnSummary extends Component {
                 <div
                   id="drlgConnections"
                   style={{
-                    marginTop:"50px",
+                    marginTop: "50px",
                     height: "calc(100vh - 450px)",
                     width: "calc(100vw - 130px)",
                     backgroundColor: "transparent",

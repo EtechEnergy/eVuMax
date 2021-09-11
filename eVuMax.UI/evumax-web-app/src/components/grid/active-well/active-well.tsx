@@ -127,7 +127,7 @@ export default class ActiveWell extends React.Component {
             // this.setState({
             //     dataForDropDown: {id:"",name:""}
             // });
-            this.forceUpdate();
+            //this.forceUpdate();
             return false;
           }
 
@@ -169,7 +169,7 @@ export default class ActiveWell extends React.Component {
 
   componentWillMount() {
     document.title = "eVuMax"; //Nishant 02/09/2021
-    this.loadUserFav();
+    //this.loadUserFav();
     this.getColumnWell();
 
 

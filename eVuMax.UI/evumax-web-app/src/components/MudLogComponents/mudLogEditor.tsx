@@ -181,7 +181,7 @@ export default class MudLogEditor extends Component<IProps> {
             });
 
             intervalID = this.state.grdIntervals[0].IntervalID;
-            this.forceUpdate();
+            //this.forceUpdate();
         }
     }
 

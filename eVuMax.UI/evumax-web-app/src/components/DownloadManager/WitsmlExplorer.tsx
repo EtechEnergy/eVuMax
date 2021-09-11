@@ -128,7 +128,7 @@ export default class WitsmlExplorer extends React.Component {
     }
 
     componentDidMount() {
-        document.title= "eVuMax";//Nishant 02/09/2021
+        document.title = "eVuMax";//Nishant 02/09/2021
         this.setState({ isProcess: false });
         this.loadServer();
     }
@@ -743,7 +743,7 @@ export default class WitsmlExplorer extends React.Component {
                 showServerEditor: true,
                 selectedNode: new node.witsmlNode()
             });
-            this.forceUpdate();
+            //    this.forceUpdate();
         }
 
 
@@ -793,7 +793,7 @@ export default class WitsmlExplorer extends React.Component {
 
 
             let selectedNode = this.state.downloadQueue[1];// this.state.selectedNode;
-            
+
             // selectedNode.imageUrl = "../../images/downloading-blue.gif";
             selectedNode.downloading = false;
 
@@ -1234,7 +1234,7 @@ export default class WitsmlExplorer extends React.Component {
 
                             {/* New code for context menu on treeview */}
                             {/* temp. Commented this code */}
-                            <Popup className="context-menu" show={this.state.contextMenuShow} offset={this.state.contextMenuOffset} 
+                            <Popup className="context-menu" show={this.state.contextMenuShow} offset={this.state.contextMenuOffset}
                             // onOpen={e => {
                             //     let element: any = document.querySelector('.context-menu');
                             //     if (element !== null) {
@@ -1243,15 +1243,15 @@ export default class WitsmlExplorer extends React.Component {
                             //         element.addEventListener('blur', this.closeContextMenu) // attach on blur event which will close it.
                             //     }
                             // }}
-                                // onClose={e => {
-                                //     let element: any = document.querySelector('.context-menu');
-                                //     element.removeEventListener('blur', this.closeContextMenu)
-                                // }}
+                            // onClose={e => {
+                            //     let element: any = document.querySelector('.context-menu');
+                            //     element.removeEventListener('blur', this.closeContextMenu)
+                            // }}
                             >
                                 {/* New Code Close */}
-                                
-                                
-                               
+
+
+
 
                                 {this.state.menuType == 0 ?
                                     // Wellbore

@@ -100,7 +100,8 @@ class TripConnSummary extends Component {
     TargetTime: 0,
     RigCost: 0,
     ShowComments: false,
-    Comment: ""
+    Comment: "",
+    isRealTime: false as boolean
   };
 
   WellId: string = "";
@@ -120,6 +121,8 @@ class TripConnSummary extends Component {
 
   componentDidMount() {
     try {
+      //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
+
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");
       this.objChart.ContainerId = "tripConnections";
@@ -295,6 +298,17 @@ class TripConnSummary extends Component {
         this.toDepth.toString()
       );
       objBrokerRequest.Parameters.push(paramToDepth);
+
+
+      let paramIsRealTime: BrokerParameter = new BrokerParameter(
+        "isRealTime", this.state.isRealTime.toString()
+      );
+      objBrokerRequest.Parameters.push(paramIsRealTime);
+
+      let paramLastHrs: BrokerParameter = new BrokerParameter(
+        "lastHrs", "1"
+      );
+      objBrokerRequest.Parameters.push(paramLastHrs);
 
       axios
         .get(_gMod._getData, {
@@ -776,7 +790,7 @@ class TripConnSummary extends Component {
             </div>
 
             <div
-            className="row mt-5"
+              className="row mt-5"
               id="tripConnections"
               style={{
                 height: "calc(100vh - 450px)",
@@ -907,7 +921,7 @@ class TripConnSummary extends Component {
 
                 </div>
               </div>
-            
+
               <div
                 className="row mb-3"
                 style={{
