@@ -1528,7 +1528,28 @@ export class DrillingSummary extends Component {
             </div>
           </div>
         </div>
+        <div className="row pt-3">
+                  <div className="col-lg-9"></div>
+                  <div className="col-lg-2">
+                    <div className="form-inline" style={{justifyContent:"end"}}>
+                      <label style={{ marginRight: "20px" }}>Realtime</label>
+                      <div >
+                        <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime}></Switch>
+                      </div>
+                    </div>
+                  </div>
 
+                  <div className="col-lg-1">
+                    <div className="float-right mr-2">
+                      <FontAwesomeIcon
+                        icon={faUndo}
+                        onClick={() => {
+                          this.refreshROPLineChart();
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
         {/* <div className="row">
           <div className="col-xl-4 ">
             <div className="statusCard">
@@ -1692,28 +1713,7 @@ export class DrillingSummary extends Component {
             <TabStripTab title="Page-2 ">
               <div style={{ marginTop: "5px" }}>
 
-                <div className="row">
-                  <div className="col-lg-9"></div>
-                  <div className="col-lg-2">
-                    <div className="form-inline">
-                      <label style={{ marginRight: "20px" }}>Realtime</label>
-                      <div style={{ marginRight: "50px" }}>
-                        <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime}></Switch>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-1">
-                    <div className="float-right mr-2">
-                      <FontAwesomeIcon
-                        icon={faUndo}
-                        onClick={() => {
-                          this.refreshROPLineChart();
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
+                
 
                 <div className="row mb-3">
                   {/* style={{ maxHeight: "160px" }} for upper div */}
