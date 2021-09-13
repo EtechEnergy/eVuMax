@@ -869,10 +869,10 @@ export class Axis {
 
           //Add by prath (Drilling summary(ROP Line chart) to control overwrite ticks while zoom)
           //fuck
-          // if (this.Labels.length > 0) {
-          //   noOfTicks = noOfTicks / 2;
-          //   noOfTicks = Math.floor(noOfTicks);
-          // }
+          if (this.Labels.length > 0) {
+            noOfTicks = noOfTicks / 2;
+            noOfTicks = Math.floor(noOfTicks);
+          }
           //===========================
         } else {
           noOfTicks = this.__axisSize / (textHeight + 5); //5 px gap between ticks
@@ -1040,6 +1040,10 @@ export class Axis {
         if (this.__selectorStartDatePos == null) {
           //calculate difference of range
           let diffSeconds = this.MaxDate.getTime() - this.MinDate.getTime();
+          //alert(diffSeconds);
+          //wip 9999999999999999
+
+
 
           if (diffSeconds > 0) {
             diffSeconds = diffSeconds / 1000;

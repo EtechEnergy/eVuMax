@@ -385,6 +385,8 @@ export class Chart {
 
   getSelectorRange = () => {
     try {
+
+
       let objAxis = this.getAxisWithSelector();
 
       if (objAxis.IsDateTime) {
@@ -1211,8 +1213,10 @@ export class Chart {
         .attr("id", this.Id + "__selector_rect")
         .attr("x", 0)
         .attr("y", 0)
-        .attr("width", 0)
-        .attr("height", 0)
+        // .attr("width", "100px")
+        // .attr("height", "100px")
+        .attr("width", "0px")
+        .attr("height", "0px")
         .style("fill", "gray")
         .style("opacity", 0.2);
 
@@ -2416,6 +2420,7 @@ export class Chart {
     try {
       for (let key of this.Axes.keys()) {
         if (this.Axes.get(key).ShowSelector == true) {
+
           return this.Axes.get(key);
         }
       }

@@ -231,6 +231,11 @@ namespace eVuMax.DataBroker.Common
         {
             try
             {
+                if (strNumber == null)
+                {
+                    return 0;
+                }
+
                 if (strNumber.ToString().Contains(","))
                     return Convert.ToDouble(strNumber.ToString().Replace(",", "."));
                 else

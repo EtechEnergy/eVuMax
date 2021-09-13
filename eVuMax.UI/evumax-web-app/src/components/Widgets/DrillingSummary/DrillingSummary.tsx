@@ -4,9 +4,8 @@ import {
   TabStripTab,
   NumericTextBox,
   TabStrip,
-  Card,
-  CardHeader,
-  Button,
+
+  Switch
 } from "@progress/kendo-react-all";
 import { Chart, lineStyle, curveStyle } from "../../../eVuMaxObjects/Chart/Chart";
 import {
@@ -26,6 +25,7 @@ import DataSelector from "../../Common/DataSelector";
 import moment from "moment";
 import { formatNumber, parseDate } from "@telerik/kendo-intl";
 import "./DrillingSummary.css";
+
 import {
   Grid,
   GridColumn as Column,
@@ -68,7 +68,7 @@ export class DrillingSummary extends Component {
     isProcess: false,
     grdNumericSummary: [] as any,
     grdOffsetNumericSummary: [] as any,
-    isRealTime: false as boolean
+    isRealTime: true as boolean
   };
 
   objChart: Chart;
@@ -1058,10 +1058,15 @@ export class DrillingSummary extends Component {
   };
   handleSelect = (e: any) => {
     this.setState({ selected: e.selected });
+  };
 
-    // if (e.selected == 1) {
-    //   this.PieDrilling1();
-    // }
+  handleToggleSwitch = () => {
+    this.setState({ isRealTime: !this.state.isRealTime });
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+    }
   };
 
   selectionType: string = "-1"; //"-1 Default,0= DateRange and 1 = Depth Range"
@@ -1174,14 +1179,15 @@ export class DrillingSummary extends Component {
         "-999"
       );
       objBrokerRequest.Parameters.push(paramSideTrackKey);
-
+      debugger;
       let paramIsRealTime: BrokerParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
       let paramLastHrs: BrokerParameter = new BrokerParameter(
-        "lastHrs", "1"
+        "lastHrs", "48"
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
+
 
       axios
         .get(_gMod._getData, {
@@ -1686,18 +1692,28 @@ export class DrillingSummary extends Component {
             <TabStripTab title="Page-2 ">
               <div style={{ marginTop: "5px" }}>
 
+                <div className="row">
+                  <div className="col-lg-9"></div>
+                  <div className="col-lg-2">
+                    <div className="form-inline">
+                      <label style={{ marginRight: "20px" }}>Realtime</label>
+                      <div style={{ marginRight: "50px" }}>
+                        <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime}></Switch>
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="col-lg-12">
-                  <div className="float-right mr-2">
-                    <FontAwesomeIcon
-                      icon={faUndo}
-                      onClick={() => {
-                        this.refreshROPLineChart();
-                      }}
-                    />
+                  <div className="col-lg-1">
+                    <div className="float-right mr-2">
+                      <FontAwesomeIcon
+                        icon={faUndo}
+                        onClick={() => {
+                          this.refreshROPLineChart();
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-
 
                 <div className="row mb-3">
                   {/* style={{ maxHeight: "160px" }} for upper div */}

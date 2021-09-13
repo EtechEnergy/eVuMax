@@ -142,10 +142,12 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
                 fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                 toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
+                
 
                 bool isRealTime = false;
                 int lastHrs = 24;
-                               
+                isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
+
 
                 try
                 {
@@ -154,7 +156,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
 
-                    isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
+                    
                     lastHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("lastHrs")).FirstOrDefault().ParamValue);
 
                 }

@@ -111,7 +111,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                 bool isRealTime = false;
                 int lastHrs = 24;
-
+                isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
 
 
                 DateTime fromDate = DateTime.Now;
@@ -121,7 +121,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 {
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
-                    isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
+                    
                     lastHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("lastHrs")).FirstOrDefault().ParamValue);
 
                 }

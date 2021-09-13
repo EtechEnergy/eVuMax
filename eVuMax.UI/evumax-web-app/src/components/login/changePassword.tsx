@@ -10,6 +10,8 @@ import login from "./login";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { confirmAlert } from "react-confirm-alert";
+import DataSelector2 from "../Common/DataSelector2";
+import DataSelector from "../Common/DataSelector";
 
 
 let _gMod = new GlobalMod();
@@ -317,6 +319,9 @@ export default class changePassword extends React.Component {
             </div>
           </div>
         </div>
+        <DataSelector2></DataSelector2>
+
+        {/* <DataSelector></DataSelector> */}
       </div>
     )
   }
