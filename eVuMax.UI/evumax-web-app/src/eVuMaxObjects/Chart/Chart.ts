@@ -480,9 +480,9 @@ export class Chart {
       //Assuming that all the data have been inserted into all data series,
       //this function will re-calculate everything
       for (let key of this.Axes.keys()) {
-        if (key == "SelectorChart-bottom") {
-          debugger;
-        }
+        // if (key == "SelectorChart-bottom") {
+        //   debugger;
+        // }
         let objAxis: Axis = this.Axes.get(key);
 
         objAxis.updateAxis();

@@ -167,8 +167,7 @@ class DataSelectorOriginal extends Component<IProps, IState> {
   ) => {
     try {
       this.setState({
-        selectedval: ptype,
-        fromDate: pfromdate,
+        selectedval: ptype, fromDate: pfromdate,
         toDate: ptodate,
         fromDepth: pfromdepth,
         toDepth: ptodepth,
@@ -540,6 +539,7 @@ class DataSelectorOriginal extends Component<IProps, IState> {
 
   loadExtents = () => {
     try {
+      alert("Extent -" + this.state.fromDate);
       //Check if it  is required to load the extents
       if (this.state.fromDate != null) {
         //We already extracted extents, no need to repeat
@@ -576,7 +576,7 @@ class DataSelectorOriginal extends Component<IProps, IState> {
           let objData = JSON.parse(res.data.Response);
 
           //set the state
-
+          alert("After received data from server -" + objData.MinDate + " - " + objData.MaxDate);
           this.setState({
             fromDate: new Date(objData.MinDate),
             toDate: new Date(objData.MaxDate),
