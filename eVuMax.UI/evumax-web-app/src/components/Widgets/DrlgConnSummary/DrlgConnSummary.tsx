@@ -11,6 +11,7 @@ import {
   axisPosition,
 } from "../../../eVuMaxObjects/Chart/Axis";
 import DataSelector from "../../Common/DataSelector";
+//import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
 import { Moment } from "moment";
 import {
   DataSeries,
@@ -57,6 +58,7 @@ import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment, faEraser, faMoon, faPencilAlt, faPencilRuler, faSun } from "@fortawesome/free-solid-svg-icons";
 import { confirmAlert } from "react-confirm-alert";
+import DataSelector_ from "../../Common/DataSelector_";
 let _gMod = new GlobalMod();
 
 class DrlgConnSummary extends Component {
@@ -107,7 +109,8 @@ class DrlgConnSummary extends Component {
     RigCost: 0,
     ShowComments: false,
     Comment: "",
-    isRealTime: false as boolean
+    isRealTime: false as boolean,
+    objDataSelector: new DataSelector_(),
   };
 
   WellId: string = "";
@@ -182,6 +185,29 @@ class DrlgConnSummary extends Component {
   getRandomNumber = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
+
+  ////Nishant
+  selectionChanged = (paramDataSelector: DataSelector_) => {
+
+    this.setState({
+      objDataSelector: paramDataSelector,
+      isRealTime: false
+    });
+    alert("data selectin changed");
+
+    this.selectionType = paramDataSelector.selectedval;
+    this.fromDate = paramDataSelector.fromDate;
+    this.toDate = paramDataSelector.toDate;
+    this.fromDepth = paramDataSelector.fromDepth;
+    this.toDepth = paramDataSelector.toDepth;
+    //this.refreshHrs = paramDataSelector.refreshHrs;
+
+    clearInterval(this.intervalID);
+
+    //alert(this.fromDate + " " + this.toDate);
+
+    this.loadConnections();
+  }
 
   setData = () => {
     try {
@@ -454,30 +480,30 @@ class DrlgConnSummary extends Component {
     this.setState({ selected: e.selected });
   };
 
-  selectionChanged = (
-    pselectedval: string,
-    pfromDate: Date,
-    ptoDate: Date,
-    pfromDepth: number,
-    ptoDepth: number
-  ) => {
-    try {
-      this.selectionType = pselectedval;
-      this.fromDate = pfromDate;
-      this.toDate = ptoDate;
-      this.fromDepth = pfromDepth;
-      this.toDepth = ptoDepth;
+  // selectionChanged = (
+  //   pselectedval: string,
+  //   pfromDate: Date,
+  //   ptoDate: Date,
+  //   pfromDepth: number,
+  //   ptoDepth: number
+  // ) => {
+  //   try {
+  //     this.selectionType = pselectedval;
+  //     this.fromDate = pfromDate;
+  //     this.toDate = ptoDate;
+  //     this.fromDepth = pfromDepth;
+  //     this.toDepth = ptoDepth;
 
-      console.log(
-        "From Date " +
-        moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-        " To Date " +
-        moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-      );
+  //     console.log(
+  //       "From Date " +
+  //       moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
+  //       " To Date " +
+  //       moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
+  //     );
 
-      this.loadConnections();
-    } catch (error) { }
-  };
+  //     this.loadConnections();
+  //   } catch (error) { }
+  // };
 
   radioData = [
     { label: "User Comments", value: "User Comments", className: "" },
@@ -840,7 +866,9 @@ class DrlgConnSummary extends Component {
                   }}
                 ></div>
 
-                <DataSelector {...this} />
+                {/* <DataSelectorOriginal {...this} /> */}
+
+                <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
               </TabStripTab>
               <TabStripTab title="Numeric Summary">
                 <div style={{ marginTop: "10px" }}>

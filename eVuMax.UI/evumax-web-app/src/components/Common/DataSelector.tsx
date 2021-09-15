@@ -15,7 +15,7 @@ import {
 } from "../../eVuMaxObjects/Chart/DataSeries";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "@progress/kendo-react-intl";
-import { DropDownList } from "@progress/kendo-react-dropdowns";
+import { ComboBox, DropDownList } from "@progress/kendo-react-dropdowns";
 import "react-router-dom";
 import ProcessLoader from "../loader/loader";
 import BrokerRequest from "../../broker/BrokerRequest";
@@ -23,26 +23,40 @@ import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
 import "./DataSelector.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIndent, faChartArea } from "@fortawesome/free-solid-svg-icons";
+import { faIndent, faChartArea, faClock } from "@fortawesome/free-solid-svg-icons";
 
 import { DateTimePicker } from "@progress/kendo-react-all";
 import { RadioButton, NumericTextBox } from "@progress/kendo-react-inputs";
 
 import GlobalMod from "../../objects/global";
 import { Util } from "../../Models/eVuMax";
+import DataSelector_ from "./DataSelector_";
+import * as utilFunc from '../../utilFunctions/utilFunctions';
+
 let _gMod = new GlobalMod();
 
 interface IProps { }
 
-interface IState {
-  selectedval?: string;
-  fromDate?: Date;
-  toDate?: Date;
-  fromDepth?: number;
-  toDepth?: number;
-}
+//change prath 99999999999
+// interface IState {
+//   selectedval?: string;
 
-class DataSelector extends Component<IProps, IState> {
+//   fromDate?: Date;
+//   toDate?: Date;
+//   fromDepth?: number;
+//   toDepth?: number;
+// }
+
+
+interface IProps {
+  objDataSelector: DataSelector_;
+  selectionChanged: any;
+  wellID: string;
+}
+//=============
+
+
+class DataSelector extends Component<IProps> {
   //Changed by prath on 30-08-2021
   // constructor(parentRef, props: any) {
   //   super(props);
@@ -52,12 +66,32 @@ class DataSelector extends Component<IProps, IState> {
   // }
 
 
+  //prath 14-09-2021
+
+  // constructor(props: any) {
+  //   super(props);
+  //   this.__parentRef = props;
+  //   this.WellId = props.wellID;
+  //   this.state = {
+  //     selectedval: "-1",
+  //     refreshHrs: 24,
+  //     objDataSelector: props.objDataSelector,
+  //   };
+  // }
+  // //=========================
+  // state = {
+  //   objDataSelector: new DataSelector_(),
+  //   selectedval: "-1",
+  //   refreshHrs: 24,
+  // }
+
+
   constructor(props: any) {
     super(props);
     this.__parentRef = props;
     this.WellId = props.WellId;
-    this.state = { selectedval: "0" };
   }
+  state = { selectedval: "-1", objDataSelector: this.props.objDataSelector };
   //=========================
 
   WellId: string = "";
@@ -130,14 +164,37 @@ class DataSelector extends Component<IProps, IState> {
 
       this.objChart.initialize();
 
+
       this.objChart.reDraw();
-      this.objChart.setSelectorDateRange(
-        this.__parentRef.fromDate,
-        this.__parentRef.toDate
-      );
+
+      //fuck=================
+      let objDataSelector: DataSelector_ = new DataSelector_();
+      objDataSelector = this.props.objDataSelector;
+      alert("Received --" + this.props.objDataSelector.fromDate);
+      // objDataSelector.fromDate = null;
+      // objDataSelector.toDate = null;
+
+      this.setState({
+        objDataSelector: objDataSelector
+      });
+
+      // this.objChart.setSelectorDateRange(
+      //   this.state.objDataSelector.fromDate,
+      //   this.state.objDataSelector.toDate
+      // );
+
+
+
+      alert(this.state.objDataSelector.fromDate);
+      //
+      // this.objChart.setSelectorDateRange(
+      //   this.__parentRef.fromDate,
+      //   this.__parentRef.toDate
+      // );
+      //fuck end=================
 
       this.loadData();
-      this.loadExtents();
+      this.loadExtents();  //work in progress
       window.addEventListener("resize", this.reRenderChart);
     } catch (error) { }
   }
@@ -151,28 +208,35 @@ class DataSelector extends Component<IProps, IState> {
     } catch (error) { }
   };
   //This method will be called by chart component when user selects the data by using chart
-  selectorChanged = (
-    ptype: string,
-    pfromdate: Date,
-    ptodate: Date,
-    pfromdepth: number,
-    ptodepth: number
-  ) => {
+  // selectorChanged = (
+  //   ptype: string,
+  //   pfromdate: Date,
+  //   ptodate: Date,
+  //   pfromdepth: number,
+  //   ptodepth: number
+  // ) => {
+  //   try {
+  //     this.setState({
+  //       selectedval: ptype,
+  //       fromDate: pfromdate,
+  //       toDate: ptodate,
+  //       fromDepth: pfromdepth,
+  //       toDepth: ptodepth,
+  //     });
+  //     this.__parentRef.selectionChanged(
+  //       this.state.selectedval,
+  //       this.state.fromDate,
+  //       this.state.toDate,
+  //       this.state.fromDepth,
+  //       this.state.toDepth
+  //     );
+  //   } catch (error) { }
+  // };
+
+  selectorChanged = () => {
     try {
-      this.setState({
-        selectedval: ptype,
-        fromDate: pfromdate,
-        toDate: ptodate,
-        fromDepth: pfromdepth,
-        toDepth: ptodepth,
-      });
-      this.__parentRef.selectionChanged(
-        this.state.selectedval,
-        this.state.fromDate,
-        this.state.toDate,
-        this.state.fromDepth,
-        this.state.toDepth
-      );
+
+      this.props.selectionChanged(this.state.objDataSelector);
     } catch (error) { }
   };
 
@@ -190,16 +254,21 @@ class DataSelector extends Component<IProps, IState> {
         return;
       }
 
+
       if (s == 0) {
         this.selectedTab = 0;
 
         $("#manual").hide();
+        $("#refreshHrs").hide();
         $("#chart").show();
         $("#tab1").removeClass("non-selected");
         $("#tab1").addClass("selected");
 
         $("#tab2").removeClass("selected");
         $("#tab2").addClass("non-selected");
+
+        $("#tab3").addClass("non-selected");
+        $("#tab3").removeClass("selected");
 
         this.objChart.updateChart();
       }
@@ -208,13 +277,35 @@ class DataSelector extends Component<IProps, IState> {
         this.selectedTab = 1;
         $("#chart").hide();
         $("#manual").show();
+        $("#refreshHrs").hide();
 
         $("#tab1").removeClass("selected");
         $("#tab1").addClass("non-selected");
 
         $("#tab2").removeClass("non-selected");
         $("#tab2").addClass("selected");
+
+
+        $("#tab3").addClass("non-selected");
+        $("#tab3").addClass("selected");
       }
+
+      if (s == 2) {
+        this.selectedTab = 2;
+        $("#chart").hide();
+        $("#manual").hide();
+        $("#refreshHrs").show();
+
+        $("#tab3").addClass("selected");
+        $("#tab3").removeClass("non-selected");
+
+        $("#tab2").addClass("non-selected");
+        $("#tab2").removeClass("selected");
+
+        $("#tab1").addClass("non-selected");
+        $("#tab1").removeClass("selected");
+      }
+
     } catch (error) { }
   };
 
@@ -228,6 +319,19 @@ class DataSelector extends Component<IProps, IState> {
     } catch (error) { }
   };
 
+
+  handleChange = (event: any, field: string) => {
+
+    const value = event.value;
+    const name = field; // target.props ? target.props.name : target.name;
+    let edited: any = utilFunc.CopyObject(this.state.objDataSelector);
+    edited[field] = value;
+
+    this.setState({
+      objDataSelector: edited
+    });
+
+  };
   render() {
     return (
       <React.Fragment>
@@ -269,6 +373,25 @@ class DataSelector extends Component<IProps, IState> {
                   size={"lg"}
                 />
               </div>
+            </div>
+
+
+            <div
+              id="tab3"
+              className="non-selected"
+              onClick={() => {
+                this.tabSelectionChanged(2);
+              }}
+            >
+              <div className="icon">
+                <FontAwesomeIcon
+                  className="icon-image"
+                  icon={faClock}
+                  size={"lg"}
+                />
+              </div>
+
+
             </div>
 
             {/* <div id="loader" style={{ display: "none" }}>
@@ -341,7 +464,7 @@ class DataSelector extends Component<IProps, IState> {
                 {this.state.selectedval == "0" ? (
                   <DateTimePicker
                     name="txtFromDate"
-                    value={this.state.fromDate}
+                    value={this.state.objDataSelector.fromDate}
                     format="MM/dd/yyyy HH:mm:ss"
                     formatPlaceholder={{
                       year: "yyyy",
@@ -351,9 +474,10 @@ class DataSelector extends Component<IProps, IState> {
                       minute: "mm",
                       second: "ss",
                     }}
-                    onChange={(e) => {
-                      this.setState({ fromDate: e.value });
-                    }}
+                    // onChange={(e) => {
+                    //   this.setState({ fromDate: e.value });
+                    // }}
+                    onChange={(e) => this.handleChange(e, "fromDate")}
                   />
                 ) : (
                   ""
@@ -368,7 +492,7 @@ class DataSelector extends Component<IProps, IState> {
                 {this.state.selectedval == "0" ? (
                   <DateTimePicker
                     name="txtToDate"
-                    value={this.state.toDate}
+                    value={this.state.objDataSelector.toDate}
                     format="MM/dd/yyyy HH:mm:ss"
                     formatPlaceholder={{
                       year: "yyyy",
@@ -378,9 +502,10 @@ class DataSelector extends Component<IProps, IState> {
                       minute: "mm",
                       second: "ss",
                     }}
-                    onChange={(e) => {
-                      this.setState({ toDate: e.value });
-                    }}
+                    // onChange={(e) => {
+                    //   this.setState({ toDate: e.value });
+                    // }}
+                    onChange={(e) => this.handleChange(e, "toDate")}
                   />
                 ) : (
                   ""
@@ -395,9 +520,10 @@ class DataSelector extends Component<IProps, IState> {
                 {this.state.selectedval == "1" ? (
                   <NumericTextBox
                     name="txtFromDepth"
-                    value={this.state.fromDepth}
+                    value={this.state.objDataSelector.fromDepth}
                     format="n2"
-                    onChange={(e) => this.setState({ fromDepth: e.value })}
+                    // onChange={(e) => this.setState({ fromDepth: e.value })}
+                    onChange={(e) => this.handleChange(e, "fromDepth")}
                   />
                 ) : (
                   ""
@@ -412,9 +538,10 @@ class DataSelector extends Component<IProps, IState> {
                 {this.state.selectedval == "1" ? (
                   <NumericTextBox
                     name="txtToDepth"
-                    value={this.state.toDepth}
+                    value={this.state.objDataSelector.toDepth}
                     format="n2"
-                    onChange={(e) => this.setState({ toDepth: e.value })}
+                    // onChange={(e) => this.setState({ toDepth: e.value })}
+                    onChange={(e) => this.handleChange(e, "toDepth")}
                   />
                 ) : (
                   ""
@@ -422,17 +549,19 @@ class DataSelector extends Component<IProps, IState> {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    //call the parent to indicate the change
-                    //this.objChart.setSelectorDateRange(this.state.fromDate,this.state.toDate);
-                    this.__parentRef.selectionChanged(
-                      this.state.selectedval,
-                      this.state.fromDate,
-                      this.state.toDate,
-                      this.state.fromDepth,
-                      this.state.toDepth
-                    );
-                  }}
+                  onClick={this.selectorChanged}
+                  // onClick={() => {
+                  //   //call the parent to indicate the change
+                  //   this.objChart.setSelectorDateRange(this.state.fromDate,this.state.toDate);
+                  //   this.__parentRef.selectionChanged(
+                  //     this.state.selectedval,
+                  //     this.state.fromDate,
+                  //     this.state.toDate,
+                  //     this.state.fromDepth,
+                  //     this.state.toDepth
+                  //   );
+
+                  // }}
                   className="btn-custom btn-custom-primary ml-5 mr-1"
                 >
                   Apply
@@ -440,6 +569,49 @@ class DataSelector extends Component<IProps, IState> {
               </div>
             </div>
           </div>
+
+
+
+          <div
+            id="refreshHrs"
+            style={{
+              height: "100%",
+              width: "calc(100% - 50px)",
+              display: "none",
+              float: "right",
+            }}
+          >
+            <ComboBox data={[12, 24]} allowCustom={true}
+              value={this.state.objDataSelector.refreshHrs}
+              // onChange={(e) => {
+              //   this.setState({ refreshHrs: e.value })
+              // }}
+              onChange={(e) => this.handleChange(e, "refreshHrs")}
+
+            />
+            <button
+              type="button"
+              onClick={() => {
+                alert(this.state.objDataSelector.refreshHrs);
+                //call the parent to indicate the change
+
+                // this.__parentRef.selectionChanged(
+                //   this.state.selectedval,
+                //   this.state.fromDate,
+                //   this.state.toDate,
+                //   this.state.fromDepth,
+                //   this.state.toDepth,
+                //   this.state.refreshHrs
+                // );
+
+                this.selectorChanged();
+              }}
+              className="btn-custom btn-custom-primary ml-5 mr-1"
+            >
+              Apply
+            </button>
+          </div>
+
         </div>
       </React.Fragment>
     );
@@ -534,11 +706,13 @@ class DataSelector extends Component<IProps, IState> {
   loadExtents = () => {
     try {
       //Check if it  is required to load the extents
-      if (this.state.fromDate != null) {
+      alert("Extent -" + this.state.objDataSelector.fromDate);
+
+      if (this.state.objDataSelector.fromDate != null) {
         //We already extracted extents, no need to repeat
         this.objChart.setSelectorDateRange(
-          this.state.fromDate,
-          this.state.toDate
+          this.state.objDataSelector.fromDate,
+          this.state.objDataSelector.toDate
         );
         return;
       }
@@ -570,12 +744,36 @@ class DataSelector extends Component<IProps, IState> {
 
           //set the state
 
+          // this.setState({
+          //   fromDate: new Date(objData.MinDate),
+          //   toDate: new Date(objData.MaxDate),
+          //   fromDepth: Number.parseFloat(objData.MinDepth),
+          //   toDepth: Number.parseFloat(objData.MaxDepth),
+          // });
+
+
+          //Nishant
+
+          // let minDate = new Date(objData.MaxDate);
+          // minDate.setHours(minDate.getHours() - this.state.objDataSelector.refreshHrs);
+          let objNewObjDataSelector = new DataSelector_();
+          objNewObjDataSelector = this.props.objDataSelector;
+          objNewObjDataSelector.fromDate = new Date(objData.MinDate);
+          objNewObjDataSelector.toDate = new Date(objData.MaxDate);
+          objNewObjDataSelector.fromDepth = objData.MinDepth;
+          objNewObjDataSelector.toDepth = objData.MaxDepth;
+          objNewObjDataSelector.refreshHrs = this.props.objDataSelector.refreshHrs;
+
+
           this.setState({
-            fromDate: new Date(objData.MinDate),
-            toDate: new Date(objData.MaxDate),
-            fromDepth: Number.parseFloat(objData.MinDepth),
-            toDepth: Number.parseFloat(objData.MaxDepth),
+            objDataSelector: objNewObjDataSelector
           });
+
+          this.objChart.setSelectorDateRange(
+            objNewObjDataSelector.fromDate,
+            objNewObjDataSelector.toDate
+          );
+
 
           this.setData(objData);
           Util.StatusSuccess("Data successfully retrived  ");

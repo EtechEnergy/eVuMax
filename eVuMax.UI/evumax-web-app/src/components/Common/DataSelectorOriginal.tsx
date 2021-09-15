@@ -15,7 +15,7 @@ import {
 } from "../../eVuMaxObjects/Chart/DataSeries";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "@progress/kendo-react-intl";
-import { ComboBox, DropDownList } from "@progress/kendo-react-dropdowns";
+import { DropDownList } from "@progress/kendo-react-dropdowns";
 import "react-router-dom";
 import ProcessLoader from "../loader/loader";
 import BrokerRequest from "../../broker/BrokerRequest";
@@ -23,23 +23,16 @@ import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
 import "./DataSelector.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIndent, faChartArea, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faIndent, faChartArea } from "@fortawesome/free-solid-svg-icons";
 
 import { DateTimePicker } from "@progress/kendo-react-all";
 import { RadioButton, NumericTextBox } from "@progress/kendo-react-inputs";
 
-import DataSelector_ from "./DataSelector_";
-
 import GlobalMod from "../../objects/global";
 import { Util } from "../../Models/eVuMax";
-import * as utilFunc from '../../utilFunctions/utilFunctions';
 let _gMod = new GlobalMod();
 
-interface IProps {
-  // objDataSelector: DataSelector_;
-  // selectionChanged: any;
-  // wellID: string;
-}
+interface IProps { }
 
 interface IState {
   selectedval?: string;
@@ -47,11 +40,9 @@ interface IState {
   toDate?: Date;
   fromDepth?: number;
   toDepth?: number;
-  refreshHrs?: number;
-
 }
 
-class DataSelector extends Component<IProps, IState> {
+class DataSelectorOriginal extends Component<IProps, IState> {
   //Changed by prath on 30-08-2021
   // constructor(parentRef, props: any) {
   //   super(props);
@@ -60,35 +51,15 @@ class DataSelector extends Component<IProps, IState> {
   //   this.state = { selectedval: "0" };
   // }
 
-  //Nishant New Code
-  // constructor(props: any) {
-  //   super(props);
-  //   this.__parentRef = props;
-  //   this.WellId = props.wellID;
-  //   this.state = {
-  //     selectedval: "0",
-  //     refreshHrs: 24,
-  //     objDataSelector: props.objDataSelector,
-  //   };
-  // }
-  //=========================
 
   constructor(props: any) {
     super(props);
     this.__parentRef = props;
     this.WellId = props.WellId;
-    this.state = {
-      selectedval: "0",
-      refreshHrs: 24,
-    };
+    this.state = { selectedval: "-1" };
   }
 
-
-  // state = {
-  //   objDataSelector: new DataSelector_(),
-  //   selectedval: "0",
-  //   refreshHrs: 24,
-  // }
+  //=========================
 
   WellId: string = "";
   Mnemonic: string = "DEPTH";
@@ -160,13 +131,19 @@ class DataSelector extends Component<IProps, IState> {
 
       this.objChart.initialize();
 
+
       this.objChart.reDraw();
       this.objChart.setSelectorDateRange(
         this.__parentRef.fromDate,
         this.__parentRef.toDate
       );
 
+
+      alert(this.__parentRef.fromDate + " " + this.__parentRef.toDate);
+
       this.loadData();
+      debugger;
+
       this.loadExtents();
       window.addEventListener("resize", this.reRenderChart);
     } catch (error) { }
@@ -180,24 +157,13 @@ class DataSelector extends Component<IProps, IState> {
 
     } catch (error) { }
   };
-
-  //Nishant
-  // selectorChanged = () => {
-  //   try {
-
-  //     this.props.selectionChanged(this.state.objDataSelector);
-  //   } catch (error) { }
-  // };
-
-
   //This method will be called by chart component when user selects the data by using chart
   selectorChanged = (
     ptype: string,
     pfromdate: Date,
     ptodate: Date,
     pfromdepth: number,
-    ptodepth: number,
-    prefreshHrs: number,
+    ptodepth: number
   ) => {
     try {
       this.setState({
@@ -206,15 +172,13 @@ class DataSelector extends Component<IProps, IState> {
         toDate: ptodate,
         fromDepth: pfromdepth,
         toDepth: ptodepth,
-        refreshHrs: prefreshHrs
       });
       this.__parentRef.selectionChanged(
         this.state.selectedval,
         this.state.fromDate,
         this.state.toDate,
         this.state.fromDepth,
-        this.state.toDepth,
-        this.state.refreshHrs
+        this.state.toDepth
       );
     } catch (error) { }
   };
@@ -237,16 +201,12 @@ class DataSelector extends Component<IProps, IState> {
         this.selectedTab = 0;
 
         $("#manual").hide();
-        $("#refreshHrs").hide();
         $("#chart").show();
         $("#tab1").removeClass("non-selected");
         $("#tab1").addClass("selected");
 
         $("#tab2").removeClass("selected");
         $("#tab2").addClass("non-selected");
-
-        $("#tab3").addClass("non-selected");
-        $("#tab3").removeClass("selected");
 
         this.objChart.updateChart();
       }
@@ -255,33 +215,12 @@ class DataSelector extends Component<IProps, IState> {
         this.selectedTab = 1;
         $("#chart").hide();
         $("#manual").show();
-        $("#refreshHrs").hide();
 
         $("#tab1").removeClass("selected");
         $("#tab1").addClass("non-selected");
 
         $("#tab2").removeClass("non-selected");
         $("#tab2").addClass("selected");
-
-
-        $("#tab3").addClass("non-selected");
-        $("#tab3").addClass("selected");
-      }
-
-      if (s == 2) {
-        this.selectedTab = 2;
-        $("#chart").hide();
-        $("#manual").hide();
-        $("#refreshHrs").show();
-
-        $("#tab3").addClass("selected");
-        $("#tab3").removeClass("non-selected");
-
-        $("#tab2").addClass("non-selected");
-        $("#tab2").removeClass("selected");
-
-        $("#tab1").addClass("non-selected");
-        $("#tab1").removeClass("selected");
       }
     } catch (error) { }
   };
@@ -295,21 +234,6 @@ class DataSelector extends Component<IProps, IState> {
       this.setState({ selectedval: e });
     } catch (error) { }
   };
-
-
-  //Nishant
-  // handleChange = (event: any, field: string) => {
-
-  //   const value = event.value;
-  //   const name = field; // target.props ? target.props.name : target.name;
-  //   let edited: any = utilFunc.CopyObject(this.state.objDataSelector);
-  //   edited[field] = value;
-
-  //   this.setState({
-  //     objDataSelector: edited
-  //   });
-
-  // };
 
   render() {
     return (
@@ -353,30 +277,6 @@ class DataSelector extends Component<IProps, IState> {
                 />
               </div>
             </div>
-
-            <div
-              id="tab3"
-              className="non-selected"
-              onClick={() => {
-                this.tabSelectionChanged(2);
-              }}
-            >
-              <div className="icon">
-                <FontAwesomeIcon
-                  className="icon-image"
-                  icon={faClock}
-                  size={"lg"}
-                />
-              </div>
-
-
-            </div>
-
-
-
-
-
-
 
             {/* <div id="loader" style={{ display: "none" }}>
               <ProcessLoader />
@@ -448,7 +348,6 @@ class DataSelector extends Component<IProps, IState> {
                 {this.state.selectedval == "0" ? (
                   <DateTimePicker
                     name="txtFromDate"
-                    //value={this.state.objDataSelector.fromDate}
                     value={this.state.fromDate}
                     format="MM/dd/yyyy HH:mm:ss"
                     formatPlaceholder={{
@@ -462,7 +361,6 @@ class DataSelector extends Component<IProps, IState> {
                     onChange={(e) => {
                       this.setState({ fromDate: e.value });
                     }}
-                  // onChange={(e) => this.handleChange(e, "fromDate")}
                   />
                 ) : (
                   ""
@@ -477,7 +375,6 @@ class DataSelector extends Component<IProps, IState> {
                 {this.state.selectedval == "0" ? (
                   <DateTimePicker
                     name="txtToDate"
-                    //value={this.state.objDataSelector.toDate}
                     value={this.state.toDate}
                     format="MM/dd/yyyy HH:mm:ss"
                     formatPlaceholder={{
@@ -491,7 +388,6 @@ class DataSelector extends Component<IProps, IState> {
                     onChange={(e) => {
                       this.setState({ toDate: e.value });
                     }}
-                  //onChange={(e) => this.handleChange(e, "toDate")}
                   />
                 ) : (
                   ""
@@ -506,12 +402,9 @@ class DataSelector extends Component<IProps, IState> {
                 {this.state.selectedval == "1" ? (
                   <NumericTextBox
                     name="txtFromDepth"
-                    //value={this.state.objDataSelector.fromDepth}
                     value={this.state.fromDepth}
                     format="n2"
                     onChange={(e) => this.setState({ fromDepth: e.value })}
-                  //onChange={(e) => this.handleChange(e, "fromDepth")}
-
                   />
                 ) : (
                   ""
@@ -526,11 +419,9 @@ class DataSelector extends Component<IProps, IState> {
                 {this.state.selectedval == "1" ? (
                   <NumericTextBox
                     name="txtToDepth"
-                    //value={this.state.objDataSelector.toDepth}
                     value={this.state.toDepth}
                     format="n2"
                     onChange={(e) => this.setState({ toDepth: e.value })}
-                  //  onChange={(e) => this.handleChange(e, "toDepth")}
                   />
                 ) : (
                   ""
@@ -540,16 +431,14 @@ class DataSelector extends Component<IProps, IState> {
                   type="button"
                   onClick={() => {
                     //call the parent to indicate the change
-                    this.objChart.setSelectorDateRange(this.state.fromDate, this.state.toDate);
+                    //this.objChart.setSelectorDateRange(this.state.fromDate,this.state.toDate);
                     this.__parentRef.selectionChanged(
                       this.state.selectedval,
                       this.state.fromDate,
                       this.state.toDate,
                       this.state.fromDepth,
-                      this.state.toDepth,
-                      this.state.refreshHrs
+                      this.state.toDepth
                     );
-                    //  this.selectorChanged();//Nishant
                   }}
                   className="btn-custom btn-custom-primary ml-5 mr-1"
                 >
@@ -557,45 +446,6 @@ class DataSelector extends Component<IProps, IState> {
                 </button>
               </div>
             </div>
-          </div>
-
-          <div
-            id="refreshHrs"
-            style={{
-              height: "100%",
-              width: "calc(100% - 50px)",
-              display: "none",
-              float: "right",
-            }}
-          >
-            <ComboBox data={[12, 24]} allowCustom={true}
-              value={this.state.refreshHrs}
-              onChange={(e) => {
-                this.setState({ refreshHrs: e.value })
-              }}
-
-            />
-            <button
-              type="button"
-              onClick={() => {
-
-                //call the parent to indicate the change
-
-                this.__parentRef.selectionChanged(
-                  this.state.selectedval,
-                  this.state.fromDate,
-                  this.state.toDate,
-                  this.state.fromDepth,
-                  this.state.toDepth,
-                  this.state.refreshHrs
-                );
-
-                //this.selectorChanged();//Nishant
-              }}
-              className="btn-custom btn-custom-primary ml-5 mr-1"
-            >
-              Apply
-            </button>
           </div>
         </div>
       </React.Fragment>
@@ -624,8 +474,7 @@ class DataSelector extends Component<IProps, IState> {
   loadData = () => {
     try {
       Util.StatusInfo("Getting data from the server  ");
-
-      //this.WellId = "us_1395675560";
+      this.WellId = "us_1395675560";
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Common";
       objBrokerRequest.Broker = "TimeData";
@@ -692,7 +541,6 @@ class DataSelector extends Component<IProps, IState> {
   loadExtents = () => {
     try {
       //Check if it  is required to load the extents
-      //Check if it  is required to load the extents
       if (this.state.fromDate != null) {
         //We already extracted extents, no need to repeat
         this.objChart.setSelectorDateRange(
@@ -701,17 +549,6 @@ class DataSelector extends Component<IProps, IState> {
         );
         return;
       }
-
-
-      ////Nishant
-      // if (this.state.objDataSelector.fromDate != null) {
-      //   //We already extracted extents, no need to repeat
-      //   this.objChart.setSelectorDateRange(
-      //     this.state.objDataSelector.fromDate,
-      //     this.state.objDataSelector.toDate
-      //   );
-      //   return;
-      // }
 
       Util.StatusInfo("Getting data from the server  ");
 
@@ -772,4 +609,4 @@ class DataSelector extends Component<IProps, IState> {
   };
 }
 
-export default DataSelector;
+export default DataSelectorOriginal;

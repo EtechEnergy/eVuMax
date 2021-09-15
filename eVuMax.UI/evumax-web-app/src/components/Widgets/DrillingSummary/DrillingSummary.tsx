@@ -4,7 +4,6 @@ import {
   TabStripTab,
   NumericTextBox,
   TabStrip,
-
   Switch
 } from "@progress/kendo-react-all";
 import { Chart, lineStyle, curveStyle } from "../../../eVuMaxObjects/Chart/Chart";
@@ -21,7 +20,7 @@ import { axisLabelStyle, Axis } from "../../../eVuMaxObjects/Chart/Axis";
 import { exit } from "process";
 //import Moment from "react-moment";
 import ProcessLoader from "../../loader/loader";
-import DataSelector from "../../Common/DataSelector";
+// import DataSelector from "../../Common/DataSelector";
 import moment from "moment";
 import { formatNumber, parseDate } from "@telerik/kendo-intl";
 import "./DrillingSummary.css";
@@ -38,6 +37,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Util } from "../../../Models/eVuMax";
 
+import DataSelector_ from "../../Common/DataSelector_";
+import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
+import DataSelector from "../../Common/DataSelector";
+
 let _gMod = new GlobalMod();
 
 const headerlabel = {
@@ -51,6 +54,8 @@ export class DrillingSummary extends Component {
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
+
+
   }
 
   WellId: string = "";
@@ -68,7 +73,8 @@ export class DrillingSummary extends Component {
     isProcess: false,
     grdNumericSummary: [] as any,
     grdOffsetNumericSummary: [] as any,
-    isRealTime: true as boolean
+    isRealTime: true as boolean,
+    objDataSelector: new DataSelector_(),
   };
 
   objChart: Chart;
@@ -85,7 +91,12 @@ export class DrillingSummary extends Component {
   componentDidMount() {
     //initialize chart
     //this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+
+
     this.initilizeCharts();
+
+
+
     this.setState({
       objChart_ROP: this.objChart,
     });
@@ -102,32 +113,55 @@ export class DrillingSummary extends Component {
     } catch (error) { }
   }
 
-  selectionChanged = (
-    pselectedval: string,
-    pfromDate: Date,
-    ptoDate: Date,
-    pfromDepth: number,
-    ptoDepth: number
-  ) => {
-    try {
+  ////Nishant
+  selectionChanged = (paramDataSelector: DataSelector_) => {
 
-      this.setState({ selectionType: pselectedval });
-      this.selectionType = pselectedval;
-      this.fromDate = pfromDate;
-      this.toDate = ptoDate;
-      this.fromDepth = pfromDepth;
-      this.toDepth = ptoDepth;
+    alert("new dataSelector Data");
+    console.log("new DataSelector", paramDataSelector);
+    this.setState({
+      objDataSelector: paramDataSelector,
+      isRealTime: false
+    });
 
-      console.log(
-        "From Date " +
-        moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-        " To Date " +
-        moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-      );
+    this.selectionType = paramDataSelector.selectedval;
+    this.fromDate = paramDataSelector.fromDate;
+    this.toDate = paramDataSelector.toDate;
+    this.fromDepth = paramDataSelector.fromDepth;
+    this.toDepth = paramDataSelector.toDepth;
+    this.refreshHrs = paramDataSelector.refreshHrs;
 
-      this.loadDrlgSummary();
-    } catch (error) { }
-  };
+    clearInterval(this.intervalID);
+
+    this.loadDrlgSummary();
+  }
+
+
+  // selectionChanged = (
+  //   pselectedval: string,
+  //   pfromDate: Date,
+  //   ptoDate: Date,
+  //   pfromDepth: number,
+  //   ptoDepth: number,
+  //   prefreshHrs: number
+  // ) => {
+  //   try {
+
+  //     this.setState({ selectionType: pselectedval });
+  //     this.selectionType = pselectedval;
+  //     this.fromDate = pfromDate;
+  //     this.toDate = ptoDate;
+  //     this.fromDepth = pfromDepth;
+  //     this.toDepth = ptoDepth;
+  //     this.refreshHrs = prefreshHrs;
+  //     //Nishant 13-09-2021
+  //     this.setState({
+  //       isRealTime: false
+  //     });
+  //     clearInterval(this.intervalID);
+  //     this.forceUpdate();
+  //     this.loadDrlgSummary();
+  //   } catch (error) { }
+  // };
 
   initilizeCharts = () => {
     this.objChart = new Chart(this, "ROP_RigState");
@@ -1061,6 +1095,7 @@ export class DrillingSummary extends Component {
   };
 
   handleToggleSwitch = () => {
+
     this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
@@ -1074,6 +1109,7 @@ export class DrillingSummary extends Component {
   toDate: Date = null;
   fromDepth: number = 0;
   toDepth: number = 0;
+  refreshHrs: number = 24;
   //************** */
 
   //objPieDrilling1: DataSeries;
@@ -1118,6 +1154,7 @@ export class DrillingSummary extends Component {
 
   loadDrlgSummary = () => {
     try {
+
       Util.StatusInfo("Getting data from server   ");
       this.setState({
         isProcess: true,
@@ -1179,12 +1216,12 @@ export class DrillingSummary extends Component {
         "-999"
       );
       objBrokerRequest.Parameters.push(paramSideTrackKey);
-      debugger;
+
       let paramIsRealTime: BrokerParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
       let paramLastHrs: BrokerParameter = new BrokerParameter(
-        "lastHrs", "48"
+        "lastHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
 
@@ -1475,6 +1512,27 @@ export class DrillingSummary extends Component {
       <div>
         <div className="row">
           <div className="drillingSummaryContainer">
+
+            <div className="col-lg-2">
+              <div className="form-inline" style={{ justifyContent: "end" }}>
+                <label style={{ marginRight: "20px" }}>Realtime</label>
+                <div >
+                  <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-1">
+              <div className="float-right mr-2">
+                <FontAwesomeIcon
+                  icon={faUndo}
+                  onClick={() => {
+                    this.refreshROPLineChart();
+                  }}
+                />
+              </div>
+            </div>
+
             <div className="mr-2">
               <div className="statusCard">
                 <div className="card-body">
@@ -1526,30 +1584,13 @@ export class DrillingSummary extends Component {
                 </div>
               </div>
             </div>
+
+
+
+
           </div>
         </div>
-        <div className="row pt-3">
-                  <div className="col-lg-9"></div>
-                  <div className="col-lg-2">
-                    <div className="form-inline" style={{justifyContent:"end"}}>
-                      <label style={{ marginRight: "20px" }}>Realtime</label>
-                      <div >
-                        <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime}></Switch>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="col-lg-1">
-                    <div className="float-right mr-2">
-                      <FontAwesomeIcon
-                        icon={faUndo}
-                        onClick={() => {
-                          this.refreshROPLineChart();
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
         {/* <div className="row">
           <div className="col-xl-4 ">
             <div className="statusCard">
@@ -1706,14 +1747,19 @@ export class DrillingSummary extends Component {
                 </div>
 
                 <div className="Data">
-                  <DataSelector {...this} />
+                  {/* <DataSelector {...this} /> */}
+                  <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} />
+                  {/* <DataSelectorOriginal {...this} /> */}
+
+
+                  {/* <DataSelector2 objDataSelector={this.state.objDataSelector} selectionChanged={this.selectionChanged} wellID={this.WellId} /> */}
                 </div>
               </div>
             </TabStripTab>
             <TabStripTab title="Page-2 ">
               <div style={{ marginTop: "5px" }}>
 
-                
+
 
                 <div className="row mb-3">
                   {/* style={{ maxHeight: "160px" }} for upper div */}

@@ -319,7 +319,7 @@ export default class changePassword extends React.Component {
             </div>
           </div>
         </div>
-        <DataSelector2></DataSelector2>
+        {/* <DataSelector2></DataSelector2> */}
 
         {/* <DataSelector></DataSelector> */}
       </div>

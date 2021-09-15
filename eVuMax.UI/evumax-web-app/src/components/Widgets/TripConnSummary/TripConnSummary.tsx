@@ -63,10 +63,12 @@ import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
 import { isThisTypeNode } from "typescript";
+import DataSelector_ from "../../Common/DataSelector_";
 
 let _gMod = new GlobalMod();
 
 class TripConnSummary extends Component {
+  intervalID: NodeJS.Timeout | undefined;
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
@@ -101,7 +103,8 @@ class TripConnSummary extends Component {
     RigCost: 0,
     ShowComments: false,
     Comment: "",
-    isRealTime: false as boolean
+    isRealTime: false as boolean,
+    objDataSelector: new DataSelector_(),
   };
 
   WellId: string = "";
@@ -442,31 +445,51 @@ class TripConnSummary extends Component {
     this.setState({ selected: e.selected });
   };
 
-  selectionChanged = (
-    pselectedval: string,
-    pfromDate: Date,
-    ptoDate: Date,
-    pfromDepth: number,
-    ptoDepth: number
-  ) => {
-    try {
-      this.selectionType = pselectedval;
-      this.fromDate = pfromDate;
-      this.toDate = ptoDate;
-      this.fromDepth = pfromDepth;
-      this.toDepth = ptoDepth;
+  // selectionChanged = (
+  //   pselectedval: string,
+  //   pfromDate: Date,
+  //   ptoDate: Date,
+  //   pfromDepth: number,
+  //   ptoDepth: number
+  // ) => {
+  //   try {
+  //     this.selectionType = pselectedval;
+  //     this.fromDate = pfromDate;
+  //     this.toDate = ptoDate;
+  //     this.fromDepth = pfromDepth;
+  //     this.toDepth = ptoDepth;
 
-      // console.log(
-      //   "From Date " +
-      //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-      //   " To Date " +
-      //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-      // );
+  //     // console.log(
+  //     //   "From Date " +
+  //     //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
+  //     //   " To Date " +
+  //     //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
+  //     // );
 
-      this.loadConnections();
-    } catch (error) { }
-  };
+  //     this.loadConnections();
+  //   } catch (error) { }
+  // };
 
+  ////Nishant
+  selectionChanged = (paramDataSelector: DataSelector_) => {
+
+    alert("new dataSelector Data");
+    console.log("new DataSelector", paramDataSelector);
+    this.setState({
+      objDataSelector: paramDataSelector,
+      isRealTime: false
+    });
+
+    this.selectionType = paramDataSelector.selectedval;
+    this.fromDate = paramDataSelector.fromDate;
+    this.toDate = paramDataSelector.toDate;
+    this.fromDepth = paramDataSelector.fromDepth;
+    this.toDepth = paramDataSelector.toDepth;
+    //this.refreshHrs = paramDataSelector.refreshHrs;
+    clearInterval(this.intervalID);
+
+    this.loadConnections();
+  }
   radioData = [
     { label: "User Comments", value: "User Comments", className: "" },
     { label: "Time Log Remarks", value: "Time Log Remarks", className: "" },
@@ -814,7 +837,9 @@ class TripConnSummary extends Component {
               }}
             ></div>
 
-            <DataSelector {...this} />
+
+
+            <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
           </TabStripTab>
           <TabStripTab title="Numeric Summary">
             <div style={{ marginTop: "10px" }}>

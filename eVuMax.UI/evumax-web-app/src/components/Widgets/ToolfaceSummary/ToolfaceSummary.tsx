@@ -79,17 +79,21 @@ import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 import { Util } from "../../../Models/eVuMax";
 //Nishant 28/07/2021
 import * as util from "../../../utilFunctions/utilFunctions";
+import DataSelector_ from "../../Common/DataSelector_";
 let _gMod = new GlobalMod();
 
 // LOG_TYPE=1 THEN 'Time Log' WHEN LOG_TYPE=2 THEN 'Depth Log'
 
 class ToolfaceSummary extends Component {
+  intervalID: NodeJS.Timeout | undefined;
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
   }
 
   state = {
+    isRealTime: true as boolean,
+    objDataSelector: new DataSelector_(),
     WellName: "",
     selected: 0,
     selectedMnemonic: "",
@@ -215,33 +219,52 @@ class ToolfaceSummary extends Component {
   _selectedItem: any;
 
 
+  ////Nishant
+  selectionChanged = (paramDataSelector: DataSelector_) => {
+
+    alert("new dataSelector Data");
+    console.log("new DataSelector", paramDataSelector);
+    this.setState({
+      objDataSelector: paramDataSelector,
+      isRealTime: false
+    });
+
+    this.selectionType = paramDataSelector.selectedval;
+    this.fromDate = paramDataSelector.fromDate;
+    this.toDate = paramDataSelector.toDate;
+    this.fromDepth = paramDataSelector.fromDepth;
+    this.toDepth = paramDataSelector.toDepth;
+    //this.refreshHrs = paramDataSelector.refreshHrs;
+    clearInterval(this.intervalID);
+
+    this.loadData();
+  }
 
 
+  // selectionChanged = (
+  //   pselectedval: string,
+  //   pfromDate: Date,
+  //   ptoDate: Date,
+  //   pfromDepth: number,
+  //   ptoDepth: number
+  // ) => {
+  //   try {
+  //     this.selectionType = pselectedval;
+  //     this.fromDate = pfromDate;
+  //     this.toDate = ptoDate;
+  //     this.fromDepth = pfromDepth;
+  //     this.toDepth = ptoDepth;
 
-  selectionChanged = (
-    pselectedval: string,
-    pfromDate: Date,
-    ptoDate: Date,
-    pfromDepth: number,
-    ptoDepth: number
-  ) => {
-    try {
-      this.selectionType = pselectedval;
-      this.fromDate = pfromDate;
-      this.toDate = ptoDate;
-      this.fromDepth = pfromDepth;
-      this.toDepth = ptoDepth;
+  //     // console.log(
+  //     //   "From Date " +
+  //     //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
+  //     //   " To Date " +
+  //     //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
+  //     // );
 
-      // console.log(
-      //   "From Date " +
-      //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-      //   " To Date " +
-      //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-      // );
-
-      this.loadData();
-    } catch (error) { }
-  };
+  //     this.loadData();
+  //   } catch (error) { }
+  // };
 
   getLineStyle = () => {
     let styleList: comboData[] = [];
@@ -2610,7 +2633,9 @@ class ToolfaceSummary extends Component {
             ></div>
 
             <div style={{ padding: "20px" }}>
-              <DataSelector {...this} />
+              {/* <DataSelector {...this} /> */}
+
+              <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
             </div>
           </TabStripTab>
 

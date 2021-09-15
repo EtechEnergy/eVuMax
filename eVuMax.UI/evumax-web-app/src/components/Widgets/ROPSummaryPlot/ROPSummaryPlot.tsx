@@ -21,9 +21,11 @@ import { faUndo } from "@fortawesome/free-solid-svg-icons";
 
 import $ from "jquery";
 import { Util } from "../../../Models/eVuMax";
+import DataSelector_ from "../../Common/DataSelector_";
 let _gMod = new GlobalMod();
 
 export class ROPSummaryPlot extends Component {
+  intervalID: NodeJS.Timeout | undefined;
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
@@ -35,6 +37,8 @@ export class ROPSummaryPlot extends Component {
     tripOutsString: "",
     tripOutsOffsetString: "",
     isProcess: false,
+    isRealTime: true as boolean,
+    objDataSelector: new DataSelector_(),
   };
 
   tripOutsString: string = "";
@@ -52,6 +56,7 @@ export class ROPSummaryPlot extends Component {
   fromDepth: number = 0;
   toDepth: number = 0;
   Warnings: string = ""; //Nishant 27/08/2021
+  refreshHrs: number = 24;
 
   componentDidMount() {
     try {
@@ -893,25 +898,48 @@ export class ROPSummaryPlot extends Component {
     this.setState({ selected: e.selected });
   };
 
-  selectionChanged = (
-    pselectedval: string,
-    pfromDate: Date,
-    ptoDate: Date,
-    pfromDepth: number,
-    ptoDepth: number
-  ) => {
-    try {
-      // this.setState({ selectionType: pselectedval });
-      this.selectionType = pselectedval;
-      this.fromDate = pfromDate;
-      this.toDate = ptoDate;
-      this.fromDepth = pfromDepth;
-      this.toDepth = ptoDepth;
-      //this.forceUpdate();
+  // selectionChanged = (
+  //   pselectedval: string,
+  //   pfromDate: Date,
+  //   ptoDate: Date,
+  //   pfromDepth: number,
+  //   ptoDepth: number
+  // ) => {
+  //   try {
+  //     // this.setState({ selectionType: pselectedval });
+  //     this.selectionType = pselectedval;
+  //     this.fromDate = pfromDate;
+  //     this.toDate = ptoDate;
+  //     this.fromDepth = pfromDepth;
+  //     this.toDepth = ptoDepth;
+  //     //this.forceUpdate();
 
-      this.loadConnections();
-    } catch (error) { }
-  };
+  //     this.loadConnections();
+  //   } catch (error) { }
+  // };
+
+  ////Nishant
+  selectionChanged = (paramDataSelector: DataSelector_) => {
+
+    alert("new dataSelector Data");
+    console.log("new DataSelector", paramDataSelector);
+    this.setState({
+      objDataSelector: paramDataSelector,
+      isRealTime: false
+    });
+
+    this.selectionType = paramDataSelector.selectedval;
+    this.fromDate = paramDataSelector.fromDate;
+    this.toDate = paramDataSelector.toDate;
+    this.fromDepth = paramDataSelector.fromDepth;
+    this.toDepth = paramDataSelector.toDepth;
+    this.refreshHrs = paramDataSelector.refreshHrs;
+
+    //clearInterval(this.intervalID);
+
+    this.loadConnections();
+  }
+
 
   render() {
     let loader = this.state.isProcess;
@@ -1289,7 +1317,9 @@ export class ROPSummaryPlot extends Component {
               </div>
 
 
-              <DataSelector {...this} />
+              {/* <DataSelector {...this} /> */}
+              <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+
               <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
             </div>
           </div>

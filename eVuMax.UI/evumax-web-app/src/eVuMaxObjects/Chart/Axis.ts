@@ -1046,10 +1046,12 @@ export class Axis {
 
 
           if (diffSeconds > 0) {
+            debugger;
             diffSeconds = diffSeconds / 1000;
           }
 
           if (diffSeconds > 60) {
+            debugger;
             let addDiff = (diffSeconds * 10) / 100;
 
             this.__selectorEndDatePos = this.MaxDate;
@@ -1057,6 +1059,7 @@ export class Axis {
               this.MaxDate.valueOf() - addDiff * 1000
             );
           } else {
+            debugger;
             if (diffSeconds == 0) {
               this.__selectorEndDatePos = null;
               this.__selectorStartDatePos = null;
