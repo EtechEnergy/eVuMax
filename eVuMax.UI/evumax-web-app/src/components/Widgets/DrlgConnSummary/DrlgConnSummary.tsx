@@ -11,7 +11,7 @@ import {
   axisPosition,
 } from "../../../eVuMaxObjects/Chart/Axis";
 import DataSelector from "../../Common/DataSelector";
-//import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
+import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
 import { Moment } from "moment";
 import {
   DataSeries,
@@ -193,11 +193,11 @@ class DrlgConnSummary extends Component {
       objDataSelector: paramDataSelector,
       isRealTime: false
     });
-    alert("data selectin changed");
-
+    //alert("DrlgConnSummary : data selection changed" + paramDataSelector.fromDate);
+    debugger;
     this.selectionType = paramDataSelector.selectedval;
-    this.fromDate = paramDataSelector.fromDate;
-    this.toDate = paramDataSelector.toDate;
+    this.fromDate = new Date(paramDataSelector.fromDate);
+    this.toDate = new Date(paramDataSelector.toDate);
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
     //this.refreshHrs = paramDataSelector.refreshHrs;

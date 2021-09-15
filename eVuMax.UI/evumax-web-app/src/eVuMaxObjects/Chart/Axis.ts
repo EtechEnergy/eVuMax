@@ -438,6 +438,8 @@ export class Axis {
         x1 + Number($("#" + this.ChartRef.Id + "__selector_rect").width());
 
       if (this.IsDateTime) {
+        //alert("-- update selectorPosReverse assign start position");
+
         this.__selectorStartDatePos = this.ScaleRef.invert(x1);
         this.__selectorEndDatePos = this.ScaleRef.invert(x2);
       } else {
@@ -1040,26 +1042,17 @@ export class Axis {
         if (this.__selectorStartDatePos == null) {
           //calculate difference of range
           let diffSeconds = this.MaxDate.getTime() - this.MinDate.getTime();
-          //alert(diffSeconds);
-          //wip 9999999999999999
-
-
-
           if (diffSeconds > 0) {
-            debugger;
             diffSeconds = diffSeconds / 1000;
           }
 
           if (diffSeconds > 60) {
-            debugger;
             let addDiff = (diffSeconds * 10) / 100;
-
             this.__selectorEndDatePos = this.MaxDate;
             this.__selectorStartDatePos = new Date(
               this.MaxDate.valueOf() - addDiff * 1000
             );
           } else {
-            debugger;
             if (diffSeconds == 0) {
               this.__selectorEndDatePos = null;
               this.__selectorStartDatePos = null;
