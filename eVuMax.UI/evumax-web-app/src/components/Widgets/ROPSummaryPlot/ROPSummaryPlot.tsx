@@ -22,6 +22,7 @@ import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import $ from "jquery";
 import { Util } from "../../../Models/eVuMax";
 import DataSelector_ from "../../Common/DataSelector_";
+import { Switch } from "@progress/kendo-react-inputs/dist/npm/switch/Switch";
 let _gMod = new GlobalMod();
 
 export class ROPSummaryPlot extends Component {
@@ -941,6 +942,19 @@ export class ROPSummaryPlot extends Component {
   }
 
 
+  handleToggleSwitch = () => {
+
+    this.setState({ isRealTime: !this.state.isRealTime });
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+    }
+  };
+
+
+
+
   render() {
     let loader = this.state.isProcess;
 
@@ -951,6 +965,38 @@ export class ROPSummaryPlot extends Component {
       <div>
         <div className="row">
           <div className="drillingSummaryContainer">
+
+
+          <div className="mr-2">
+              <div className="statusCard">
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-2">Real Time</h6>
+                  <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+                </div>
+              </div>
+            </div>
+
+
+            <div className="mr-2 ">
+              <div className="statusCard">
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-2">Undo Zoom</h6>  <FontAwesomeIcon
+                  icon={faUndo}
+                  onClick={() => {
+                    this.refreshChart();
+                  }}
+                />
+                  {/* <div className="_summaryLabelBig">
+                  
+                  </div> */}
+                </div>
+              </div>
+            </div>
+
+
+
+
+
             <div className="mr-2">
               <div className="statusCard">
                 <div className="card-body">
@@ -1046,7 +1092,7 @@ export class ROPSummaryPlot extends Component {
           </div>
         </div>
         {/* Nishant 28/08/2021 */}
-        <div className="col-lg-12">
+        {/* <div className="col-lg-12">
           <div className="float-right mr-2">
             <FontAwesomeIcon
               icon={faUndo}
@@ -1055,7 +1101,7 @@ export class ROPSummaryPlot extends Component {
               }}
             />
           </div>
-        </div>
+        </div> */}
         {/* <div className="row">
           <div className="col-lg-12 eVumaxPanelTitle">
             <div>

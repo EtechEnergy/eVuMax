@@ -116,7 +116,7 @@ export class DrillingSummary extends Component {
   ////Nishant
   selectionChanged = (paramDataSelector: DataSelector_) => {
 
-    alert("new dataSelector Data");
+   
     console.log("new DataSelector", paramDataSelector);
     this.setState({
       objDataSelector: paramDataSelector,
@@ -1511,19 +1511,16 @@ export class DrillingSummary extends Component {
     return (
       <div>
         <div className="row">
+          
           <div className="drillingSummaryContainer">
 
-            <div className="col-lg-2">
-              <div className="form-inline" style={{ justifyContent: "end" }}>
+          {/* <div className="col-lg-6 mb-2" >
+              <div className="form-inline" style={{ justifyContent: "flex-start" }}>
                 <label style={{ marginRight: "20px" }}>Realtime</label>
                 <div >
                   <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
                 </div>
-              </div>
-            </div>
-
-            <div className="col-lg-1">
-              <div className="float-right mr-2">
+                <div className="ml-5">
                 <FontAwesomeIcon
                   icon={faUndo}
                   onClick={() => {
@@ -1531,7 +1528,15 @@ export class DrillingSummary extends Component {
                   }}
                 />
               </div>
+              </div>
+              
             </div>
+
+            <div className="col-lg-1">
+             {/* refresh icon */}
+            {/* </div> */}
+           
+           
 
             <div className="mr-2">
               <div className="statusCard">
@@ -1589,8 +1594,32 @@ export class DrillingSummary extends Component {
 
 
           </div>
+         
         </div>
-
+        <div className="row m-1" style={{justifyContent:"flex-end"}}>
+          <div className="eVumaxPanelController" style={{width:"180px"}}>
+            <div>
+              <label className="summaryTitle mr-2">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+              
+            </div>
+           
+          </div>
+         
+          <div className="eVumaxPanelController ml-1" style={{width:"100px"}}>
+            <div>
+              <label className="summaryTitle mr-2">Reset</label> 
+              <FontAwesomeIcon
+                  icon={faUndo}
+                  onClick={() => {
+                    this.refreshROPLineChart();
+                  }}
+                />
+              
+            </div>
+           
+          </div>
+        </div>
         {/* <div className="row">
           <div className="col-xl-4 ">
             <div className="statusCard">

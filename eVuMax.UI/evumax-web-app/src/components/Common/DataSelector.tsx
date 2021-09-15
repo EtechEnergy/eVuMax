@@ -170,7 +170,7 @@ class DataSelector extends Component<IProps> {
       //fuck=================
       let objDataSelector: DataSelector_ = new DataSelector_();
       objDataSelector = this.props.objDataSelector;
-      alert("Received --" + this.props.objDataSelector.fromDate);
+    
       // objDataSelector.fromDate = null;
       // objDataSelector.toDate = null;
 
@@ -185,7 +185,7 @@ class DataSelector extends Component<IProps> {
 
 
 
-      alert(this.state.objDataSelector.fromDate);
+     
       //
       // this.objChart.setSelectorDateRange(
       //   this.__parentRef.fromDate,
@@ -592,7 +592,7 @@ class DataSelector extends Component<IProps> {
             <button
               type="button"
               onClick={() => {
-                alert(this.state.objDataSelector.refreshHrs);
+                
                 //call the parent to indicate the change
 
                 // this.__parentRef.selectionChanged(
@@ -706,7 +706,7 @@ class DataSelector extends Component<IProps> {
   loadExtents = () => {
     try {
       //Check if it  is required to load the extents
-      alert("Extent -" + this.state.objDataSelector.fromDate);
+      // alert("Extent -" + this.state.objDataSelector.fromDate);
 
       if (this.state.objDataSelector.fromDate != null) {
         //We already extracted extents, no need to repeat

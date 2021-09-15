@@ -735,6 +735,15 @@ class DrlgConnSummary extends Component {
     }
   }
 
+  handleToggleSwitch = () => {
+
+    this.setState({ isRealTime: !this.state.isRealTime });
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+    }
+  };
 
   render() {
     return (
@@ -743,6 +752,15 @@ class DrlgConnSummary extends Component {
           <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
+            </div>
+          </div>
+        </div>
+        <div className="row ml-1 mr-1 mt-2" style={{justifyContent:"flex-end"}}>
+          <div className="eVumaxPanelController" style={{width:"180px"}}>
+            <div>
+              <label className="summaryTitle mr-2">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+                  
             </div>
           </div>
         </div>
@@ -831,10 +849,6 @@ class DrlgConnSummary extends Component {
                     <label className="connInfo" style={{ marginRight: "20px" }}>
                       ({this.state.ExclConnCount}) Excluded Connections
                     </label>
-                    <label style={{ marginRight: "20px" }}>Realtime</label>
-                    <div style={{ marginRight: "50px" }}>
-                      <Switch></Switch>
-                    </div>
                   </div>
                 </div>
 

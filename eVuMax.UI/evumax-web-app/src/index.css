@@ -391,6 +391,22 @@ div.k-time-tab.k-datetime-wrap {
   box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
     0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
 }
+.eVumaxPanelController {
+  /* margin: 5px; */
+  /* display: block; */
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+  background-color: rgba(189, 189, 189, 0.1);
+  padding: 10px 8px 10px 17px;
+  border-radius: 5px;
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+    0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  cursor: pointer;
+}
+.eVumaxDivider{
+  border-left: 3px solid var(--base-anchor-color);
+  margin-top: 1px;
+}
 
 .eVumaxPanel {
   margin: 5px;
