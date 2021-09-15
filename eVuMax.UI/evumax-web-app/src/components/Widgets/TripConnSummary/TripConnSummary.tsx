@@ -325,7 +325,7 @@ class TripConnSummary extends Component {
 
           this.objSummaryData = JSON.parse(res.data.Response);
 
-
+          console.log("TripConnSummary Data: ", this.objSummaryData);
           this.Warnings = res.data.Warnings;
 
 
@@ -1612,6 +1612,7 @@ class TripConnSummary extends Component {
       this.objChart.rightAxis().Inverted = false;
 
       //Create series for each rig state
+      console.log("plotChartRigStateView: this.objSummaryData.rigStates.length ", this.objSummaryData.rigStates.length);
       for (let i = 0; i < this.objSummaryData.rigStates.length; i++) {
         let objSeries = new DataSeries();
         objSeries.Id = this.objSummaryData.rigStates[i]["RIG_STATE"].toString();
@@ -1624,6 +1625,8 @@ class TripConnSummary extends Component {
         objSeries.YAxisId = this.objChart.leftAxis().Id;
         this.objChart.DataSeries.set(objSeries.Id, objSeries);
       }
+
+      console.log("plotChartRigStateView: this.objChart.DataSeries", this.objChart.DataSeries);
 
       //Fill up the data for each series
 
