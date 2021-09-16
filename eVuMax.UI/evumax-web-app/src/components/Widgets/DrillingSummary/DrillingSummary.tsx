@@ -73,7 +73,7 @@ export class DrillingSummary extends Component {
     isProcess: false,
     grdNumericSummary: [] as any,
     grdOffsetNumericSummary: [] as any,
-    isRealTime: true as boolean,
+    isRealTime: false as boolean,
     objDataSelector: new DataSelector_(),
   };
 
@@ -116,7 +116,7 @@ export class DrillingSummary extends Component {
   ////Nishant
   selectionChanged = (paramDataSelector: DataSelector_) => {
 
-   
+
     console.log("new DataSelector", paramDataSelector);
     this.setState({
       objDataSelector: paramDataSelector,
@@ -1511,34 +1511,34 @@ export class DrillingSummary extends Component {
     return (
       <div>
         <div className="row">
-        <div className="col-xl-5 form-inline m-1" style={{justifyContent:"flex-start"}}>
-          <div className="eVumaxPanelController" style={{width:"180px"}}>
-           
+          <div className="col-xl-5 form-inline m-1" style={{ justifyContent: "flex-start" }}>
+            <div className="eVumaxPanelController" style={{ width: "180px" }}>
+
               <label className="summaryTitle mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
-              
-       
-          </div>
-         
-          <div className="eVumaxPanelController ml-1" style={{width:"170px"}}>
-            <div>
-              <label className="summaryTitle mr-2">Undo Zoom</label>  <FontAwesomeIcon
+
+
+            </div>
+
+            <div className="eVumaxPanelController ml-1" style={{ width: "170px" }}>
+              <div>
+                <label className="summaryTitle mr-2">Undo Zoom</label>  <FontAwesomeIcon
                   icon={faSearchMinus}
                   onClick={() => {
                     this.refreshROPLineChart();
                   }}
                 />
-             
-              
-            </div>
-           
-          </div>
-        </div>
-        <div className="col-xl-6" style={{justifyContent:"flex-end"}}>
-          
-          <div className="drillingSummaryContainer" style={{justifyContent:"flex-end"}}>
 
-          {/* <div className="col-lg-6 mb-2" >
+
+              </div>
+
+            </div>
+          </div>
+          <div className="col-xl-6" style={{ justifyContent: "flex-end" }}>
+
+            <div className="drillingSummaryContainer" style={{ justifyContent: "flex-end" }}>
+
+              {/* <div className="col-lg-6 mb-2" >
               <div className="form-inline" style={{ justifyContent: "flex-start" }}>
                 <label style={{ marginRight: "20px" }}>Realtime</label>
                 <div >
@@ -1558,71 +1558,71 @@ export class DrillingSummary extends Component {
 
             <div className="col-lg-1">
              {/* refresh icon */}
-            {/* </div> */}
-           
-           
+              {/* </div> */}
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Rig Name</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objSummaryData.RigName}
+
+
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Rig Name</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objSummaryData.RigName}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Well Name</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objSummaryData.WellName}
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Well Name</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objSummaryData.WellName}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Depth In</h6>
-                  <div className="_summaryLabelBig">
-                    {isNaN(Number(this.state.objSummaryData.MainDepthIn))
-                      ? 0.0
-                      : Number(this.state.objSummaryData.MainDepthIn).toFixed(
-                        2
-                      )}
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Depth In</h6>
+                    <div className="_summaryLabelBig">
+                      {isNaN(Number(this.state.objSummaryData.MainDepthIn))
+                        ? 0.0
+                        : Number(this.state.objSummaryData.MainDepthIn).toFixed(
+                          2
+                        )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Depth Out</h6>
-                  <div className="_summaryLabelBig">
-                    {isNaN(Number(this.state.objSummaryData.MainDepthOut))
-                      ? 0.0
-                      : Number(this.state.objSummaryData.MainDepthOut).toFixed(
-                        2
-                      )}
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Depth Out</h6>
+                    <div className="_summaryLabelBig">
+                      {isNaN(Number(this.state.objSummaryData.MainDepthOut))
+                        ? 0.0
+                        : Number(this.state.objSummaryData.MainDepthOut).toFixed(
+                          2
+                        )}
+                    </div>
                   </div>
                 </div>
               </div>
+
+
+
+
             </div>
-
-
-
 
           </div>
-         
         </div>
-        </div>
-       
-        
+
+
         {/* <div className="row">
           <div className="col-xl-4 ">
             <div className="statusCard">

@@ -164,7 +164,13 @@ namespace eVuMax.DataBroker.Common.TimeData
 
                         foreach (DataRow objRow in objData.Rows)
                         {
+                            if (DataService.checkNull(objRow["RIG_STATE_COLOR"],"").ToString() !="") { 
                             objRow["COLOR"] = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(objRow["RIG_STATE_COLOR"])));
+                            }
+                            else
+                            {
+                                bool i = true;
+                            }
                         }
                         //objData.Columns.Remove("RIG_STATE_COLOR");
                         //=================================================
