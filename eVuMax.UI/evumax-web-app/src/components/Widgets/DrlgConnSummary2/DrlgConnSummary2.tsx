@@ -576,11 +576,11 @@ class DrlgConnSummary2 extends Component {
   // };
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
     //alert("new dataSelector Data");
     let realtimeStatus: boolean = paramRefreshHrs;
-    this.setState({
+    await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
     });
@@ -590,9 +590,17 @@ class DrlgConnSummary2 extends Component {
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
     //this.refreshHrs = paramDataSelector.refreshHrs;
-    clearInterval(this.intervalID);
 
-    this.loadConnections();
+
+
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+      this.loadConnections();
+    }
+
+    //this.loadConnections();
   }
 
 
