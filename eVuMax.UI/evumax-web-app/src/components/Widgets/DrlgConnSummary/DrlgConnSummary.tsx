@@ -188,11 +188,14 @@ class DrlgConnSummary extends Component {
   };
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_) => {
+  selectionChanged = (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+    alert(paramRefreshHrs);
+
+    let realtimeStatus: boolean = paramRefreshHrs;
 
     this.setState({
       objDataSelector: paramDataSelector,
-      isRealTime: false
+      isRealTime: realtimeStatus
     });
     //alert("DrlgConnSummary : data selection changed" + paramDataSelector.fromDate);
     debugger;
@@ -214,9 +217,6 @@ class DrlgConnSummary extends Component {
     try {
 
       this.objUserSettings = JSON.parse(this.objSummaryData.userSettings);
-
-
-
       this.setState({
         WellName: this.objSummaryData.WellName,
         summaryData: this.objSummaryData.connData,
@@ -737,15 +737,21 @@ class DrlgConnSummary extends Component {
     }
   }
 
-  handleToggleSwitch = () => {
+  handleToggleSwitch = async () => {
 
-    this.setState({ isRealTime: !this.state.isRealTime });
+    await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
       clearInterval(this.intervalID);
+      this.loadConnections();
     }
   };
+
+
+
+
+
 
   render() {
     return (

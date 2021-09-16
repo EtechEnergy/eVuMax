@@ -196,19 +196,15 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                 ////''#1 Process Main Well Summary Items ...
 
-
+                //datetime
                 if (selectionType == "0")
                 {
 
                     if (objTimeLog != null)
                     {
-
-
-
                         //PRATH
                         fromDepth = objTimeLog.getHoleDepthFromDateTime(ref paramRequest.objDataService, fromDate.ToOADate());
                         toDepth = objTimeLog.getHoleDepthFromDateTime(ref paramRequest.objDataService, toDate.ToOADate());
-
                         selectionType = "0";
                     }
                 }
@@ -260,7 +256,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                
 
                 //Nishant : get FromDate and ToDate from Depth  Range
-
+                //depthwise
                 if (selectionType == "1") // Depth Range
                 {
                     getDateRangeFromDepth(paramRequest, fromDepth, toDepth, ref fromDate, ref toDate);

@@ -2131,6 +2131,7 @@ export class Chart {
         if (objAxis != null) {
           if (objAxis.__selectorDragging) {
             objAxis.updateSelectorPosReverse();
+            //Change data in DataSelector  99999999999  imp
             this.__parentRef.selectorChanged(
               "0",
               objAxis.__selectorStartDatePos,

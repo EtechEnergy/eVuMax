@@ -120,7 +120,7 @@ export class DrillingSummary extends Component {
 
   ////Nishant
   selectionChanged = (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
-
+    alert(paramRefreshHrs);
     let realtimeStatus: boolean = paramRefreshHrs;
 
     this.setState({
@@ -1108,7 +1108,7 @@ export class DrillingSummary extends Component {
 
 
     if (this.state.isRealTime) {
-      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 10000);
+      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
       clearInterval(this.intervalID);
       this.loadDrlgSummary();

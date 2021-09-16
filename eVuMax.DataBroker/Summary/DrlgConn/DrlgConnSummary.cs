@@ -114,7 +114,12 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 bool isRealTime = false;
                 int refreshHrs = 24;
                 isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
-
+                refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
+                
+                if (isRealTime)
+                {
+                    selectionType = "-1";
+                }
 
                 DateTime fromDate = DateTime.Now;
                 DateTime toDate = DateTime.Now;
@@ -123,9 +128,6 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 {
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
-
-                    refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
-
                 }
                 catch (Exception)
                 {
