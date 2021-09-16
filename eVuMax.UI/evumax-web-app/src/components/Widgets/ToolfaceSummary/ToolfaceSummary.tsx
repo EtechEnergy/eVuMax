@@ -1291,6 +1291,14 @@ class ToolfaceSummary extends Component {
       if (this.objUserSettings.ActualTVD.lineColor == "") {
         this.objUserSettings.ActualTVD.lineColor = util.getRandomColor();
       }
+      //Nishant: Nis-PC 16-09-2021
+      if(this.objUserSettings.GeoDrlgWindowColor==""){
+        this.objUserSettings.GeoDrlgWindowColor=util.getRandomColor();
+      }
+      if(this.objUserSettings.ROPDrlgWindowColor==""){
+        this.objUserSettings.ROPDrlgWindowColor=util.getRandomColor();
+      }
+      //****************** */
 
       this.setState({
         WellName: this.objToolfaceData.WellName,
