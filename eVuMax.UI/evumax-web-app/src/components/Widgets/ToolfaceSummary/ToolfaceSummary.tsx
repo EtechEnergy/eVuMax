@@ -64,6 +64,8 @@ import "./ToolfaceSummary.css";
 import {
   faPlus,
 
+  faSearchMinus,
+
   faTrash,
 
   faUndo,
@@ -2509,8 +2511,37 @@ class ToolfaceSummary extends Component {
 
     return (
       <>
-        <div className="row ml-1 mr-1">
+        <div className="row ml-1 mr-1" style={{justifyContent:"space-between"}}>
 
+        <div className="mr-2">
+            <div className="statusCard">
+              <div className="card-body">
+                <h6 className="card-subtitle mb-2">Well Name</h6>
+                <div className="_summaryLabelBig">
+                  {this.state.WellName}
+                </div>
+              </div>
+            </div>
+          </div>
+           <div className="form-inline m-1">
+            <div className="eVumaxPanelController" style={{ width: "270px" }}>
+
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+              <label className=" ml-5 mr-2" onClick={() => {
+                this.displayData();
+              }} style={{ cursor: "pointer" }}>Undo Zoom</label>  <FontAwesomeIcon
+                icon={faSearchMinus}
+                size="lg"
+                onClick={() => {
+                  this.displayData();
+                }}
+              />
+
+            </div>
+
+
+          </div>
           {/* <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
@@ -2527,16 +2558,7 @@ class ToolfaceSummary extends Component {
               />
             </div>
           </div> */}
-          <div className="mr-2 ">
-            <div className="statusCard_">
-              <div className="card-body">
-                <h6 className="card-subtitle mb-2">Real Time</h6> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-                {/* <div className="_summaryLabelBig">
-                  
-                  </div> */}
-              </div>
-            </div>
-          </div>
+          
           {/* <div className="mr-2 ">
               <div className="statusCard_">
                 <div className="card-body">
@@ -2551,16 +2573,7 @@ class ToolfaceSummary extends Component {
               </div>
             </div> */}
 
-          <div className="mr-2">
-            <div className="statusCard">
-              <div className="card-body">
-                <h6 className="card-subtitle mb-2">Well Name</h6>
-                <div className="_summaryLabelBig">
-                  {this.state.WellName}
-                </div>
-              </div>
-            </div>
-          </div>
+         
 
 
 
