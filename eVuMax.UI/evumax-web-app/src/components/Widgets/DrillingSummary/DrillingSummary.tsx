@@ -1521,8 +1521,8 @@ export class DrillingSummary extends Component {
 
     return (
       <div>
-        <div className="row">
-          <div className="col-xl-5 form-inline m-1" style={{ justifyContent: "flex-start" }}>
+        <div className="row" style={{ justifyContent: "space-between" }}>
+          <div className="form-inline m-1">
             <div className="eVumaxPanelController" style={{ width: "180px" }}>
 
               <label className="summaryTitle mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
@@ -1545,9 +1545,9 @@ export class DrillingSummary extends Component {
 
             </div>
           </div>
-          <div className="col-xl-6" style={{ justifyContent: "flex-end" }}>
+          <div className="" >
 
-            <div className="drillingSummaryContainer" style={{ justifyContent: "flex-end" }}>
+            <div className="drillingSummaryContainer" >
 
               {/* <div className="col-lg-6 mb-2" >
               <div className="form-inline" style={{ justifyContent: "flex-start" }}>
@@ -1728,7 +1728,7 @@ export class DrillingSummary extends Component {
 
                       //height: "calc(100vh - 700px)",
                       height: "calc(30vh)",
-                      width: "calc(30vw)",
+                      width: "calc(33vw)",
                       minWidth: "400px",
                       float: "left",
                       backgroundColor: "transparent",
@@ -1745,7 +1745,7 @@ export class DrillingSummary extends Component {
                     style={{
                       //height: "calc(100vh - 700px)",
                       height: "calc(30vh)",
-                      width: "calc(30vw)",
+                      width: "calc(33vw)",
                       minWidth: "400px",
                       flex: 1,
                       backgroundColor: "transparent",
@@ -1761,7 +1761,7 @@ export class DrillingSummary extends Component {
                       //height: "calc(100vh - 700px)",
                       flex: 1,
                       height: "calc(30vh)",
-                      width: "calc(30vw)",
+                      width: "calc(33vw)",
                       minWidth: "400px",
                       backgroundColor: "transparent",
                       float: "right",
@@ -2073,9 +2073,9 @@ export class DrillingSummary extends Component {
                   <div
                     id="roplinechart"
                     style={{
-                      height: "calc(50vh)",
+                      height: "calc(45vh)",
                       width: "calc(95vw)",
-                      marginLeft: "-100px",
+                      marginLeft: "-50px",
                       float: "left",
                       backgroundColor: "transparent",
                     }}
