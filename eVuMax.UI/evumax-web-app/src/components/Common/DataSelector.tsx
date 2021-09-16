@@ -654,7 +654,7 @@ class DataSelector extends Component<IProps> {
         this.WellId
       );
 
-alert(this.WellId);
+      //alert(this.WellId);
 
       //PRATH 26-11-2020
       // let paramChannelList: BrokerParameter = new BrokerParameter(
