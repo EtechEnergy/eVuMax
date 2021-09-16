@@ -473,7 +473,7 @@ class TripConnSummary extends Component {
   ////Nishant
   selectionChanged = (paramDataSelector: DataSelector_) => {
 
-    alert("new dataSelector Data");
+    //alert("new dataSelector Data");
     console.log("new DataSelector", paramDataSelector);
     this.setState({
       objDataSelector: paramDataSelector,
@@ -742,17 +742,17 @@ class TripConnSummary extends Component {
               <label className="summaryTitle">{this.state.WellName}</label>
             </div>
           </div> */}
- <div className="mr-2 ">
-              <div className="statusCard_">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Real Time</h6> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-                  {/* <div className="_summaryLabelBig">
+          <div className="mr-2 ">
+            <div className="statusCard_">
+              <div className="card-body">
+                <h6 className="card-subtitle mb-2">Real Time</h6> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+                {/* <div className="_summaryLabelBig">
                   
                   </div> */}
-                </div>
               </div>
             </div>
-            {/* <div className="mr-2 ">
+          </div>
+          {/* <div className="mr-2 ">
               <div className="statusCard_">
                 <div className="card-body">
                   <h6 className="card-subtitle mb-2">Undo Zoom</h6>  <FontAwesomeIcon
@@ -766,18 +766,18 @@ class TripConnSummary extends Component {
               </div>
             </div> */}
 
-<div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Well Name</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.WellName}
-                  </div>
+          <div className="mr-2">
+            <div className="statusCard">
+              <div className="card-body">
+                <h6 className="card-subtitle mb-2">Well Name</h6>
+                <div className="_summaryLabelBig">
+                  {this.state.WellName}
                 </div>
               </div>
             </div>
+          </div>
 
-          
+
         </div>
 
         <TabStrip selected={this.state.selected} onSelect={this.handleSelect}  >
