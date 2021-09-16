@@ -132,7 +132,7 @@ class DrlgConnSummary extends Component {
   componentDidMount() {
     try {
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
-      alert("drlgconnsummy-" + this.WellId);
+      //alert("drlgconnsummy-" + this.WellId);
 
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");
@@ -363,7 +363,7 @@ class DrlgConnSummary extends Component {
         "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
-      alert(this.refreshHrs);
+      //alert(this.refreshHrs);
 
       axios
         .get(_gMod._getData, {
@@ -750,22 +750,31 @@ class DrlgConnSummary extends Component {
   render() {
     return (
       <>
-        <div className="row ml-1 mr-1" style={{justifyContent:"space-between"}}>
-        <div className="eVumaxPanelController" style={{ width: "180px" }}>
-            <div>
-              <label className="summaryTitle mr-2">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+        <div className="row ml-1 mr-1" style={{ justifyContent: "space-between" }}>
+          <div className="form-inline m-1">
+            <div className="eVumaxPanelController" style={{ width: "180px" }}>
+
+              <label className="summaryTitle mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
 
+
+            </div>
+
+
+          </div>
+          <div className="mr-2">
+            <div className="statusCard">
+              <div className="card-body">
+                <h6 className="card-subtitle mb-2">Well Name</h6>
+                <div className="_summaryLabelBig">
+                  {this.state.WellName}
+                </div>
+              </div>
             </div>
           </div>
-          <div className="eVumaxPanelTitle" style={{minWidth:"150px"}}>
-            <div>
-              <label className="summaryTitle">{this.state.WellName}</label>
-            </div>
-          </div>
-         
+
         </div>
-       
+
         <div>
           <div>
             <TabStrip
@@ -858,7 +867,7 @@ class DrlgConnSummary extends Component {
                   id="drlgConnections"
                   style={{
                     marginTop: "50px",
-                    height: "calc(100vh - 450px)",
+                    height: "calc(100vh - 480px)",
                     width: "calc(100vw - 130px)",
                     backgroundColor: "transparent",
                   }}
@@ -887,7 +896,7 @@ class DrlgConnSummary extends Component {
                 <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
               </TabStripTab>
               <TabStripTab title="Numeric Summary">
-                <div style={{ marginTop: "10px" }}>
+                <div style={{}}>
                   <div className="row mb-3">
                     <div className="col-xl-8 col-lg-7 col-md-6 col-sm-12">
                       <h6 className="summaryGroupHeader">Overall Summary</h6>

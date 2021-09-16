@@ -8,7 +8,7 @@ import "./dashboard.css";
 import VuMaxLogo from "../../images/VuMaxLogo_Small.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faUserCircle, faCog, faListAlt, faHome,  faDownload,  faInfo,  faSignOutAlt,faKey} from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle, faCog, faListAlt, faHome, faDownload, faInfo, faSignOutAlt, faKey } from "@fortawesome/free-solid-svg-icons";
 import { Route, NavLink, Switch } from "react-router-dom";
 import { AppState } from "../../redux/store/configureStore";
 import { connect } from "react-redux";
@@ -45,9 +45,9 @@ export class Dashboard extends React.Component<Props> {
   state = {
     //showPopupMenu: true
     showAboutDialog: false,
-    
+
   }
- 
+
   LogOut = () => {
     sessionStorage.clear();
     localStorage.clear();
@@ -102,7 +102,7 @@ export class Dashboard extends React.Component<Props> {
     return (
       <div>
 
-          
+
         {this.state.showAboutDialog && <Dialog height="390px" width="800px" title="About"
           onClose={() => { this.setState({ showAboutDialog: false }); }}
         >
@@ -158,20 +158,20 @@ export class Dashboard extends React.Component<Props> {
                 <div
                   className="dropdown-menu dropdown-menu-right"
                   aria-labelledby="navbarDropdown"
-                  style={{width:"190px"}}
+                  style={{ width: "190px" }}
                 >
                   <NavLink className="nav-link" exact to="/dashboard/changePassword">
-                  <FontAwesomeIcon icon={faKey} className="mr-2" /> Change Password
-                </NavLink>
-                 
-                 
+                    <FontAwesomeIcon icon={faKey} className="mr-2" /> Change Password
+                  </NavLink>
+
+
                   <a className="nav-link" onClick={this.ShowAboutDialog}>
                     <FontAwesomeIcon icon={faInfo} className="mr-2" /> About
                   </a>
                   <a className="nav-link" onClick={this.LogOut}>
                     <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" /> Logout
                   </a>
-                 
+
                 </div>
               </li>
             </ul>
@@ -200,9 +200,9 @@ export class Dashboard extends React.Component<Props> {
                   <FontAwesomeIcon icon={faListAlt} />
                 </NavLink>
               </li>
-             
+
               <li className="nav-item">
-             
+
                 <a
                   data-leftmenu="settings"
                   //onClick={this.getMenu}
@@ -245,19 +245,19 @@ export class Dashboard extends React.Component<Props> {
 
         <nav></nav>
 
-        
+
         <div className="fixed-bottom bg-status">
           <span id="statuIcon" className="ml-3" style={{ minWidth: 20 }}></span>
           <div id="statusText" className="pt-1 pb-1 pl-1 hidenOverFlow ">
             Ready
           </div>
           <div id="" className="ml-auto mr-3 float-right d-inline-flex">
-          <div id="PoweredByText" className="pt-1 pb-1 pl-1 hidenOverFlow ">
-          Powered by <img src={ETECHLogo} style={{height:"15px"}} className="img-fluid ml-1 mr-1" /> Etech &copy; {new Date().getFullYear()}   
+            <div id="PoweredByText" className="pt-1 pb-1 pl-1 hidenOverFlow ">
+              Powered by <img src={ETECHLogo} style={{ height: "15px" }} className="img-fluid ml-1 mr-1" /> Etech &copy; {new Date().getFullYear()}
+            </div>
+            {/* Powered by  <img src={ETECHLogo} style={{height:"15px"}} className="img-fluid ml-2 mr-2 mt-2" /> ETECH <p>&copy; {new Date().getFullYear()}  </p> */}
           </div>
-          {/* Powered by  <img src={ETECHLogo} style={{height:"15px"}} className="img-fluid ml-2 mr-2 mt-2" /> ETECH <p>&copy; {new Date().getFullYear()}  </p> */}
-          </div>
-          
+
         </div>
         {/* Side menu */}
 
