@@ -90,7 +90,12 @@ export class DrillingSummary extends Component {
 
   componentDidMount() {
     //initialize chart
-    //this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+    // if (this.state.isRealTime) {
+    //   this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+    // } else {
+    //   clearInterval(this.intervalID);
+    // }
+
 
 
     this.initilizeCharts();
@@ -114,13 +119,13 @@ export class DrillingSummary extends Component {
   }
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_) => {
+  selectionChanged = (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
+    let realtimeStatus: boolean = paramRefreshHrs;
 
-    console.log("new DataSelector", paramDataSelector);
     this.setState({
       objDataSelector: paramDataSelector,
-      isRealTime: false
+      isRealTime: realtimeStatus
     });
 
     this.selectionType = paramDataSelector.selectedval;
@@ -130,7 +135,10 @@ export class DrillingSummary extends Component {
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
 
-    clearInterval(this.intervalID);
+    // if (!realtimeStatus) {
+    //   clearInterval(this.intervalID);
+    // }
+
 
     this.loadDrlgSummary();
   }
@@ -1094,13 +1102,16 @@ export class DrillingSummary extends Component {
     this.setState({ selected: e.selected });
   };
 
-  handleToggleSwitch = () => {
+  handleToggleSwitch = async () => {
 
-    this.setState({ isRealTime: !this.state.isRealTime });
+    await this.setState({ isRealTime: !this.state.isRealTime });
+
+
     if (this.state.isRealTime) {
-      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 10000);
     } else {
       clearInterval(this.intervalID);
+      this.loadDrlgSummary();
     }
   };
 
@@ -1154,7 +1165,7 @@ export class DrillingSummary extends Component {
 
   loadDrlgSummary = () => {
     try {
-
+      //alert("loadDrlgSumm");
       Util.StatusInfo("Getting data from server   ");
       this.setState({
         isProcess: true,
@@ -1221,7 +1232,7 @@ export class DrillingSummary extends Component {
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
       let paramLastHrs: BrokerParameter = new BrokerParameter(
-        "lastHrs", this.refreshHrs.toString()
+        "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
 
