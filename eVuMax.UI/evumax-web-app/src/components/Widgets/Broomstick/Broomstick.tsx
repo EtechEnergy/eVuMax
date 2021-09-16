@@ -11,7 +11,7 @@ import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import ProcessLoader from "../../loader/loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
 import "./Broomstick.css";
 import GlobalMod from "../../../objects/global";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
@@ -495,28 +495,8 @@ class Broomstick extends Component {
     let loader = this.state;
     return (
       <div>
-        <div className="row">
-          
-        <div className="mr-2 mb-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Undo Zoom</h6>  <FontAwesomeIcon
-                  icon={faUndo}
-                  onClick={() => {
-                    this.refreshChart();
-                  }}
-                />
-                  {/* <div className="_summaryLabelBig">
-                  
-                  </div> */}
-                </div>
-              </div>
-            </div>
-
-
-
-
-
+        <div className="row" style={{justifyContent:"space-between"}}>
+      
             <div className="mr-2 mb-2">
               <div className="statusCard">
                 <div className="card-body">
@@ -527,11 +507,30 @@ class Broomstick extends Component {
                 </div>
               </div>
             </div>
-          <div className="col-lg-2 mb-3">
+            <div className="mb-3">
             <h6>Broomstick Hookload Document</h6>
 
             {loader.isProcess ? <ProcessLoader /> : ""}
           </div>
+            <div className="form-inline m-1">
+            <div className="eVumaxPanelController" style={{ width: "150px" }}>
+
+             
+              <label className=" ml-1 mr-2" onClick={() => {
+                this.refreshChart();
+              }} style={{ cursor: "pointer" }}>Undo Zoom</label>  <FontAwesomeIcon
+                icon={faSearchMinus}
+                size="lg"
+                onClick={() => {
+                  this.refreshChart();
+                }}
+              />
+
+            </div>
+
+
+          </div>
+         
           {/* <div className="col-lg-10">
             <div className="float-right mr-2">
               <FontAwesomeIcon
@@ -546,7 +545,7 @@ class Broomstick extends Component {
 
         <div className="row">
           <label
-            style={{ paddingLeft: "20px", paddingRight: "15px" }}
+            style={{ paddingLeft: "20px", paddingRight: "15px",alignSelf:"flex-end" }}
           >Run No.</label>
 
 
