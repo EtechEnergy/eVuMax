@@ -736,21 +736,32 @@ class TripConnSummary extends Component {
     return (
       <>
 
-        <div className="row ml-1 mr-1">
+        <div className="row ml-1 mr-1" style={{justifyContent:"space-between"}}>
           {/* <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
             </div>
           </div> */}
-          <div className="mr-2 ">
-            <div className="statusCard_">
+          <div className="mr-2">
+            <div className="statusCard">
               <div className="card-body">
-                <h6 className="card-subtitle mb-2">Real Time</h6> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-                {/* <div className="_summaryLabelBig">
-                  
-                  </div> */}
+                <h6 className="card-subtitle mb-2">Well Name</h6>
+                <div className="_summaryLabelBig">
+                  {this.state.WellName}
+                </div>
               </div>
             </div>
+          </div>
+          <div className="form-inline m-1">
+            <div className="eVumaxPanelController" style={{ width: "140px" }}>
+
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+
+
+            </div>
+
+
           </div>
           {/* <div className="mr-2 ">
               <div className="statusCard_">
@@ -766,16 +777,7 @@ class TripConnSummary extends Component {
               </div>
             </div> */}
 
-          <div className="mr-2">
-            <div className="statusCard">
-              <div className="card-body">
-                <h6 className="card-subtitle mb-2">Well Name</h6>
-                <div className="_summaryLabelBig">
-                  {this.state.WellName}
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
 
         </div>
@@ -862,8 +864,8 @@ class TripConnSummary extends Component {
               className="row mt-5"
               id="tripConnections"
               style={{
-                height: "calc(100vh - 450px)",
-                width: "calc(100vw - 200px)",
+                height: "calc(100vh - 500px)",
+                width: "calc(100vw - 100px)",
                 backgroundColor: "transparent",
               }}
             >
@@ -1004,7 +1006,7 @@ class TripConnSummary extends Component {
                 <Grid
                   className="Table_Grid"
                   style={{
-                    maxHeight: "450px",
+                    maxHeight: "400px",
                     // height: "450px",
                     width: "90%",
                   }}
