@@ -119,21 +119,29 @@ export class DrillingSummary extends Component {
   }
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
     let realtimeStatus: boolean = paramRefreshHrs;
 
-    this.setState({
+    await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
     });
-
+    alert(paramDataSelector.selectedval);
     this.selectionType = paramDataSelector.selectedval;
     this.fromDate = paramDataSelector.fromDate;
     this.toDate = paramDataSelector.toDate;
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
+
+
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+      this.loadDrlgSummary();
+    }
 
     // if (!realtimeStatus) {
     //   clearInterval(this.intervalID);

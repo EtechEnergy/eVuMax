@@ -110,7 +110,7 @@ class DrlgConnSummary2 extends Component {
     TargetTime: 0,
     RigCost: 0,
     ShowComments: false,
-    isRealTime: true as boolean,
+    isRealTime: false as boolean,
     objDataSelector: new DataSelector_(),
 
   };

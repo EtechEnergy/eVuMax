@@ -188,12 +188,12 @@ class DrlgConnSummary extends Component {
   };
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
-    alert(paramRefreshHrs);
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+    //alert(paramRefreshHrs);
 
     let realtimeStatus: boolean = paramRefreshHrs;
 
-    this.setState({
+    await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
     });
@@ -206,7 +206,12 @@ class DrlgConnSummary extends Component {
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
 
-    clearInterval(this.intervalID);
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+      this.loadConnections();
+    }
 
     //alert(this.fromDate + " " + this.toDate);
 
@@ -757,7 +762,7 @@ class DrlgConnSummary extends Component {
     return (
       <>
         <div className="row ml-1 mr-1" style={{ justifyContent: "space-between" }}>
-        <div className="mr-2">
+          <div className="mr-2">
             <div className="statusCard">
               <div className="card-body">
                 <h6 className="card-subtitle mb-2">Well Name</h6>
@@ -778,7 +783,7 @@ class DrlgConnSummary extends Component {
 
 
           </div>
-        
+
 
         </div>
 
