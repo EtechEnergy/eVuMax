@@ -23,9 +23,9 @@ import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
 import "./DataSelector.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIndent, faChartArea, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faIndent, faChartArea, faClock, fas } from "@fortawesome/free-solid-svg-icons";
 
-import { DateTimePicker } from "@progress/kendo-react-all";
+import { DateTimePicker, Label } from "@progress/kendo-react-all";
 import { RadioButton, NumericTextBox } from "@progress/kendo-react-inputs";
 
 import GlobalMod from "../../objects/global";
@@ -94,12 +94,13 @@ class DataSelector extends Component<IProps> {
 
   }
   state = {
-     selectedval: "-1",
-     objDataSelector: this.props.objDataSelector,
-     Warnings:""
-};
+    selectedval: "-1",
+    objDataSelector: this.props.objDataSelector,
+    Warning: "",
+    showWarning: false
+  };
   //=========================
-  
+
   WellId: string = "";
   Mnemonic: string = "DEPTH";
 
@@ -230,10 +231,10 @@ class DataSelector extends Component<IProps> {
   //   } catch (error) { }
   // };
 
-  selectorChanged = (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number) => {
+  selectorChanged = (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pApplyRefreshHrs?: boolean) => {
     try {
 
-
+      alert(pApplyRefreshHrs);
       let objDataSelector: DataSelector_ = new DataSelector_();
       objDataSelector.selectedval = ptype;
       objDataSelector.fromDate = pfromdate;
@@ -246,7 +247,11 @@ class DataSelector extends Component<IProps> {
       this.setState({ objDataSelector: objDataSelector })
 
       //this.objChart.setSelectorDateRange(this.state.objDataSelector.fromDate, this.state.objDataSelector.toDate);
-      this.props.selectionChanged(this.state.objDataSelector);
+      if (pApplyRefreshHrs == true) {
+        this.props.selectionChanged(this.state.objDataSelector, true);
+      } else {
+        this.props.selectionChanged(this.state.objDataSelector, false);
+      }
     } catch (error) { }
   };
 
@@ -349,9 +354,9 @@ class DataSelector extends Component<IProps> {
   render() {
     return (
       <React.Fragment>
-        
+
         <div style={{ height: "90px", display: "flex" }}>
-        
+
           <div
             style={{
               height: "100%",
@@ -359,7 +364,7 @@ class DataSelector extends Component<IProps> {
               display: "inline-block",
             }}
           >
-            
+
             <div
               id="tab1"
               className="selected"
@@ -603,6 +608,7 @@ class DataSelector extends Component<IProps> {
               float: "right",
             }}
           >
+            <Label className="mr-3" >Last</Label>
             <ComboBox data={[12, 24]} allowCustom={true}
               value={this.state.objDataSelector.refreshHrs}
               // onChange={(e) => {
@@ -611,22 +617,23 @@ class DataSelector extends Component<IProps> {
               onChange={(e) => this.handleChange(e, "refreshHrs")}
 
             />
+            <Label className="mr-3 ml-3" >Hrs</Label>
             <button
               type="button"
               onClick={() => {
                 this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
-                  , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth);
+                  , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth, true);
               }}
               className="btn-custom btn-custom-primary ml-5 mr-1"
             >
               Apply
             </button>
-            
+
           </div>
-         
+
         </div>
 
-        <div id="warning" style={{ paddingBottom: "15px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
+        {this.state.showWarning && <div id="warning" style={{ paddingBottom: "15px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} > {this.state.Warning} </label> </div>}
       </React.Fragment>
     );
   }
@@ -635,16 +642,28 @@ class DataSelector extends Component<IProps> {
     try {
       //Populate the data series with this data
       this.objLine.Data.slice(0, this.objLine.Data.length);
-      if(paramData.length==0 || paramData.length == undefined || paramData.length == null){
-       // if (this.state.Warnings.trim() != "") {
-          $("#warning").css("backgroundColor", "#ffb74d");
-          $("#lblWarning").text("No data available for dataselector");
-       // }
+      if (paramData.length == 0 || paramData.length == undefined || paramData.length == null) {
+        this.setState({
+          Warning: "No data available for dataselector",
+          showWarning: true
+        });
+
+        // if (this.state.Warnings.trim() != "") {
+        $("#warning").css("backgroundColor", "#ffb74d");
+        // $("#lblWarning").text("No data available for dataselector");
+        // }
         // else {
         //   $("#warning").css("backgroundColor", "transparent");
         //   $("#lblWarning").text("");
         // }
-      } 
+      } else {
+        this.setState({
+          Warning: "",
+          showWarning: false
+        });
+        $("#warning").css("backgroundColor", "transparent");
+        //$("#lblWarning").text("");
+      }
 
 
       for (let i = 0; i < paramData.length; i++) {

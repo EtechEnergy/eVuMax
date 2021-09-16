@@ -73,7 +73,7 @@ export class DrillingSummary extends Component {
     isProcess: false,
     grdNumericSummary: [] as any,
     grdOffsetNumericSummary: [] as any,
-    isRealTime: true as boolean,
+    isRealTime: false as boolean,
     objDataSelector: new DataSelector_(),
   };
 
@@ -90,7 +90,12 @@ export class DrillingSummary extends Component {
 
   componentDidMount() {
     //initialize chart
-    //this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+    // if (this.state.isRealTime) {
+    //   this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+    // } else {
+    //   clearInterval(this.intervalID);
+    // }
+
 
 
     this.initilizeCharts();
@@ -114,13 +119,13 @@ export class DrillingSummary extends Component {
   }
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_) => {
+  selectionChanged = (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
-   
-    console.log("new DataSelector", paramDataSelector);
+    let realtimeStatus: boolean = paramRefreshHrs;
+
     this.setState({
       objDataSelector: paramDataSelector,
-      isRealTime: false
+      isRealTime: realtimeStatus
     });
 
     this.selectionType = paramDataSelector.selectedval;
@@ -130,7 +135,10 @@ export class DrillingSummary extends Component {
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
 
-    clearInterval(this.intervalID);
+    // if (!realtimeStatus) {
+    //   clearInterval(this.intervalID);
+    // }
+
 
     this.loadDrlgSummary();
   }
@@ -1094,13 +1102,16 @@ export class DrillingSummary extends Component {
     this.setState({ selected: e.selected });
   };
 
-  handleToggleSwitch = () => {
+  handleToggleSwitch = async () => {
 
-    this.setState({ isRealTime: !this.state.isRealTime });
+    await this.setState({ isRealTime: !this.state.isRealTime });
+
+
     if (this.state.isRealTime) {
-      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 10000);
     } else {
       clearInterval(this.intervalID);
+      this.loadDrlgSummary();
     }
   };
 
@@ -1154,7 +1165,7 @@ export class DrillingSummary extends Component {
 
   loadDrlgSummary = () => {
     try {
-
+      //alert("loadDrlgSumm");
       Util.StatusInfo("Getting data from server   ");
       this.setState({
         isProcess: true,
@@ -1221,7 +1232,7 @@ export class DrillingSummary extends Component {
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
       let paramLastHrs: BrokerParameter = new BrokerParameter(
-        "lastHrs", this.refreshHrs.toString()
+        "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
 
@@ -1510,35 +1521,35 @@ export class DrillingSummary extends Component {
 
     return (
       <div>
-        <div className="row" style={{justifyContent:"space-between"}}>
-        <div className="form-inline m-1 flex-item" >
-          <div className="eVumaxPanelController" style={{width:"180px"}}>
-           
+        <div className="row" style={{ justifyContent: "space-between" }}>
+          <div className="form-inline m-1">
+            <div className="eVumaxPanelController" style={{ width: "180px" }}>
+
               <label className="summaryTitle mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
-              
-       
-          </div>
-         
-          <div className="eVumaxPanelController ml-1" style={{width:"170px"}}>
-            <div>
-              <label className="summaryTitle mr-2">Undo Zoom</label>  <FontAwesomeIcon
+
+
+            </div>
+
+            <div className="eVumaxPanelController ml-1" style={{ width: "170px" }}>
+              <div>
+                <label className="summaryTitle mr-2">Undo Zoom</label>  <FontAwesomeIcon
                   icon={faSearchMinus}
                   onClick={() => {
                     this.refreshROPLineChart();
                   }}
                 />
-             
-              
-            </div>
-           
-          </div>
-        </div>
-        <div className="flex-item" >
-          
-          <div className="drillingSummaryContainer">
 
-          {/* <div className="col-lg-6 mb-2" >
+
+              </div>
+
+            </div>
+          </div>
+          <div className="" >
+
+            <div className="drillingSummaryContainer" >
+
+              {/* <div className="col-lg-6 mb-2" >
               <div className="form-inline" style={{ justifyContent: "flex-start" }}>
                 <label style={{ marginRight: "20px" }}>Realtime</label>
                 <div >
@@ -1558,71 +1569,71 @@ export class DrillingSummary extends Component {
 
             <div className="col-lg-1">
              {/* refresh icon */}
-            {/* </div> */}
-           
-           
+              {/* </div> */}
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Rig Name</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objSummaryData.RigName}
+
+
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Rig Name</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objSummaryData.RigName}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Well Name</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objSummaryData.WellName}
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Well Name</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objSummaryData.WellName}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Depth In</h6>
-                  <div className="_summaryLabelBig">
-                    {isNaN(Number(this.state.objSummaryData.MainDepthIn))
-                      ? 0.0
-                      : Number(this.state.objSummaryData.MainDepthIn).toFixed(
-                        2
-                      )}
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Depth In</h6>
+                    <div className="_summaryLabelBig">
+                      {isNaN(Number(this.state.objSummaryData.MainDepthIn))
+                        ? 0.0
+                        : Number(this.state.objSummaryData.MainDepthIn).toFixed(
+                          2
+                        )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Depth Out</h6>
-                  <div className="_summaryLabelBig">
-                    {isNaN(Number(this.state.objSummaryData.MainDepthOut))
-                      ? 0.0
-                      : Number(this.state.objSummaryData.MainDepthOut).toFixed(
-                        2
-                      )}
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Depth Out</h6>
+                    <div className="_summaryLabelBig">
+                      {isNaN(Number(this.state.objSummaryData.MainDepthOut))
+                        ? 0.0
+                        : Number(this.state.objSummaryData.MainDepthOut).toFixed(
+                          2
+                        )}
+                    </div>
                   </div>
                 </div>
               </div>
+
+
+
+
             </div>
-
-
-
 
           </div>
-         
         </div>
-        </div>
-       
-        
+
+
         {/* <div className="row">
           <div className="col-xl-4 ">
             <div className="statusCard">
@@ -2062,9 +2073,9 @@ export class DrillingSummary extends Component {
                   <div
                     id="roplinechart"
                     style={{
-                      height: "calc(50vh)",
+                      height: "calc(45vh)",
                       width: "calc(95vw)",
-                      marginLeft: "-100px",
+                      marginLeft: "-50px",
                       float: "left",
                       backgroundColor: "transparent",
                     }}
