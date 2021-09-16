@@ -215,7 +215,7 @@ class DrlgConnSummary extends Component {
 
     //alert(this.fromDate + " " + this.toDate);
 
-    this.loadConnections();
+    //this.loadConnections();
   }
 
   setData = () => {

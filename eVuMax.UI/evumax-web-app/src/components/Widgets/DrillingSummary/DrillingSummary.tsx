@@ -148,7 +148,7 @@ export class DrillingSummary extends Component {
     // }
 
 
-    this.loadDrlgSummary();
+    //this.loadDrlgSummary();
   }
 
 
