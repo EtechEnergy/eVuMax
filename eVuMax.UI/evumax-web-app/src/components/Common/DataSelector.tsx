@@ -231,7 +231,7 @@ class DataSelector extends Component<IProps> {
   //   } catch (error) { }
   // };
 
-  selectorChanged = (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pApplyRefreshHrs?: boolean) => {
+  selectorChanged = async (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pApplyRefreshHrs?: boolean) => {
     try {
 
 
@@ -244,7 +244,7 @@ class DataSelector extends Component<IProps> {
       objDataSelector.refreshHrs = this.state.objDataSelector.refreshHrs;
 
 
-      this.setState({ objDataSelector: objDataSelector })
+      await this.setState({ objDataSelector: objDataSelector })
 
       //this.objChart.setSelectorDateRange(this.state.objDataSelector.fromDate, this.state.objDataSelector.toDate);
       if (pApplyRefreshHrs == true) {
@@ -620,8 +620,13 @@ class DataSelector extends Component<IProps> {
             <Label className="mr-3 ml-3" >Hrs</Label>
             <button
               type="button"
+              // onClick={() => {
+              //   this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
+              //     , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth, true);
+              // }}
               onClick={() => {
-                this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
+                //realtime 
+                this.selectorChanged("-1", this.state.objDataSelector.fromDate
                   , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth, true);
               }}
               className="btn-custom btn-custom-primary ml-5 mr-1"
