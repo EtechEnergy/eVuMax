@@ -34,7 +34,7 @@ import {
 } from "@progress/kendo-react-grid";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Util } from "../../../Models/eVuMax";
 
 import DataSelector_ from "../../Common/DataSelector_";
@@ -1511,8 +1511,32 @@ export class DrillingSummary extends Component {
     return (
       <div>
         <div className="row">
+        <div className="col-xl-5 form-inline m-1" style={{justifyContent:"flex-start"}}>
+          <div className="eVumaxPanelController" style={{width:"180px"}}>
+           
+              <label className="summaryTitle mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+              
+       
+          </div>
+         
+          <div className="eVumaxPanelController ml-1" style={{width:"170px"}}>
+            <div>
+              <label className="summaryTitle mr-2">Undo Zoom</label>  <FontAwesomeIcon
+                  icon={faSearchMinus}
+                  onClick={() => {
+                    this.refreshROPLineChart();
+                  }}
+                />
+             
+              
+            </div>
+           
+          </div>
+        </div>
+        <div className="col-xl-6" style={{justifyContent:"flex-end"}}>
           
-          <div className="drillingSummaryContainer">
+          <div className="drillingSummaryContainer" style={{justifyContent:"flex-end"}}>
 
           {/* <div className="col-lg-6 mb-2" >
               <div className="form-inline" style={{ justifyContent: "flex-start" }}>
@@ -1596,30 +1620,9 @@ export class DrillingSummary extends Component {
           </div>
          
         </div>
-        <div className="row m-1" style={{justifyContent:"flex-end"}}>
-          <div className="eVumaxPanelController" style={{width:"180px"}}>
-            <div>
-              <label className="summaryTitle mr-2">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
-              
-            </div>
-           
-          </div>
-         
-          <div className="eVumaxPanelController ml-1" style={{width:"100px"}}>
-            <div>
-              <label className="summaryTitle mr-2">Reset</label> 
-              <FontAwesomeIcon
-                  icon={faUndo}
-                  onClick={() => {
-                    this.refreshROPLineChart();
-                  }}
-                />
-              
-            </div>
-           
-          </div>
         </div>
+       
+        
         {/* <div className="row">
           <div className="col-xl-4 ">
             <div className="statusCard">

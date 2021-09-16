@@ -395,6 +395,7 @@ div.k-time-tab.k-datetime-wrap {
   /* margin: 5px; */
   /* display: block; */
   line-height: 1.4;
+  display: inline-block;
   letter-spacing: 0.2px;
   background-color: rgba(189, 189, 189, 0.1);
   padding: 10px 8px 10px 17px;
