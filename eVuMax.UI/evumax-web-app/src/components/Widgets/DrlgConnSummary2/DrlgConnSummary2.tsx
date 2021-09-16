@@ -131,11 +131,14 @@ class DrlgConnSummary2 extends Component {
   toDate: Date = null;
   fromDepth: number = 0;
   toDepth: number = 0;
+  refreshHrs: number = 24;
 
 
-  componentWillUnmount() {
-    clearInterval(this.intervalID);
-  }
+  // componentWillUnmount() {
+  //   clearInterval(this.intervalID);
+  // }
+
+
   componentDidMount() {
     try {
 
@@ -433,10 +436,10 @@ class DrlgConnSummary2 extends Component {
       );
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
-      let paramLastHrs: BrokerParameter = new BrokerParameter(
-        "lastHrs", "24"
+      let paramRefreshHrs: BrokerParameter = new BrokerParameter(
+        "refreshHrs", "24"
       );
-      objBrokerRequest.Parameters.push(paramLastHrs);
+      objBrokerRequest.Parameters.push(paramRefreshHrs);
 
 
       axios
@@ -573,13 +576,13 @@ class DrlgConnSummary2 extends Component {
   // };
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_) => {
+  selectionChanged = (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
     //alert("new dataSelector Data");
-    console.log("new DataSelector", paramDataSelector);
+    let realtimeStatus: boolean = paramRefreshHrs;
     this.setState({
       objDataSelector: paramDataSelector,
-      isRealTime: false
+      isRealTime: realtimeStatus
     });
     this.selectionType = paramDataSelector.selectedval;
     this.fromDate = paramDataSelector.fromDate;
@@ -593,21 +596,27 @@ class DrlgConnSummary2 extends Component {
   }
 
 
+
   radioData = [
     { label: "User Comments", value: "User Comments", className: "" },
     { label: "Time Log Remarks", value: "Time Log Remarks", className: "" },
   ];
 
   handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
-  handleToggleSwitch = () => {
 
-    this.setState({ isRealTime: !this.state.isRealTime });
+  handleToggleSwitch = async () => {
+
+    await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
       clearInterval(this.intervalID);
+      this.loadConnections();
     }
   };
+
+
+
 
   render() {
     return (
