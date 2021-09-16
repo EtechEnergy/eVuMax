@@ -629,21 +629,32 @@ class DrlgConnSummary2 extends Component {
   render() {
     return (
       <>
-        <div className="row ml-1 mr-1">
+        <div className="row ml-1 mr-1" style={{justifyContent:"space-between"}}>
           {/* <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
             </div>
           </div> */}
-          <div className="mr-2 ">
-            <div className="statusCard_">
+           <div className="mr-2">
+            <div className="statusCard">
               <div className="card-body">
-                <h6 className="card-subtitle mb-2">Real Time</h6> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-                {/* <div className="_summaryLabelBig">
-                  
-                  </div> */}
+                <h6 className="card-subtitle mb-2">Well Name</h6>
+                <div className="_summaryLabelBig">
+                  {this.state.WellName}
+                </div>
               </div>
             </div>
+          </div>
+          
+          <div className="form-inline m-1">
+            <div className="eVumaxPanelController" style={{ width: "150px" }}>
+
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+             
+            </div>
+
+
           </div>
           {/* <div className="mr-2 ">
               <div className="statusCard_">
@@ -659,16 +670,7 @@ class DrlgConnSummary2 extends Component {
               </div>
             </div> */}
 
-          <div className="mr-2">
-            <div className="statusCard">
-              <div className="card-body">
-                <h6 className="card-subtitle mb-2">Well Name</h6>
-                <div className="_summaryLabelBig">
-                  {this.state.WellName}
-                </div>
-              </div>
-            </div>
-          </div>
+         
 
 
 
