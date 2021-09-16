@@ -750,22 +750,22 @@ class DrlgConnSummary extends Component {
   render() {
     return (
       <>
-        <div className="row ml-1 mr-1">
-          <div className="col-lg-12 eVumaxPanelTitle">
-            <div>
-              <label className="summaryTitle">{this.state.WellName}</label>
-            </div>
-          </div>
-        </div>
-        <div className="row ml-1 mr-1 mt-2" style={{ justifyContent: "flex-end" }}>
-          <div className="eVumaxPanelController" style={{ width: "180px" }}>
+        <div className="row ml-1 mr-1" style={{justifyContent:"space-between"}}>
+        <div className="eVumaxPanelController" style={{ width: "180px" }}>
             <div>
               <label className="summaryTitle mr-2">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
 
             </div>
           </div>
+          <div className="eVumaxPanelTitle" style={{minWidth:"150px"}}>
+            <div>
+              <label className="summaryTitle">{this.state.WellName}</label>
+            </div>
+          </div>
+         
         </div>
+       
         <div>
           <div>
             <TabStrip
