@@ -757,18 +757,7 @@ class DrlgConnSummary extends Component {
     return (
       <>
         <div className="row ml-1 mr-1" style={{ justifyContent: "space-between" }}>
-          <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "180px" }}>
-
-              <label className="summaryTitle mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
-
-
-            </div>
-
-
-          </div>
-          <div className="mr-2">
+        <div className="mr-2">
             <div className="statusCard">
               <div className="card-body">
                 <h6 className="card-subtitle mb-2">Well Name</h6>
@@ -778,6 +767,18 @@ class DrlgConnSummary extends Component {
               </div>
             </div>
           </div>
+          <div className="form-inline m-1">
+            <div className="eVumaxPanelController" style={{ width: "140px" }}>
+
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+
+
+            </div>
+
+
+          </div>
+        
 
         </div>
 
