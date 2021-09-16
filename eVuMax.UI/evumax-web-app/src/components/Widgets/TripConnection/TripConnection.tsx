@@ -436,7 +436,7 @@ class TripConnSummary extends Component {
     ////Nishant
     selectionChanged = (paramDataSelector: DataSelector_) => {
 
-        alert("new dataSelector Data");
+        //alert("new dataSelector Data");
         console.log("new DataSelector", paramDataSelector);
         this.setState({
             objDataSelector: paramDataSelector,

@@ -922,7 +922,7 @@ export class ROPSummaryPlot extends Component {
   ////Nishant
   selectionChanged = (paramDataSelector: DataSelector_) => {
 
-    alert("new dataSelector Data");
+    //alert("new dataSelector Data");
     console.log("new DataSelector", paramDataSelector);
     this.setState({
       objDataSelector: paramDataSelector,
@@ -967,7 +967,7 @@ export class ROPSummaryPlot extends Component {
           <div className="drillingSummaryContainer">
 
 
-          <div className="mr-2">
+            <div className="mr-2">
               <div className="statusCard">
                 <div className="card-body">
                   <h6 className="card-subtitle mb-2">Real Time</h6>
@@ -981,11 +981,11 @@ export class ROPSummaryPlot extends Component {
               <div className="statusCard">
                 <div className="card-body">
                   <h6 className="card-subtitle mb-2">Undo Zoom</h6>  <FontAwesomeIcon
-                  icon={faUndo}
-                  onClick={() => {
-                    this.refreshChart();
-                  }}
-                />
+                    icon={faUndo}
+                    onClick={() => {
+                      this.refreshChart();
+                    }}
+                  />
                   {/* <div className="_summaryLabelBig">
                   
                   </div> */}
