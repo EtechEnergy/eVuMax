@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eVuMax.DataBroker.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using VuMaxDR.Data.Objects;
 using System.Data;
 using Newtonsoft.Json;
 using System.Drawing;
+
 
 
 namespace eVuMax.DataBroker.Summary.DrlgConn
@@ -137,9 +139,28 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 VuMaxDR.Data.Objects.TimeLog objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
 
 
+                //WIP PRATH  999999999999999
+                string lastError = "";
+                DateTime localFromDate = new DateTime();
+                DateTime localToDate = new DateTime();
+                VuMaxDR.Data.Objects.Well objWell = VuMaxDR.Data.Objects.Well.loadObject(ref paramRequest.objDataService, wellId, ref lastError);
+
+
+                if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
+                {
+                    localFromDate = Util.convertWellToLocalTimeZone(fromDate, objWell);
+                }
+
+                if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
+                {
+                    localToDate = Util.convertWellToLocalTimeZone(toDate, objWell);
+                }
+                //
+
+
                 if (selectionType == "-1")
                 {
-
+               
                     if (objTimeLog != null)
                     {
 
@@ -267,7 +288,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                 if (selectionType == "0")
                 {
-                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
+                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
                 }
                 else
                 {
