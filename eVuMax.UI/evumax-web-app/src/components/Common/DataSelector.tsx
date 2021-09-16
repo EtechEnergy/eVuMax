@@ -89,7 +89,9 @@ class DataSelector extends Component<IProps> {
   constructor(props: any) {
     super(props);
     this.__parentRef = props;
-    this.WellId = props.WellId;
+    this.WellId = this.props.wellID;
+
+
   }
   state = { selectedval: "-1", objDataSelector: this.props.objDataSelector };
   //=========================
@@ -107,6 +109,7 @@ class DataSelector extends Component<IProps> {
   //Initialize chart after component was mounted
   componentDidMount() {
     try {
+
       //Prepare chart object
       //initialize chart
       this.objChart = new Chart(this, "SelectorChart");
@@ -641,7 +644,6 @@ class DataSelector extends Component<IProps> {
     try {
 
       Util.StatusInfo("Getting data from the server  ");
-      this.WellId = "us_1395675560";
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Common";
       objBrokerRequest.Broker = "TimeData";
@@ -651,6 +653,9 @@ class DataSelector extends Component<IProps> {
         "WellId",
         this.WellId
       );
+
+
+
       //PRATH 26-11-2020
       // let paramChannelList: BrokerParameter = new BrokerParameter(
       //   "ChannelList",

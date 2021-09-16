@@ -126,12 +126,13 @@ class DrlgConnSummary extends Component {
   toDate: Date = null;
   fromDepth: number = 0;
   toDepth: number = 0;
-
+  refreshHrs: number = 24;
 
 
   componentDidMount() {
     try {
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
+      alert("drlgconnsummy-" + this.WellId);
 
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");
@@ -200,7 +201,7 @@ class DrlgConnSummary extends Component {
     this.toDate = new Date(paramDataSelector.toDate);
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
-    //this.refreshHrs = paramDataSelector.refreshHrs;
+    this.refreshHrs = paramDataSelector.refreshHrs;
 
     clearInterval(this.intervalID);
 
@@ -359,9 +360,10 @@ class DrlgConnSummary extends Component {
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
       let paramLastHrs: BrokerParameter = new BrokerParameter(
-        "lastHrs", "1"
+        "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
+      alert(this.refreshHrs);
 
       axios
         .get(_gMod._getData, {
@@ -755,12 +757,12 @@ class DrlgConnSummary extends Component {
             </div>
           </div>
         </div>
-        <div className="row ml-1 mr-1 mt-2" style={{justifyContent:"flex-end"}}>
-          <div className="eVumaxPanelController" style={{width:"180px"}}>
+        <div className="row ml-1 mr-1 mt-2" style={{ justifyContent: "flex-end" }}>
+          <div className="eVumaxPanelController" style={{ width: "180px" }}>
             <div>
               <label className="summaryTitle mr-2">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
-                  
+
             </div>
           </div>
         </div>
