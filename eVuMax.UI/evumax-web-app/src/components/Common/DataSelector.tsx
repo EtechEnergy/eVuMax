@@ -93,9 +93,13 @@ class DataSelector extends Component<IProps> {
 
 
   }
-  state = { selectedval: "-1", objDataSelector: this.props.objDataSelector };
+  state = {
+     selectedval: "-1",
+     objDataSelector: this.props.objDataSelector,
+     Warnings:""
+};
   //=========================
-
+  
   WellId: string = "";
   Mnemonic: string = "DEPTH";
 
@@ -345,7 +349,9 @@ class DataSelector extends Component<IProps> {
   render() {
     return (
       <React.Fragment>
+        
         <div style={{ height: "90px", display: "flex" }}>
+        
           <div
             style={{
               height: "100%",
@@ -353,6 +359,7 @@ class DataSelector extends Component<IProps> {
               display: "inline-block",
             }}
           >
+            
             <div
               id="tab1"
               className="selected"
@@ -614,9 +621,12 @@ class DataSelector extends Component<IProps> {
             >
               Apply
             </button>
+            
           </div>
-
+         
         </div>
+
+        <div id="warning" style={{ paddingBottom: "15px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
       </React.Fragment>
     );
   }
@@ -625,6 +635,17 @@ class DataSelector extends Component<IProps> {
     try {
       //Populate the data series with this data
       this.objLine.Data.slice(0, this.objLine.Data.length);
+      if(paramData.length==0 || paramData.length == undefined || paramData.length == null){
+       // if (this.state.Warnings.trim() != "") {
+          $("#warning").css("backgroundColor", "#ffb74d");
+          $("#lblWarning").text("No data available for dataselector");
+       // }
+        // else {
+        //   $("#warning").css("backgroundColor", "transparent");
+        //   $("#lblWarning").text("");
+        // }
+      } 
+
 
       for (let i = 0; i < paramData.length; i++) {
         let objVal: ChartData = new ChartData();
@@ -654,7 +675,7 @@ class DataSelector extends Component<IProps> {
         this.WellId
       );
 
-alert(this.WellId);
+
 
       //PRATH 26-11-2020
       // let paramChannelList: BrokerParameter = new BrokerParameter(
