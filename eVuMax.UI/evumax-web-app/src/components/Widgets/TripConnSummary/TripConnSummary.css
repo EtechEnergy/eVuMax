@@ -62,7 +62,7 @@
 }
 /* vimal */
 .form-inline label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: flex-end;
   margin-bottom: 0;
