@@ -96,7 +96,8 @@ class DataSelector extends Component<IProps> {
   state = {
      selectedval: "-1",
      objDataSelector: this.props.objDataSelector,
-     Warnings:""
+     Warning:"",
+     showWarning:false
 };
   //=========================
   
@@ -626,7 +627,7 @@ class DataSelector extends Component<IProps> {
          
         </div>
 
-        <div id="warning" style={{ paddingBottom: "15px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
+       {this.state.showWarning  && <div id="warning" style={{ paddingBottom: "15px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} > {this.state.Warning} </label> </div>}
       </React.Fragment>
     );
   }
@@ -636,15 +637,27 @@ class DataSelector extends Component<IProps> {
       //Populate the data series with this data
       this.objLine.Data.slice(0, this.objLine.Data.length);
       if(paramData.length==0 || paramData.length == undefined || paramData.length == null){
-       // if (this.state.Warnings.trim() != "") {
+       this.setState({
+         Warning:"No data available for dataselector",
+         showWarning:true
+     });
+
+        // if (this.state.Warnings.trim() != "") {
           $("#warning").css("backgroundColor", "#ffb74d");
-          $("#lblWarning").text("No data available for dataselector");
+          // $("#lblWarning").text("No data available for dataselector");
        // }
         // else {
         //   $("#warning").css("backgroundColor", "transparent");
         //   $("#lblWarning").text("");
         // }
-      } 
+      }else{
+        this.setState({
+          Warning:"",
+          showWarning:false
+      });
+          $("#warning").css("backgroundColor", "transparent");
+           //$("#lblWarning").text("");
+      }
 
 
       for (let i = 0; i < paramData.length; i++) {
