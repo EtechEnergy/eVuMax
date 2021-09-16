@@ -170,7 +170,7 @@ class DataSelector extends Component<IProps> {
       //fuck=================
       let objDataSelector: DataSelector_ = new DataSelector_();
       objDataSelector = this.props.objDataSelector;
-    
+
       // objDataSelector.fromDate = null;
       // objDataSelector.toDate = null;
 
@@ -185,7 +185,7 @@ class DataSelector extends Component<IProps> {
 
 
 
-     
+
       //
       // this.objChart.setSelectorDateRange(
       //   this.__parentRef.fromDate,
@@ -592,7 +592,7 @@ class DataSelector extends Component<IProps> {
             <button
               type="button"
               onClick={() => {
-                
+
                 //call the parent to indicate the change
 
                 // this.__parentRef.selectionChanged(
