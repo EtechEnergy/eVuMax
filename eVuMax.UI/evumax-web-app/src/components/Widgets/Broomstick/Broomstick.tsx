@@ -496,12 +496,43 @@ class Broomstick extends Component {
     return (
       <div>
         <div className="row">
+          
+        <div className="mr-2 mb-2">
+              <div className="statusCard">
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-2">Undo Zoom</h6>  <FontAwesomeIcon
+                  icon={faUndo}
+                  onClick={() => {
+                    this.refreshChart();
+                  }}
+                />
+                  {/* <div className="_summaryLabelBig">
+                  
+                  </div> */}
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+            <div className="mr-2 mb-2">
+              <div className="statusCard">
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-2">Rig Name</h6>
+                  <div className="_summaryLabelBig">
+                    {this.state.objBroomstickData.WellName}
+                  </div>
+                </div>
+              </div>
+            </div>
           <div className="col-lg-2 mb-3">
             <h6>Broomstick Hookload Document</h6>
 
             {loader.isProcess ? <ProcessLoader /> : ""}
           </div>
-          <div className="col-lg-10">
+          {/* <div className="col-lg-10">
             <div className="float-right mr-2">
               <FontAwesomeIcon
                 icon={faUndo}
@@ -510,7 +541,7 @@ class Broomstick extends Component {
                 }}
               />
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="row">

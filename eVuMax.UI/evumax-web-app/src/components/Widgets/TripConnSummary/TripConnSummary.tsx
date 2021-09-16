@@ -722,16 +722,62 @@ class TripConnSummary extends Component {
 
     }
   }
+  handleToggleSwitch = () => {
+
+    this.setState({ isRealTime: !this.state.isRealTime });
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+    }
+  };
+
   render() {
     return (
       <>
 
         <div className="row ml-1 mr-1">
-          <div className="col-lg-12 eVumaxPanelTitle">
+          {/* <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
             </div>
-          </div>
+          </div> */}
+ <div className="mr-2 ">
+              <div className="statusCard_">
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-2">Real Time</h6> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+                  {/* <div className="_summaryLabelBig">
+                  
+                  </div> */}
+                </div>
+              </div>
+            </div>
+            {/* <div className="mr-2 ">
+              <div className="statusCard_">
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-2">Undo Zoom</h6>  <FontAwesomeIcon
+                  icon={faUndo}
+                  onClick={() => {
+                    this.refreshROPLineChart();
+                  }}
+                />
+                
+                </div>
+              </div>
+            </div> */}
+
+<div className="mr-2">
+              <div className="statusCard">
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-2">Well Name</h6>
+                  <div className="_summaryLabelBig">
+                    {this.state.WellName}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          
         </div>
 
         <TabStrip selected={this.state.selected} onSelect={this.handleSelect}  >
@@ -805,10 +851,10 @@ class TripConnSummary extends Component {
                 <label className="connInfo" style={{ marginRight: "20px" }}>
                   ({this.state.ExclConnCount}) Excluded Connections
                 </label>
-                <label style={{ marginRight: "20px" }}>Realtime</label>
+                {/* <label style={{ marginRight: "20px" }}>Realtime</label>
                 <div style={{ marginRight: "50px" }}>
                   <Switch></Switch>
-                </div>
+                </div> */}
               </div>
             </div>
 
