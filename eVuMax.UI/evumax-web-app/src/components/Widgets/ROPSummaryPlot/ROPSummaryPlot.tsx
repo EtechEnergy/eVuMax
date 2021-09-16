@@ -17,7 +17,7 @@ import * as utilFunc from "../../../utilFunctions/utilFunctions";
 import GlobalMod from "../../../objects/global";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
 
 import $ from "jquery";
 import { Util } from "../../../Models/eVuMax";
@@ -963,133 +963,133 @@ export class ROPSummaryPlot extends Component {
 
     return (
       <div>
-        <div className="row">
+        <div className="row mb-2" style={{justifyContent:"space-between"}}>
+          <div className="">
           <div className="drillingSummaryContainer">
 
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Real Time</h6>
-                  <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-                </div>
-              </div>
-            </div>
-
-
-            <div className="mr-2 ">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Undo Zoom</h6>  <FontAwesomeIcon
-                    icon={faUndo}
-                    onClick={() => {
-                      this.refreshChart();
-                    }}
-                  />
-                  {/* <div className="_summaryLabelBig">
-                  
-                  </div> */}
-                </div>
-              </div>
-            </div>
+          
 
 
 
 
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Rig Name</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objROPSummaryData.RigName}
-                  </div>
-                </div>
-              </div>
-            </div>
+<div className="mr-2">
+  <div className="statusCard">
+    <div className="card-body">
+      <h6 className="card-subtitle mb-2">Rig Name</h6>
+      <div className="_summaryLabelBig">
+        {this.state.objROPSummaryData.RigName}
+      </div>
+    </div>
+  </div>
+</div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Well Name</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objROPSummaryData.WellName}
-                  </div>
-                </div>
-              </div>
-            </div>
+<div className="mr-2">
+  <div className="statusCard">
+    <div className="card-body">
+      <h6 className="card-subtitle mb-2">Well Name</h6>
+      <div className="_summaryLabelBig">
+        {this.state.objROPSummaryData.WellName}
+      </div>
+    </div>
+  </div>
+</div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Offset Well</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objROPSummaryData.offSetWellName === ""
-                      ? "-"
-                      : this.state.objROPSummaryData.offSetWellName}
-                  </div>
-                </div>
-              </div>
-            </div>
+<div className="mr-2">
+  <div className="statusCard">
+    <div className="card-body">
+      <h6 className="card-subtitle mb-2">Offset Well</h6>
+      <div className="_summaryLabelBig">
+        {this.state.objROPSummaryData.offSetWellName === ""
+          ? "-"
+          : this.state.objROPSummaryData.offSetWellName}
+      </div>
+    </div>
+  </div>
+</div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Offset Depth In</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objROPSummaryData.offSetWellName == "" ? "" :
-                      (this.state.objROPSummaryData.offsetDepthIn >= 0 ? Number(this.state.objROPSummaryData.offsetDepthIn).toFixed(2) : "")
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
+<div className="mr-2">
+  <div className="statusCard">
+    <div className="card-body">
+      <h6 className="card-subtitle mb-2">Offset Depth In</h6>
+      <div className="_summaryLabelBig">
+        {this.state.objROPSummaryData.offSetWellName == "" ? "" :
+          (this.state.objROPSummaryData.offsetDepthIn >= 0 ? Number(this.state.objROPSummaryData.offsetDepthIn).toFixed(2) : "")
+        }
+      </div>
+    </div>
+  </div>
+</div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Offset Depth Out</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objROPSummaryData.offSetWellName == "" ? "" :
-                      (this.state.objROPSummaryData.offsetDepthOut >= 0 ? Number(this.state.objROPSummaryData.offsetDepthOut).toFixed(2) : "")
-                    }
-                  </div>
-                </div>
-                <div className="col-lg-12">
+<div className="mr-2">
+  <div className="statusCard">
+    <div className="card-body">
+      <h6 className="card-subtitle mb-2">Offset Depth Out</h6>
+      <div className="_summaryLabelBig">
+        {this.state.objROPSummaryData.offSetWellName == "" ? "" :
+          (this.state.objROPSummaryData.offsetDepthOut >= 0 ? Number(this.state.objROPSummaryData.offsetDepthOut).toFixed(2) : "")
+        }
+      </div>
+    </div>
+    <div className="col-lg-12">
 
-                </div>
-              </div>
-            </div>
+    </div>
+  </div>
+</div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Depth In</h6>
-                  <div className="_summaryLabelBig">
-                    {isNaN(Number(this.state.objROPSummaryData.fromDepth))
-                      ? 0.0
-                      : Number(this.state.objROPSummaryData.fromDepth).toFixed(
-                        2
-                      )}
-                  </div>
-                </div>
-              </div>
-            </div>
+<div className="mr-2">
+  <div className="statusCard">
+    <div className="card-body">
+      <h6 className="card-subtitle mb-2">Depth In</h6>
+      <div className="_summaryLabelBig">
+        {isNaN(Number(this.state.objROPSummaryData.fromDepth))
+          ? 0.0
+          : Number(this.state.objROPSummaryData.fromDepth).toFixed(
+            2
+          )}
+      </div>
+    </div>
+  </div>
+</div>
 
-            <div className="mr-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Depth Out</h6>
-                  <div className="_summaryLabelBig">
-                    {isNaN(Number(this.state.objROPSummaryData.toDepth))
-                      ? 0.0
-                      : Number(this.state.objROPSummaryData.toDepth).toFixed(2)}
-                  </div>
-                </div>
-              </div>
+<div className="mr-2">
+  <div className="statusCard">
+    <div className="card-body">
+      <h6 className="card-subtitle mb-2">Depth Out</h6>
+      <div className="_summaryLabelBig">
+        {isNaN(Number(this.state.objROPSummaryData.toDepth))
+          ? 0.0
+          : Number(this.state.objROPSummaryData.toDepth).toFixed(2)}
+      </div>
+    </div>
+  </div>
 
-            </div>
+</div>
+
+</div>
           </div>
+         
+          <div className="form-inline m-1">
+            <div className="eVumaxPanelController" style={{ width: "270px" }}>
+
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+              <label className=" ml-5 mr-2" onClick={() => {
+                this.refreshChart();
+              }} style={{ cursor: "pointer" }}>Undo Zoom</label>  <FontAwesomeIcon
+                icon={faSearchMinus}
+                size="lg"
+                onClick={() => {
+                  this.refreshChart();
+                }}
+              />
+
+            </div>
+
+
+          </div>
+
         </div>
         {/* Nishant 28/08/2021 */}
         {/* <div className="col-lg-12">
