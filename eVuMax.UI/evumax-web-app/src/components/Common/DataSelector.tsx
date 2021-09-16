@@ -234,7 +234,7 @@ class DataSelector extends Component<IProps> {
   selectorChanged = (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pApplyRefreshHrs?: boolean) => {
     try {
 
-      alert(pApplyRefreshHrs);
+
       let objDataSelector: DataSelector_ = new DataSelector_();
       objDataSelector.selectedval = ptype;
       objDataSelector.fromDate = pfromdate;

@@ -490,8 +490,8 @@ export class DrillingSummary extends Component {
 
       console.log(this.state.objSummaryData.ROPData);
 
-      Util.StatusSuccess("Last Depth retrived  " + this.state.objSummaryData.ROPData[this.state.objSummaryData.ROPData.length - 1].X);
-      Util.StatusReady();
+      // Util.StatusSuccess("Last Depth retrived  " + this.state.objSummaryData.ROPData[this.state.objSummaryData.ROPData.length - 1].X);
+      // Util.StatusReady();
 
       for (let i = 0; i < this.state.objSummaryData.ROPData.length; i++) {
         let objVal: ChartData = new ChartData();
