@@ -94,7 +94,7 @@ class ToolfaceSummary extends Component {
   }
 
   state = {
-    isRealTime: true as boolean,
+
     objDataSelector: new DataSelector_(),
     WellName: "",
     selected: 0,
@@ -202,6 +202,7 @@ class ToolfaceSummary extends Component {
     RotaryROP: 0,
     OutOfDrlgWindow: 0,
     OutOfROPWindow: 0,
+    isRealTime: false as boolean,
   };
 
   WellId: string = "";
@@ -218,17 +219,17 @@ class ToolfaceSummary extends Component {
   toDate: Date = null;
   fromDepth: number = 0;
   toDepth: number = 0;
+  refreshHrs: number = 24;
   _selectedItem: any;
 
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
-    //alert("new dataSelector Data");
-    console.log("new DataSelector", paramDataSelector);
-    this.setState({
+    let realtimeStatus: boolean = paramRefreshHrs;
+    await this.setState({
       objDataSelector: paramDataSelector,
-      isRealTime: false
+      isRealTime: realtimeStatus
     });
 
     this.selectionType = paramDataSelector.selectedval;
@@ -236,10 +237,14 @@ class ToolfaceSummary extends Component {
     this.toDate = paramDataSelector.toDate;
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
-    //this.refreshHrs = paramDataSelector.refreshHrs;
-    clearInterval(this.intervalID);
+    this.refreshHrs = paramDataSelector.refreshHrs;
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadData.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+      this.loadData();
+    }
 
-    this.loadData();
   }
 
 
@@ -1294,11 +1299,11 @@ class ToolfaceSummary extends Component {
         this.objUserSettings.ActualTVD.lineColor = util.getRandomColor();
       }
       //Nishant: Nis-PC 16-09-2021
-      if(this.objUserSettings.GeoDrlgWindowColor==""){
-        this.objUserSettings.GeoDrlgWindowColor=util.getRandomColor();
+      if (this.objUserSettings.GeoDrlgWindowColor == "") {
+        this.objUserSettings.GeoDrlgWindowColor = util.getRandomColor();
       }
-      if(this.objUserSettings.ROPDrlgWindowColor==""){
-        this.objUserSettings.ROPDrlgWindowColor=util.getRandomColor();
+      if (this.objUserSettings.ROPDrlgWindowColor == "") {
+        this.objUserSettings.ROPDrlgWindowColor = util.getRandomColor();
       }
       //****************** */
 
@@ -1446,6 +1451,16 @@ class ToolfaceSummary extends Component {
         "ToDepth",
         this.toDepth.toString()
       );
+
+      let paramIsRealTime: BrokerParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
+      objBrokerRequest.Parameters.push(paramIsRealTime);
+
+      let paramRefreshHrs: BrokerParameter = new BrokerParameter(
+        "refreshHrs", this.refreshHrs.toString()
+      );
+      objBrokerRequest.Parameters.push(paramRefreshHrs);
+
+
       objBrokerRequest.Parameters.push(paramToDepth);
 
       axios
@@ -2458,15 +2473,20 @@ class ToolfaceSummary extends Component {
       this.objAdnlChart.reDraw();
     } catch (error) { }
   };
-  handleToggleSwitch = () => {
+  handleToggleSwitch = async () => {
 
-    this.setState({ isRealTime: !this.state.isRealTime });
+    await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadData.bind(this), 15000);
     } else {
       clearInterval(this.intervalID);
+      this.loadData();
     }
   };
+
+
+
+
   render() {
     //this.objToolfaceData.adnlChannelsData.length
 
@@ -2511,9 +2531,9 @@ class ToolfaceSummary extends Component {
 
     return (
       <>
-        <div className="row ml-1 mr-1" style={{justifyContent:"space-between"}}>
+        <div className="row ml-1 mr-1" style={{ justifyContent: "space-between" }}>
 
-        <div className="mr-2">
+          <div className="mr-2">
             <div className="statusCard">
               <div className="card-body">
                 <h6 className="card-subtitle mb-2">Well Name</h6>
@@ -2523,7 +2543,7 @@ class ToolfaceSummary extends Component {
               </div>
             </div>
           </div>
-           <div className="form-inline m-1">
+          <div className="form-inline m-1">
             <div className="eVumaxPanelController" style={{ width: "270px" }}>
 
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
@@ -2558,7 +2578,7 @@ class ToolfaceSummary extends Component {
               />
             </div>
           </div> */}
-          
+
           {/* <div className="mr-2 ">
               <div className="statusCard_">
                 <div className="card-body">
@@ -2573,7 +2593,7 @@ class ToolfaceSummary extends Component {
               </div>
             </div> */}
 
-         
+
 
 
 

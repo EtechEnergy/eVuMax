@@ -1239,10 +1239,10 @@ export class DrillingSummary extends Component {
       let paramIsRealTime: BrokerParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
-      let paramLastHrs: BrokerParameter = new BrokerParameter(
+      let paramRefreshHrs: BrokerParameter = new BrokerParameter(
         "refreshHrs", this.refreshHrs.toString()
       );
-      objBrokerRequest.Parameters.push(paramLastHrs);
+      objBrokerRequest.Parameters.push(paramRefreshHrs);
 
 
       axios

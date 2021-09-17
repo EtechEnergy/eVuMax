@@ -103,9 +103,20 @@ namespace eVuMax.DataBroker.Summary.Toolface
                 DateTime fromDate = DateTime.Now;
                 DateTime toDate = DateTime.Now;
 
+
+
                 //Get the primary time log 
                 objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
 
+                bool isRealTime = false;
+                int refreshHrs = 24;
+                isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
+                refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
+
+                if (isRealTime)
+                {
+                    selectionType = "-1";
+                }
 
                 try
                 {
@@ -148,6 +159,12 @@ namespace eVuMax.DataBroker.Summary.Toolface
                         double diff = (secondsDiff * 10) / 100;
 
                         minDate = maxDate.AddSeconds(-1 * diff);
+
+                        if (isRealTime)
+                        {
+                            minDate = maxDate.AddHours(-refreshHrs);
+                        }
+
 
                         fromDate = minDate;
                         toDate = maxDate;
