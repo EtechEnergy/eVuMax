@@ -276,7 +276,7 @@ export class StackedBarSeries {
 
 								this.ChartRef.__toolTip.css('left', tooltipX);
 								this.ChartRef.__toolTip.css('top', tooltipY);
-								this.ChartRef.__toolTip.css('display', 'inherit');
+								this.ChartRef.__toolTip.css('display', 'block');
 
 								//Check if tooltip is going beyond right edge
 							})
@@ -582,7 +582,7 @@ export class StackedBarSeries {
 
 							this.ChartRef.__toolTip.css('left', tooltipX);
 							this.ChartRef.__toolTip.css('top', tooltipY);
-							this.ChartRef.__toolTip.css('display', 'inherit');
+							this.ChartRef.__toolTip.css('display', 'block');
 
 							//Check if tooltip is going beyond right edge
 						})

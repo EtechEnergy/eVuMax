@@ -79,6 +79,16 @@ namespace eVuMax.DataBroker.Broomstick.Document
                 double fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                 double toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
 
+                bool isRealTime = false;
+                int refreshHrs = 24;
+                isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
+                refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
+
+                if (isRealTime)
+                {
+                    selectionType = "-1";
+                }
+
                 DateTime fromDate = DateTime.Now;
                 DateTime toDate = DateTime.Now;
 
@@ -126,6 +136,11 @@ namespace eVuMax.DataBroker.Broomstick.Document
                         double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
 
                         double diff = (secondsDiff * 10) / 100;
+
+                        if (isRealTime)
+                        {
+                            minDate = maxDate.AddHours(-refreshHrs);
+                        }
 
                         minDate = maxDate.AddSeconds(-1 * diff);
 

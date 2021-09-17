@@ -20,6 +20,8 @@ import { Util } from "../../../Models/eVuMax";
 let _gMod = new GlobalMod();
 
 class Broomstick extends Component {
+  intervalID: NodeJS.Timeout | undefined;
+
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
@@ -29,7 +31,8 @@ class Broomstick extends Component {
     WellName: "",
     objBroomstickData: {} as any,
     isProcess: false,
-    RunNo: ''
+    RunNo: '',
+    isRealTime: false as boolean
   };
 
   WellId: string = "";
@@ -38,6 +41,7 @@ class Broomstick extends Component {
   selectionType: string = "-1"; //"-1 Default,0= DateRange and 1 = Depth Range"
   fromDepth: number = 0;
   toDepth: number = 0;
+  refreshHrs: number = 24;
 
   runlist = [];
 
@@ -66,10 +70,7 @@ class Broomstick extends Component {
   loadConnections = () => {
     try {
       Util.StatusInfo("Getting data from the server  ");
-      // this.setState({
-      //   isProcess: true,
-      // });
-      // this.forceUpdate();
+
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Broomstick.Manager"; //MOD_Broomstick_manager
@@ -88,15 +89,11 @@ class Broomstick extends Component {
       );
       objBrokerRequest.Parameters.push(paramwellId);
 
-
-
       let paramRunNo: BrokerParameter = new BrokerParameter(
         "RunNo",
         this.selRunNo
       );
       objBrokerRequest.Parameters.push(paramRunNo);
-
-
 
       let paramSelectionType: BrokerParameter = new BrokerParameter(
         "SelectionType",
@@ -115,6 +112,14 @@ class Broomstick extends Component {
         this.toDepth.toString()
       );
       objBrokerRequest.Parameters.push(paramToDepth);
+
+      let paramIsRealTime: BrokerParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
+      objBrokerRequest.Parameters.push(paramIsRealTime);
+
+      let paramRefreshHrs: BrokerParameter = new BrokerParameter(
+        "refreshHrs", this.refreshHrs.toString()
+      );
+      objBrokerRequest.Parameters.push(paramRefreshHrs);
 
       axios
         .get(_gMod._getData, {
@@ -491,31 +496,46 @@ class Broomstick extends Component {
       this.objChart_Broomstick.reDraw();
     } catch (error) { }
   };
+
+
+
+  handleToggleSwitch = async () => {
+
+    await this.setState({ isRealTime: !this.state.isRealTime });
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+      this.loadConnections();
+    }
+  };
+
+
   render() {
     let loader = this.state;
     return (
       <div>
-        <div className="row" style={{justifyContent:"space-between"}}>
-      
-            <div className="mr-2 mb-2">
-              <div className="statusCard">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Rig Name</h6>
-                  <div className="_summaryLabelBig">
-                    {this.state.objBroomstickData.WellName}
-                  </div>
+        <div className="row" style={{ justifyContent: "space-between" }}>
+
+          <div className="mr-2 mb-2">
+            <div className="statusCard">
+              <div className="card-body">
+                <h6 className="card-subtitle mb-2">Rig Name</h6>
+                <div className="_summaryLabelBig">
+                  {this.state.objBroomstickData.WellName}
                 </div>
               </div>
             </div>
-            <div className="mb-3">
+          </div>
+          <div className="mb-3">
             <h6>Broomstick Hookload Document</h6>
 
             {loader.isProcess ? <ProcessLoader /> : ""}
           </div>
-            <div className="form-inline m-1">
+          <div className="form-inline m-1">
             <div className="eVumaxPanelController" style={{ width: "150px" }}>
 
-             
+
               <label className=" ml-1 mr-2" onClick={() => {
                 this.refreshChart();
               }} style={{ cursor: "pointer" }}>Undo Zoom</label>  <FontAwesomeIcon
@@ -530,7 +550,7 @@ class Broomstick extends Component {
 
 
           </div>
-         
+
           {/* <div className="col-lg-10">
             <div className="float-right mr-2">
               <FontAwesomeIcon
@@ -545,7 +565,7 @@ class Broomstick extends Component {
 
         <div className="row">
           <label
-            style={{ paddingLeft: "20px", paddingRight: "15px",alignSelf:"flex-end" }}
+            style={{ paddingLeft: "20px", paddingRight: "15px", alignSelf: "flex-end" }}
           >Run No.</label>
 
 
