@@ -98,18 +98,20 @@ namespace eVuMax.DataBroker.Summary.TripConn
                 DateTime toDate = DateTime.Now;
 
                 bool isRealTime = false;
-                int lastHrs = 24;
+                int refreshHrs = 24;
                 isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
-
-
+                
+                if (isRealTime)
+                {
+                    selectionType = "-1";
+                }
 
                 try
                 {
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
 
-                    
-                    lastHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("lastHrs")).FirstOrDefault().ParamValue);
+                    refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
                 }
                 catch (Exception)
                 {
@@ -140,7 +142,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                         if (isRealTime)
                         {
-                            minDate = maxDate.AddHours(-lastHrs);
+                            minDate = maxDate.AddHours(-refreshHrs);
                             //secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
                             //minDate = maxDate.AddSeconds(-1 * secondsDiff);
                         }

@@ -120,6 +120,7 @@ class TripConnSummary extends Component {
   toDate: Date = null;
   fromDepth: number = 0;
   toDepth: number = 0;
+  refreshHrs: number = 24;
   Warnings: string = "";
 
   componentDidMount() {
@@ -308,10 +309,10 @@ class TripConnSummary extends Component {
       );
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
-      let paramLastHrs: BrokerParameter = new BrokerParameter(
-        "lastHrs", "1"
+      let paramRefreshHrs: BrokerParameter = new BrokerParameter(
+        "refreshHrs ", this.refreshHrs.toString()
       );
-      objBrokerRequest.Parameters.push(paramLastHrs);
+      objBrokerRequest.Parameters.push(paramRefreshHrs);
 
       axios
         .get(_gMod._getData, {
@@ -471,13 +472,14 @@ class TripConnSummary extends Component {
   // };
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
-    //alert("new dataSelector Data");
+
+    let realtimeStatus: boolean = paramRefreshHrs;
     console.log("new DataSelector", paramDataSelector);
-    this.setState({
+    await this.setState({
       objDataSelector: paramDataSelector,
-      isRealTime: false
+      isRealTime: realtimeStatus
     });
 
     this.selectionType = paramDataSelector.selectedval;
@@ -485,11 +487,18 @@ class TripConnSummary extends Component {
     this.toDate = paramDataSelector.toDate;
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
-    //this.refreshHrs = paramDataSelector.refreshHrs;
-    clearInterval(this.intervalID);
+    this.refreshHrs = paramDataSelector.refreshHrs;
 
-    this.loadConnections();
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    } else {
+      clearInterval(this.intervalID);
+      this.loadConnections();
+    }
+
   }
+
+
   radioData = [
     { label: "User Comments", value: "User Comments", className: "" },
     { label: "Time Log Remarks", value: "Time Log Remarks", className: "" },
@@ -722,21 +731,24 @@ class TripConnSummary extends Component {
 
     }
   }
-  handleToggleSwitch = () => {
+  handleToggleSwitch = async () => {
 
-    this.setState({ isRealTime: !this.state.isRealTime });
+    await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
       clearInterval(this.intervalID);
+      this.loadConnections();
     }
   };
+
+
 
   render() {
     return (
       <>
 
-        <div className="row ml-1 mr-1" style={{justifyContent:"space-between"}}>
+        <div className="row ml-1 mr-1" style={{ justifyContent: "space-between" }}>
           {/* <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
@@ -777,7 +789,7 @@ class TripConnSummary extends Component {
               </div>
             </div> */}
 
-          
+
 
 
         </div>
