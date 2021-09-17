@@ -142,6 +142,7 @@ class DrlgConnSummary2 extends Component {
   componentDidMount() {
     try {
 
+
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
 
       //initialize charts
@@ -385,6 +386,7 @@ class DrlgConnSummary2 extends Component {
 
   loadConnections = () => {
     try {
+
       Util.StatusInfo("Getting data from the server  ");
 
       let objBrokerRequest = new BrokerRequest();
@@ -437,7 +439,7 @@ class DrlgConnSummary2 extends Component {
       objBrokerRequest.Parameters.push(paramIsRealTime);
 
       let paramRefreshHrs: BrokerParameter = new BrokerParameter(
-        "refreshHrs", "24"
+        "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
 
@@ -578,7 +580,7 @@ class DrlgConnSummary2 extends Component {
   ////Nishant
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
-    //alert("new dataSelector Data");
+
     let realtimeStatus: boolean = paramRefreshHrs;
     await this.setState({
       objDataSelector: paramDataSelector,
@@ -589,7 +591,7 @@ class DrlgConnSummary2 extends Component {
     this.toDate = paramDataSelector.toDate;
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
-    //this.refreshHrs = paramDataSelector.refreshHrs;
+    this.refreshHrs = paramDataSelector.refreshHrs;
 
 
 
@@ -610,9 +612,10 @@ class DrlgConnSummary2 extends Component {
     { label: "Time Log Remarks", value: "Time Log Remarks", className: "" },
   ];
 
-  handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
+  //handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
 
   handleToggleSwitch = async () => {
+
 
     await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
@@ -629,13 +632,13 @@ class DrlgConnSummary2 extends Component {
   render() {
     return (
       <>
-        <div className="row ml-1 mr-1" style={{justifyContent:"space-between"}}>
+        <div className="row ml-1 mr-1" style={{ justifyContent: "space-between" }}>
           {/* <div className="col-lg-12 eVumaxPanelTitle">
             <div>
               <label className="summaryTitle">{this.state.WellName}</label>
             </div>
           </div> */}
-           <div className="mr-2">
+          <div className="mr-2">
             <div className="statusCard">
               <div className="card-body">
                 <h6 className="card-subtitle mb-2">Well Name</h6>
@@ -645,13 +648,13 @@ class DrlgConnSummary2 extends Component {
               </div>
             </div>
           </div>
-          
+
           <div className="form-inline m-1">
             <div className="eVumaxPanelController" style={{ width: "150px" }}>
 
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
-             
+
             </div>
 
 
@@ -670,14 +673,14 @@ class DrlgConnSummary2 extends Component {
               </div>
             </div> */}
 
-         
+
 
 
 
 
         </div>
 
-        <TabStrip selected={this.state.selected} onSelect={this.handleSelect}>
+        <TabStrip selected={this.state.selected} onSelect={this.handleSelect} keepTabsMounted={true}>
           <TabStripTab title="Drilling Connections Summary">
             <div //vima
               className="form-group"

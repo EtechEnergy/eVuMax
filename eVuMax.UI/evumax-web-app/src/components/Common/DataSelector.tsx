@@ -608,8 +608,10 @@ class DataSelector extends Component<IProps> {
               float: "right",
             }}
           >
+            <Label>Real Time Refresh Rate</Label>
+            <br />
             <Label className="mr-3" >Last</Label>
-            <ComboBox data={[12, 24]} allowCustom={true}
+            <ComboBox style={{ width: "100px" }} data={[12, 24]} allowCustom={true}
               value={this.state.objDataSelector.refreshHrs}
               // onChange={(e) => {
               //   this.setState({ refreshHrs: e.value })
@@ -639,7 +641,7 @@ class DataSelector extends Component<IProps> {
         </div>
 
         {this.state.showWarning && <div id="warning" style={{ paddingBottom: "15px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} > {this.state.Warning} </label> </div>}
-      </React.Fragment>
+      </React.Fragment >
     );
   }
 
