@@ -192,7 +192,7 @@ class DrlgConnSummary extends Component {
     //alert(paramRefreshHrs);
 
     let realtimeStatus: boolean = paramRefreshHrs;
-    alert(paramDataSelector.selectedval);
+    //alert(paramDataSelector.selectedval);
 
     await this.setState({
       objDataSelector: paramDataSelector,

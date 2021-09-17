@@ -127,7 +127,7 @@ export class DrillingSummary extends Component {
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
     });
-    alert(paramDataSelector.selectedval);
+    //alert(paramDataSelector.selectedval);
     this.selectionType = paramDataSelector.selectedval;
     this.fromDate = paramDataSelector.fromDate;
     this.toDate = paramDataSelector.toDate;
