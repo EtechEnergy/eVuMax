@@ -210,7 +210,7 @@ class DrlgConnSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      await clearInterval(this.intervalID);
       this.loadConnections();
     }
 
@@ -749,7 +749,7 @@ class DrlgConnSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      await clearInterval(this.intervalID);
       this.loadConnections();
     }
   };

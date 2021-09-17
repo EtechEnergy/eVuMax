@@ -227,6 +227,7 @@ class ToolfaceSummary extends Component {
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
     let realtimeStatus: boolean = paramRefreshHrs;
+
     await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
@@ -241,7 +242,7 @@ class ToolfaceSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadData.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      await clearInterval(this.intervalID);
       this.loadData();
     }
 
@@ -2479,7 +2480,7 @@ class ToolfaceSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadData.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      await clearInterval(this.intervalID);
       this.loadData();
     }
   };

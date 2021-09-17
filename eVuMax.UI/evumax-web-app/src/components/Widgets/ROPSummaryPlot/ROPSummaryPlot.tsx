@@ -38,7 +38,7 @@ export class ROPSummaryPlot extends Component {
     tripOutsString: "",
     tripOutsOffsetString: "",
     isProcess: false,
-    isRealTime: true as boolean,
+    isRealTime: false as boolean,
     objDataSelector: new DataSelector_(),
   };
 
@@ -227,6 +227,7 @@ export class ROPSummaryPlot extends Component {
 
   refreshChart = () => {
     try {
+
       this.refreshPieChart();
       this.refreshOffsetPieChart();
       this.refreshRotaryChart();
@@ -735,6 +736,7 @@ export class ROPSummaryPlot extends Component {
 
   loadConnections = () => {
     try {
+
       Util.StatusInfo("Getting data from the server  ");
       // this.setState({
       //   isProcess: true,
@@ -797,6 +799,14 @@ export class ROPSummaryPlot extends Component {
         "-999"
       );
       objBrokerRequest.Parameters.push(paramSideTrackKey);
+
+      let paramIsRealTime: BrokerParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
+      objBrokerRequest.Parameters.push(paramIsRealTime);
+
+      let paramRefreshHrs: BrokerParameter = new BrokerParameter(
+        "refreshHrs", this.refreshHrs.toString()
+      );
+      objBrokerRequest.Parameters.push(paramRefreshHrs);
 
       axios
         .get(_gMod._getData, {
@@ -920,13 +930,14 @@ export class ROPSummaryPlot extends Component {
   // };
 
   ////Nishant
-  selectionChanged = (paramDataSelector: DataSelector_) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
     //alert("new dataSelector Data");
-    console.log("new DataSelector", paramDataSelector);
-    this.setState({
+    let realtimeStatus: boolean = paramRefreshHrs;
+
+    await this.setState({
       objDataSelector: paramDataSelector,
-      isRealTime: false
+      isRealTime: realtimeStatus
     });
 
     this.selectionType = paramDataSelector.selectedval;
@@ -936,21 +947,36 @@ export class ROPSummaryPlot extends Component {
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
 
+
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    } else {
+      await clearInterval(this.intervalID);
+      this.loadConnections();
+    }
+
     //clearInterval(this.intervalID);
 
     this.loadConnections();
   }
 
 
-  handleToggleSwitch = () => {
 
-    this.setState({ isRealTime: !this.state.isRealTime });
+  handleToggleSwitch = async () => {
+
+    await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      await clearInterval(this.intervalID);
+      this.loadConnections();
     }
   };
+
+
+
+
+
 
 
 
@@ -963,113 +989,113 @@ export class ROPSummaryPlot extends Component {
 
     return (
       <div>
-        <div className="row mb-2" style={{justifyContent:"space-between"}}>
+        <div className="row mb-2" style={{ justifyContent: "space-between" }}>
           <div className="">
-          <div className="drillingSummaryContainer">
-
-
-          
+            <div className="drillingSummaryContainer">
 
 
 
 
 
-<div className="mr-2">
-  <div className="statusCard">
-    <div className="card-body">
-      <h6 className="card-subtitle mb-2">Rig Name</h6>
-      <div className="_summaryLabelBig">
-        {this.state.objROPSummaryData.RigName}
-      </div>
-    </div>
-  </div>
-</div>
 
-<div className="mr-2">
-  <div className="statusCard">
-    <div className="card-body">
-      <h6 className="card-subtitle mb-2">Well Name</h6>
-      <div className="_summaryLabelBig">
-        {this.state.objROPSummaryData.WellName}
-      </div>
-    </div>
-  </div>
-</div>
 
-<div className="mr-2">
-  <div className="statusCard">
-    <div className="card-body">
-      <h6 className="card-subtitle mb-2">Offset Well</h6>
-      <div className="_summaryLabelBig">
-        {this.state.objROPSummaryData.offSetWellName === ""
-          ? "-"
-          : this.state.objROPSummaryData.offSetWellName}
-      </div>
-    </div>
-  </div>
-</div>
 
-<div className="mr-2">
-  <div className="statusCard">
-    <div className="card-body">
-      <h6 className="card-subtitle mb-2">Offset Depth In</h6>
-      <div className="_summaryLabelBig">
-        {this.state.objROPSummaryData.offSetWellName == "" ? "" :
-          (this.state.objROPSummaryData.offsetDepthIn >= 0 ? Number(this.state.objROPSummaryData.offsetDepthIn).toFixed(2) : "")
-        }
-      </div>
-    </div>
-  </div>
-</div>
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Rig Name</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objROPSummaryData.RigName}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-<div className="mr-2">
-  <div className="statusCard">
-    <div className="card-body">
-      <h6 className="card-subtitle mb-2">Offset Depth Out</h6>
-      <div className="_summaryLabelBig">
-        {this.state.objROPSummaryData.offSetWellName == "" ? "" :
-          (this.state.objROPSummaryData.offsetDepthOut >= 0 ? Number(this.state.objROPSummaryData.offsetDepthOut).toFixed(2) : "")
-        }
-      </div>
-    </div>
-    <div className="col-lg-12">
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Well Name</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objROPSummaryData.WellName}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-    </div>
-  </div>
-</div>
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Offset Well</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objROPSummaryData.offSetWellName === ""
+                        ? "-"
+                        : this.state.objROPSummaryData.offSetWellName}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-<div className="mr-2">
-  <div className="statusCard">
-    <div className="card-body">
-      <h6 className="card-subtitle mb-2">Depth In</h6>
-      <div className="_summaryLabelBig">
-        {isNaN(Number(this.state.objROPSummaryData.fromDepth))
-          ? 0.0
-          : Number(this.state.objROPSummaryData.fromDepth).toFixed(
-            2
-          )}
-      </div>
-    </div>
-  </div>
-</div>
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Offset Depth In</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objROPSummaryData.offSetWellName == "" ? "" :
+                        (this.state.objROPSummaryData.offsetDepthIn >= 0 ? Number(this.state.objROPSummaryData.offsetDepthIn).toFixed(2) : "")
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-<div className="mr-2">
-  <div className="statusCard">
-    <div className="card-body">
-      <h6 className="card-subtitle mb-2">Depth Out</h6>
-      <div className="_summaryLabelBig">
-        {isNaN(Number(this.state.objROPSummaryData.toDepth))
-          ? 0.0
-          : Number(this.state.objROPSummaryData.toDepth).toFixed(2)}
-      </div>
-    </div>
-  </div>
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Offset Depth Out</h6>
+                    <div className="_summaryLabelBig">
+                      {this.state.objROPSummaryData.offSetWellName == "" ? "" :
+                        (this.state.objROPSummaryData.offsetDepthOut >= 0 ? Number(this.state.objROPSummaryData.offsetDepthOut).toFixed(2) : "")
+                      }
+                    </div>
+                  </div>
+                  <div className="col-lg-12">
 
-</div>
+                  </div>
+                </div>
+              </div>
 
-</div>
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Depth In</h6>
+                    <div className="_summaryLabelBig">
+                      {isNaN(Number(this.state.objROPSummaryData.fromDepth))
+                        ? 0.0
+                        : Number(this.state.objROPSummaryData.fromDepth).toFixed(
+                          2
+                        )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mr-2">
+                <div className="statusCard">
+                  <div className="card-body">
+                    <h6 className="card-subtitle mb-2">Depth Out</h6>
+                    <div className="_summaryLabelBig">
+                      {isNaN(Number(this.state.objROPSummaryData.toDepth))
+                        ? 0.0
+                        : Number(this.state.objROPSummaryData.toDepth).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
           </div>
-         
+
           <div className="form-inline m-1">
             <div className="eVumaxPanelController" style={{ width: "270px" }}>
 

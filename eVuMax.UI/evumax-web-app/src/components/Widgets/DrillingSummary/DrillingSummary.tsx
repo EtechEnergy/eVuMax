@@ -139,16 +139,10 @@ export class DrillingSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      await clearInterval(this.intervalID);
       this.loadDrlgSummary();
     }
 
-    // if (!realtimeStatus) {
-    //   clearInterval(this.intervalID);
-    // }
-
-
-    //this.loadDrlgSummary();
   }
 
 
@@ -1118,7 +1112,7 @@ export class DrillingSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      await clearInterval(this.intervalID);
       this.loadDrlgSummary();
     }
   };

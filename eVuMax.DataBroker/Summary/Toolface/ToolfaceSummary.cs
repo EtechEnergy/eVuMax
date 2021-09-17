@@ -103,11 +103,6 @@ namespace eVuMax.DataBroker.Summary.Toolface
                 DateTime fromDate = DateTime.Now;
                 DateTime toDate = DateTime.Now;
 
-
-
-                //Get the primary time log 
-                objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
-
                 bool isRealTime = false;
                 int refreshHrs = 24;
                 isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
@@ -117,6 +112,9 @@ namespace eVuMax.DataBroker.Summary.Toolface
                 {
                     selectionType = "-1";
                 }
+
+                //Get the primary time log 
+                objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
 
                 try
                 {
