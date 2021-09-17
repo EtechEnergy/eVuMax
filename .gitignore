@@ -359,7 +359,7 @@ MigrationBackup/
 **/*.msi
 
 # WIX
-build/
+build
 
 
 
