@@ -337,7 +337,7 @@ class DataSelector extends Component<IProps> {
 
 
   handleChange = (event: any, field: string) => {
-    debugger;
+
 
     const value = event.value;
     const name = field; // target.props ? target.props.name : target.name;
@@ -611,7 +611,7 @@ class DataSelector extends Component<IProps> {
             <Label>Real Time Refresh Rate</Label>
             <br />
             <Label className="mr-3" >Last</Label>
-            <ComboBox style={{ width: "100px" }} data={[12, 24]} allowCustom={true}
+            <ComboBox style={{ width: "100px" }} data={[1, 3, 12, 24, 48]} allowCustom={true}
               value={this.state.objDataSelector.refreshHrs}
               // onChange={(e) => {
               //   this.setState({ refreshHrs: e.value })
@@ -628,7 +628,7 @@ class DataSelector extends Component<IProps> {
               // }}
               onClick={() => {
                 //realtime 
-                this.selectorChanged("-1", this.state.objDataSelector.fromDate
+                this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
                   , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth, true);
               }}
               className="btn-custom btn-custom-primary ml-5 mr-1"
@@ -734,8 +734,9 @@ class DataSelector extends Component<IProps> {
         .then((res) => {
           const objData = JSON.parse(res.data.Response);
           this.setData(objData);
-          Util.StatusSuccess("Data successfully retrived  ");
+          Util.StatusSuccess("Data successfully retrived DataSelector ");
           Util.StatusReady();
+
         })
         .catch((error) => {
           Util.StatusError(error.message);
@@ -827,7 +828,7 @@ class DataSelector extends Component<IProps> {
 
 
 
-          debugger;
+
           this.setData(objData);
           Util.StatusSuccess("Data successfully retrived  ");
           Util.StatusReady();

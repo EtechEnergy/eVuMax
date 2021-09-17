@@ -17,6 +17,7 @@ import GlobalMod from "../../../objects/global";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 
 import { Util } from "../../../Models/eVuMax";
+import { Switch } from "@progress/kendo-react-all";
 let _gMod = new GlobalMod();
 
 class Broomstick extends Component {
@@ -520,7 +521,7 @@ class Broomstick extends Component {
           <div className="mr-2 mb-2">
             <div className="statusCard">
               <div className="card-body">
-                <h6 className="card-subtitle mb-2">Rig Name</h6>
+                <h6 className="card-subtitle mb-2">Well Name</h6>
                 <div className="_summaryLabelBig">
                   {this.state.objBroomstickData.WellName}
                 </div>
@@ -533,10 +534,11 @@ class Broomstick extends Component {
             {loader.isProcess ? <ProcessLoader /> : ""}
           </div>
           <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "150px" }}>
+            <div className="eVumaxPanelController" style={{ width: "270px" }}>
 
-
-              <label className=" ml-1 mr-2" onClick={() => {
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+              <label className=" ml-5 mr-2" onClick={() => {
                 this.refreshChart();
               }} style={{ cursor: "pointer" }}>Undo Zoom</label>  <FontAwesomeIcon
                 icon={faSearchMinus}

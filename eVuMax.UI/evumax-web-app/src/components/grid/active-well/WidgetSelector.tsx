@@ -28,8 +28,8 @@ interface IState {
 }
 
 export default class WidgetSelector extends React.Component<IProps> {
-  constructor(parentRef, props: any) {
-    super(props);
+  constructor(parentRef) {
+    super(parentRef);
     this.__parentRef = parentRef;
     this.currentWellID = parentRef.state.currentWellID;
     this.currentWellName = parentRef.state.currentWellName; //Nishant

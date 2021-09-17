@@ -85,7 +85,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
   componentDidMount() {
     try {
       //Prepare chart object
-      alert("TripAnalyzerSelection");
+
       this.loadData();
     } catch (error) { }
   }

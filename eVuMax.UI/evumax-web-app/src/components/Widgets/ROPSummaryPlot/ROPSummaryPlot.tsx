@@ -609,7 +609,7 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Combine.rightAxis().Visible = false;
       this.objChart_Combine.rightAxis().ShowLabels = false;
 
-      this.objChart_Combine.MarginLeft = 80;
+      this.objChart_Combine.MarginLeft = 20;
       this.objChart_Combine.MarginBottom = 0;
       this.objChart_Combine.MarginTop = 5;
       this.objChart_Combine.MarginRight = 10;
@@ -1058,9 +1058,7 @@ export class ROPSummaryPlot extends Component {
                       }
                     </div>
                   </div>
-                  <div className="col-lg-12">
 
-                  </div>
                 </div>
               </div>
 

@@ -88,6 +88,12 @@ export class DrillingSummary extends Component {
   objChart_OffsetPie1: Chart;
   objChart_OffsetPie2: Chart;
 
+  componentWillUnmount() {
+    clearInterval(this.intervalID);
+    console.log("componentWillUnmount");
+    this.intervalID = null;
+  }
+
   componentDidMount() {
     //initialize chart
     // if (this.state.isRealTime) {
@@ -490,7 +496,7 @@ export class DrillingSummary extends Component {
       //Populate the data series with this data
       objROPLine.Data.slice(0, objROPLine.Data.length);
 
-      console.log(this.state.objSummaryData.ROPData);
+      //  console.log(this.state.objSummaryData.ROPData);
 
       // Util.StatusSuccess("Last Depth retrived  " + this.state.objSummaryData.ROPData[this.state.objSummaryData.ROPData.length - 1].X);
       // Util.StatusReady();
@@ -1251,7 +1257,7 @@ export class DrillingSummary extends Component {
           // $("#loader").hide();
 
           let objData = JSON.parse(res.data.Response);
-          console.log(objData);
+
           let offSetWellNumericData: any = [];
           if (objData.offSetWellNumericData.length > 0) {
             offSetWellNumericData = objData.offSetWellNumericData[0];

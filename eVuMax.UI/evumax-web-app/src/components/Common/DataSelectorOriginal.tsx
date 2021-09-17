@@ -142,7 +142,6 @@ class DataSelectorOriginal extends Component<IProps, IState> {
       alert(this.__parentRef.fromDate + " " + this.__parentRef.toDate);
 
       this.loadData();
-      debugger;
 
       this.loadExtents();
       window.addEventListener("resize", this.reRenderChart);

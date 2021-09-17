@@ -4,7 +4,7 @@ export default class DataSelector_ {
     toDate: Date = new Date;
     fromDepth: number = 0;
     toDepth: number = 0;
-    refreshHrs: number = 12;
+    refreshHrs: number = 24;
     wellID: string = "";
 
 

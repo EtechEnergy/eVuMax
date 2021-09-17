@@ -199,7 +199,7 @@ class DrlgConnSummary extends Component {
       isRealTime: realtimeStatus
     });
 
-    debugger;
+
     this.selectionType = paramDataSelector.selectedval;
     this.fromDate = new Date(paramDataSelector.fromDate);
     this.toDate = new Date(paramDataSelector.toDate);
@@ -211,6 +211,7 @@ class DrlgConnSummary extends Component {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
       await clearInterval(this.intervalID);
+      this.forceUpdate();
       this.loadConnections();
     }
 
@@ -750,6 +751,7 @@ class DrlgConnSummary extends Component {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
       await clearInterval(this.intervalID);
+      this.forceUpdate();
       this.loadConnections();
     }
   };
