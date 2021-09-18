@@ -242,7 +242,7 @@ class ToolfaceSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadData.bind(this), 15000);
     } else {
-      this.AxiosSource.cancel();
+      //    this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
       this.loadData();
@@ -2498,7 +2498,7 @@ class ToolfaceSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadData.bind(this), 15000);
     } else {
-      this.AxiosSource.cancel();
+      //   this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
       this.loadData();

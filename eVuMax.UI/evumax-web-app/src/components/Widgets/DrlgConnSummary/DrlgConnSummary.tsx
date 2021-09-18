@@ -409,7 +409,7 @@ class DrlgConnSummary extends Component {
           this.setData();
         })
         .catch((error) => {
-          alert(error);
+          //alert(error);
           console.log("this.AxiosSource.token", AxiosSource.token);
           Util.StatusError(error.message);
           Util.StatusReady();
@@ -772,7 +772,7 @@ class DrlgConnSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      debugger;
+
       // AxiosSource.cancel();
       clearInterval(this.intervalID);
       this.intervalID = null;

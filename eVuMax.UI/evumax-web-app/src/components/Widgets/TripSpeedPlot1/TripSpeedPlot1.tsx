@@ -53,8 +53,6 @@ export class TripSpeedPlot1 extends Component {
 
   componentWillUnmount() {
     this.AxiosSource.cancel();
-    // clearInterval(this.intervalID);
-    // this.intervalID = null;
   }
   //==============
 
