@@ -1,3 +1,5 @@
+//https://julietonyekaoha.medium.com/react-cancel-all-axios-request-in-componentwillunmount-e5b2c978c071
+
 import React, { Component } from "react";
 import axios from "axios";
 import {
@@ -88,11 +90,17 @@ export class DrillingSummary extends Component {
   objChart_OffsetPie1: Chart;
   objChart_OffsetPie2: Chart;
 
+
+  //Cancel all Axios Request
+  AxiosSource = axios.CancelToken.source();
+  AxiosConfig = { cancelToken: this.AxiosSource.token };
+
   componentWillUnmount() {
+    this.AxiosSource.cancel();
     clearInterval(this.intervalID);
-    console.log("componentWillUnmount");
     this.intervalID = null;
   }
+  //==============
 
   componentDidMount() {
     //initialize chart
@@ -145,7 +153,9 @@ export class DrillingSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
+      //await this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
+      this.intervalID = null;
       this.loadDrlgSummary();
     }
 
@@ -1118,7 +1128,9 @@ export class DrillingSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
+      //await this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
+      this.intervalID = null;
       this.loadDrlgSummary();
     }
   };
@@ -1244,14 +1256,17 @@ export class DrillingSummary extends Component {
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
 
+      //axios.get(endpointUrl, config).then((res) => {})
 
       axios
         .get(_gMod._getData, {
+          cancelToken: this.AxiosSource.token,
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
           },
           params: { paramRequest: JSON.stringify(objBrokerRequest) },
+
         })
         .then((res) => {
           // $("#loader").hide();
@@ -1286,6 +1301,7 @@ export class DrillingSummary extends Component {
           this.refreshChart();
         })
         .catch((error) => {
+          alert("error in Axios");
           this.setState({
             isProcess: false,
           });

@@ -242,7 +242,9 @@ class ToolfaceSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadData.bind(this), 15000);
     } else {
+      this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
+      this.intervalID = null;
       this.loadData();
     }
 
@@ -554,6 +556,21 @@ class ToolfaceSummary extends Component {
       ],
     });
   };
+
+  //Cancel all Axios Request
+  AxiosSource = axios.CancelToken.source();
+  AxiosConfig = { cancelToken: this.AxiosSource.token };
+
+  componentWillUnmount() {
+    this.AxiosSource.cancel();
+    clearInterval(this.intervalID);
+    this.intervalID = null;
+  }
+  //==============
+
+
+
+
 
   componentDidMount() {
     try {
@@ -1466,6 +1483,7 @@ class ToolfaceSummary extends Component {
 
       axios
         .get(_gMod._getData, {
+          cancelToken: this.AxiosSource.token,
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
@@ -2480,7 +2498,9 @@ class ToolfaceSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadData.bind(this), 15000);
     } else {
+      this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
+      this.intervalID = null;
       this.loadData();
     }
   };

@@ -47,6 +47,20 @@ export class TripSpeedPlot1 extends Component {
   objChart_TripSpeed: Chart;
   objChart_BarWOConn: Chart;
   objChart_BarWithConn: Chart;
+  //Cancel all Axios Request
+  AxiosSource = axios.CancelToken.source();
+  AxiosConfig = { cancelToken: this.AxiosSource.token };
+
+  componentWillUnmount() {
+    this.AxiosSource.cancel();
+    // clearInterval(this.intervalID);
+    // this.intervalID = null;
+  }
+  //==============
+
+
+
+
 
   componentDidMount() {
     try {
@@ -833,6 +847,7 @@ export class TripSpeedPlot1 extends Component {
       objBrokerRequest.Parameters.push(paramwellId);
       axios
         .get(_gMod._getData, {
+          cancelToken: this.AxiosSource.token,
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",

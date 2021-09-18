@@ -61,11 +61,16 @@ import { confirmAlert } from "react-confirm-alert";
 import DataSelector_ from "../../Common/DataSelector_";
 let _gMod = new GlobalMod();
 
+//Cancel all Axios Request
+let AxiosSource = axios.CancelToken.source();
+// AxiosConfig = { cancelToken: this.AxiosSource.token };
+
 class DrlgConnSummary extends Component {
   intervalID: NodeJS.Timeout | undefined;
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
+    AxiosSource = axios.CancelToken.source();
   }
 
   state = {
@@ -128,6 +133,17 @@ class DrlgConnSummary extends Component {
   toDepth: number = 0;
   refreshHrs: number = 24;
 
+  // //Cancel all Axios Request
+  // AxiosSource = axios.CancelToken.source();
+  // // AxiosConfig = { cancelToken: this.AxiosSource.token };
+
+  componentWillUnmount() {
+
+    AxiosSource.cancel();
+    clearInterval(this.intervalID);
+    this.intervalID = null;
+  }
+  //==============
 
   componentDidMount() {
     try {
@@ -210,8 +226,11 @@ class DrlgConnSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
+
+      // AxiosSource.cancel();
       await clearInterval(this.intervalID);
-      this.forceUpdate();
+      this.intervalID = null;
+
       this.loadConnections();
     }
 
@@ -374,6 +393,7 @@ class DrlgConnSummary extends Component {
 
       axios
         .get(_gMod._getData, {
+          cancelToken: AxiosSource.token,
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
@@ -389,6 +409,8 @@ class DrlgConnSummary extends Component {
           this.setData();
         })
         .catch((error) => {
+          alert(error);
+          console.log("this.AxiosSource.token", AxiosSource.token);
           Util.StatusError(error.message);
           Util.StatusReady();
           if (error.response) {
@@ -750,8 +772,10 @@ class DrlgConnSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      await clearInterval(this.intervalID);
-      this.forceUpdate();
+      debugger;
+      // AxiosSource.cancel();
+      clearInterval(this.intervalID);
+      this.intervalID = null;
       this.loadConnections();
     }
   };

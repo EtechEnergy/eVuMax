@@ -123,6 +123,18 @@ class TripConnSummary extends Component {
   refreshHrs: number = 24;
   Warnings: string = "";
 
+  //Cancel all Axios Request
+  AxiosSource = axios.CancelToken.source();
+  AxiosConfig = { cancelToken: this.AxiosSource.token };
+
+  componentWillUnmount() {
+    this.AxiosSource.cancel();
+    clearInterval(this.intervalID);
+    this.intervalID = null;
+  }
+  //==============
+
+
   componentDidMount() {
     try {
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
@@ -316,6 +328,7 @@ class TripConnSummary extends Component {
 
       axios
         .get(_gMod._getData, {
+          cancelToken: this.AxiosSource.token,
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
@@ -492,7 +505,9 @@ class TripConnSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      this.AxiosSource.cancel();
+      await clearInterval(this.intervalID);
+      this.intervalID = null;
       this.loadConnections();
     }
 
@@ -737,7 +752,9 @@ class TripConnSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      clearInterval(this.intervalID);
+      this.AxiosSource.cancel();
+      await clearInterval(this.intervalID);
+      this.intervalID = null;
       this.loadConnections();
     }
   };
