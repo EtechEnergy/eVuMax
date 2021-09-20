@@ -129,9 +129,10 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
 
+                  
+                    //Convert date to UTC
                     fromDate = fromDate.ToUniversalTime();
                     toDate = toDate.ToUniversalTime();
-
                 }
                 catch (Exception)
                 {

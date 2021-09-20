@@ -159,6 +159,11 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                     SideTrackKey = paramRequest.Parameters.Where(x => x.ParamName.Contains("SideTrackKey")).FirstOrDefault().ParamValue.ToString();
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
+
+
+                    //Convert date to UTC
+                    fromDate = fromDate.ToUniversalTime();
+                    toDate = toDate.ToUniversalTime();
                 }
                 catch (Exception ex)
                 {
@@ -869,7 +874,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         {
 
                             // 'Check if using 
+                            
                             double result = objOffsetTimeLog.EvaluateStatColumn(ref objDataService, ref objOffsetTimeLog, FromDate, ToDate, objStatItem.toDRItemVuMax());
+                            
                             result = Math.Round(result, 3);
 
 

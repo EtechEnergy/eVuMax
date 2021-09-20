@@ -1258,6 +1258,7 @@ export class DrillingSummary extends Component {
 
       //axios.get(endpointUrl, config).then((res) => {})
 
+      this.AxiosSource = axios.CancelToken.source();
       axios
         .get(_gMod._getData, {
           cancelToken: this.AxiosSource.token,
@@ -1291,6 +1292,7 @@ export class DrillingSummary extends Component {
             objROPDataOffset: objData.ROPDataOffset,
             isProcess: false,
           });
+          debugger;
 
           this.prepareGrdNumericTable(); //Vimal 06-02-2021
           this.prepareOffsetNumericTable(); //vimal
