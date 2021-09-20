@@ -111,6 +111,10 @@ namespace eVuMax.DataBroker.Summary.TripConn
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
 
+                    //Convert date to UTC
+                    fromDate = fromDate.ToUniversalTime();
+                    toDate = toDate.ToUniversalTime();
+
                     refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
                 }
                 catch (Exception)
@@ -257,7 +261,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                 if (selectionType == "0")
                 {
-                    strSQL = "SELECT * FROM VMX_AKPI_TRIP_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
+                    strSQL = "SELECT * FROM VMX_AKPI_TRIP_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='"+fromDate.ToString("dd-MMM-yyyy HH:mm:ss")+"' AND TO_DATE<='"+toDate.ToString("dd-MMM-yyyy HH:mm:ss")+"' ORDER BY FROM_DATE";
                 }
                 else
                 {
@@ -408,8 +412,8 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         TimeSpan objSpan = new TimeSpan(0, 0, (int)totalSeconds);
 
                         newRow["COMMENTS"] = DataService.checkNull(objRow["USER_COMMENT"], "").ToString();
-                        newRow["FROM_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
-                        newRow["TO_DATE"] = connToDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
+                        newRow["FROM_DATE"] = connFromDate.ToString("MMM-dd-yyyy HH:mm:ss");
+                        newRow["TO_DATE"] = connToDate.ToString("MMM-dd-yyyy HH:mm:ss");
                         newRow["TOTAL_TIME"] = "[" + objSpan.Hours.ToString() + ":" + objSpan.Minutes.ToString() + ":" + objSpan.Seconds.ToString() + "]";
                         newRow["DAY_NIGHT"] = DataService.checkNull(objRow["TIME"], "D").ToString();
 
@@ -472,9 +476,6 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
-
-                        lnFromDate = lnFromDate.ToUniversalTime();
-                        lnToDate = lnToDate.ToUniversalTime();
 
                         subQuery += "OR (DATETIME>'" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<'" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "') ";
 
@@ -539,9 +540,6 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
                         string connComments = DataService.checkNull(objRow["COMMENTS"], "").ToString();
-
-                        lnFromDate = lnFromDate.ToUniversalTime();
-                        lnToDate = lnToDate.ToUniversalTime();
 
                         DataRow newRow = rigStateData.NewRow();
 
@@ -745,8 +743,6 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         DateTime lnConnFromDate = DateTime.Parse(connRow["FROM_DATE"].ToString());
                         DateTime lnConnToDate = DateTime.Parse(connRow["TO_DATE"].ToString());
 
-                        lnConnFromDate = lnConnFromDate.ToUniversalTime();
-                        lnConnToDate = lnConnToDate.ToUniversalTime();
 
                         int Direction = -1;
 
@@ -830,6 +826,18 @@ namespace eVuMax.DataBroker.Summary.TripConn
                     #endregion
 
 
+
+                    //Convert display dates to local 
+                    foreach (DataRow objRow in connData.Rows)
+                    {
+
+                        DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
+                        DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
+
+                        objRow["FROM_DATE"] = lnFromDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm:ss");
+                        objRow["TO_DATE"] = lnToDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm:ss");
+
+                    }
 
 
                     objResponse.Response = JsonConvert.SerializeObject(objTripConnSummary);

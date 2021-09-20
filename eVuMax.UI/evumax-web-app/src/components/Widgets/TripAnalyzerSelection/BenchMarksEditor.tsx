@@ -250,7 +250,7 @@ export default class BenchMrksEditor extends Component<IProps> {
                 })
                 .then((res) => {
                     const objData = JSON.parse(res.data.Response);
-                    console.log("BenchMarksEditor Data", objData);
+                    //    console.log("BenchMarksEditor Data", objData);
 
                     let customTagList: comboData[] = [];
                     for (let index = 0; index < objData.TagSourceData.length; index++) {

@@ -167,7 +167,7 @@ export default class MudLogEditor extends Component<IProps> {
         }
 
         this.objMudLog_clone = this.objMudLog;
-        console.log(this.objMudLog);
+        //    console.log(this.objMudLog);
     }
 
 

@@ -3709,6 +3709,8 @@ class ToolfaceSummary extends Component {
       );
       objBrokerRequest.Parameters.push(paramSettingsData);
 
+
+      this.AxiosSource = axios.CancelToken.source();
       axios
         .get(_gMod._performTask, {
           headers: {

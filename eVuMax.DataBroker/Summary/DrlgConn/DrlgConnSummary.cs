@@ -128,6 +128,10 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 {
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
+
+                    fromDate = fromDate.ToUniversalTime();
+                    toDate = toDate.ToUniversalTime();
+
                 }
                 catch (Exception)
                 {
@@ -139,25 +143,6 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                 //Get the primary time log 
                 VuMaxDR.Data.Objects.TimeLog objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
-
-
-                //WIP PRATH  999999999999999
-                string lastError = "";
-                DateTime localFromDate = new DateTime();
-                DateTime localToDate = new DateTime();
-                VuMaxDR.Data.Objects.Well objWell = VuMaxDR.Data.Objects.Well.loadObject(ref paramRequest.objDataService, wellId, ref lastError);
-
-
-                if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
-                {
-                    localFromDate = Util.convertWellToLocalTimeZone(fromDate, objWell);
-                }
-
-                if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
-                {
-                    localToDate = Util.convertWellToLocalTimeZone(toDate, objWell);
-                }
-                //
 
 
                 if (selectionType == "-1")
@@ -290,7 +275,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                 if (selectionType == "0")
                 {
-                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
+                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='"+fromDate.ToString("dd-MMM-yyyy HH:mm:ss")+"' AND TO_DATE<='"+toDate.ToString("dd-MMM-yyyy HH:mm:ss")+"' ORDER BY FROM_DATE";
                 }
                 else
                 {
@@ -703,8 +688,6 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
 
-                        lnFromDate = lnFromDate.ToUniversalTime();
-                        lnToDate = lnToDate.ToUniversalTime();
 
                         subQuery += "OR (DATETIME>'" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<'" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "') ";
 
@@ -768,9 +751,6 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
-
-                        lnFromDate = lnFromDate.ToUniversalTime();
-                        lnToDate = lnToDate.ToUniversalTime();
 
                         DataRow newRow = rigStateData.NewRow();
 
@@ -1077,6 +1057,19 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     //    histogramData.Rows.Add(newRow);
                     //}
                     #endregion
+
+
+                    ////Convert display dates to local  (Already converted to local while create table)
+                    //foreach (DataRow objRow in connData.Rows)
+                    //{
+
+                    //    DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
+                    //    DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
+
+                    //    objRow["FROM_DATE"] = lnFromDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm:ss");
+                    //    objRow["TO_DATE"] = lnToDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm:ss");
+
+                    //}
 
                     objResponse.Response = JsonConvert.SerializeObject(objDrlgConnSummary);
 

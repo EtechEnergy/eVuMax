@@ -412,7 +412,7 @@ class Broomstick extends Component {
         objSeries.Type = dataSeriesType.Line;
         objSeries.Color = objData.PlanColor;
         //objSeries.Color = "#6F6FFF";
-        console.log(objData.PlanName, objSeries.Color);
+        //console.log(objData.PlanName, objSeries.Color);
         objSeries.XAxisId = this.objChart_Broomstick.bottomAxis().Id;
         objSeries.YAxisId = this.objChart_Broomstick.leftAxis().Id;
         objSeries.LineWidth = 1;

@@ -405,7 +405,7 @@ class DrlgConnSummary extends Component {
           Util.StatusReady();
           this.objSummaryData = JSON.parse(res.data.Response);
 
-          console.log("Summary data" + this.objSummaryData);
+          //console.log("Summary data" + this.objSummaryData);
           this.setData();
         })
         .catch((error) => {
@@ -1289,12 +1289,13 @@ class DrlgConnSummary extends Component {
                         cell={(props) => (
                           <td className="text-right">
                             {
-                              <Moment_
-                                date={props.dataItem.FROM_DATE}
-                                format="MMM-DD-yyyy HH:MM:ss"
-                              >
-                                {" "}
-                              </Moment_>
+                              <label> {props.dataItem.FROM_DATE}</label>
+                              // <Moment_
+                              //   date={props.dataItem.FROM_DATE}
+                              //   format="MMM-DD-yyyy HH:MM:ss"
+                              // >
+                              //   {" "}
+                              // </Moment_>
                             }
                           </td>
                         )}

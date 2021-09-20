@@ -463,7 +463,7 @@ class DrlgConnSummary2 extends Component {
         .then((res) => {
           this.objSummaryData = JSON.parse(res.data.Response);
           Util.StatusSuccess("Data successfully retrived  ");
-          console.log("Data", this.objSummaryData);
+          //  console.log("Data", this.objSummaryData);
           this.setData();
         })
         .catch((error) => {

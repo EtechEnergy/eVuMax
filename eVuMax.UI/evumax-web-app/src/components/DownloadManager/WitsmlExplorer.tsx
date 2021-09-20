@@ -361,8 +361,8 @@ export default class WitsmlExplorer extends React.Component {
                 //objTimelog = <DataObjects.TimeLog> timeLogList ;
 
                 this.setState({ objTimeLog: timeLogList[i] });
-                console.log(timeLogList[i]);
-                console.log(this.state.objTimeLog.ObjectID);
+                // console.log(timeLogList[i]);
+                // console.log(this.state.objTimeLog.ObjectID);
             }
 
             if (logType == UI.enumNodeType.depthLog) {

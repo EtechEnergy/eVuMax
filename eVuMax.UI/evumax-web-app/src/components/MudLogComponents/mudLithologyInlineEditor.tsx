@@ -215,7 +215,7 @@ export default class MudLithologyInlineEditor extends Component<IProps> {
     }
 
     render() {
-        console.log(this.state.lithoLogyTypeList);
+        //  console.log(this.state.lithoLogyTypeList);
         return (
             <Dialog
                 onClose={this.props.cancel}

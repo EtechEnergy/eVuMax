@@ -211,23 +211,26 @@ class DataSelector extends Component<IProps> {
   //   pfromdate: Date,
   //   ptodate: Date,
   //   pfromdepth: number,
-  //   ptodepth: number
+  //   ptodepth: number,
+  //   pApplyRefreshHrs?: boolean
   // ) => {
   //   try {
+  //     debugger;
   //     this.setState({
   //       selectedval: ptype,
   //       fromDate: pfromdate,
   //       toDate: ptodate,
   //       fromDepth: pfromdepth,
   //       toDepth: ptodepth,
+
   //     });
-  //     this.__parentRef.selectionChanged(
-  //       this.state.selectedval,
-  //       this.state.fromDate,
-  //       this.state.toDate,
-  //       this.state.fromDepth,
-  //       this.state.toDepth
-  //     );
+  //     // this.__parentRef.selectionChanged(
+  //     //   this.state.selectedval,
+  //     //   this.state.fromDate,
+  //     //   this.state.toDate,
+  //     //   this.state.fromDepth,
+  //     //   this.state.toDepth
+  //     // );
   //   } catch (error) { }
   // };
 
@@ -237,8 +240,8 @@ class DataSelector extends Component<IProps> {
 
       let objDataSelector: DataSelector_ = new DataSelector_();
       objDataSelector.selectedval = ptype;
-      objDataSelector.fromDate = pfromdate;
-      objDataSelector.toDate = ptodate;
+      objDataSelector.fromDate = new Date(pfromdate);
+      objDataSelector.toDate = new Date(ptodate);
       objDataSelector.fromDepth = pfromdepth;
       objDataSelector.toDepth = ptodepth;
       objDataSelector.refreshHrs = this.state.objDataSelector.refreshHrs;
@@ -337,7 +340,6 @@ class DataSelector extends Component<IProps> {
 
 
   handleChange = (event: any, field: string) => {
-
 
     const value = event.value;
     const name = field; // target.props ? target.props.name : target.name;

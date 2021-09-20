@@ -437,7 +437,7 @@ class TripConnSummary extends Component {
     selectionChanged = (paramDataSelector: DataSelector_) => {
 
         //alert("new dataSelector Data");
-        console.log("new DataSelector", paramDataSelector);
+        //console.log("new DataSelector", paramDataSelector);
         this.setState({
             objDataSelector: paramDataSelector,
             isRealTime: false

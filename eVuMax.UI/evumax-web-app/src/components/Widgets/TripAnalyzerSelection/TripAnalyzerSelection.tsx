@@ -273,7 +273,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
           let objGrdData = objData.map((dataItem: any) =>
             Object.assign({ selected: false, selected_: false }, dataItem)
           );
-          console.log("newData", objGrdData);
+          //   console.log("newData", objGrdData);
 
           this.setState({
             isProcess: false,

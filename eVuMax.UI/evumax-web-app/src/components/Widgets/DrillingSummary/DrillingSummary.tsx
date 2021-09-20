@@ -1272,7 +1272,7 @@ export class DrillingSummary extends Component {
           // $("#loader").hide();
 
           let objData = JSON.parse(res.data.Response);
-
+          //console.log("DrlgSummary -", objData);
           let offSetWellNumericData: any = [];
           if (objData.offSetWellNumericData.length > 0) {
             offSetWellNumericData = objData.offSetWellNumericData[0];

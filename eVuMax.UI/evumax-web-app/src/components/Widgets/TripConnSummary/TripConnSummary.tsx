@@ -339,7 +339,7 @@ class TripConnSummary extends Component {
 
           this.objSummaryData = JSON.parse(res.data.Response);
 
-          console.log("TripConnSummary Data: ", this.objSummaryData);
+          //     console.log("TripConnSummary Data: ", this.objSummaryData);
           this.Warnings = res.data.Warnings;
 
 
@@ -489,7 +489,7 @@ class TripConnSummary extends Component {
 
 
     let realtimeStatus: boolean = paramRefreshHrs;
-    console.log("new DataSelector", paramDataSelector);
+    //   console.log("new DataSelector", paramDataSelector);
     await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
@@ -1128,7 +1128,7 @@ class TripConnSummary extends Component {
                       </td>
                     )}
                   ></Column>
-                  <Column
+                  {/* <Column
                     field="FROM_DATE"
                     headerClassName="text-center"
                     className="text-left"
@@ -1146,7 +1146,7 @@ class TripConnSummary extends Component {
                         }
                       </td>
                     )}
-                  />
+                  /> */}
 
                   <Column
                     //vimal
@@ -1689,7 +1689,7 @@ class TripConnSummary extends Component {
       this.objChart.rightAxis().Inverted = false;
 
       //Create series for each rig state
-      console.log("plotChartRigStateView: this.objSummaryData.rigStates.length ", this.objSummaryData.rigStates.length);
+      //    console.log("plotChartRigStateView: this.objSummaryData.rigStates.length ", this.objSummaryData.rigStates.length);
       for (let i = 0; i < this.objSummaryData.rigStates.length; i++) {
         let objSeries = new DataSeries();
         objSeries.Id = this.objSummaryData.rigStates[i]["RIG_STATE"].toString();
@@ -1703,7 +1703,7 @@ class TripConnSummary extends Component {
         this.objChart.DataSeries.set(objSeries.Id, objSeries);
       }
 
-      console.log("plotChartRigStateView: this.objChart.DataSeries", this.objChart.DataSeries);
+      //    console.log("plotChartRigStateView: this.objChart.DataSeries", this.objChart.DataSeries);
 
       //Fill up the data for each series
 

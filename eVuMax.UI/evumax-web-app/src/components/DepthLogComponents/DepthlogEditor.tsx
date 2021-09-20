@@ -1767,7 +1767,7 @@ export default class DepthlogEditor extends React.PureComponent<IProps> {
         );
     }
     itemRender = (li: any, itemProps: any) => {
-        console.log(this.state.objDepthLog.logCurves);
+        //   console.log(this.state.objDepthLog.logCurves);
         const itemChildren = (
             <span>
                 <input type="checkbox" checked={itemProps.selected} onChange={() => { }} />

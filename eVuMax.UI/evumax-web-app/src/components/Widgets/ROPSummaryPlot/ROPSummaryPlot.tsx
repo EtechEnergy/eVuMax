@@ -835,7 +835,7 @@ export class ROPSummaryPlot extends Component {
           // $("#loader").hide();
 
           let objData = JSON.parse(res.data.Response);
-          console.log(objData);
+          //console.log(objData);
 
           this.Warnings = res.data.Warnings;
 

@@ -2,73 +2,73 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Fragment>
         <DirectoryRef Id="dir_eVuMaxUI">
-            <Component Id="cmp1A9E5BDB23656FC836A2237FDA84672C" Guid="{5F64D911-4292-4DBD-AC45-792D7342274E}">
+            <Component Id="cmp1A9E5BDB23656FC836A2237FDA84672C" Guid="{D739A78A-149C-4783-B994-BF0EADA86D16}">
                 <File Id="filC2BF1F13316CA4C637632A710F6C1AC6" KeyPath="yes" Source="$(loc.eVuMaxUI)\asset-manifest.json" />
             </Component>
-            <Component Id="cmp3878E92A0173FA55C1D79A3C2CD8F959" Guid="{52798735-E413-4EF5-A913-AEEDAEB080DD}">
+            <Component Id="cmp3878E92A0173FA55C1D79A3C2CD8F959" Guid="{4429F5B3-D172-439B-BDA1-2658AA9EDFD5}">
                 <File Id="filEB74AB282F59E74A3ED2E7B904267B91" KeyPath="yes" Source="$(loc.eVuMaxUI)\favicon.ico" />
             </Component>
-            <Component Id="cmp6E5820925FE16580CF2175BF860285C4" Guid="{6719C0DE-9BD5-4630-AE0B-5CFCD518BBBC}">
+            <Component Id="cmp6E5820925FE16580CF2175BF860285C4" Guid="{584C1942-A708-49D3-A4DD-F48ED4DD138B}">
                 <File Id="fil3B71006A4B7BFC07CC8A7706B8A8334C" KeyPath="yes" Source="$(loc.eVuMaxUI)\index.html" />
             </Component>
-            <Component Id="cmpE92328B54693BF704C036E87C17C267B" Guid="{68A6F58A-6C65-4619-8C33-BC54DB473293}">
+            <Component Id="cmpE92328B54693BF704C036E87C17C267B" Guid="{65BFC4A1-DAA9-4D1D-9E61-944CC5687CA7}">
                 <File Id="fil0E4AE4A4341B26DDBB83A954DDE3D1F1" KeyPath="yes" Source="$(loc.eVuMaxUI)\logo192.png" />
             </Component>
-            <Component Id="cmp7DD890979C25E7AEC9B5273D623EB9EC" Guid="{BC340C7D-7BEC-4D86-A2E4-C1EB0DADA9BA}">
+            <Component Id="cmp7DD890979C25E7AEC9B5273D623EB9EC" Guid="{673B7D7F-FB25-4FC1-A411-32888DDB6CFA}">
                 <File Id="filEE72DEB8B2496648FC55D28B2470DB06" KeyPath="yes" Source="$(loc.eVuMaxUI)\logo512.png" />
             </Component>
-            <Component Id="cmp0DE339AB6D73EA8394DF7FE60F8CA5B1" Guid="{94C16EE9-7B50-47D2-8C97-4AAF42952BB4}">
+            <Component Id="cmp0DE339AB6D73EA8394DF7FE60F8CA5B1" Guid="{7A62DEA7-DEB5-4B4B-B0DD-733E20DA04C5}">
                 <File Id="fil3C63250B4E7EF4BD3F345A68D01E740A" KeyPath="yes" Source="$(loc.eVuMaxUI)\manifest.json" />
             </Component>
-            <Component Id="cmpBAEDF85BD786F436E853741638328878" Guid="{DEBDC584-4153-4F0F-8466-943385DC044D}">
+            <Component Id="cmpBAEDF85BD786F436E853741638328878" Guid="{4FA59C66-68EC-45CD-A867-73EB50A72A4C}">
                 <File Id="fil49476E0169D812BE99203DF3498151F9" KeyPath="yes" Source="$(loc.eVuMaxUI)\robots.txt" />
             </Component>
-            <Component Id="cmp044090B33DD3B108550A03C8D7258439" Guid="{3157D867-44D6-4FE6-8B87-E32B4D36B62A}">
+            <Component Id="cmp044090B33DD3B108550A03C8D7258439" Guid="{C716CE9C-311B-4D93-BC3C-E21BEBC8CA0B}">
                 <File Id="fil1BFC38F108576DF1092539A63407C201" KeyPath="yes" Source="$(loc.eVuMaxUI)\vumaxfavicon.ico" />
             </Component>
             <Directory Id="dirAB3623110AEA13D272FE1983D54F46B5" Name="static">
                 <Directory Id="dir6908F2F4CFB90617561AAA02B681656A" Name="css">
-                    <Component Id="cmp824764904091EE0AEBFDCC5819DE42BB" Guid="{94E124AE-A1C5-4F00-8515-823223EED972}">
+                    <Component Id="cmp824764904091EE0AEBFDCC5819DE42BB" Guid="{F0B5E385-6047-47A1-BCCF-DD209F170167}">
                         <File Id="filD579BF243FBB639F2FD996B1771684FE" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\css\2.6f9ce932.chunk.css" />
                     </Component>
-                    <Component Id="cmp4F32C9D48452BA7A9C579ED32DF29175" Guid="{31651085-53A4-4E31-ACF5-9C24B2F46D53}">
+                    <Component Id="cmp4F32C9D48452BA7A9C579ED32DF29175" Guid="{65F73D3C-C90F-40AB-AB2D-A0C80F3706CC}">
                         <File Id="filCFAE76A4578720712CB716AAD32062C7" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\css\2.6f9ce932.chunk.css.map" />
                     </Component>
-                    <Component Id="cmpAB27B951513D57BDCA34F8312FA318DF" Guid="{4E498FBE-D3F9-473D-ABB3-77B08950DC31}">
+                    <Component Id="cmpAB27B951513D57BDCA34F8312FA318DF" Guid="{6E49E886-1C72-4E4E-8686-74FDB8053C46}">
                         <File Id="filAB0BE20795DC8712ABB48FD2E3C512F0" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\css\main.3516e7d0.chunk.css" />
                     </Component>
-                    <Component Id="cmp0CD131A1FF3623B30FEB336EA8FA99E5" Guid="{38CB3F2E-544E-4EF7-BF93-164561ABA764}">
+                    <Component Id="cmp0CD131A1FF3623B30FEB336EA8FA99E5" Guid="{264200DE-73D8-4713-9568-416FB6AAA480}">
                         <File Id="fil0D2D0ECCA0E71D7A711254A36B776E5A" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\css\main.3516e7d0.chunk.css.map" />
                     </Component>
                 </Directory>
                 <Directory Id="dirC537F0E9D1021AFF4179EAE646093846" Name="js">
-                    <Component Id="cmpE1F02A090D4F4904D4150FC1F84AC8FB" Guid="{B7578120-28CB-48CB-B951-4411BC979984}">
+                    <Component Id="cmpE1F02A090D4F4904D4150FC1F84AC8FB" Guid="{0EE2B8EC-9A79-4A3E-BAC7-F99C46C4E1F2}">
                         <File Id="fil224E9BF9A5B1304087B6D73F57B957F3" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\2.afb1d2a4.chunk.js" />
                     </Component>
-                    <Component Id="cmp1D05093AD702DA51002C6911DEDF85B9" Guid="{DF92ECB8-9F93-4A2E-B9CB-F0427A039CDF}">
+                    <Component Id="cmp1D05093AD702DA51002C6911DEDF85B9" Guid="{98FE3238-471C-4E2C-BA63-2FEFD2B01B10}">
                         <File Id="fil2A27D5D50CCFA8D0EC4B609ADB8019D4" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\2.afb1d2a4.chunk.js.LICENSE.txt" />
                     </Component>
-                    <Component Id="cmpE41EE4816B80D43E921BE8090B5CB46C" Guid="{52F259BD-FC53-46D9-B5C3-5A9E05610FCB}">
+                    <Component Id="cmpE41EE4816B80D43E921BE8090B5CB46C" Guid="{C8705CC6-9337-438B-8469-99500244900E}">
                         <File Id="fil468E762DBFE1642A725F3A56F4D3B17A" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\2.afb1d2a4.chunk.js.map" />
                     </Component>
-                    <Component Id="cmp426006630B5901A7C673EBFD583B5975" Guid="{CA066D86-F0F7-4D24-BD61-642D294C69CF}">
-                        <File Id="fil022DC7534E874B8B2A282F9BA1D063F7" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\main.76f2619c.chunk.js" />
+                    <Component Id="cmp1119FD9D99845AF8535CCA228D8EAC0E" Guid="{DD464507-EDD1-4F88-B316-F23B6F6A994A}">
+                        <File Id="filCA37595D9DABA3EFADA0EE6ED3BBFEDD" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\main.1372a149.chunk.js" />
                     </Component>
-                    <Component Id="cmp65A46832B9F544D9F5F66BA0B083BEF7" Guid="{BD6BC783-49A6-4006-B2AA-0CF4E4AE9E1D}">
-                        <File Id="fil7D4F8D6EC15F3C3697985B290043187B" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\main.76f2619c.chunk.js.map" />
+                    <Component Id="cmp69FAA67E33BAFC458BE8BC168E98DC1C" Guid="{07ED2987-C909-4EA0-AD14-65956C2C7FDA}">
+                        <File Id="fil45EDAF18074F15CC8F58786D86A93E67" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\main.1372a149.chunk.js.map" />
                     </Component>
-                    <Component Id="cmp1DBD79BFE8C23C94A32522128BADCF9F" Guid="{5D2C5D59-ED28-428B-83BF-A73B39DB7B64}">
+                    <Component Id="cmp1DBD79BFE8C23C94A32522128BADCF9F" Guid="{7A0E613A-E08D-475B-B745-2238D7DB25B9}">
                         <File Id="filD234FA8A51188A62CEBDE7BBADE04A28" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\runtime-main.582f3784.js" />
                     </Component>
-                    <Component Id="cmpD1C3A6EC198B6F719CAF12B0E77CCF16" Guid="{DC0BBA71-643D-41DD-A5D6-93F7A3052698}">
+                    <Component Id="cmpD1C3A6EC198B6F719CAF12B0E77CCF16" Guid="{58D79DF5-4DE0-4B0A-A6E4-24E5B63CD316}">
                         <File Id="fil623BF990D2BB05954297E05A4E59EC05" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\js\runtime-main.582f3784.js.map" />
                     </Component>
                 </Directory>
                 <Directory Id="dir304E7CC23ACDB014379F3EC32786D6DD" Name="media">
-                    <Component Id="cmp7546DE108BD3EAD970AB72F8ADAB99CA" Guid="{AA858BFB-5BED-44ED-A9E7-7502B4A0D3E1}">
+                    <Component Id="cmp7546DE108BD3EAD970AB72F8ADAB99CA" Guid="{8F4D64D7-46E0-4AEB-BCE2-F46C3BC4AE53}">
                         <File Id="fil5F25B2B524F911CE9CC48456D1325E70" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\media\downloading-blue.1d117764.gif" />
                     </Component>
-                    <Component Id="cmpEF80CA22F4256307FEF263B7AA3B393F" Guid="{67C382F2-F3C2-443E-A745-AAD85EF14756}">
+                    <Component Id="cmpEF80CA22F4256307FEF263B7AA3B393F" Guid="{B525A8CF-CF18-4703-9FA3-D643CAFA3568}">
                         <File Id="filDEB80135C31E4DC477769FB06E000FA9" KeyPath="yes" Source="$(loc.eVuMaxUI)\static\media\etechSVG.08de06c8.svg" />
                     </Component>
                 </Directory>
@@ -92,8 +92,8 @@
             <ComponentRef Id="cmpE1F02A090D4F4904D4150FC1F84AC8FB" />
             <ComponentRef Id="cmp1D05093AD702DA51002C6911DEDF85B9" />
             <ComponentRef Id="cmpE41EE4816B80D43E921BE8090B5CB46C" />
-            <ComponentRef Id="cmp426006630B5901A7C673EBFD583B5975" />
-            <ComponentRef Id="cmp65A46832B9F544D9F5F66BA0B083BEF7" />
+            <ComponentRef Id="cmp1119FD9D99845AF8535CCA228D8EAC0E" />
+            <ComponentRef Id="cmp69FAA67E33BAFC458BE8BC168E98DC1C" />
             <ComponentRef Id="cmp1DBD79BFE8C23C94A32522128BADCF9F" />
             <ComponentRef Id="cmpD1C3A6EC198B6F719CAF12B0E77CCF16" />
             <ComponentRef Id="cmp7546DE108BD3EAD970AB72F8ADAB99CA" />

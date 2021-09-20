@@ -184,8 +184,8 @@ export default class ActiveWell extends React.Component {
   OpenInterfaceChange = (item: any, dataItem: any) => {
     //pending
 
-    console.log("open Interface", dataItem.WELL_ID);
-    console.log("open Interface", item);
+    // console.log("open Interface", dataItem.WELL_ID);
+    // console.log("open Interface", item);
 
     utilFunc.launchWidget(item.value.id, dataItem.WELL_ID);
   };
@@ -288,7 +288,7 @@ export default class ActiveWell extends React.Component {
         .then((res) => {
           const objData = JSON.parse(res.data.Response);
           this.setState({ columnWell: objData, isProcess: false });
-          console.log(objData);
+          // console.log(objData);
         })
         .catch((error) => {
           if (error.response) {
@@ -513,11 +513,11 @@ export default class ActiveWell extends React.Component {
   };
   //Nishant 02-06-2020
   onSaveLayoutClick = (event: any) => {
-    console.log(event);
+    // console.log(event);
   };
 
   onGridColumnReorder = (e: GridColumnReorderEvent) => {
-    console.log(e.columns);
+    // console.log(e.columns);
     //e[i].orderIndex
     //e[i].field
     let columnWell = this.state.columnWell;
