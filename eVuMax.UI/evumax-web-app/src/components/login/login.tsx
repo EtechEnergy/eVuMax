@@ -28,7 +28,9 @@ import {
 } from "../../redux/actions/loginActions";
 import RegularButton from "../CustomButtons/Button";
 import { confirmAlert } from "react-confirm-alert";
-import { color } from "d3";
+
+import AboutPage from "../../components/About/about";
+import { Dialog } from "@progress/kendo-react-dialogs";
 
 let _gMod = new GlobalMod();
 
@@ -39,6 +41,25 @@ let objNotification = new NotificationProperties();
 type Props = LinkStateProps & LinkDispatchProps;
 
 export class LoginPage extends React.Component<Props> {
+
+  state = {
+    //showPopupMenu: true
+    showAboutDialog: false,
+
+  }
+
+  ShowAboutDialog = () => {
+    try {
+      this.setState({
+        showAboutDialog: true
+      });
+
+    } catch (error) {
+
+    }
+  }
+
+
   Login = () => {
     let userName: string = (
       document.getElementById("txtUserName") as HTMLInputElement
@@ -55,7 +76,7 @@ export class LoginPage extends React.Component<Props> {
         buttons: [
           {
             label: "Ok",
-            onClick: () => {},
+            onClick: () => { },
           },
           // {
           //     label: 'No',
@@ -78,6 +99,14 @@ export class LoginPage extends React.Component<Props> {
   render() {
     return (
       <div>
+        {this.state.showAboutDialog && <Dialog height="390px" width="800px" title="About"
+          onClose={() => { this.setState({ showAboutDialog: false }); }}
+        >
+          <div className="" style={{ paddingTop: "50px" }}>
+            <AboutPage handleClick={() => { this.setState({ showAboutDialog: false }) }} />
+          </div>
+        </Dialog>}
+
         <div className="d-md-flex d-xl-flex d-lg-flex d-sm-flex  h-md-100 align-items-center">
           <div
             className="col-md-6 col-lg-6 col-xl-7 d-none d-sm-none d-md-block p-0  logbackarea h-md-100 bg-img "
@@ -88,6 +117,7 @@ export class LoginPage extends React.Component<Props> {
                 <img
                   src={VuMaxLogo}
                   style={{ display: "inline-block", paddingBottom: "30px" }}
+                  onClick={() => { this.setState({ showAboutDialog: true }); }}
                 />
                 <span
                   className="text-white"

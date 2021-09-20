@@ -227,7 +227,7 @@ class DrlgConnSummary extends Component {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
 
-      // AxiosSource.cancel();
+      AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
 
@@ -390,6 +390,8 @@ class DrlgConnSummary extends Component {
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
       //alert(this.refreshHrs);
+
+      AxiosSource = axios.CancelToken.source();
 
       axios
         .get(_gMod._getData, {
@@ -773,7 +775,7 @@ class DrlgConnSummary extends Component {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
 
-      // AxiosSource.cancel();
+      AxiosSource.cancel();
       clearInterval(this.intervalID);
       this.intervalID = null;
       this.loadConnections();

@@ -822,6 +822,7 @@ export class ROPSummaryPlot extends Component {
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
 
+      this.AxiosSource = axios.CancelToken.source();
       axios
         .get(_gMod._getData, {
           cancelToken: this.AxiosSource.token,
@@ -966,7 +967,7 @@ export class ROPSummaryPlot extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      //  this.AxiosSource.cancel();
+      this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
       this.loadConnections();
@@ -983,7 +984,7 @@ export class ROPSummaryPlot extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
-      //  this.AxiosSource.cancel();
+      this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
       this.loadConnections();

@@ -136,6 +136,9 @@ class Broomstick extends Component {
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
 
+
+      this.AxiosSource = axios.CancelToken.source();
+
       axios
         .get(_gMod._getData, {
           cancelToken: this.AxiosSource.token,
@@ -176,9 +179,9 @@ class Broomstick extends Component {
         })
         .catch((error) => {
           Util.StatusError(error.message);
-          this.forceUpdate();
 
           if (error.response) {
+
             // return <CustomeNotifications Key="success" Icon={false}  />
             // this.errors(error.response.message);
           } else if (error.request) {

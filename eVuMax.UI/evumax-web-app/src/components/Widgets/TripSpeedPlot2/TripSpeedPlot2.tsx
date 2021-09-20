@@ -327,6 +327,8 @@ export class TripSpeedPlot2 extends Component {
       );
       objBrokerRequest.Parameters.push(paramwellId);
 
+      this.AxiosSource = axios.CancelToken.source();
+
       axios
         .get(_gMod._getData, {
           cancelToken: this.AxiosSource.token,

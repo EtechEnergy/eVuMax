@@ -153,7 +153,7 @@ export class DrillingSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
-      //await this.AxiosSource.cancel();
+      await this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
       this.loadDrlgSummary();
@@ -1128,7 +1128,7 @@ export class DrillingSummary extends Component {
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
-      //await this.AxiosSource.cancel();
+      await this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
       this.loadDrlgSummary();
@@ -1303,11 +1303,8 @@ export class DrillingSummary extends Component {
           this.refreshChart();
         })
         .catch((error) => {
-          alert("error in Axios");
-          this.setState({
-            isProcess: false,
-          });
-          this.forceUpdate();
+
+          Util.StatusError(error.message);
 
           if (error.response) {
             // return <CustomeNotifications Key="success" Icon={false}  />
