@@ -700,6 +700,7 @@ export class DrillingSummary extends Component {
       let objDistance = new DataSeries();
       objDistance.Id = "Distance";
       objDistance.Stacked = true;
+      objDistance.ShowLabelOnSeries = true;
 
       objDistance.Title = "Distance";
       objDistance.Type = dataSeriesType.Bar;
@@ -784,6 +785,7 @@ export class DrillingSummary extends Component {
       let objROP = new DataSeries();
       objROP.Id = "ROP";
       objROP.Stacked = true;
+      objROP.ShowLabelOnSeries = true;
 
       objROP.Title = "ROP";
       objROP.Type = dataSeriesType.Bar;
@@ -872,7 +874,7 @@ export class DrillingSummary extends Component {
       let objTime = new DataSeries();
       objTime.Id = "Time";
       objTime.Stacked = true;
-
+      objTime.ShowLabelOnSeries = true;
       objTime.Title = "Time";
       objTime.Type = dataSeriesType.Bar;
       objTime.Color = this.getRigStateColor(0); //  "#1089ff";
