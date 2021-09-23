@@ -8,6 +8,7 @@ using VuMaxDR.Data.Objects;
 using System.Data;
 using Newtonsoft.Json;
 using System.Drawing;
+using System.Dynamic;
 
 namespace eVuMax.DataBroker.Summary.Toolface
 {
@@ -371,6 +372,25 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 objToolfaceSummary.OutOfDrlgWindowPercent = Math.Round(100 - InZonePercent,2); //Nishant 12/08/2021
                 objToolfaceSummary.OutOfROPWindowPercent = Math.Round(100 - InZoneROPPercent,2); //Nishant 12/08/2021
+
+                Dictionary<string, FormationTop> topsList = new Dictionary<string, FormationTop>();
+                topsList = FormationTop.getList(ref paramRequest.objDataService, wellId, fromDepth, toDepth);
+                List<Object> topsList1 = new List<Object>();
+
+                if (topsList.Count > 0)
+                {
+
+                    foreach (string key in topsList.Keys)
+                    {
+                        dynamic obj = new ExpandoObject();
+                        obj.Depth = topsList[key].Depth;
+                        obj.Color = ColorTranslator.ToHtml(Color.FromArgb((int)topsList[key].Color));
+                        obj.TopName = topsList[key].TopName;
+                        topsList1.Add(obj);
+                    }
+
+                    objToolfaceSummary.formationTops = topsList1;
+                }
 
 
                 objResponse.Response = JsonConvert.SerializeObject(objToolfaceSummary);

@@ -29,15 +29,15 @@ export default class AboutPage extends React.Component<IProps>{
         Version: "Demo",
         BuildDate: ""
     }
-    
-    redirectEtechSite=()=>{
+
+    redirectEtechSite = () => {
         try {
-            
+
             return;
             window.open("https://etechinter.com/contact-us/");
 
         } catch (error) {
-            
+
         }
     }
     getVersion = () => {
@@ -107,14 +107,14 @@ export default class AboutPage extends React.Component<IProps>{
                     <div className="VersionDateTimeContainer mt-3  mr-4 ml-5" style={{ fontSize: "1.2em", display: "block" }}>Version: <b> {this.state.Version}  </b></div>
                     <div className="VersionDateTimeContainer mt-3 mb-5 mr-4 ml-5" style={{ fontSize: "1.2em", display: "block" }}>Build DateTime: <b> {this.state.BuildDate}  </b></div>
                     <div id="PoweredByText" className="ml-auto mr-2 float-right">
-                               Powered by  <img src={ETECHLogo} style={{height:"20px"}} className="img-fluid" /> Etech International Inc. <p>&copy; Copyright {new Date().getFullYear()} <a >info@etechinter.com</a> </p>
+                        Powered by  <img src={ETECHLogo} style={{ height: "20px" }} className="img-fluid" /> Etech International Inc. &copy; Copyright {new Date().getFullYear()}
                     </div>
 
                     <div className="VersionLogContainer">
                         <button type="button" onClick={this.props.handleClick} className="VersionButtonOk ml-1" style={{ height: "30px", width: "80px", border: "1px solid" }}>Ok</button>
                     </div>
 
-                  
+
 
                 </div>
             </div>
