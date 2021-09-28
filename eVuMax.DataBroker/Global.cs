@@ -20,13 +20,18 @@ namespace eVuMax.DataBroker
         public const string Mod_Broomstick_Manager = "Broomstick.Manager";
 
         //Nishant
-        
+        public const string Mod_eVuMaxLogger = "eVuMaxLogger";
+
         public const string Mod_DownloadManager = "DownloadManager"; //Nishant 27-11-2020
-                                                                     //Nishant: 27-11-2020
+       
         public const string DO_DownloadManager = "DownloadManager";
         public const string PasswordEncryptionKey = "V0K9iPqdUnt0i#*(%^@"; //Nishant: 27-11-2020
         public const int ServerLogMaxLimit = 100; //Nishant 27-11-2020
 
+        #endregion
+
+        #region ErrorLogger
+        public const string Brk_eVuMaxLogger = "eVuMaxLogger";//Nitin 16-10-2020
         #endregion
 
         #region Common Broker Strings
@@ -35,6 +40,7 @@ namespace eVuMax.DataBroker
         public const string Brk_Authentication = "Authentication";
         public const string Brk_TimeData = "TimeData";
         public const string Common_Functions = "Common.Functions";//Nitin 16-10-2020
+        
 
         #endregion
 

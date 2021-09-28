@@ -70,6 +70,13 @@ namespace eVuMax.DataBroker
 					return objBroker;
 				}
 
+				//Nishant 28-09-2021
+				if (paramRequest.Module == Global.Mod_eVuMaxLogger)
+				{
+
+					DataBroker.Logger.eVuMaxLoggerBroker objBroker = new Logger.eVuMaxLoggerBroker();
+					return objBroker;
+				}
 
 
 				return null;
