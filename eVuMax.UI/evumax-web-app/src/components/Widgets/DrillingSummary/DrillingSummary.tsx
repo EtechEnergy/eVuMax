@@ -42,6 +42,7 @@ import { Util } from "../../../Models/eVuMax";
 import DataSelector_ from "../../Common/DataSelector_";
 import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
 import DataSelector from "../../Common/DataSelector";
+import {ClientLogger} from "../../ClientLogger/ClientLogger";
 
 let _gMod = new GlobalMod();
 
@@ -109,6 +110,8 @@ export class DrillingSummary extends Component {
     // } else {
     //   clearInterval(this.intervalID);
     // }
+
+ 
 
 
 

@@ -327,7 +327,7 @@ namespace eVuMax.API
                 }
 
                 //***********
-                ClientLogger.Debug(paramRequest);
+                ClientLogger.Debug(ErrorMessage);
             }
             catch (Exception ex)
             {

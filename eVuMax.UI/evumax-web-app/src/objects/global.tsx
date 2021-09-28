@@ -3,6 +3,7 @@ export default class GlobalMod {
   _getData = Port + ServiceName + getData;
   _performTask = Port + ServiceName + performTask;
   _getVersion = Port + ServiceName + "/getAssemblyVersion"; //Nishant 06/08/2021
+  _logClientMsg = Port + ServiceName + "/LogClientSideError"; //Nishant 28/09/2021 NisPC
 }
 
 //for Local testing
