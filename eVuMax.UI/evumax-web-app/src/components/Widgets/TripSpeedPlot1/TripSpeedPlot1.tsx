@@ -333,7 +333,9 @@ export class TripSpeedPlot1 extends Component {
       this.objChart_TripSpeed.topAxis().ShowTitle = true;
       this.objChart_TripSpeed.topAxis().Title = "Delta T (Hrs.)";
       this.objChart_TripSpeed.topAxis().DisplayOrder = 1;
-      this.objChart_TripSpeed.topAxis().LabelAngel = 45;
+      this.objChart_TripSpeed.topAxis().LabelAngel = 90;
+      this.objChart_TripSpeed.topAxis().ShowAxisLine = true;
+
 
       this.objChart_TripSpeed.topAxis().GridVisible = false;
 
@@ -476,6 +478,7 @@ export class TripSpeedPlot1 extends Component {
       }
 
       // //Delta with connection
+
 
       if (this.state.objTripSpeedData.deltaWithConnData.length > 0) {
         objSeries = new DataSeries();

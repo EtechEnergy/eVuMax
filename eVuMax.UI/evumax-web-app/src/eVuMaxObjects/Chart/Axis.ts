@@ -746,6 +746,7 @@ export class Axis {
         } else {
           if (this.ShowLabels) {
             titleY = this.IRelativePos - textWidth - titleHeight;
+
           } else {
             titleY = this.IRelativePos;
           }
@@ -962,10 +963,16 @@ export class Axis {
     }
 
     if (this.LabelAngel != 0) {
+      //prath 28-09-2021 (to control anchor posion of top axis)
+      let textAnchor = "end";
+      if (this.Position == axisPosition.top) {
+        textAnchor = "middle";
+      }
+
       this.ChartRef.SVGRef.select("#" + this.Id)
         .selectAll(".tick")
         .select("text")
-        .attr("text-anchor", "end")
+        .attr("text-anchor", textAnchor)
         .attr("transform", "rotate(-" + this.LabelAngel + ")");
     }
 
