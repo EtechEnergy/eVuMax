@@ -59,15 +59,11 @@ import {
 
 
 import moment from "moment";
-
 import "./ToolfaceSummary.css";
 import {
   faPlus,
-
   faSearchMinus,
-
   faTrash,
-
   faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
@@ -122,49 +118,51 @@ class ToolfaceSummary extends Component {
       dataMnemonic: "",
       lineStyle: 0,
       lineWidth: 1,
-      lineColor: util.getRandomColor(),
+      //lineColor: util.getRandomColor(),
+      lineColor: "#499DF5",
     },
     MTF: {
       Mnemonic: "MTF",
       dataMnemonic: "",
       lineStyle: 0,
       lineWidth: 2,
-      lineColor: util.getRandomColor(),
+      //lineColor: util.getRandomColor(),
+      lineColor: "#FF8C00",
     },
     PlanDLS: {
       Mnemonic: "PlanDLS",
       dataMnemonic: "",
       lineStyle: 0,
       lineWidth: 2,
-      lineColor: util.getRandomColor(),
+      lineColor: "#B8B8B8"  //util.getRandomColor(),
     },
     ActualDLS: {
       Mnemonic: "ActualDLS",
       dataMnemonic: "",
       lineStyle: 0,
       lineWidth: 2,
-      lineColor: util.getRandomColor(),
+      lineColor: "#B8B8B8", // util.getRandomColor(),
     },
     PlanTVD: {
       Mnemonic: "PlanTVD",
       dataMnemonic: "",
       lineStyle: 0,
       lineWidth: 2,
-      lineColor: util.getRandomColor(),
+      lineColor: "#FF0000", //util.getRandomColor(),
     },
     ActualTVD: {
       Mnemonic: "ActualTVD",
       dataMnemonic: "",
       lineStyle: 0,
       lineWidth: 2,
-      lineColor: util.getRandomColor(),
+      lineColor: "#008037", //util.getRandomColor(),
     },
     MY: {
       Mnemonic: "MY",
       dataMnemonic: "",
       lineStyle: 0,
       lineWidth: 2,
-      lineColor: util.getRandomColor(),
+      lineColor: "#FF0000",
     },
 
     adnlChannels: [] as any[],
@@ -686,11 +684,8 @@ class ToolfaceSummary extends Component {
     try {
       let tripOutlineData = [];
       let tripOutArr = [];
-      debugger;
+
       if (this.objToolfaceData.formationTops.length > 0) {
-
-
-
 
         for (let index = 0; index < this.objToolfaceData.formationTops.length; index++) {
           const depth = this.objToolfaceData.formationTops[index].Depth;
@@ -1351,25 +1346,34 @@ class ToolfaceSummary extends Component {
         this.objUserSettings.ROPDrlgWindowData
       ).map((item: any, key: number) => ({ ...item, SRNO: key }));
 
+      //alert("hi");
+
 
       if (this.objUserSettings.GTF.lineColor == "") {
-        this.objUserSettings.GTF.lineColor = util.getRandomColor();
+        //this.objUserSettings.GTF.lineColor = util.getRandomColor();
+        this.objUserSettings.GTF.lineColor = "#499DF5";
+
       }
 
       if (this.objUserSettings.MTF.lineColor == "") {
-        this.objUserSettings.MTF.lineColor = util.getRandomColor();
+        //this.objUserSettings.MTF.lineColor = util.getRandomColor();
+        this.objUserSettings.MTF.lineColor = "#FF8C00";
       }
       if (this.objUserSettings.PlanDLS.lineColor == "") {
-        this.objUserSettings.PlanDLS.lineColor = util.getRandomColor();
+        //this.objUserSettings.PlanDLS.lineColor = util.getRandomColor();
+        this.objUserSettings.PlanDLS.lineColor = "#B8B8B8";
       }
       if (this.objUserSettings.ActualDLS.lineColor == "") {
-        this.objUserSettings.ActualDLS.lineColor = util.getRandomColor();
+        //this.objUserSettings.ActualDLS.lineColor = util.getRandomColor();
+        this.objUserSettings.ActualDLS.lineColor = "#B8B8B8";
       }
       if (this.objUserSettings.PlanTVD.lineColor == "") {
-        this.objUserSettings.PlanTVD.lineColor = util.getRandomColor();
+        //this.objUserSettings.PlanTVD.lineColor = util.getRandomColor();
+        this.objUserSettings.PlanTVD.lineColor = "#FF0000";
       }
       if (this.objUserSettings.ActualTVD.lineColor == "") {
-        this.objUserSettings.ActualTVD.lineColor = util.getRandomColor();
+        //this.objUserSettings.ActualTVD.lineColor = util.getRandomColor();
+        this.objUserSettings.ActualTVD.lineColor = "#008037";
       }
       //Nishant: Nis-PC 16-09-2021
       if (this.objUserSettings.GeoDrlgWindowColor == "") {
@@ -1550,7 +1554,7 @@ class ToolfaceSummary extends Component {
 
           this.objToolfaceData = JSON.parse(res.data.Response);
           console.log("ToolfaceData", this.objToolfaceData);
-          debugger;
+
 
           //console.log(util.rgb2hex(this.objToolfaceData.formationTops[0].Color));
           // for (let index = 0; index < array.length; index++) {
@@ -1558,7 +1562,7 @@ class ToolfaceSummary extends Component {
 
           // }
 
-          debugger;
+
           // for (let i = 0; i < this.objToolfaceData.formationTops.length; i++) {
           //   this.objToolfaceData.formationTops[i].Color = this.objToolfaceData.formationTops[i].Color.toString(16).replace("-", "#");
           // }
@@ -1674,11 +1678,28 @@ class ToolfaceSummary extends Component {
       if (newData.some((x) => x.Mnemonic == selectedChannel.id)) {
         // Skip existing value
       } else {
+
+        let line_Color = "";
+        switch (selectedChannel.id) {
+          case "GAMMA_RAY":
+            line_Color = "#008017"
+            break;
+          case "DIFF_PRESS":
+            line_Color = "#0202FF"
+            break;
+          case "ROP":
+            line_Color = "#FF0000"
+            break;
+          default:
+            line_Color = "#93C7CF" //util.getRandomColor()
+            break;
+        }
+
         newData.push({
           Mnemonic: selectedChannel.id,
           lineStyle: 0,
           lineWidth: 2,
-          lineColor: util.getRandomColor(), // Default Color when add New Channel  Nishant 06/09/2021,
+          lineColor: line_Color  // util.getRandomColor(), // Default Color when add New Channel  Nishant 06/09/2021,
           // visible:"true" // Nishant 28/07/2021
         });
       }
@@ -1850,6 +1871,7 @@ class ToolfaceSummary extends Component {
   };
 
   Primary_handleSelected = (item: any) => {
+
     const data = this.state.primaryPlotList.map((channels) => {
       if (channels.Mnemonic === item.Mnemonic) {
         channels.selected = !channels.selected;
