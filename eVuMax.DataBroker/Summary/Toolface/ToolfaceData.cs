@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using VuMaxDR.Data.Objects;
 
 namespace eVuMax.DataBroker.Summary.Toolface
 {
@@ -22,7 +23,8 @@ namespace eVuMax.DataBroker.Summary.Toolface
         public DataTable SlideTable { get; set; } = new DataTable();
         public DataTable RotarySections { get; set; } = new DataTable();
         public List<adnlChannelData> adnlChannelsData { get; set; } = new List<adnlChannelData>();
-        public DataTable formationTops { get; set; } = new DataTable();
+        //public DataTable formationTops { get; set; } = new DataTable();
+        public List<Object> formationTops { get; set; } = new List<Object>();
         public List<DrillingWindowInfo> drlgWindow = new List<DrillingWindowInfo>();
         public List<DrillingWindowInfo> ropWindow = new List<DrillingWindowInfo>();
 

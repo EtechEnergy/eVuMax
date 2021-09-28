@@ -183,7 +183,7 @@ class ToolfaceSummary extends Component {
     isDirty: false,
 
     // Settings
-    ShowFormationTops: false,
+    ShowFormationTops: true,
     MTFVector: false,
     GTFVector: false,
     FilterByMinSlideLength: false,
@@ -633,6 +633,10 @@ class ToolfaceSummary extends Component {
         this.onBeforeDrawSeries(e, i);
       });
 
+      this.objChart.onAfterSeriesDraw.subscribe((e, i) => {
+        this.onAfterSeriesDraw(e, i);
+      });
+
       //this.loadData(); //change on 09-02-2021
 
       //initialize chart for additional channels
@@ -675,6 +679,57 @@ class ToolfaceSummary extends Component {
       // this.refreshChart();
     } catch (error) { }
   }
+
+
+
+  onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
+    try {
+      let tripOutlineData = [];
+      let tripOutArr = [];
+      debugger;
+      if (this.objToolfaceData.formationTops.length > 0) {
+
+
+
+
+        for (let index = 0; index < this.objToolfaceData.formationTops.length; index++) {
+          const depth = this.objToolfaceData.formationTops[index].Depth;
+          let x1 = this.objChart.bottomAxis().ScaleRef(depth);
+          let x2 = x1;
+          let y1 = this.objChart.__chartRect.top;
+          let y2 = this.objChart.__chartRect.bottom;
+
+          let formationTop = this.objChart.SVGRef.append("g")
+            .attr("class", "formationTop-" + this.objChart.Id)
+            .append("line")
+            .attr("id", "line-1")
+            .attr("x1", x1)
+            .attr("y1", y1)
+            .attr("x2", x2)
+            .attr("y2", y2)
+            .style("fill", this.objToolfaceData.formationTops[index].Color)
+            .style("stroke", this.objToolfaceData.formationTops[index].Color)
+            .style("stroke-dasharray", "5,5");
+
+
+          this.objChart.SVGRef.append("g")
+            .attr(
+              "transform",
+              "translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(-90)"
+            )
+            .append('text')
+            .style('background-color', 'green')
+            .attr('class', 'axis-title')
+
+            .attr('dy', '.75em')
+            .text(this.objToolfaceData.formationTops[index].TopName);
+
+
+        }
+      }
+
+    } catch (error) { }
+  };
 
   getRandomNumber = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -1494,6 +1549,20 @@ class ToolfaceSummary extends Component {
           Util.StatusSuccess("Data successfully retrived  ");
 
           this.objToolfaceData = JSON.parse(res.data.Response);
+          console.log("ToolfaceData", this.objToolfaceData);
+          debugger;
+
+          //console.log(util.rgb2hex(this.objToolfaceData.formationTops[0].Color));
+          // for (let index = 0; index < array.length; index++) {
+          //   const element = array[index];
+
+          // }
+
+          debugger;
+          // for (let i = 0; i < this.objToolfaceData.formationTops.length; i++) {
+          //   this.objToolfaceData.formationTops[i].Color = this.objToolfaceData.formationTops[i].Color.toString(16).replace("-", "#");
+          // }
+          //let hexString = this.objToolfaceData.formationTops[0].Color.toString(16).replace("-", "#");
 
           if (this.objToolfaceData.MTFData == null) {
             this.objToolfaceData.MTFData = [];

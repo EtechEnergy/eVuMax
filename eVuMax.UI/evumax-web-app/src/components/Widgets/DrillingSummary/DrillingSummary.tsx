@@ -643,7 +643,9 @@ export class DrillingSummary extends Component {
         //Fill up the data for data series
         let objDataPoint = new ChartData();
         objDataPoint.x = index;
-        objDataPoint.y = eval(formatNumber(element.PERCENTAGE, "n2"));
+
+        //objDataPoint.y = eval(formatNumber(element.PERCENTAGE, "n2"));
+        objDataPoint.y = eval((element.PERCENTAGE).toFixed(2));
         objDataPoint.color = element.COLOR;
         objDataPoint.label = strArr[0];
 
@@ -698,6 +700,7 @@ export class DrillingSummary extends Component {
       let objDistance = new DataSeries();
       objDistance.Id = "Distance";
       objDistance.Stacked = true;
+      objDistance.ShowLabelOnSeries = true;
 
       objDistance.Title = "Distance";
       objDistance.Type = dataSeriesType.Bar;
@@ -738,9 +741,9 @@ export class DrillingSummary extends Component {
       //Fill up the data for data series
       objDistancePoint = new ChartData();
       objDistancePoint.x = 3;
-      objDistancePoint.y = eval(
-        formatNumber(this.state.objSummaryData.SlideFootageOffset, "n2")
-      );
+
+      //objDistancePoint.y = eval(formatNumber(this.state.objSummaryData.SlideFootageOffset, "n2"));
+      objDistancePoint.y = eval((this.state.objSummaryData.SlideFootageOffset).toFixed(2));
       objDistancePoint.color = this.getRigStateColor(1);
       objDistancePoint.labelX = "Slide Offset";
       objDistance.Data.push(objDistancePoint);
@@ -782,6 +785,7 @@ export class DrillingSummary extends Component {
       let objROP = new DataSeries();
       objROP.Id = "ROP";
       objROP.Stacked = true;
+      objROP.ShowLabelOnSeries = true;
 
       objROP.Title = "ROP";
       objROP.Type = dataSeriesType.Bar;
@@ -794,7 +798,7 @@ export class DrillingSummary extends Component {
       //Fill up the data for data series
       let objROPPoint = new ChartData();
       objROPPoint.x = 0;
-      objROPPoint.y = eval(this.state.objNumericData.ROP_Rotary);
+      objROPPoint.y = eval(this.state.objSummaryData.RotaryROP);// this.state.objNumericData.ROP_Rotary
       objROPPoint.labelX = "Rotary";
       objROPPoint.color = this.getRigStateColor(0);
       this.objChart.bottomAxis().Labels.push("Rotary");
@@ -804,9 +808,7 @@ export class DrillingSummary extends Component {
       //Offset well
       objROPPoint = new ChartData();
       objROPPoint.x = 1;
-      objROPPoint.y = eval(
-        formatNumber(this.state.objOffsetNumericData.ROP_Rotary, "n2")
-      );
+      objROPPoint.y = eval((this.state.objSummaryData.RotaryROPOffset).toFixed(2));// this.state.objOffsetNumericData.ROP_Rotary
       objROPPoint.labelX = "Rotary Offset";
       objROPPoint.color = this.getRigStateColor(0);
       objROP.Data.push(objROPPoint);
@@ -815,18 +817,18 @@ export class DrillingSummary extends Component {
       //Fill up the data for data series
       objROPPoint = new ChartData();
       objROPPoint.x = 2;
-      objROPPoint.y = eval(this.state.objNumericData.ROP_Slide);
+      objROPPoint.y = eval(this.state.objSummaryData.SlideROP); //Nis
       objROPPoint.color = this.getRigStateColor(1);
       objROPPoint.labelX = "Slide";
       objROP.Data.push(objROPPoint);
       this.objChart.bottomAxis().Labels.push("Slide");
 
       //offset well
+
+
       objROPPoint = new ChartData();
       objROPPoint.x = 4;
-      objROPPoint.y = eval(
-        formatNumber(this.state.objOffsetNumericData.ROP_Slide, "n2")
-      );
+      objROPPoint.y = eval((this.state.objSummaryData.SlideROPOffset).toFixed(2));
       objROPPoint.labelX = "Slide Offset";
       objROPPoint.color = this.getRigStateColor(1);
       this.objChart.bottomAxis().Labels.push("Slide Offset");
@@ -872,7 +874,7 @@ export class DrillingSummary extends Component {
       let objTime = new DataSeries();
       objTime.Id = "Time";
       objTime.Stacked = true;
-
+      objTime.ShowLabelOnSeries = true;
       objTime.Title = "Time";
       objTime.Type = dataSeriesType.Bar;
       objTime.Color = this.getRigStateColor(0); //  "#1089ff";
@@ -1273,7 +1275,7 @@ export class DrillingSummary extends Component {
           // $("#loader").hide();
 
           let objData = JSON.parse(res.data.Response);
-          //console.log("DrlgSummary -", objData);
+          console.log("DrlgSummary -", objData);
           let offSetWellNumericData: any = [];
           if (objData.offSetWellNumericData.length > 0) {
             offSetWellNumericData = objData.offSetWellNumericData[0];
@@ -1292,7 +1294,7 @@ export class DrillingSummary extends Component {
             objROPDataOffset: objData.ROPDataOffset,
             isProcess: false,
           });
-          debugger;
+
 
           this.prepareGrdNumericTable(); //Vimal 06-02-2021
           this.prepareOffsetNumericTable(); //vimal
