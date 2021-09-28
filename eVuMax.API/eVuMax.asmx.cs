@@ -274,6 +274,70 @@ namespace eVuMax.API
         }
 
 
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public void LogClientSideError(string paramRequest)
+        {
+            try
+            {
 
-    }//Class
-}//Namespace
+                BrokerRequest objRequest = JsonConvert.DeserializeObject<BrokerRequest>(paramRequest);
+
+
+                string ErrorMessage = objRequest.Parameters.Where(x => x.ParamName.Contains("ErrorMessage")).FirstOrDefault().ParamValue;
+                string  UserFolderName= objRequest.Parameters.Where(x => x.ParamName.Contains("UserFolderName")).FirstOrDefault().ParamValue;
+
+                if(UserFolderName == "" || UserFolderName == null)
+                {
+                    BrokerResponse objResponse = new BrokerResponse();
+                    objResponse.RequestSuccessfull = false;
+                    objResponse.Errors = "UserFolderName is Blank "; 
+                    HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objResponse));
+                }
+
+                ILog ClientLogger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+                ClientLogger = log4net.LogManager.GetLogger("eVuMaxClientSideLog");
+
+                foreach (var appender in ClientLogger.Logger.Repository.GetAppenders())
+                {
+                    try
+                    {
+                        if (appender.Name == "clientSideLogger") {
+
+                            string file = Path.GetDirectoryName(((log4net.Appender.RollingFileAppender)appender).File);
+
+                            file = @"C:\log\" + @UserFolderName + @"\";
+                            string filename = Path.Combine(file, "eVuMaxClientSideLog.txt");
+
+                            //switch (((log4net.Appender.RollingFileAppender)appender).RollingStyle)
+                            //{
+                            //    case log4net.Appender.RollingFileAppender.RollingMode.Date:
+                            //        ((log4net.Appender.RollingFileAppender)appender).RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Once;
+                            //        break;
+                            //    case log4net.Appender.RollingFileAppender.RollingMode.Composite:
+                            //        ((log4net.Appender.RollingFileAppender)appender).RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Size;
+                            //        break;
+                            //}
+                        ((log4net.Appender.FileAppender)appender).File = filename;
+                            ((log4net.Appender.FileAppender)appender).ActivateOptions();
+                        }
+                    }
+                    catch (Exception ex) {
+                    }
+                }
+
+                //***********
+                ClientLogger.Debug(paramRequest);
+            }
+            catch (Exception ex)
+            {
+                BrokerResponse objResponse = new BrokerResponse();
+                objResponse.RequestSuccessfull = false;
+                objResponse.Errors = "Error parsing request. " + ex.Message + ex.StackTrace;
+                HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objResponse));
+            }
+        }
+
+
+        }//Class
+    }//Namespace
