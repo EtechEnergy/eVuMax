@@ -6,7 +6,7 @@ using VuMaxDR.Common;
 using VuMaxDR.Data;
 using System.Data;
 using System.Collections.ObjectModel;
-using eVuMax.DataBroker.eVuMaxLogger;
+using eVuMax.DataBroker.Logger;
 using Newtonsoft.Json;
 
 namespace eVuMax.DataBroker.Summary.TripSpeed

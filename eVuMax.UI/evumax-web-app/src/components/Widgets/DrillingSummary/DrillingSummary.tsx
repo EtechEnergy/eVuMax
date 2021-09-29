@@ -111,9 +111,8 @@ export class DrillingSummary extends Component {
     //   clearInterval(this.intervalID);
     // }
 
- 
-
-
+    // let objErrorLogger: ClientLogger= new ClientLogger();
+    // objErrorLogger.SendLog(_gMod._userId,"Client Error test from DrillingSumary");
 
     this.initilizeCharts();
 

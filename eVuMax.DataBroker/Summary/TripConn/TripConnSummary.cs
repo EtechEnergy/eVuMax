@@ -86,7 +86,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
             try
             {
 
-                objLogger.LogMessage("getTripConnSummary Called");
+                //objLogger.LogMessage("getTripConnSummary Called");
                 TripConnData objTripConnSummary = new TripConnData();
 
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
@@ -462,7 +462,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                     #endregion
 
                     #region RigState wise break up
-                    objLogger.LogMessage("getTripConnSummary Called-Rigstate wise break up started");
+                    //objLogger.LogMessage("getTripConnSummary Called-Rigstate wise break up started");
                     //Rigstate wise break up
                     Dictionary<double, double> uniqueRigStates = new Dictionary<double, double>();
 
@@ -597,7 +597,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         rigStateData.Rows.Add(newRow);
 
                     }
-                    objLogger.LogMessage("getTripConnSummary rigStateData Added");
+                    //objLogger.LogMessage("getTripConnSummary rigStateData Added");
 
                     #endregion
 
@@ -727,7 +727,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                     #endregion
 
                     #region Trip Direction Information
-                    objLogger.LogMessage("getTripConnSummary:Trip Direction Information Started");
+                    //objLogger.LogMessage("getTripConnSummary:Trip Direction Information Started");
                     //Process trip detection
                     TripDetection objTripDetection = new TripDetection();
                     objTripDetection.objDataService = paramRequest.objDataService;
@@ -822,7 +822,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         tripInfoData.Rows.Add(tripDataRow);
 
                     }
-                    objLogger.LogMessage("getTripConnSummary:Trip Direction Information:  tripInfoData Added");
+                    //objLogger.LogMessage("getTripConnSummary:Trip Direction Information:  tripInfoData Added");
                     #endregion
 
 
@@ -852,7 +852,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                 }
                 else
                 {
-                    objLogger.LogMessage("VMX_AKPI_TRIP_CONNECTIONS no data found");
+                    //objLogger.LogMessage("VMX_AKPI_TRIP_CONNECTIONS no data found");
                     objResponse.RequestSuccessfull = false;
                     objResponse.Errors = "Error retrieving data";
                     objResponse.Response = "";
@@ -862,10 +862,16 @@ namespace eVuMax.DataBroker.Summary.TripConn
             }
             catch (Exception ex)
             {
-                objLogger.LogMessage("getTripConnSummary Error: " + ex.Message + ex.StackTrace);
+                
+                //
                 Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
                 objBadResponse.RequestSuccessfull = false;
                 objBadResponse.Errors = "Error in getTripConnections " + ex.Message + ex.StackTrace;
+                eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
+           
+                    
+                objLogger.LogMessage("Error in getTripConnections " + ex.Message + ex.StackTrace);
+
                 return objBadResponse;
             }
         }

@@ -19,6 +19,14 @@ export class ClientLogger{
             if(userName == "" || logMsg == ""){
                 return;
             }
+
+
+            let objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "eVuMaxLogger";
+            objBrokerRequest.Broker = "eVuMaxLogger";
+            objBrokerRequest.Function = "logClientMessage";
+      
+
             objParameter = new BrokerParameter("UserFolderName",_gMod._userId);
             objBrokerRequest.Parameters.push(objParameter);
 
@@ -26,7 +34,7 @@ export class ClientLogger{
             objBrokerRequest.Parameters.push(objParameter);
 
             axios
-            .get(_gMod._logClientMsg, {
+            .get(_gMod._getData, {
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json;charset=UTF-8",
