@@ -1783,9 +1783,12 @@ class ToolfaceSummary extends Component {
 
   Channels_ListView = (props: any) => {
     let item = props.dataItem;
+
+
     let classNames = item.selected
       ? "row  border-bottom align-middle k-state-selected k-listview-content-rows"
       : "row  border-bottom align-middle k-listview-content-rows";
+
     return (
       <div
         className={classNames}
@@ -1817,6 +1820,7 @@ class ToolfaceSummary extends Component {
 
   PrimaryPlots_ListView = (props: any) => {
     let item = props.dataItem;
+
     let classNames = item.selected
       ? "row  border-bottom align-middle k-state-selected k-listview-content-rows"
       : "row  border-bottom align-middle k-listview-content-rows";
@@ -3141,6 +3145,7 @@ class ToolfaceSummary extends Component {
                   </Button> */}
                 </div>
               </div>
+
             </div>
             <div className="row ">
               <div className="col-lg-6 p-5">

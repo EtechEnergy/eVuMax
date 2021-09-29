@@ -17,6 +17,9 @@
   --base-axis-color: #fff;
   --base-chart-grid-color: #444;
 
+  /* prath */
+  --base-list-bg-color: red;
+
   /* --base-work-area: white;
 --base-menu-top:white;
 --base-menu-left:white;
@@ -213,10 +216,12 @@ input[type="password"]::-ms-input-placeholder {
 .k-grid tr.k-state-selected {
   background-color: var(--base-primary) !important;
 }
+
 .k-state-selected {
   background-color: var(--base-menu-top) !important;
   color: var(--base-anchor-color) !important;
 }
+
 .k-popup {
   background-color: var(--base-work-area) !important;
   color: var(--base-anchor-color) !important;
@@ -317,10 +322,12 @@ input[type="password"]::-ms-input-placeholder {
   padding: 10px 10px !important;
 }
 
+/* change by prath */
 .k-listview-content-rows:hover {
   cursor: pointer !important;
   color: var(--base-primary-color) !important;
-  background-color: var(--base-menu-top) !important;
+  /* background-color: var(--base-menu-top) !important; */
+  background-color: var(--base-list-bg-color) !important;
 }
 
 .k-listview-content-rows:hover .listview-button {
@@ -404,7 +411,7 @@ div.k-time-tab.k-datetime-wrap {
     0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
   cursor: pointer !important;
 }
-.eVumaxDivider{
+.eVumaxDivider {
   border-left: 3px solid var(--base-anchor-color);
   margin-top: 1px;
 }
