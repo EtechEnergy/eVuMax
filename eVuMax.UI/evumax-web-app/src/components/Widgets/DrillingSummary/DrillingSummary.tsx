@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import axios from "axios";
 import {
   TabStripTab,
-  NumericTextBox,
   TabStrip,
   Switch
 } from "@progress/kendo-react-all";
@@ -12,37 +11,33 @@ import { Chart, lineStyle, curveStyle } from "../../../eVuMaxObjects/Chart/Chart
 import {
   DataSeries,
   dataSeriesType,
-  pointStyle,
 } from "../../../eVuMaxObjects/Chart/DataSeries";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
 import { axisLabelStyle, Axis } from "../../../eVuMaxObjects/Chart/Axis";
-import { exit } from "process";
-//import Moment from "react-moment";
-import ProcessLoader from "../../loader/loader";
-// import DataSelector from "../../Common/DataSelector";
+
 import moment from "moment";
-import { formatNumber, parseDate } from "@telerik/kendo-intl";
+
 import "./DrillingSummary.css";
 
 import {
   Grid,
   GridColumn as Column,
   GridRow as Row,
-  GridColumn,
-  GridToolbar,
+
 } from "@progress/kendo-react-grid";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faAddressBook, faListAlt, faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Util } from "../../../Models/eVuMax";
 
 import DataSelector_ from "../../Common/DataSelector_";
 import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
 import DataSelector from "../../Common/DataSelector";
 import {ClientLogger} from "../../ClientLogger/ClientLogger";
+import LogViewer from "../../ClientLogger/LogViewer";
 
 let _gMod = new GlobalMod();
 
@@ -61,8 +56,10 @@ export class DrillingSummary extends Component {
 
   }
 
+LogList: ClientLogger[] = [];
   WellId: string = "";
   state = {
+    showViewLogger:false,//Nishant 29-09-2021 NisPC
     selectionType: "-1",
     selected: 0,
     objDrlgSummary: {} as any,
@@ -111,8 +108,11 @@ export class DrillingSummary extends Component {
     //   clearInterval(this.intervalID);
     // }
 
-    // let objErrorLogger: ClientLogger= new ClientLogger();
+     let objErrorLogger: ClientLogger= new ClientLogger();
     // objErrorLogger.SendLog(_gMod._userId,"Client Error test from DrillingSumary");
+objErrorLogger.logMessage = "Component did Mount";
+objErrorLogger.userName =  "Nishant User";
+    this.LogList.push(objErrorLogger);
 
     this.initilizeCharts();
 
@@ -1543,6 +1543,13 @@ export class DrillingSummary extends Component {
     }
   };
 
+//Nishant 29-09-2021 Nis PC
+  closeLogViewer=async ()=>{
+    
+ await this.setState({
+  showViewLogger:false
+    });
+  }
   render() {
     let loader = this.state;
 
@@ -1628,33 +1635,20 @@ export class DrillingSummary extends Component {
                   </div>
                 </div>
               </div>
-
-
-
-
             </div>
 
           </div>
           <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "270px" }}>
-
+            <div className="eVumaxPanelController" style={{ width: "360px" }}>
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
-              <label className=" ml-5 mr-2" onClick={() => {
-                this.refreshROPLineChart();
-              }} style={{ cursor: "pointer" }}>Undo Zoom</label>  <FontAwesomeIcon
-                icon={faSearchMinus}
-                size="lg"
-                onClick={() => {
-                  this.refreshROPLineChart();
-                }}
-              />
+              <label className=" ml-5 mr-1" onClick={() => { this.refreshROPLineChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>  
+              <FontAwesomeIcon  icon={faSearchMinus}    size="lg"   onClick={() => { this.refreshROPLineChart();}} />
+ 
 
+              <label className=" ml-2 mr-1" onClick={() => {     this.setState({   showViewLogger:true })}} style={{ cursor: "pointer" }}>View Logger</label> 
+              <FontAwesomeIcon   icon={faListAlt}   size="lg"   onClick={() => {  this.setState({ showViewLogger:true})}}/>
             </div>
-
-
           </div>
-
         </div>
 
 
@@ -2162,7 +2156,10 @@ export class DrillingSummary extends Component {
             </TabStripTab> */}
           </TabStrip>
         </div>
+       {this.state.showViewLogger && <LogViewer onClose= {this.closeLogViewer} LogList={this.LogList} >    </LogViewer>}
+
       </div>
+      
     );
   }
 }

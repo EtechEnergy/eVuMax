@@ -3,16 +3,21 @@ import BrokerRequest from "../../broker/BrokerRequest";
 import GlobalMod from "../../objects/global";
 import BrokerParameter from "../../broker/BrokerParameter";
 import { Util } from "../../Models/eVuMax";
+import { now } from "moment";
 
 
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
 let objParameter = new BrokerParameter("","");
 
+
+
+
 export class ClientLogger{
-    // logMessage:string= "";
-    // userName:string = "";
-    LogList: Map<string, string> = new Map();
+    logDateTime:Date = new Date(Date.now());
+    logMessage:string= "";
+    userName:string = "";
+   private LogList: Map<string, string> = new Map();
     
     public SendLog(userName:string, logMsg:string){
         try {
