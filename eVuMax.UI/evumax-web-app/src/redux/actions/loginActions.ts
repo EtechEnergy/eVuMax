@@ -86,6 +86,7 @@ export const startLog_In = (login: Partial<Types.ILogin>) => {
           dispatch(setStatus(objStatus));
 
           login._pwd = "";
+          _gMod._userId = login._userName;
           history.push("/dashboard/home");
           return dispatch(Log_In(login));
         } else {

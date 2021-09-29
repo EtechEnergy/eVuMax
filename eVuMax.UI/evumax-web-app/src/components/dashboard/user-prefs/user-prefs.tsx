@@ -29,7 +29,7 @@ export default class UserPref extends React.Component {
   };
 
   componentDidMount() {
-    document.title= "eVuMax";//Nishant 02/09/2021
+    document.title = "eVuMax";//Nishant 02/09/2021
     this.Load();
   }
 
@@ -120,12 +120,10 @@ export default class UserPref extends React.Component {
         })
 
         .then((res) => {
-
-
           this.loadTheme(this.state._defaultValue);
-
           history.push("/dashboard/home");
-          window.location.reload(true);
+          //window.location.reload(true);
+          window.location.reload(); //prath
         })
         .catch((error) => {
           if (error.response) {
@@ -227,6 +225,7 @@ export default class UserPref extends React.Component {
           }
         })
         .catch((error) => {
+
           if (error.response) {
             // return <CustomeNotifications Key="success" Icon={false}  />
             // this.errors(error.response.message);
@@ -245,6 +244,7 @@ export default class UserPref extends React.Component {
   };
 
   applyTheme = (props: any) => {
+
     if (props.props.length) {
       //  this.setState({ _pId: props.props[0].Id });
       props.props.forEach((items: any) => {
@@ -283,6 +283,14 @@ export default class UserPref extends React.Component {
         if (items.PropName === "PrimaryColor") {
           document.documentElement.style.setProperty(
             "--base-primary--color",
+            items.PropValue
+          );
+        }
+
+
+        if (items.PropName === "ListBackColor") {
+          document.documentElement.style.setProperty(
+            "--base-list-bg--color",
             items.PropValue
           );
         }

@@ -24,7 +24,7 @@ let objBrokerRequest = new BrokerRequest();
 export const ThemeContext = React.createContext<{ Id: string }>({ Id: "" });
 
 class App extends Component {
-  
+
 
 
   state = {
@@ -32,7 +32,7 @@ class App extends Component {
   };
 
   componentDidMount() {
-    
+
     this.loadTheme();
   }
 
@@ -55,7 +55,7 @@ class App extends Component {
         })
         .then((res) => {
           const objData = res.data;
-          
+
           if (objData.RequestSuccessfull) {
 
             this.applyTheme(JSON.parse(objData.Response));
@@ -82,7 +82,6 @@ class App extends Component {
   };
 
   applyTheme = (props: any) => {
-    
 
     if (props.length) {
       //
@@ -130,6 +129,14 @@ class App extends Component {
         if (items.PropertyName === "ChartGridColor") {
           document.documentElement.style.setProperty(
             "--base-chart-grid-color",
+            items.Value
+          );
+        }
+
+        //prath
+        if (items.PropertyName === "ListBackColor") {
+          document.documentElement.style.setProperty(
+            "--base-list-bg-color",
             items.Value
           );
         }

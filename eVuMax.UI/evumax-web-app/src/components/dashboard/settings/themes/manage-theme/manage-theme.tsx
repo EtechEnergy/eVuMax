@@ -39,17 +39,18 @@ export default class ManageTheme extends React.Component {
     _primaryBackColor: "#007bff",
     _primaryColor: "#FFF",
     _chartGridColor: "#FFF",
+    _listBackColor: "#FFF",
   };
 
   componentDidMount() {
-    document.title= "eVuMax";//Nishant 02/09/2021
+    document.title = "eVuMax";//Nishant 02/09/2021
     this.Load();
   }
 
   Cancel = () => {
     try {
       history.push("/dashboard/themes");
-    } catch {}
+    } catch { }
   };
 
   onChangeWorkArea = (e: any) => {
@@ -74,6 +75,11 @@ export default class ManageTheme extends React.Component {
   onChangeGridColor = (e: any) => {
     this.setState({ _chartGridColor: e.value });
   };
+
+  //prath
+  onChangeListBackColor = (e: any) => {
+    this.setState({ _listBackColor: e.value });
+  }
 
   Save = () => {
     try {
@@ -115,6 +121,14 @@ export default class ManageTheme extends React.Component {
       objThemeProps.PropName = "ChartGridColor";
       objThemeProps.PropValue = this.state._chartGridColor;
       objTheme.props.push(objThemeProps);
+
+      objThemeProps = new ThemeProps();
+
+      objThemeProps.PropName = "ListBackColor";
+      objThemeProps.PropValue = this.state._listBackColor;
+      objTheme.props.push(objThemeProps);
+
+
 
       objBrokerRequest = new BrokerRequest();
 
@@ -167,7 +181,7 @@ export default class ManageTheme extends React.Component {
           console.log("rejected");
           this.setState({ isProcess: false });
         });
-    } catch {}
+    } catch { }
   };
 
   Load = () => {
@@ -214,11 +228,11 @@ export default class ManageTheme extends React.Component {
                 console.log("rejected");
                 this.setState({ isProcess: false });
               });
-          } catch {}
+          } catch { }
         } else {
         }
       }
-    } catch {}
+    } catch { }
   };
 
   DisplayData = (props: any) => {
@@ -247,6 +261,10 @@ export default class ManageTheme extends React.Component {
 
         if (items.PropName === "ChartGridColor") {
           this.setState({ _chartGridColor: items.PropValue });
+        }
+
+        if (items.PropName === "ListBackColor") {
+          this.setState({ _listBackColor: items.PropValue });
         }
       });
     }
@@ -381,6 +399,21 @@ export default class ManageTheme extends React.Component {
                     />
                   </div>
                 </div>
+
+                <div className="form-group row">
+                  <label className="col-sm-3 col-form-label text-right">
+                    List Background color :
+                  </label>
+                  <div className="col-sm-3">
+                    <ColorPicker
+                      value={this.state._listBackColor}
+                      view={"gradient"}
+                      gradientSettings={this.gradientSettings}
+                      onChange={this.onChangeListBackColor}
+                    />
+                  </div>
+                </div>
+
               </form>
             </div>
           </div>
