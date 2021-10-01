@@ -314,7 +314,10 @@ export class StackedBarSeries {
 								.style('fill', colorValues[s])
 								.attr('dy', '.75em')
 								.text(function (d) {
-									return stackValues[s];
+									if (stackValues[s] > 0) {
+										return stackValues[s];
+									}
+
 								});
 						}
 
