@@ -4,22 +4,19 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
-//using eVuMax.DataBroker.Data;
 using VuMaxDR.Data;
 using Newtonsoft.Json;
-using System.Data.SqlClient;
 using eVuMax.DataBroker;
 using eVuMax.DataBroker.Broker;
 using System.Web.Script.Services;
-using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 using log4net;
+using System.Configuration;
 
 namespace eVuMax.API
 {
-
-    
+        
     /// <summary>
     /// Summary description for eVuMax
     /// </summary>
@@ -32,13 +29,7 @@ namespace eVuMax.API
     {
 
         string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
-       
       
-
-
-        //  DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
-
-
         /// <summary>
         /// Handles the request to get data and returns the response coming from broker
         /// </summary>
@@ -53,8 +44,6 @@ namespace eVuMax.API
                 ILog APILogger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
                 APILogger =  log4net.LogManager.GetLogger("eVuMaxAPILog");
                 
-
-
                 string AuthType = System.Configuration.ConfigurationManager.AppSettings["AuthType"];
 
                 //Parse the request to Broker request
@@ -69,6 +58,7 @@ namespace eVuMax.API
                 //****************************************
 
                 string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
+                connString = getConnectionString();//for Decrepting password and user Name
                 DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
                 
 
@@ -151,10 +141,10 @@ namespace eVuMax.API
                 objParameter.ParamValue = AuthType;
                 objRequest.Parameters.Add(objParameter);
                 //****************************************
-
-                             
+                                            
 
                 string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
+                connString = getConnectionString();//for Decrepting password and user Name
                 DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
 
 
@@ -226,21 +216,18 @@ namespace eVuMax.API
         {
             try
             {
-
-
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 string version = assembly.GetName().Version.ToString();
-
                 //FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
                 //string version = fvi.FileVersion;
                 var linkTimeLocal = GetLinkerTime(assembly);
-
                 List<string> VerDateInfo = new List<string>();
                 VerDateInfo.Add(version);
                 VerDateInfo.Add(linkTimeLocal.ToString());
 
-                //HttpContext.Current.Response.Write(VerDateInfo);
+
                 HttpContext.Current.Response.Write(JsonConvert.SerializeObject(VerDateInfo));
+                
 
 
             }
@@ -339,5 +326,60 @@ namespace eVuMax.API
         }
 
 
-        }//Class
+
+        private string getConnectionString()
+        {
+            try
+            {
+                System.Data.OleDb.OleDbConnectionStringBuilder builder = new System.Data.OleDb.OleDbConnectionStringBuilder();
+                builder.ConnectionString = ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
+                string dataSource = DecryptString(builder.DataSource);
+                builder.DataSource = dataSource;
+
+               // if (builder["Trusted_Connection"].ToString() != "yes") //Will be used when Windows Auth is used
+                {
+
+                    string userName = DecryptString(builder["User ID"].ToString());
+                    string password = DecryptString(builder["Password"].ToString());
+
+                    builder["User ID"] = userName;
+                    builder["Password"] = password;
+
+                }
+
+                string connString = builder.ConnectionString;
+                return connString;
+            }
+            catch (Exception ex)
+            {
+
+                return "";
+            }
+        }
+
+
+        private static string DecryptString(string encrString)
+        {
+            byte[] b;
+            string decrypted;
+            try
+            {
+                b = Convert.FromBase64String(encrString);
+                decrypted = System.Text.ASCIIEncoding.ASCII.GetString(b);
+            }
+            catch (FormatException fe)
+            {
+                decrypted = "";
+            }
+            return decrypted;
+        }
+
+        private static string EnryptString(string strEncrypted)
+        {
+            byte[] b = System.Text.ASCIIEncoding.ASCII.GetBytes(strEncrypted);
+            string encrypted = Convert.ToBase64String(b);
+            return encrypted;
+        }
+
+    }//Class
     }//Namespace

@@ -44,6 +44,22 @@
 
     <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\img\EtechBanner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\img\EtechBackground.bmp" />
+
+
+    <!--################################################################# Encryption Start ################################################################################-->
+
+
+    <!--Excution sequence-->
+    <InstallExecuteSequence>
+      <Custom Action="EncryptConfigurationFiles" After="InstallInitialize" ></Custom>
+    </InstallExecuteSequence>
+
+
+    <Binary Id="ConnectionStringEncryption.dll" SourceFile="$(var.ConnectionStringEncryption.ProjectDir)\bin\Release\ConnectionStringEncryption.CA.dll" />
+    <CustomAction Execute="immediate"  Id="EncryptConfigurationFiles" BinaryKey="ConnectionStringEncryption.dll" DllEntry="EncryptParameters" Return="ignore" />
+
+    <!--################################################################# Encryption End ################################################################################-->
+
     
   </Product>
 

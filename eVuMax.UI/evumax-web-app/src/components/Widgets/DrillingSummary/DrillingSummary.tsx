@@ -30,13 +30,13 @@ import {
 } from "@progress/kendo-react-grid";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressBook, faListAlt, faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faListAlt, faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import { Util } from "../../../Models/eVuMax";
 
 import DataSelector_ from "../../Common/DataSelector_";
 import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
 import DataSelector from "../../Common/DataSelector";
-import {ClientLogger} from "../../ClientLogger/ClientLogger";
+import { ClientLogger } from "../../ClientLogger/ClientLogger";
 import LogViewer from "../../ClientLogger/LogViewer";
 
 let _gMod = new GlobalMod();
@@ -56,10 +56,10 @@ export class DrillingSummary extends Component {
 
   }
 
-LogList: ClientLogger[] = [];
+  LogList: ClientLogger[] = [];
   WellId: string = "";
   state = {
-    showViewLogger:false,//Nishant 29-09-2021 NisPC
+
     selectionType: "-1",
     selected: 0,
     objDrlgSummary: {} as any,
@@ -108,12 +108,17 @@ LogList: ClientLogger[] = [];
     //   clearInterval(this.intervalID);
     // }
 
-     let objErrorLogger: ClientLogger= new ClientLogger();
-    // objErrorLogger.SendLog(_gMod._userId,"Client Error test from DrillingSumary");
-objErrorLogger.logMessage = "Component did Mount";
-objErrorLogger.userName =  "Nishant User";
+    let objErrorLogger: ClientLogger = new ClientLogger();
+    objErrorLogger.logMessage = "Component did Mount";
+
+    objErrorLogger.userName = _gMod._userId;
+
     this.LogList.push(objErrorLogger);
 
+    objErrorLogger = new ClientLogger();
+    objErrorLogger.logMessage = "User Name " + _gMod._userId;
+    objErrorLogger.userName = _gMod._userId;
+    this.LogList.push(objErrorLogger);
     this.initilizeCharts();
 
 
@@ -123,7 +128,9 @@ objErrorLogger.userName =  "Nishant User";
     });
 
 
+
     this.loadDrlgSummary();
+
     window.addEventListener("resize", this.refreshChart);
   }
 
@@ -1189,6 +1196,7 @@ objErrorLogger.userName =  "Nishant User";
 
   loadDrlgSummary = () => {
     try {
+
       //alert("loadDrlgSumm");
       Util.StatusInfo("Getting data from server   ");
       this.setState({
@@ -1278,6 +1286,7 @@ objErrorLogger.userName =  "Nishant User";
 
           let objData = JSON.parse(res.data.Response);
           console.log("DrlgSummary -", objData);
+          console.log("FROM DATE ", objData.StartDate + " - TO DATE " + objData.EndDate);
           let offSetWellNumericData: any = [];
           if (objData.offSetWellNumericData.length > 0) {
             offSetWellNumericData = objData.offSetWellNumericData[0];
@@ -1543,13 +1552,7 @@ objErrorLogger.userName =  "Nishant User";
     }
   };
 
-//Nishant 29-09-2021 Nis PC
-  closeLogViewer=async ()=>{
-    
- await this.setState({
-  showViewLogger:false
-    });
-  }
+
   render() {
     let loader = this.state;
 
@@ -1639,14 +1642,26 @@ objErrorLogger.userName =  "Nishant User";
 
           </div>
           <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "360px" }}>
+            <div className="eVumaxPanelController" style={{ width: "380px" }}>
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-              <label className=" ml-5 mr-1" onClick={() => { this.refreshROPLineChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>  
-              <FontAwesomeIcon  icon={faSearchMinus}    size="lg"   onClick={() => { this.refreshROPLineChart();}} />
- 
+              <label className=" ml-5 mr-1" onClick={() => { this.refreshROPLineChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshROPLineChart(); }} />
 
-              <label className=" ml-2 mr-1" onClick={() => {     this.setState({   showViewLogger:true })}} style={{ cursor: "pointer" }}>View Logger</label> 
-              <FontAwesomeIcon   icon={faListAlt}   size="lg"   onClick={() => {  this.setState({ showViewLogger:true})}}/>
+
+              <label className=" ml-2 mr-1" onClick={() => {
+
+                let objLogger = new ClientLogger();
+                objLogger.LogList = this.LogList;
+                objLogger.programID = "DrillingSummary";
+                objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>View Logger</label>
+              <FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+                let objLogger = new ClientLogger();
+                objLogger.LogList = this.LogList;
+                objLogger.programID = "DrillingSummary";
+                objLogger.downloadFile();
+
+              }} />
             </div>
           </div>
         </div>
@@ -2156,10 +2171,10 @@ objErrorLogger.userName =  "Nishant User";
             </TabStripTab> */}
           </TabStrip>
         </div>
-       {this.state.showViewLogger && <LogViewer onClose= {this.closeLogViewer} LogList={this.LogList} >    </LogViewer>}
+
 
       </div>
-      
+
     );
   }
 }
