@@ -18,16 +18,33 @@ export class ClientLogger {
     logMessage: string = "";
     userName: string = "";
     programID: string = "";
-    LogList: ClientLogger[] = [];
+    LogList: string[] = [];
+
+    constructor(paramProgramID: string, paramUserID: string) {
+        this.programID = paramProgramID;
+        this.userName = paramUserID;
+    }
+    public SendLog(logMsg: string) {
+        try {
+            let logString: string = "";
+            logString = new Date(Date.now()).toString() + "~" + logMsg;
+            this.LogList.push(logString);
+        } catch (error) {
+
+        }
+
+    }
 
     downloadFile = () => {
         try {
             var textFile = null;
-            let text = "Error Log:" + this.programID + "\n";
+            let text = "Error Log:" + this.programID + "\n" + "UserID: " + this.userName + "\n";
+            
 
             for (let index = 0; index < this.LogList.length; index++) {
-                const element = this.LogList[index];
-                text += "\n" + element.logDateTime + "~" + element.logMessage;
+                const logMsg = this.LogList[index];
+                //text += "\n" + element.logDateTime + "~" + element.logMessage;
+                text += "\n" + logMsg;
             }
             const dataURI = "data:text/plain;base64," + encodeBase64(text);
             saveAs(dataURI, 'ClientLogger.txt');

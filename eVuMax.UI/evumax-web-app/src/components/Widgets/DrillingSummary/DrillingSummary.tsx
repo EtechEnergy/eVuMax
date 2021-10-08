@@ -16,7 +16,7 @@ import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
-import { axisLabelStyle, Axis } from "../../../eVuMaxObjects/Chart/Axis";
+import { axisLabelStyle } from "../../../eVuMaxObjects/Chart/Axis";
 
 import moment from "moment";
 
@@ -38,8 +38,10 @@ import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
 import DataSelector from "../../Common/DataSelector";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 import LogViewer from "../../ClientLogger/LogViewer";
+import { json } from "d3-fetch";
 
 let _gMod = new GlobalMod();
+let objLogger: ClientLogger = new ClientLogger("DrillingSummary", _gMod._userId);
 
 const headerlabel = {
   fontSize: "16px",
@@ -56,7 +58,7 @@ export class DrillingSummary extends Component {
 
   }
 
-  LogList: ClientLogger[] = [];
+
   WellId: string = "";
   state = {
 
@@ -101,24 +103,8 @@ export class DrillingSummary extends Component {
   //==============
 
   componentDidMount() {
-    //initialize chart
-    // if (this.state.isRealTime) {
-    //   this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
-    // } else {
-    //   clearInterval(this.intervalID);
-    // }
 
-    let objErrorLogger: ClientLogger = new ClientLogger();
-    objErrorLogger.logMessage = "Component did Mount";
-
-    objErrorLogger.userName = _gMod._userId;
-
-    this.LogList.push(objErrorLogger);
-
-    objErrorLogger = new ClientLogger();
-    objErrorLogger.logMessage = "User Name " + _gMod._userId;
-    objErrorLogger.userName = _gMod._userId;
-    this.LogList.push(objErrorLogger);
+    objLogger.SendLog("Component did Mount")
     this.initilizeCharts();
 
 
@@ -199,6 +185,8 @@ export class DrillingSummary extends Component {
   // };
 
   initilizeCharts = () => {
+    objLogger.SendLog("initilizeCharts:this.objChart");
+
     this.objChart = new Chart(this, "ROP_RigState");
     this.objChart.ContainerId = "drlgSummary";
     this.objChart.Title = "ROP";
@@ -237,6 +225,8 @@ export class DrillingSummary extends Component {
     this.objChart.reDraw();
 
     //************************************************************ */
+    objLogger.SendLog("initilizeCharts:this.objChart_Distance");
+
     this.objChart_Distance = new Chart(this, "Distance_RigState");
     this.objChart_Distance.ContainerId = "drlgSummary2";
     this.objChart_Distance.Title = "Distance Drilled";
@@ -279,6 +269,8 @@ export class DrillingSummary extends Component {
     this.objChart_Distance.initialize();
     this.objChart_Distance.reDraw();
     //*************************************************************** */
+
+    objLogger.SendLog("initilizeCharts:this.objChart_Time");
 
     this.objChart_Time = new Chart(this, "Time_RigState");
     this.objChart_Time.ContainerId = "drlgSummary3";
@@ -325,6 +317,8 @@ export class DrillingSummary extends Component {
 
     //*************************************************************** */
 
+    objLogger.SendLog("initilizeCharts:this.objChart_RigStateSummary");
+
     this.objChart_RigStateSummary = new Chart(this, "RigState_Summary");
     this.objChart_RigStateSummary.ContainerId = "ChartRigStateSummary";
     this.objChart_RigStateSummary.Title = "";
@@ -368,6 +362,7 @@ export class DrillingSummary extends Component {
 
     //=========ROP Line Chart
 
+    objLogger.SendLog("initilizeCharts:this.objChart_ROPLine");
     //initialize chart
     this.objChart_ROPLine = new Chart(this, "ROPLine_Chart");
     this.objChart_ROPLine.ContainerId = "roplinechart";
@@ -403,6 +398,9 @@ export class DrillingSummary extends Component {
     //=================================
 
     //initialize chart Pie Chart
+
+    objLogger.SendLog("initilizeCharts:this.objChart_Pie1");
+
     this.objChart_Pie1 = new Chart(this, "Pie_Chart1", true);
     this.objChart_Pie1.ContainerId = "piechart1";
     //this.objChart_Pie1.Title = "PRATH CHART";
@@ -417,6 +415,8 @@ export class DrillingSummary extends Component {
 
     //========================================================
 
+    objLogger.SendLog("initilizeCharts:this.objChart_Pie2");
+
     this.objChart_Pie2 = new Chart(this, "Pie_Chart2", true);
     this.objChart_Pie2.ContainerId = "piechart2";
 
@@ -429,6 +429,8 @@ export class DrillingSummary extends Component {
     this.objChart_Pie2.reDraw();
 
     //initialize chart Pie Chart
+    objLogger.SendLog("initilizeCharts:this.objChart_OffsetPie1");
+
     this.objChart_OffsetPie1 = new Chart(this, "OffsetPie_Chart1", true);
     this.objChart_OffsetPie1.ContainerId = "offsetpiechart1";
 
@@ -441,6 +443,8 @@ export class DrillingSummary extends Component {
     this.objChart_OffsetPie1.reDraw();
 
     //initialize chart Pie Chart
+    objLogger.SendLog("initilizeCharts:this.objChart_OffsetPie2");
+
     this.objChart_OffsetPie2 = new Chart(this, "OffsetPie_Chart2", true);
     this.objChart_OffsetPie2.ContainerId = "offsetpiechart2";
 
@@ -455,7 +459,7 @@ export class DrillingSummary extends Component {
 
   refreshROPLineChart = () => {
     try {
-
+      objLogger.SendLog("refreshROPLineChart");
       // this.objChart_ROPLine = new Chart(this, "ROPLine_Chart");
       // this.objChart_ROPLine.ContainerId = "roplinechart";
       this.objChart_ROPLine.initialize();
@@ -514,13 +518,10 @@ export class DrillingSummary extends Component {
 
       //Populate the data series with this data
       objROPLine.Data.slice(0, objROPLine.Data.length);
-
-      //  console.log(this.state.objSummaryData.ROPData);
-
-      // Util.StatusSuccess("Last Depth retrived  " + this.state.objSummaryData.ROPData[this.state.objSummaryData.ROPData.length - 1].X);
-      // Util.StatusReady();
-
+      objLogger.SendLog("refreshROPLineChart: inserting Data to DataSeries (objROPLine)");
       for (let i = 0; i < this.state.objSummaryData.ROPData.length; i++) {
+
+
         let objVal: ChartData = new ChartData();
 
         const element = this.state.objSummaryData.ROPData[i];
@@ -549,6 +550,8 @@ export class DrillingSummary extends Component {
 
       //offset well
       if (this.state.objSummaryData.ROPDataOffset.length > 0) {
+        objLogger.SendLog("refreshROPLineChart: inserting ROPDataOffset Data to DataSeries (objROPLine)");
+
         objROPLine = new DataSeries();
         objROPLine.Id = "ROPOffsetlineSeries";
         objROPLine.Name = "ROP-Offset";
@@ -578,10 +581,13 @@ export class DrillingSummary extends Component {
       this.objChart_ROPLine.drawLegend();
 
       this.objChart_ROPLine.reDraw();
-    } catch (error) { }
+    } catch (error) {
+      objLogger.SendLog("refreshROPLineChart: TryCatch Error:" + error);
+    }
   };
   refreshRigStateSummaryChart = () => {
     try {
+
       this.objChart_RigStateSummary.initialize();
 
       //Clear all the series
@@ -671,7 +677,7 @@ export class DrillingSummary extends Component {
 
       //console.log("Labels", this.objChart_RigStateSummary.bottomAxis().Labels);
     } catch (error) {
-      console.log(error);
+      objLogger.SendLog("refreshRigStateSummaryChart: TryCatch Error:" + error);
     }
   };
 
@@ -759,7 +765,9 @@ export class DrillingSummary extends Component {
       this.objChart_Distance.bottomAxis().Labels.push("Slide Offset");
 
       this.objChart_Distance.reDraw();
-    } catch (error) { }
+    } catch (error) {
+      objLogger.SendLog("refreshDistanceChart: TryCatch Error:" + error);
+    }
   };
 
   refreshROPChart = () => {
@@ -845,7 +853,9 @@ export class DrillingSummary extends Component {
       objROP.Data.push(objROPPoint);
 
       this.objChart.reDraw();
-    } catch (error) { }
+    } catch (error) {
+      objLogger.SendLog("refreshROPChart: TryCatch Error:" + error);
+    }
   };
 
   refreshTimeChart = () => {
@@ -951,7 +961,9 @@ export class DrillingSummary extends Component {
 
       objTime.Data.push(objROPPoint);
       this.objChart_Time.reDraw();
-    } catch (error) { }
+    } catch (error) {
+      objLogger.SendLog("refreshTimeChart: TryCatch Error:" + error);
+    }
   };
 
   refreshChart = () => {
@@ -969,10 +981,13 @@ export class DrillingSummary extends Component {
 
       this.refreshOffsetPieChart1();
       this.refreshOffsetPieChart2();
-    } catch (error) { }
+    } catch (error) {
+      objLogger.SendLog("refreshChart: TryCatch Error:" + error);
+    }
   };
 
   refreshPieChart1 = () => {
+    objLogger.SendLog("refreshPieChart1");
     this.objChart_Pie1.initialize();
 
     //Clear all the series
@@ -1011,6 +1026,7 @@ export class DrillingSummary extends Component {
   };
 
   refreshPieChart2 = () => {
+    objLogger.SendLog("refreshPieChart2");
     this.objChart_Pie2.initialize();
 
     //Clear all the series
@@ -1049,6 +1065,7 @@ export class DrillingSummary extends Component {
   };
 
   refreshOffsetPieChart1 = () => {
+    objLogger.SendLog("refreshOffsetPieChart1");
     this.objChart_OffsetPie1.initialize();
 
     //Clear all the series
@@ -1088,6 +1105,7 @@ export class DrillingSummary extends Component {
   };
 
   refreshOffsetPieChart2 = () => {
+    objLogger.SendLog("refreshOffsetPieChart2");
     this.objChart_OffsetPie2.initialize();
 
     //Clear all the series
@@ -1142,6 +1160,7 @@ export class DrillingSummary extends Component {
       await this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
+      objLogger.SendLog("loadDrlgSummary from handleToggleSwitch");
       this.loadDrlgSummary();
     }
   };
@@ -1203,6 +1222,7 @@ export class DrillingSummary extends Component {
         isProcess: true,
       });
 
+      objLogger.SendLog("loadDrlgSummary");
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Summary.Manager";
@@ -1268,6 +1288,8 @@ export class DrillingSummary extends Component {
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
 
+      objLogger.SendLog("loadDrlgSummary BrokerParameters: " + JSON.stringify(objBrokerRequest.Parameters));
+
       //axios.get(endpointUrl, config).then((res) => {})
 
       this.AxiosSource = axios.CancelToken.source();
@@ -1282,16 +1304,15 @@ export class DrillingSummary extends Component {
 
         })
         .then((res) => {
-          // $("#loader").hide();
+
+          objLogger.SendLog("loadDrlgSummary Data Received...");
 
           let objData = JSON.parse(res.data.Response);
-          console.log("DrlgSummary -", objData);
-          console.log("FROM DATE ", objData.StartDate + " - TO DATE " + objData.EndDate);
+
           let offSetWellNumericData: any = [];
           if (objData.offSetWellNumericData.length > 0) {
             offSetWellNumericData = objData.offSetWellNumericData[0];
           }
-
 
 
           this.setState({
@@ -1337,10 +1358,8 @@ export class DrillingSummary extends Component {
   };
   prepareOffsetNumericTable = () => {
     try {
+      objLogger.SendLog("prepareOffsetNumericTable..."); 
       let arrOffsetNumericTable: any[] = [];
-      {
-      }
-
       let objData: any = {
         col_1: "Offset Well",
         value_1: this.state.objSummaryData.offSetWellName,
@@ -1448,12 +1467,15 @@ export class DrillingSummary extends Component {
         grdOffsetNumericSummary: arrOffsetNumericTable,
       });
     } catch (error) {
-      //alert(error);
-      console.log(error);
+      objLogger.SendLog("TryCatch: prepareOffsetNumericTable Error:" + error); 
+      
     }
   };
   prepareGrdNumericTable = () => {
     try {
+
+      objLogger.SendLog("prepareGrdNumericTable ...");
+
       //  Auto_Slide_Footage_Pct: "0";
       //  Auto_Slide_Time_Pct: "0";
       //  Distance_AutoSlide: "0";
@@ -1535,8 +1557,7 @@ export class DrillingSummary extends Component {
         grdNumericSummary: arrNumericTable,
       });
     } catch (error) {
-      // alert(error);
-      console.log(error);
+      objLogger.SendLog("TryCatch: prepareGrdNumericTable Error:" + error);
     }
   };
 
@@ -1649,16 +1670,12 @@ export class DrillingSummary extends Component {
 
 
               <label className=" ml-2 mr-1" onClick={() => {
-
-                let objLogger = new ClientLogger();
-                objLogger.LogList = this.LogList;
-                objLogger.programID = "DrillingSummary";
                 objLogger.downloadFile();
-              }} style={{ cursor: "pointer" }}>View Logger</label>
+              }} style={{ cursor: "pointer" }}>Download Log</label>
               <FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
-                let objLogger = new ClientLogger();
-                objLogger.LogList = this.LogList;
-                objLogger.programID = "DrillingSummary";
+                // let objLogger = new ClientLogger();
+                // objLogger.LogList = this.LogList;
+                // objLogger.programID = "DrillingSummary";
                 objLogger.downloadFile();
 
               }} />
