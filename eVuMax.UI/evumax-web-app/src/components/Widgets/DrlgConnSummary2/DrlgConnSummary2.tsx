@@ -1676,10 +1676,13 @@ class DrlgConnSummary2 extends Component {
         objSTBPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_BOTTOM"];
         objSTB.Data.push(objSTBPoint);
 
-        let objCost2Point = new ChartData();
-        objCost2Point.x = this.objSummaryData.connData[i]["DEPTH"];
-        objCost2Point.y = this.objSummaryData.connData[i]["STS_COST"];
-        objSTSCost.Data.push(objCost2Point);
+        if (this.objSummaryData.connData[i]["STS_COST"]) {
+          let objCost2Point = new ChartData();
+          objCost2Point.x = this.objSummaryData.connData[i]["DEPTH"];
+          objCost2Point.y = this.objSummaryData.connData[i]["STS_COST"];
+          objSTSCost.Data.push(objCost2Point);
+        }
+
       }
       Util.StatusSuccess("Data successfully plotted");
       Util.StatusReady();

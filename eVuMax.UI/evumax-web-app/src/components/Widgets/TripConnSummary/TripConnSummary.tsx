@@ -169,6 +169,8 @@ class TripConnSummary extends Component {
       this.objChart.MarginRight = 0;
 
       this.objChart.initialize();
+      debugger;
+
       this.objChart.reDraw();
       this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
         this.onBeforeDrawSeries(e, i);
@@ -1535,7 +1537,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Labels = [];
 
       //Fill up the data for data series
-
+      debugger;
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
 
@@ -1563,14 +1565,20 @@ class TripConnSummary extends Component {
 
         objSTS.Data.push(objSTSPoint);
 
+
+
         let objCostPoint = new ChartData();
-        objCostPoint.datetime = new Date(
-          Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
-        );
-        objCostPoint.y = this.objSummaryData.connData[i]["COST"];
-        //objCostPoint.x = this.objSummaryData.connData[i]["DEPTH"];
-        objCostPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
-        objCost.Data.push(objCostPoint);
+
+
+        if (this.objSummaryData.connData[i]["COST"] > 0) {
+          objCostPoint.datetime = new Date(
+            Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
+          );
+          objCostPoint.y = this.objSummaryData.connData[i]["COST"];
+          objCostPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
+          objCost.Data.push(objCostPoint);
+        }
+
       }
 
 
@@ -1849,6 +1857,7 @@ class TripConnSummary extends Component {
         let lnBenchMark = this.objUserSettings.STSBenchMark;
 
         if (lnBenchMark > 0) {
+
           let x1 = this.objChart.__chartRect.left;
           let x2 = this.objChart.__chartRect.right;
           let y1 = this.objChart.leftAxis().ScaleRef(lnBenchMark);

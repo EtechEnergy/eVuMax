@@ -7,11 +7,15 @@ export default class GlobalMod {
   _logClientMsg = Port + ServiceName + "/LogClientSideError"; //Nishant 28/09/2021 NisPC
 
   constructor() {
+
     let localUser = localStorage.getItem("persist:root");
-    let logindetail = JSON.parse(JSON.parse(localUser).login);
-
-    this._userId = logindetail._userId;
-
+    //alert(localUser);
+    if (localUser != null) {
+      let logindetail = JSON.parse(JSON.parse(localUser).login);
+      this._userId = logindetail._userId;
+    } else {
+      localUser = "";
+    }
 
   }
 }

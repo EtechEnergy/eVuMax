@@ -1837,16 +1837,20 @@ class DrlgConnSummary extends Component {
         objSTBPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_BOTTOM"];
         objSTB.Data.push(objSTBPoint);
 
-        let objCostPoint = new ChartData();
+        if (this.objSummaryData.connData[i]["COST"] > 0) {
+          let objCostPoint = new ChartData();
 
-        objCostPoint.x = this.objSummaryData.connData[i]["DEPTH"];
-        objCostPoint.y = this.objSummaryData.connData[i]["COST"];
-        objCost.Data.push(objCostPoint);
+          objCostPoint.x = this.objSummaryData.connData[i]["DEPTH"];
+          objCostPoint.y = this.objSummaryData.connData[i]["COST"];
+          objCost.Data.push(objCostPoint);
+        }
 
-        let objCost2Point = new ChartData();
-        objCost2Point.x = this.objSummaryData.connData[i]["DEPTH"];
-        objCost2Point.y = this.objSummaryData.connData[i]["STS_COST"];
-        objSTSCost.Data.push(objCost2Point);
+        if (this.objSummaryData.connData[i]["STS_COST"] > 0) {
+          let objCost2Point = new ChartData();
+          objCost2Point.x = this.objSummaryData.connData[i]["DEPTH"];
+          objCost2Point.y = this.objSummaryData.connData[i]["STS_COST"];
+          objSTSCost.Data.push(objCost2Point);
+        }
       }
 
       this.objChart.reDraw();

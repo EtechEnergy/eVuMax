@@ -1991,6 +1991,7 @@ export class Chart {
       let stackedBarChartsFound: boolean = false;
 
       for (let key of this.DataSeries.keys()) {
+        debugger;
         if (
           this.DataSeries.get(key).Type == dataSeriesType.Bar &&
           this.DataSeries.get(key).Stacked
@@ -2016,7 +2017,7 @@ export class Chart {
       let pointSeriesFound: boolean = false;
       let areaSeriesFound: boolean = false;
       let barChartFound: boolean = false;
-
+      debugger;
       for (let key of this.DataSeries.keys()) {
 
         if (this.DataSeries.get(key).Type == dataSeriesType.Bar) {

@@ -29,6 +29,7 @@ export class LineSeries {
 
       //Remove existing data
       let xValues = new Array<number>();
+
       for (let key of this.ChartRef.DataSeries.keys()) {
         let name = this.ChartRef.DataSeries.get(key).Title; //prath
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
