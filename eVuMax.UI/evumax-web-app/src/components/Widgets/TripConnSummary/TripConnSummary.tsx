@@ -57,13 +57,14 @@ import { axisBottom, gray, json } from "d3";
 import moment from "moment";
 import { stat } from "fs";
 import "./TripConnSummary.css";
-import { faMoon, faSun, faUnderline, faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faListAlt, faMoon, faSun, faUnderline, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
 import { isThisTypeNode } from "typescript";
 import DataSelector_ from "../../Common/DataSelector_";
+import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 let _gMod = new GlobalMod();
 
@@ -72,8 +73,9 @@ class TripConnSummary extends Component {
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
+    this.objLogger.wellID = this.WellId;
   }
-
+  objLogger: ClientLogger = new ClientLogger("TripConnSummary", _gMod._userId);
   state = {
     WellName: "",
     showCommentDialog: false,
@@ -137,6 +139,7 @@ class TripConnSummary extends Component {
 
   componentDidMount() {
     try {
+      //this.objLogger.SendLog("Test Logger");
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
 
       //initialize chart
@@ -786,12 +789,21 @@ class TripConnSummary extends Component {
             </div>
           </div>
           <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "140px" }}>
-
+            {/* <div className="eVumaxPanelController" style={{ width: "140px" }}>
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+            </div>
+             */}
 
+            <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "280px" : "150px" }}>
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {this.objLogger.LogList.length > 0 && <><label className=" ml-5 mr-1" onClick={() => {
+                this.objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
 
+                this.objLogger.downloadFile();
+
+              }} /></>
+              }
             </div>
 
 

@@ -21,9 +21,10 @@ import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-all";
 import TripAnalyzerSelection from "../TripAnalyzerSelection/TripAnalyzerSelection";
 import { axisLabelStyle } from "../../../eVuMaxObjects/Chart/Axis";
-import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faListAlt, faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
+import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 let _gMod = new GlobalMod();
 
@@ -31,7 +32,10 @@ export class TripSpeedPlot1 extends Component {
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
+    this.objLogger.wellID = this.WellId;
   }
+
+  objLogger: ClientLogger = new ClientLogger("TripSpeedPlot1", _gMod._userId);
   state = {
     WellName: "",
     selectedTab: 0,
@@ -63,7 +67,7 @@ export class TripSpeedPlot1 extends Component {
   componentDidMount() {
     try {
       //initialize chart
-
+//this.objLogger.SendLog("Test Logger");
       this.initilizeCharts();
 
       this.loadConnections();
@@ -921,15 +925,28 @@ export class TripSpeedPlot1 extends Component {
             {/* {loader ? <ProcessLoader /> : ""} */}
           </div>
           <div className="col-lg-6">
-            <div className="float-right mr-2">
+            {/* <div className="float-right mr-2">
               <FontAwesomeIcon
                 icon={faUndo}
                 onClick={() => {
-                  // this.forceUpdate();
                   this.refreshChart();
                 }}
               />
+            </div> */}
+             <div className="eVumaxPanelController" style={{ float:"right", width: this.objLogger.LogList.length > 0 ? "270px" : "180px" }}>
+             
+              <label className=" ml-0 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
+              {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
+                this.objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+             
+                this.objLogger.downloadFile();
+
+              }} /></>
+              }
             </div>
+
           </div>
         </div>
         <div className="clearfix"></div>

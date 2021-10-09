@@ -49,7 +49,8 @@ export class ClientLogger {
                 text += "\n" + logMsg;
             }
             const dataURI = "data:text/plain;base64," + encodeBase64(text);
-            saveAs(dataURI, 'ClientLogger.txt');
+            //saveAs(dataURI, 'ClientLogger.txt');
+            saveAs(dataURI,  this.programID +'-ClientLogger.txt');
             // saveAs(dataURI, "clientLogger.txt", {
             //     proxyURL: _gMod._port + _gMod._serviceName + "/Post_", ///path/to/proxy",
             //     forceProxy: true

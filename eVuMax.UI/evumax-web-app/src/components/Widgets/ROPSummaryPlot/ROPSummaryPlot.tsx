@@ -843,8 +843,8 @@ export class ROPSummaryPlot extends Component {
           //console.log(objData);
 
           this.Warnings = res.data.Warnings;
- 
-          this.objLogger.SendLog("Connection Loaded");
+
+          //this.objLogger.SendLog("Connection Loaded");
 
           if (this.Warnings.trim() != "") {
             $("#warning").css("backgroundColor", "#ffb74d");
@@ -899,7 +899,7 @@ export class ROPSummaryPlot extends Component {
             isProcess: false,
           });
           document.title = this.state.objROPSummaryData.WellName + " -ROP Summary"; //Nishant 02/09/2021
-          this.objLogger.wellID = this.WellId + ": " + this.state.objROPSummaryData.WellName ;
+          this.objLogger.wellID = this.WellId + ": " + this.state.objROPSummaryData.WellName;
 
         })
         .catch((error) => {
@@ -1133,22 +1133,20 @@ export class ROPSummaryPlot extends Component {
               />
 
             </div> */}
-            <div className="eVumaxPanelController" style={{ width: "380px" }}>
+            <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "380px" : "255px" }}>
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               <label className=" ml-5 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
               <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
 
 
-              <label className=" ml-2 mr-1" onClick={() => {
+              {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
                 this.objLogger.downloadFile();
-              }} style={{ cursor: "pointer" }}>Download Log</label>
-              <FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
-                // let this.objLogger = new ClientLogger();
-                // this.objLogger.LogList = this.LogList;
-                // this.objLogger.programID = "DrillingSummary";
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+
                 this.objLogger.downloadFile();
 
-              }} />
+              }} /></>
+              }
             </div>
 
 

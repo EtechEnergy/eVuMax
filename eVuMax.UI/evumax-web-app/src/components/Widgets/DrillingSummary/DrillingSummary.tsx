@@ -1666,7 +1666,7 @@ export class DrillingSummary extends Component {
 
           </div>
           <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "380px" }}>
+            {/* <div className="eVumaxPanelController" style={{ width: "380px" }}>
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               <label className=" ml-5 mr-1" onClick={() => { this.refreshROPLineChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
               <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshROPLineChart(); }} />
@@ -1676,12 +1676,25 @@ export class DrillingSummary extends Component {
                 this.objLogger.downloadFile();
               }} style={{ cursor: "pointer" }}>Download Log</label>
               <FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
-                // let this.objLogger = new ClientLogger();
-                // this.objLogger.LogList = this.LogList;
-                // this.objLogger.programID = "DrillingSummary";
+                
                 this.objLogger.downloadFile();
 
               }} />
+            </div> */}
+            <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "380px" : "255px" }}>
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              <label className=" ml-5 mr-1" onClick={() => { this.refreshROPLineChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshROPLineChart(); }} />
+
+
+              {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
+                this.objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+             
+                this.objLogger.downloadFile();
+
+              }} /></>
+              }
             </div>
           </div>
         </div>
