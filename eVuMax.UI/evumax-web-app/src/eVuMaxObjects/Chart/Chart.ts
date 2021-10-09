@@ -1,3 +1,4 @@
+//line 1196 for remove errors related to NAN of rect in axes (await)
 //zoom Ref
 //http://bl.ocks.org/stefan505/64137471af975e27ab62d82a4af7db36
 //https://www.d3-graph-gallery.com/graph/line_brushZoom.html
@@ -32,6 +33,7 @@ import { ZoomStep } from "./ZoomSteps";
 import { faAssistiveListeningSystems, faLeaf } from "@fortawesome/free-solid-svg-icons";
 
 import { AxisRange, AxisDateRange } from "../Chart/AxisRange";
+import { ClientLogger } from "../../components/ClientLogger/ClientLogger";
 
 export enum lineStyle {
   solid = 0,
@@ -58,15 +60,25 @@ export class Chart {
   //constructor(parentRef, chartId) {
   constructor(parentRef, chartId, isPie?: boolean) {
     try {
+      debugger;
       this.__parentRef = parentRef;
+      if (this.__parentRef.objLogger != undefined) {
+        this.objLogger = this.__parentRef.objLogger;
+        //this.objLogger.SendLog("CHART constructor : " + chartId);
+      } else {
+        this.objLogger = new ClientLogger("Chart", "NA");
+      }
+
       this.Id = chartId;
       //prath 01-10-2020  (added para isPie in constructor for Pie Chart)
       if (!isPie) {
         this.createDefaultAxes();
       }
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("CHART-constructor : " + chartId);
+    }
   }
-
+  objLogger: ClientLogger;
   Id: string = "";
   Name: string = "";
   BackgroundColor: string = "inherit";
@@ -291,6 +303,8 @@ export class Chart {
 
   createDefaultAxes = () => {
     try {
+      debugger;
+
       if (this.Axes.get(this.Id + "-left") == undefined) {
         //Create default left axis
 
@@ -358,6 +372,7 @@ export class Chart {
 
   createAxes = () => {
     try {
+
       for (let key of this.Axes.keys()) {
         let objAxis: Axis = this.Axes.get(key);
         //
@@ -379,13 +394,13 @@ export class Chart {
 
       return null;
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-getAxisByID : " + error);
       return null;
     }
   };
 
   getSelectorRange = () => {
     try {
-
 
       let objAxis = this.getAxisWithSelector();
 
@@ -395,6 +410,7 @@ export class Chart {
         return this.getSelectorNumericRange();
       }
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-getSelectorRange : " + error);
       return null;
     }
   };
@@ -415,6 +431,7 @@ export class Chart {
         end: objAxis.__selectorEndPos,
       };
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-getSelectorNumericRange : " + error);
       return null;
     }
   };
@@ -435,6 +452,7 @@ export class Chart {
         endDate: objAxis.__selectorEndDatePos,
       };
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-getSelectorDateRange : " + error);
       return null;
     }
   };
@@ -453,7 +471,10 @@ export class Chart {
 
       objAxis.__selectorStartPos = startVal;
       objAxis.__selectorEndPos = endVal;
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-setSelectorRange : " + error);
+
+    }
   };
 
   setSelectorDateRange = (startDate: Date, endDate: Date) => {
@@ -470,7 +491,9 @@ export class Chart {
 
       objAxis.__selectorStartDatePos = startDate;
       objAxis.__selectorEndDatePos = endDate;
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-setSelectorDateRange : " + error);
+    }
   };
 
   updateAxes = () => {
@@ -481,14 +504,16 @@ export class Chart {
       //this function will re-calculate everything
       for (let key of this.Axes.keys()) {
         // if (key == "SelectorChart-bottom") {
-        //   debugger;
+        //   
         // }
         let objAxis: Axis = this.Axes.get(key);
 
         objAxis.updateAxis();
 
       }
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-updateAxes : " + error);
+    }
   };
 
   calculateAxesPositions = () => {
@@ -717,7 +742,10 @@ export class Chart {
 
       //Now calculate start and end positions of all axes
       this.calcAxesStartEndPos();
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-calculateAxesPositions : " + error);
+
+    }
   };
 
   calcAxesStartEndPos = () => {
@@ -930,7 +958,10 @@ export class Chart {
 
         startPos = startPos + availableAxisSize;
       }
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-calcAxesStartEndPos : " + error);
+
+    }
   };
 
   calculateHeight = (pText: string, pFontName: string, pFontSize: string) => {
@@ -960,6 +991,7 @@ export class Chart {
         return Number(height);
       }
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-calculateHeight : " + error);
       return 0;
     }
   };
@@ -991,6 +1023,7 @@ export class Chart {
         return Number(width);
       }
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-calculateWidth : " + error);
       return 0;
     }
   };
@@ -998,103 +1031,108 @@ export class Chart {
 
   //For move on Canvas
   mouseMoveOnSvg = (d: any, i: any) => {
-    d3.event.preventDefault();
-    let SVGRef = this.SVGRef;
-    let mouseCoordinate = d3.mouse(SVGRef._groups[0][0]);
+    try {
+
+      d3.event.preventDefault();
+      let SVGRef = this.SVGRef;
+      let mouseCoordinate = d3.mouse(SVGRef._groups[0][0]);
 
 
-    //
+      //
 
-    let xPx = mouseCoordinate[0];
-    let yPx = mouseCoordinate[1];
+      let xPx = mouseCoordinate[0];
+      let yPx = mouseCoordinate[1];
 
-    let pointFound: boolean = false;
-    let hAxis: Axis;
-    let vAxis: Axis;
-    for (let key of this.DataSeries.keys()) {
-      let objSeries: DataSeries = this.DataSeries.get(key);
-      if (objSeries.Type === dataSeriesType.Point) {
+      let pointFound: boolean = false;
+      let hAxis: Axis;
+      let vAxis: Axis;
+      for (let key of this.DataSeries.keys()) {
+        let objSeries: DataSeries = this.DataSeries.get(key);
+        if (objSeries.Type === dataSeriesType.Point) {
 
-        hAxis = this.getAxisByID(this.DataSeries.get(objSeries.Id).XAxisId);
-        vAxis = this.getAxisByID(this.DataSeries.get(objSeries.Id).YAxisId);
-        let xValue = hAxis.ScaleRef.invert(xPx).toFixed(2);
-        let yValue = vAxis.ScaleRef.invert(yPx).toFixed(2);
+          hAxis = this.getAxisByID(this.DataSeries.get(objSeries.Id).XAxisId);
+          vAxis = this.getAxisByID(this.DataSeries.get(objSeries.Id).YAxisId);
+          let xValue = hAxis.ScaleRef.invert(xPx).toFixed(2);
+          let yValue = vAxis.ScaleRef.invert(yPx).toFixed(2);
 
-        let objPoint: ChartData[] = this.DataSeries.get(objSeries.Id).Data.filter(async (point) => {
-          let pxOffset = objSeries.PointSize;
-          switch (objSeries.PointStyle) {
-            case pointStyle.Circle:
-              pxOffset = objSeries.PointSize;
-              break;
-            case pointStyle.Rectangle:
-              pxOffset = objSeries.PointWidth;
-              break;
-            case pointStyle.Diamond:
-              pxOffset = objSeries.PointWidth;
-              break;
-
-
-            default:
-              break;
-          }
+          let objPoint: ChartData[] = this.DataSeries.get(objSeries.Id).Data.filter(async (point) => {
+            let pxOffset = objSeries.PointSize;
+            switch (objSeries.PointStyle) {
+              case pointStyle.Circle:
+                pxOffset = objSeries.PointSize;
+                break;
+              case pointStyle.Rectangle:
+                pxOffset = objSeries.PointWidth;
+                break;
+              case pointStyle.Diamond:
+                pxOffset = objSeries.PointWidth;
+                break;
 
 
-          if ((point.xPixel > (xPx - pxOffset) && point.xPixel < (xPx + pxOffset)) && (point.yPixel > (yPx - pxOffset) && point.yPixel < (yPx + pxOffset))) {
-            pointFound = true;
-            hAxis.ChartRef.__toolTip.css("visibility", "visible");
-            hAxis.ChartRef.__toolTip.css("class", "tooltip");
-
-            if (hAxis.IsDateTime) {
-              //hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + point.datetime + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
-              hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + point.datetime + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
-            } else {
-              hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + Number(point.x).toFixed(2) + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
-            }
-            hAxis.ChartRef.__toolTip.css("position", "absolute"); //
-            hAxis.ChartRef.__toolTip.css("background-color", "#585656");
-            hAxis.ChartRef.__toolTip.css("padding", "10px");
-            hAxis.ChartRef.__toolTip.css("border-radius", "3px");
-            hAxis.ChartRef.__toolTip.css("left", 0);
-            hAxis.ChartRef.__toolTip.css("top", 0);
-            hAxis.ChartRef.__toolTip.css("z-index", 1000000); //bring tooltip on front
-
-            //change code to find relative position of tooltip
-            var tooltipX = SVGRef._groups[0][0].getBoundingClientRect().left + point.xPixel;// point.xPixel;
-            var tooltipY = SVGRef._groups[0][0].getBoundingClientRect().top + point.yPixel;// point.yPixel;
-
-            var tooltipWidth = hAxis.ChartRef.__toolTip.innerWidth();
-            var tooltipHeight = hAxis.ChartRef.__toolTip.innerHeight();
-
-            if (tooltipX + tooltipWidth > hAxis.ChartRef.__chartRect.right) {
-              tooltipX = tooltipX - tooltipWidth;
+              default:
+                break;
             }
 
-            if (tooltipY + tooltipHeight > hAxis.ChartRef.__chartRect.bottom) {
-              tooltipY = tooltipY - tooltipHeight;
+
+            if ((point.xPixel > (xPx - pxOffset) && point.xPixel < (xPx + pxOffset)) && (point.yPixel > (yPx - pxOffset) && point.yPixel < (yPx + pxOffset))) {
+              pointFound = true;
+              hAxis.ChartRef.__toolTip.css("visibility", "visible");
+              hAxis.ChartRef.__toolTip.css("class", "tooltip");
+
+              if (hAxis.IsDateTime) {
+                //hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + point.datetime + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
+                hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + point.datetime + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
+              } else {
+                hAxis.ChartRef.__toolTip.html(hAxis.Title + " - " + Number(point.x).toFixed(2) + "<br>" + vAxis.Title + " - " + Number(point.y).toFixed(2));
+              }
+              hAxis.ChartRef.__toolTip.css("position", "absolute"); //
+              hAxis.ChartRef.__toolTip.css("background-color", "#585656");
+              hAxis.ChartRef.__toolTip.css("padding", "10px");
+              hAxis.ChartRef.__toolTip.css("border-radius", "3px");
+              hAxis.ChartRef.__toolTip.css("left", 0);
+              hAxis.ChartRef.__toolTip.css("top", 0);
+              hAxis.ChartRef.__toolTip.css("z-index", 1000000); //bring tooltip on front
+
+              //change code to find relative position of tooltip
+              var tooltipX = SVGRef._groups[0][0].getBoundingClientRect().left + point.xPixel;// point.xPixel;
+              var tooltipY = SVGRef._groups[0][0].getBoundingClientRect().top + point.yPixel;// point.yPixel;
+
+              var tooltipWidth = hAxis.ChartRef.__toolTip.innerWidth();
+              var tooltipHeight = hAxis.ChartRef.__toolTip.innerHeight();
+
+              if (tooltipX + tooltipWidth > hAxis.ChartRef.__chartRect.right) {
+                tooltipX = tooltipX - tooltipWidth;
+              }
+
+              if (tooltipY + tooltipHeight > hAxis.ChartRef.__chartRect.bottom) {
+                tooltipY = tooltipY - tooltipHeight;
+              }
+
+              hAxis.ChartRef.__toolTip.css("left", tooltipX + 20);
+              hAxis.ChartRef.__toolTip.css("top", tooltipY - 20);
+              hAxis.ChartRef.__toolTip.css("display", "inherit");
+
+              //hAxis.ChartRef.__toolTip.css("display", "inline-block");
+
             }
 
-            hAxis.ChartRef.__toolTip.css("left", tooltipX + 20);
-            hAxis.ChartRef.__toolTip.css("top", tooltipY - 20);
-            hAxis.ChartRef.__toolTip.css("display", "inherit");
-
-            //hAxis.ChartRef.__toolTip.css("display", "inline-block");
-
-          }
-
-        });
-      }
-
-      if (pointFound == false) {
-        if (hAxis == undefined) {
-          return;
+          });
         }
-        hAxis.ChartRef.__toolTip.css("display", "none");
 
+        if (pointFound == false) {
+          if (hAxis == undefined) {
+            return;
+          }
+          hAxis.ChartRef.__toolTip.css("display", "none");
+
+        }
       }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-mouseMoveOnSvg : " + error);
     }
   }
 
-  reDraw = () => {
+  reDraw = async () => {
     try {
       $("#" + this.ContainerId).empty();
 
@@ -1192,7 +1230,8 @@ export class Chart {
 
       this.Height = Number($("#" + this.ContainerId).height());
       this.Width = Number($("#" + this.ContainerId).width());
-      this.createAxes();
+      //08-10-2021 to handle error of "rect" - NaN
+      await this.createAxes();
 
       //Create Title prath 01-10-2020
 
@@ -1224,7 +1263,10 @@ export class Chart {
       this.drawLegend();
 
 
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-reDraw : " + error);
+
+    }
   };
 
   //#region Scroll-on-Chart
@@ -1258,62 +1300,71 @@ export class Chart {
       }
       this.ScaleBackup = new Map<string, any>();
     } catch (error) {
-
+      this.objLogger.SendLog("Error ->CHART-reBuildAxisAfterScrolling : " + error);
     }
 
   }
   onScroll = () => {
-    //alert("onScroll method");
-    $("#" + this.ContainerId).css("cursor", "grab");
-    let t = d3.event.transform;
-    this.isScrollingInProgress = true;
-    for (let key of this.Axes.keys()) {
-      let objAxis: Axis = this.Axes.get(key);
-      if (objAxis.Visible && objAxis.isAllowScrolling) {
-        switch (objAxis.Position) {
-          case axisPosition.bottom:
-            let sxBottom = t.rescaleX(objAxis.ScaleRef);
-            this.ScrollingScale.set(objAxis.Id, sxBottom);
-            objAxis.AxisRef = d3
-              .axisBottom(sxBottom)
-              .tickSize(-objAxis.__tickSize)
-              .ticks(objAxis.__noOfTicks);
-            this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(sxBottom.domain())));
-            break;
-          case axisPosition.top:
-            let sxTop = t.rescaleX(objAxis.ScaleRef);
-            this.ScrollingScale.set(objAxis.Id, sxTop);
-            objAxis.AxisRef = d3
-              .axisTop(sxTop)
-              .tickSize(-objAxis.__tickSize)
-              .ticks(objAxis.__noOfTicks);
-            this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(sxTop.domain())));
-            break;
-          case axisPosition.left:
-            let syLeft = t.rescaleY(objAxis.ScaleRef);
-            this.ScrollingScale.set(objAxis.Id, syLeft);
-            objAxis.AxisRef = d3
-              .axisLeft(syLeft)
-              .tickSize(-objAxis.__tickSize)
-              .ticks(objAxis.__noOfTicks);
-            this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(syLeft.domain())));
-            break;
-          case axisPosition.right:
-            let syRight = t.rescaleX(objAxis.ScaleRef); //<-- rescale the scales
-            this.ScrollingScale.set(objAxis.Id, syRight);
-            this.SVGRef.select("#" + objAxis.Id).call(
-              d3.axisRight(syRight).ticks(objAxis.__noOfTicks)
-            );
-            this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(syRight.domain())));
-            break;
-          default:
-            break;
+    try {
+
+
+
+      //alert("onScroll method");
+      $("#" + this.ContainerId).css("cursor", "grab");
+      let t = d3.event.transform;
+      this.isScrollingInProgress = true;
+      for (let key of this.Axes.keys()) {
+        let objAxis: Axis = this.Axes.get(key);
+        if (objAxis.Visible && objAxis.isAllowScrolling) {
+          switch (objAxis.Position) {
+            case axisPosition.bottom:
+              let sxBottom = t.rescaleX(objAxis.ScaleRef);
+              this.ScrollingScale.set(objAxis.Id, sxBottom);
+              objAxis.AxisRef = d3
+                .axisBottom(sxBottom)
+                .tickSize(-objAxis.__tickSize)
+                .ticks(objAxis.__noOfTicks);
+              this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(sxBottom.domain())));
+              break;
+            case axisPosition.top:
+              let sxTop = t.rescaleX(objAxis.ScaleRef);
+              this.ScrollingScale.set(objAxis.Id, sxTop);
+              objAxis.AxisRef = d3
+                .axisTop(sxTop)
+                .tickSize(-objAxis.__tickSize)
+                .ticks(objAxis.__noOfTicks);
+              this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(sxTop.domain())));
+              break;
+            case axisPosition.left:
+              let syLeft = t.rescaleY(objAxis.ScaleRef);
+              this.ScrollingScale.set(objAxis.Id, syLeft);
+              objAxis.AxisRef = d3
+                .axisLeft(syLeft)
+                .tickSize(-objAxis.__tickSize)
+                .ticks(objAxis.__noOfTicks);
+              this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(syLeft.domain())));
+              break;
+            case axisPosition.right:
+              let syRight = t.rescaleX(objAxis.ScaleRef); //<-- rescale the scales
+              this.ScrollingScale.set(objAxis.Id, syRight);
+              this.SVGRef.select("#" + objAxis.Id).call(
+                d3.axisRight(syRight).ticks(objAxis.__noOfTicks)
+              );
+              this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(syRight.domain())));
+              break;
+            default:
+              break;
+          }
+          objAxis.formatAxis();
         }
-        objAxis.formatAxis();
       }
+      this.updateChart(true); //Update Chart without axies
+      this.isScrollingInProgress = false;
+
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-onScroll : " + error);
     }
-    this.updateChart(true); //Update Chart without axies
-    this.isScrollingInProgress = false;
+
   };
   //#endregion Scroll-on-Chart
 
@@ -1364,7 +1415,8 @@ export class Chart {
       });
       d3.event.stopPropagation();
     } catch (error) {
-      alert(error);
+      this.objLogger.SendLog("Error ->CHART-mouseDownZoom : " + error);
+      //alert(error);
     }
   };
 
@@ -1389,7 +1441,7 @@ export class Chart {
       }
 
     } catch (error) {
-
+      this.objLogger.SendLog("Error ->CHART-zoomingDisableForAxies : " + error);
     }
 
   }
@@ -1511,7 +1563,7 @@ export class Chart {
       $("#" + this.ContainerId).css("cursor", "default");
       rect.remove();
     } catch (error) {
-      //alert("Mouse Up =>" + error);
+      this.objLogger.SendLog("Error ->CHART-mouseUpZoom : " + error);
     }
   };
 
@@ -1522,7 +1574,9 @@ export class Chart {
       objZoomStep.Min = Axis_.ScaleRef.domain()[0];
       objZoomStep.Max = Axis_.ScaleRef.domain()[1]; //xxxx wip-prath
       ZoomAxisArr.push(objZoomStep);
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error);
+    }
   };
   restoreZoomStep = (zoomStep: number, ClearZoom?: boolean) => {
     try {
@@ -1579,7 +1633,9 @@ export class Chart {
 
       this.updateChart(true);
       //======================================================================
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-restoreZoomStep : " + error);
+    }
   };
 
   refreshOnZoom = (origin, m) => {
@@ -1689,135 +1745,11 @@ export class Chart {
 
       }
     } catch (error) {
-      // alert("Error : " + error);
+      this.objLogger.SendLog("Error ->CHART-refreshOnZoom : " + error);
     }
   };
 
 
-  //FOLLOWING FUNCTION IS NOT IN USE - REMOVE ?????
-  // updateTicks = (objAxis: Axis) => {
-  //   try {
-  //     //update Axis with new Domain values
-  //     this.SVGRef.select("#" + objAxis.Id).call(objAxis.AxisRef);
-  //     //====================
-  //     objAxis.formatAxis(); //21-01-2021 Require ????
-  //     return;
-  //     //Find number of ticks based on selected new domain values (Afer Zoom) - Earlier showing white Ticks
-  //     let maxLabel = "";
-
-  //     if (objAxis.IsDateTime) {
-  //       let objRange: AxisDateRange = objAxis.ScaleRef.domain(); //With new domain
-
-  //       let formatFunc = d3.timeFormat(objAxis.DateFormat);
-  //       maxLabel = formatFunc(objRange.Max);
-  //     } else {
-  //       let objRange: AxisRange = objAxis.ScaleRef.domain(); //With new domain
-
-  //       objRange.Max = Number.parseFloat(objRange[1].toFixed(2).toString());
-  //       objRange.Min = Number.parseFloat(objRange[0].toFixed(2).toString());
-
-  //       maxLabel = objRange.Max.toString();
-  //     }
-  //     let textWidth = this.calculateWidth(
-  //       maxLabel,
-  //       objAxis.LabelFont,
-  //       objAxis.LabelFontSize.toString()
-  //     );
-  //     let textHeight = this.calculateHeight(
-  //       maxLabel,
-  //       objAxis.LabelFont,
-  //       objAxis.LabelFontSize.toString()
-  //     );
-
-  //     //determine no. of ticks that can be displayed on left axis
-  //     if (objAxis.LabelStyle == axisLabelStyle.labels && objAxis.bandScale) {
-  //       let noOfTicks = objAxis.ScaleRef.domain().length;
-
-  //       if (objAxis.IsDateTime) {
-  //         objAxis.AxisRef.tickFormat((d, i) => {
-  //           if (i >= 0 && i < objAxis.Labels.length) {
-  //             return objAxis.Labels[i] + " ";
-  //           } else {
-  //             return d;
-  //           }
-  //         });
-  //       } else {
-  //         objAxis.AxisRef.tickFormat((d, i) => {
-  //           if (i >= 0 && i < objAxis.Labels.length) {
-  //             return objAxis.Labels[i];
-  //           } else {
-  //             let formatter = d3.format(objAxis.NumericFormat);
-  //             return formatter(d);
-  //           }
-  //         });
-  //       }
-  //     }
-
-  //     if (objAxis.LabelStyle == axisLabelStyle.values && objAxis.bandScale) {
-  //       let noOfTicks = objAxis.ScaleRef.domain().length;
-
-  //       //add ticks now
-  //       if (objAxis.IsDateTime) {
-  //         objAxis.AxisRef.tickFormat(d3.timeFormat(objAxis.DateFormat));
-  //       } else {
-  //         objAxis.AxisRef.tickFormat(d3.format(objAxis.NumericFormat));
-  //       }
-  //     }
-
-  //     if (objAxis.LabelStyle == axisLabelStyle.values && !objAxis.bandScale) {
-  //       let noOfTicks = 0;
-
-  //       if (
-  //         objAxis.Position == axisPosition.left ||
-  //         objAxis.Position == axisPosition.right
-  //       ) {
-  //         if (objAxis.LabelAngel == 0) {
-  //           noOfTicks = objAxis.__axisSize / (textHeight + 5); //5 px gap between ticks
-  //         } else {
-  //           noOfTicks = objAxis.__axisSize / (textWidth + 5); //5 px gap between ticks
-  //         }
-  //       } else {
-  //         if (objAxis.LabelAngel == 0) {
-  //           noOfTicks = objAxis.__axisSize / (textWidth + 5); //5 px gap between ticks
-  //         } else {
-  //           noOfTicks = objAxis.__axisSize / (textHeight + 5); //5 px gap between ticks
-  //         }
-  //       }
-
-  //       if (noOfTicks <= 0) {
-  //         noOfTicks = 1;
-  //       }
-
-  //       if (noOfTicks > 20) {
-  //         noOfTicks = 20;
-  //       }
-
-  //       noOfTicks = Math.ceil(noOfTicks);
-
-  //       //alert(noOfTicks);
-  //       objAxis.AxisRef.ticks(noOfTicks); //update noOfTicks (as per zoomed effect)
-  //     }
-
-  //     //Hide or show axis
-  //     if (!objAxis.GridVisible) {
-  //       this.SVGRef.select("#" + objAxis.Id)
-  //         .selectAll(".tick")
-  //         .attr("stroke-width", "0px")
-  //         .select("line")
-  //         .attr("stroke", "")
-  //         .attr("stroke-width", "1px")
-  //         .style("display", "none");
-  //     } else {
-  //       this.SVGRef.select("#" + objAxis.Id)
-  //         .selectAll(".tick")
-  //         .attr("stroke-width", "0px")
-  //         .select("line")
-  //         .attr("stroke", objAxis.GridColor)
-  //         .attr("stroke-width", "1px")
-  //         .style("display", "");
-  //     }
-  //   } catch (error) { }
-  // };
   //#endregion  ZOOM-CHART functions=========================================================
 
   drawLegend = () => {
@@ -1860,7 +1792,9 @@ export class Chart {
       }
 
 
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-drawLegend : " + error);
+    }
   };
 
   initialize = () => {
@@ -1885,6 +1819,7 @@ export class Chart {
       });
     } catch (error) {
       let halt = true;
+      this.objLogger.SendLog("Error ->CHART-initialize : " + error);
     }
   };
   //
@@ -1982,7 +1917,10 @@ export class Chart {
 
       this.updateSeries();
       this._onAfterSeriesDraw.dispatch(null, 0);
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-updateChart : " + error);
+
+    }
   };
 
   drawSeries = () => {
@@ -1991,7 +1929,7 @@ export class Chart {
       let stackedBarChartsFound: boolean = false;
 
       for (let key of this.DataSeries.keys()) {
-        debugger;
+
         if (
           this.DataSeries.get(key).Type == dataSeriesType.Bar &&
           this.DataSeries.get(key).Stacked
@@ -2005,7 +1943,9 @@ export class Chart {
         objStackedBarSeries.ChartRef = this;
         objStackedBarSeries.redrawSeries();
       }
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-drawSeries : " + error);
+    }
   };
 
   updateSeries = () => {
@@ -2017,7 +1957,7 @@ export class Chart {
       let pointSeriesFound: boolean = false;
       let areaSeriesFound: boolean = false;
       let barChartFound: boolean = false;
-      debugger;
+
       for (let key of this.DataSeries.keys()) {
 
         if (this.DataSeries.get(key).Type == dataSeriesType.Bar) {
@@ -2085,7 +2025,9 @@ export class Chart {
         objBarSeries.ChartRef = this;
         objBarSeries.redrawSeries();
       }
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-updateSeries : " + error);
+    }
   };
 
   //#region Mouse Events
@@ -2119,7 +2061,9 @@ export class Chart {
       eventArgs.y = e.offsetY;
 
       this._onMouseDown.dispatch(eventArgs, 0);
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-mouseDown : " + error);
+    }
   };
   //#endregion
 
@@ -2155,7 +2099,9 @@ export class Chart {
       eventArgs.y = e.offsetY;
 
       this._onMouseUp.dispatch(eventArgs, 0);
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-mouseUp : " + error);
+    }
   };
 
   getTooltipTextHorizontalPlot = (index: number, seriesId: string) => {
@@ -2246,7 +2192,10 @@ export class Chart {
       }
 
       return strText;
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-getTooltipTextHorizontalPlot : " + error);
+
+    }
   };
 
   mouseMove = (e: any) => {
@@ -2319,7 +2268,10 @@ export class Chart {
       eventArgs.y = e.offsetY;
 
       this._onMouseMove.dispatch(eventArgs, 0);
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-mouseMove : " + error);
+
+    }
   };
 
   mouseLeave = (e: any) => {
@@ -2335,7 +2287,9 @@ export class Chart {
         objAxis.__rightEdgeDragging = false;
         $("#" + this.Id + "__selector_rect").css("cursor", "default");
       }
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-mouseLeave : " + error);
+    }
   };
 
   //#region Selector Logic
@@ -2357,6 +2311,7 @@ export class Chart {
         return false;
       }
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-hasSelectorDragInProgress : " + error);
       return false;
     }
   };
@@ -2376,6 +2331,7 @@ export class Chart {
 
       return false;
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-isMouseOverSelector : " + error);
       return false;
     }
   };
@@ -2395,6 +2351,7 @@ export class Chart {
 
       return false;
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-isMouseOnLeftEdge : " + error);
       return false;
     }
   };
@@ -2414,6 +2371,7 @@ export class Chart {
 
       return false;
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-isMouseOnRightEdge : " + error);
       return false;
     }
   };
@@ -2429,6 +2387,7 @@ export class Chart {
 
       return null;
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-getAxisWithSelector : " + error);
       return null;
     }
   };
@@ -2443,6 +2402,7 @@ export class Chart {
 
       return false;
     } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-hasSelector : " + error);
       return false;
     }
   };
@@ -2456,7 +2416,10 @@ export class Chart {
       }
 
       objAxis.__selectorDragging = false;
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-selectorMouseUp : " + error);
+
+    }
   };
 
   selectorMouseDown = (e: any) => {
@@ -2487,7 +2450,9 @@ export class Chart {
       if (x > width - 3) {
         objAxis.__rightEdgeDragging = true;
       }
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-selectorMouseDown : " + error);
+    }
   };
 
   selectorMouseLeave = (e: any) => {
@@ -2499,7 +2464,9 @@ export class Chart {
       }
 
       objAxis.__selectorDragging = false;
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-selectorMouseLeave : " + error);
+    }
   };
 
   selectorMouseMove = (e: any) => {
@@ -2552,7 +2519,10 @@ export class Chart {
           $("#" + this.Id + "__selector_rect").attr("x", newX);
         }
       }
-    } catch (error) { }
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-selectorMouseMove : " + error);
+
+    }
   };
 
   //#endregion

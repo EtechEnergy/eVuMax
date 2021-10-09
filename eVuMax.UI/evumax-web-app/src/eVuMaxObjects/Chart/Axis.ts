@@ -1100,6 +1100,8 @@ export class Axis {
           this.ScaleRef(this.__selectorEndPos) -
           this.ScaleRef(this.__selectorStartPos);
 
+
+
         this.ChartRef.SVGRef.select("." + this.ChartRef.Id + "__selector")
           .select("rect")
           .attr("x", this.ScaleRef(this.__selectorStartPos))

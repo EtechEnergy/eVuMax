@@ -5,6 +5,7 @@ import BrokerParameter from "../../broker/BrokerParameter";
 import { Util } from "../../Models/eVuMax";
 import { now } from "moment";
 import { saveAs, encodeBase64 } from '@progress/kendo-file-saver';
+import { timeStamp } from "console";
 
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
@@ -18,6 +19,7 @@ export class ClientLogger {
     logMessage: string = "";
     userName: string = "";
     programID: string = "";
+    wellID: string = "";
     LogList: string[] = [];
 
     constructor(paramProgramID: string, paramUserID: string) {
@@ -27,7 +29,7 @@ export class ClientLogger {
     public SendLog(logMsg: string) {
         try {
             let logString: string = "";
-            logString = new Date(Date.now()).toString() + "~" + logMsg;
+            logString = new Date(Date.now()).toLocaleString() + "   =>  " + logMsg;
             this.LogList.push(logString);
         } catch (error) {
 
@@ -38,8 +40,8 @@ export class ClientLogger {
     downloadFile = () => {
         try {
             var textFile = null;
-            let text = "Error Log:" + this.programID + "\n" + "UserID: " + this.userName + "\n";
-            
+            let text = "Error Log:" + this.programID + "\n" + "UserID: " + this.userName + "\n" + "Well ID: " + this.wellID + "\n";
+
 
             for (let index = 0; index < this.LogList.length; index++) {
                 const logMsg = this.LogList[index];

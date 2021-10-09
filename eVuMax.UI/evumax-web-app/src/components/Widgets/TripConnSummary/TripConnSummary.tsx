@@ -169,7 +169,7 @@ class TripConnSummary extends Component {
       this.objChart.MarginRight = 0;
 
       this.objChart.initialize();
-      debugger;
+
 
       this.objChart.reDraw();
       this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
@@ -1537,7 +1537,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Labels = [];
 
       //Fill up the data for data series
-      debugger;
+
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
 
