@@ -17,7 +17,7 @@ export interface IProps {
 export class LogViewer extends Component<IProps> {
     constructor(props) {
         super(props);
-        debugger;
+         
         this.state = {
             LogList: this.props.LogList,
             file: new Blob()
@@ -142,7 +142,7 @@ export default LogViewer
 //     let Name: any= "";     
 //     useEffect(() => {
 //              return () => {
-//              debugger;
+//               
 //                 Name = LogList;
 //                 alert(Name.LogList);
 //              }
