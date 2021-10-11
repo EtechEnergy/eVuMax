@@ -60,7 +60,7 @@ export class Chart {
   //constructor(parentRef, chartId) {
   constructor(parentRef, chartId, isPie?: boolean) {
     try {
-      debugger;
+       
       this.__parentRef = parentRef;
       if (this.__parentRef.objLogger != undefined) {
         this.objLogger = this.__parentRef.objLogger;
@@ -303,7 +303,7 @@ export class Chart {
 
   createDefaultAxes = () => {
     try {
-      debugger;
+       
 
       if (this.Axes.get(this.Id + "-left") == undefined) {
         //Create default left axis

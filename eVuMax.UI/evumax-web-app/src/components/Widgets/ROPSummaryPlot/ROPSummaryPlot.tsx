@@ -17,12 +17,13 @@ import * as utilFunc from "../../../utilFunctions/utilFunctions";
 import GlobalMod from "../../../objects/global";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faListAlt, faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
 
 import $ from "jquery";
 import { Util } from "../../../Models/eVuMax";
 import DataSelector_ from "../../Common/DataSelector_";
 import { Switch } from "@progress/kendo-react-inputs/dist/npm/switch/Switch";
+import { ClientLogger } from "../../ClientLogger/ClientLogger";
 let _gMod = new GlobalMod();
 
 export class ROPSummaryPlot extends Component {
@@ -31,6 +32,9 @@ export class ROPSummaryPlot extends Component {
     super(props);
     this.WellId = props.match.params.WellId;
   }
+
+  objLogger: ClientLogger = new ClientLogger("ROPSummaryPlot", _gMod._userId);
+
   state = {
     selected: 0,
     //selectionType: "-1",
@@ -840,7 +844,7 @@ export class ROPSummaryPlot extends Component {
 
           this.Warnings = res.data.Warnings;
 
-
+          //this.objLogger.SendLog("Connection Loaded");
 
           if (this.Warnings.trim() != "") {
             $("#warning").css("backgroundColor", "#ffb74d");
@@ -895,6 +899,7 @@ export class ROPSummaryPlot extends Component {
             isProcess: false,
           });
           document.title = this.state.objROPSummaryData.WellName + " -ROP Summary"; //Nishant 02/09/2021
+          this.objLogger.wellID = this.WellId + ": " + this.state.objROPSummaryData.WellName;
 
         })
         .catch((error) => {
@@ -1113,10 +1118,10 @@ export class ROPSummaryPlot extends Component {
           </div>
 
           <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "270px" }}>
+            {/* <div className="eVumaxPanelController" style={{ width: "270px" }}>
 
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+              
               <label className=" ml-5 mr-2" onClick={() => {
                 this.refreshChart();
               }} style={{ cursor: "pointer" }}>Undo Zoom</label>  <FontAwesomeIcon
@@ -1127,6 +1132,21 @@ export class ROPSummaryPlot extends Component {
                 }}
               />
 
+            </div> */}
+            <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "380px" : "255px" }}>
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              <label className=" ml-5 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
+
+
+              {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
+                this.objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+
+                this.objLogger.downloadFile();
+
+              }} /></>
+              }
             </div>
 
 

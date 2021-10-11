@@ -173,14 +173,14 @@ namespace eVuMax.DataBroker.Common.authentication
 
 				Boolean isValidUser = false;
 
-				if (AuthType_ == "WindowsUser")
+				if (AuthType_ == "0") //WindowsUser
 				{
 					//isValidUser = objLDAP.isValidLDAPUser();
 
 					isValidUser = objLDAP.isValidWindowUser();
                 }
-                else
-                {
+				if (AuthType_ == "1") //1VuMaxDBUser
+				{
 					isValidUser = isValidDBUser(ref objRequest.objDataService, UserName, Password, ref LastError);
 				}
 

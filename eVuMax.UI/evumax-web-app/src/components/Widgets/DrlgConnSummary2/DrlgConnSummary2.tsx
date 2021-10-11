@@ -52,12 +52,13 @@ import {
 import moment from "moment";
 
 import "./DrlgConnSummary2.css";
-import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import { faListAlt, faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
 import DataSelector_ from "../../Common/DataSelector_";
+import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 let _gMod = new GlobalMod();
 
@@ -115,6 +116,7 @@ class DrlgConnSummary2 extends Component {
 
   };
 
+  objLogger: ClientLogger = new ClientLogger("DrlgConnSummary2", _gMod._userId);
   WellId: string = "";
   objSummaryData: any; //Stores Connection Summary Data
   objUserSettings: any;
@@ -149,7 +151,7 @@ class DrlgConnSummary2 extends Component {
   componentDidMount() {
     try {
 
-
+      //this.objLogger.SendLog("test Logger");
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
 
       //initialize charts
@@ -662,33 +664,21 @@ class DrlgConnSummary2 extends Component {
           </div>
 
           <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "150px" }}>
-
+            {/* <div className="eVumaxPanelController" style={{ width: "150px" }}>
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
-
-            </div>
-
-
-          </div>
-          {/* <div className="mr-2 ">
-              <div className="statusCard_">
-                <div className="card-body">
-                  <h6 className="card-subtitle mb-2">Undo Zoom</h6>  <FontAwesomeIcon
-                  icon={faUndo}
-                  onClick={() => {
-                    this.refreshROPLineChart();
-                  }}
-                />
-                
-                </div>
-              </div>
             </div> */}
+            <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "280px" : "150px" }}>
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              {this.objLogger.LogList.length > 0 && <><label className=" ml-5 mr-1" onClick={() => {
+                this.objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
 
+                this.objLogger.downloadFile();
 
-
-
-
+              }} /></>
+              }
+            </div>
+          </div>
 
         </div>
 

@@ -61,6 +61,7 @@ import {
 import moment from "moment";
 import "./ToolfaceSummary.css";
 import {
+  faListAlt,
   faPlus,
   faSearchMinus,
   faTrash,
@@ -78,6 +79,7 @@ import { Util } from "../../../Models/eVuMax";
 //Nishant 28/07/2021
 import * as util from "../../../utilFunctions/utilFunctions";
 import DataSelector_ from "../../Common/DataSelector_";
+import { ClientLogger } from "../../ClientLogger/ClientLogger";
 let _gMod = new GlobalMod();
 
 // LOG_TYPE=1 THEN 'Time Log' WHEN LOG_TYPE=2 THEN 'Depth Log'
@@ -87,8 +89,10 @@ class ToolfaceSummary extends Component {
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
+    this.objLogger.wellID = this.WellId;
   }
 
+  objLogger: ClientLogger = new ClientLogger("ToolfaceSummary", _gMod._userId);
   state = {
 
     objDataSelector: new DataSelector_(),
@@ -572,6 +576,7 @@ class ToolfaceSummary extends Component {
 
   componentDidMount() {
     try {
+      //this.objLogger.SendLog("Logger Test");
       window.addEventListener("resize", this.displayData);
       this.getPrimaryList();
       // this.getLineStyle();
@@ -2660,10 +2665,10 @@ class ToolfaceSummary extends Component {
             </div>
           </div>
           <div className="form-inline m-1">
-            <div className="eVumaxPanelController" style={{ width: "270px" }}>
+            {/* <div className="eVumaxPanelController" style={{ width: "270px" }}>
 
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
-              {/* <label style={{ marginRight: "20px" }}>Realtime</label> */}
+              
               <label className=" ml-5 mr-2" onClick={() => {
                 this.displayData();
               }} style={{ cursor: "pointer" }}>Undo Zoom</label>  <FontAwesomeIcon
@@ -2674,6 +2679,21 @@ class ToolfaceSummary extends Component {
                 }}
               />
 
+            </div> */}
+            <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "380px" : "255px" }}>
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              <label className=" ml-5 mr-1" onClick={() => { this.displayData(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.displayData(); }} />
+
+
+              {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
+                this.objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+
+                this.objLogger.downloadFile();
+
+              }} /></>
+              }
             </div>
 
 

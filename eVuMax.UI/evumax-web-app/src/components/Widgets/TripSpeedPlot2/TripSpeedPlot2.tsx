@@ -21,6 +21,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-all";
 import TripAnalyzerSelection from "../TripAnalyzerSelection/TripAnalyzerSelection";
 import { axisLabelStyle } from "../../../eVuMaxObjects/Chart/Axis";
 import { Util } from "../../../Models/eVuMax";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faListAlt } from "@fortawesome/free-solid-svg-icons";
+import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 let _gMod = new GlobalMod();
 
@@ -28,7 +31,10 @@ export class TripSpeedPlot2 extends Component {
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
+    this.objLogger.wellID = this.WellId;
   }
+
+  objLogger: ClientLogger = new ClientLogger("TripSpeedPlot2", _gMod._userId);
   state = {
     WellName: "",
     selectedTab: 0,
@@ -56,6 +62,7 @@ export class TripSpeedPlot2 extends Component {
 
   componentDidMount() {
     try {
+      //this.objLogger.SendLog("Test Logger");
       //initialize chart
       this.initilizeCharts();
       //alert("Component Mount");
@@ -395,6 +402,21 @@ export class TripSpeedPlot2 extends Component {
             <label className="summaryTitle">{this.state.WellName}  </label>
             {loader ? <ProcessLoader /> : ""}
           </div>
+
+          <div className="col-lg-11">
+          <div className="eVumaxPanelController" style={{ float:"right",visibility:this.objLogger.LogList.length > 0 ? "visible" : "hidden",  width: "170px" }}>
+                         
+                         {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
+                           this.objLogger.downloadFile();
+                         }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+                        
+                           this.objLogger.downloadFile();
+            
+                         }} /></>
+                         }
+                       </div>
+          </div>
+      
         </div>
         <div className="clearfix"></div>
 

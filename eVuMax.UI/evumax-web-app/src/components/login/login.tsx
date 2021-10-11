@@ -31,12 +31,12 @@ import { confirmAlert } from "react-confirm-alert";
 
 import AboutPage from "../../components/About/about";
 import { Dialog } from "@progress/kendo-react-dialogs";
+import axios from "axios";
 
 let _gMod = new GlobalMod();
 
-let objBrokerResponse = new BrokerRequest();
-let objParameter = new BrokerParameter("odata", "odata");
-let objNotification = new NotificationProperties();
+let objParameter = new BrokerParameter("", "");
+let objBrokerRequest = new BrokerRequest();
 
 type Props = LinkStateProps & LinkDispatchProps;
 
@@ -45,6 +45,7 @@ export class LoginPage extends React.Component<Props> {
   state = {
     //showPopupMenu: true
     showAboutDialog: false,
+    AuthType:"-1"
 
   }
 
@@ -58,7 +59,53 @@ export class LoginPage extends React.Component<Props> {
 
     }
   }
+componentDidMount(){
+  try {
+    objBrokerRequest.Module = "Common";
+    objBrokerRequest.Function = "getAuthType";
+    objBrokerRequest.Broker = "";
 
+    objBrokerRequest.Parameters.length = 0;
+
+    // let objLogin: any;
+    // objLogin = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).login);
+
+ 
+    // objParameter = new BrokerParameter("UserName", objLogin._userName);
+    // objBrokerRequest.Parameters.push(objParameter);
+
+    // objParameter = new BrokerParameter("Password", this.state.newPassword);
+    // objBrokerRequest.Parameters.push(objParameter);
+
+
+    axios.get(_gMod._getData, {
+      params: { paramRequest: JSON.stringify(objBrokerRequest) },
+  })
+      .then((res) => {
+debugger;
+        if (res.data!="") {
+          sessionStorage.clear();
+          localStorage.clear();
+          this.setState({
+            AuthType: res.data
+          });
+       
+
+        } else {
+          
+          this.setState({
+            AuthType: -1
+          });
+
+        }
+      })
+      .catch((error) => {
+
+      });
+  } catch (error) {
+    
+  }
+}
 
   Login = () => {
     let userName: string = (
@@ -199,7 +246,7 @@ export class LoginPage extends React.Component<Props> {
                     />
                   </div>
                 </div>
-                <div className="form-group pb-3">
+              {this.state.AuthType=="1" &&  <div className="form-group pb-3">
                   <div className="input-group flex-nowrap">
                     <input
                       type="password"
@@ -208,7 +255,7 @@ export class LoginPage extends React.Component<Props> {
                       placeholder="Password"
                     />
                   </div>
-                </div>
+                </div>}
 
                 <br />
                 <br />
