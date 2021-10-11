@@ -25,7 +25,7 @@
 		<Property Id="DB_USER" Value="user"/>
 		<Property Id="DB_PASSWORD" Value="password"/>
 		<Property Id="DB_SERVER" Value="localhost"/>
-		<Property Id="ISWINDOWSAUTHENTICATION" Secure="yes" Value="True"  />
+		<Property Id="ISWINDOWSAUTHENTICATION" Secure="yes" Value="0"  />
 		<Property Id="INTEGRATEDSECURITY" Value="0" />
 
 		<Feature Id="ProductFeature" Title="eVuMax App" Level="1">
@@ -40,6 +40,8 @@
 
 		<UIRef Id="UI"/>
 		<UIRef Id="UIDialog"/>
+		<UIRef Id="AuthUIDialog"/>
+		
 		<Property Id="WIXUI_INSTALLDIR" Value="dir_eVuMaxAPI" />
 
 		<Property Id="MsiLogging" Value="v!" />

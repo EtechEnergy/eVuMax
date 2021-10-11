@@ -37,7 +37,7 @@
 
 		  <util:XmlFile Id="WAVuMaxConfig" Action="setValue" Permanent="yes" File="[#Web.config]"
 	 ElementPath="/configuration/appSettings/add[\[]@key='AuthType'[\]]" Name="value"
-	 Value="[INTEGRATEDSECURITY]"/>
+	 Value="[ISWINDOWSAUTHENTICATION]"/>
        
       </Component>
 

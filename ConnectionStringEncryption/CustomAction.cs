@@ -15,6 +15,7 @@ namespace ConnectionStringEncryption
 
             try
             {
+                // Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 session["APPCONFIGPATH"] = @"C:\Program Files (x86)\ETECH\eVuMaxAPI\Web.config";
                 session["SECTIONTOENCRYPT"] = "connectionStrings";
 
