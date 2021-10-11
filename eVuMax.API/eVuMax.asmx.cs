@@ -364,8 +364,8 @@ namespace eVuMax.API
             string decrypted;
             try
             {
-                b = Convert.FromBase64String(encrString);
-                decrypted = System.Text.ASCIIEncoding.ASCII.GetString(b);
+                var objAES = new VuMaxDR.Common.AES();
+                decrypted = objAES.Decrypt(encrString,DataBroker.Global.EncryptionKey, 128);
             }
             catch (FormatException fe)
             {
@@ -374,12 +374,7 @@ namespace eVuMax.API
             return decrypted;
         }
 
-        private static string EnryptString(string strEncrypted)
-        {
-            byte[] b = System.Text.ASCIIEncoding.ASCII.GetBytes(strEncrypted);
-            string encrypted = Convert.ToBase64String(b);
-            return encrypted;
-        }
+       
 
     }//Class
     }//Namespace

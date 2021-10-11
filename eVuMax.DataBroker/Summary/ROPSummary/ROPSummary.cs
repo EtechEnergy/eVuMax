@@ -15,7 +15,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
     public class ROPSummary
     {
 
-        private VuMaxDR.Data.Objects.Well  objWell = new VuMaxDR.Data.Objects.Well();
+        private VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
         private TimeLog objTimeLog;
         private TimeLog objOffsetTimeLog;
         private string SideTrackKey = "-999";
@@ -25,21 +25,21 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
         MnemonicMappingMgr objMnemonicMappingMgr = new MnemonicMappingMgr();
         string selectionType = "-1";//10% of timelog data
 
-        double[] rotateDataX = new double[0]; 
-        double[] rotateDataY= new double[0];
+        double[] rotateDataX = new double[0];
+        double[] rotateDataY = new double[0];
 
         double[] offsetrotateDataX;
         double[] offsetrotateDataY;
 
 
-        double[] slideDataX ;
-        double[] slideDataY ;
+        double[] slideDataX;
+        double[] slideDataY;
 
         double[] offsetslideDataX;
         double[] offsetslideDataY;
 
 
-       double AvgRotaryROP = 0;
+        double AvgRotaryROP = 0;
         double MedRotaryROP = 0;
         double AvgSlideROP = 0;
         double MedSlideROP = 0;
@@ -78,15 +78,15 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
         double offsetDepthIn = 0;
         double offsetDepthOut = 0;
-        
+
 
         ROPSummarySettings objUserSetting = new ROPSummarySettings();
         string wellId = "";
         string userId = "";
         private string lastError = "";
 
-        private Dictionary<double, double>  tripOuts = new Dictionary<double, double>();
-        private Dictionary<double, double>  tripOutsOffset = new Dictionary<double, double>();
+        private Dictionary<double, double> tripOuts = new Dictionary<double, double>();
+        private Dictionary<double, double> tripOutsOffset = new Dictionary<double, double>();
 
         ROPSummaryData objROPSummaryData = new ROPSummaryData();
 
@@ -170,11 +170,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                 userId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
 
-                 selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
-                 fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
-                 toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
-                 fromDate = DateTime.Now;
-                 toDate = DateTime.Now;
+                selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
+                fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
+                toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
+                fromDate = DateTime.Now;
+                toDate = DateTime.Now;
 
                 bool isRealTime = false;
                 int refreshHrs = 24;
@@ -231,8 +231,8 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         offsetFromDate = objOffsetTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
                         offsetToDate = objOffsetTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
 
-                        
-                      //  objROPSummaryData.offSetWellNumericData = processOffsetNumericOutput(ref paramRequest.objDataService, offsetFromDate, offsetToDate);
+
+                        //  objROPSummaryData.offSetWellNumericData = processOffsetNumericOutput(ref paramRequest.objDataService, offsetFromDate, offsetToDate);
 
                     }
                 }
@@ -284,11 +284,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                 DataTable objData = paramRequest.objDataService.getTable(strSQL);
 
 
-                objROPSummaryData.RigStates =Util.getRigState(ref paramRequest.objDataService, wellId); //prath
+                objROPSummaryData.RigStates = Util.getRigState(ref paramRequest.objDataService, wellId); //prath
 
                 string ropWarning = "";
 
-                generateReportData(paramRequest,out ropWarning);
+                generateReportData(paramRequest, out ropWarning);
 
                 __Warnings = __Warnings + " " + ropWarning;
 
@@ -303,42 +303,57 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
             }
             catch (Exception ex)
             {
-                
+
                 Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
                 objBadResponse.RequestSuccessfull = false;
                 objBadResponse.Errors = "Error in getDrlgConnections " + ex.Message + ex.StackTrace;
                 return objBadResponse;
-                
-                
+
+
             }
 
         }
 
 
-        //get Date from Depth Range
+
         private void getDateRangeFromDepth(Broker.BrokerRequest paramRequest, double paramFromDepth, double paramToDepth, ref DateTime paramFromDate, ref DateTime paramToDate)
         {
-            DateTime limitFromDate = new DateTime();
-            DateTime limitToDate = new DateTime();
-            getDateRangeFromSideTrack(paramRequest, ref limitFromDate, ref limitToDate);
 
-            string dataTableName = objTimeLog.getDataTableName(ref paramRequest.objDataService);
-            string strSQL = "";
-            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + paramFromDepth.ToString() + " ORDER BY DATETIME";
-            DataTable objData = paramRequest.objDataService.getTable(strSQL);
-            if (objData.Rows.Count > 0)
+            try
             {
-                paramFromDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+
+                string dataTableName = objTimeLog.getDataTableName(ref paramRequest.objDataService);
+                string strSQL = "";
+                strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE HDTH>=" + paramFromDepth.ToString() + " ORDER BY DATETIME";
+                DataTable objData = paramRequest.objDataService.getTable(strSQL);
+                if (objData.Rows.Count > 0)
+                {
+                    paramFromDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+                }
+
+
+                strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE HDTH>=" + paramToDepth.ToString() + " ORDER BY DATETIME";
+                objData = paramRequest.objDataService.getTable(strSQL);
+                if (objData.Rows.Count > 0)
+                {
+                    paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+                }
+
+                if (objData != null)
+                {
+                    objData.Dispose();
+                }
+
+            }
+            catch (Exception)
+            {
+
+
             }
 
-            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH<=" + paramToDepth.ToString() + " ORDER BY DATETIME DESC";
-            objData = paramRequest.objDataService.getTable(strSQL);
-            if (objData.Rows.Count > 0)
-            {
-                paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
-            }
 
         }
+
 
         //getDateRangeFromSideTrack
         private void getDateRangeFromSideTrack(Broker.BrokerRequest paramRequest, ref DateTime paramFromDate, ref DateTime paramToDate)
@@ -389,7 +404,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
         }
 
-        private void generateReportData(Broker.BrokerRequest paramRequest,out string paramWarnings)
+        private void generateReportData(Broker.BrokerRequest paramRequest, out string paramWarnings)
         {
 
             paramWarnings = "";
@@ -412,16 +427,16 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         //objMnemonicMappingMgr.loadMappings(ref paramRequest.objDataService);
 
 
-                       
+
                         yMnemonic = objMnemonicMappingMgr.getMappedMnemonic(yMnemonic, objTimeLog.logCurves);
-                       
+
                         if (string.IsNullOrEmpty(yMnemonic.Trim()))
                         {
-                             // 'No data found ...
+                            // 'No data found ...
                         }
                     }
 
-                    if(yMnemonic.Trim()=="")
+                    if (yMnemonic.Trim() == "")
                     {
                         paramWarnings = "ROP data not found in time log. Please check mnemonic mappings";
                     }
@@ -436,7 +451,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     }
                     else
                     {
-                        
+
                         strSQL = "SELECT HDTH AS [DEPTH], [" + yMnemonic + "] AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ";
                     }
 
@@ -467,10 +482,10 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         Array.Resize(ref rotateDataX, objData.Rows.Count - 1);
                         Array.Resize(ref rotateDataY, objData.Rows.Count - 1);
 
-                        for (int i = 0; i < objData.Rows.Count - 1;  i++)
+                        for (int i = 0; i < objData.Rows.Count - 1; i++)
                         {
                             double yValue = Convert.ToDouble(DataService.checkNull(objData.Rows[i][yMnemonic], 0));
-                            double xValue = Convert.ToDouble( DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+                            double xValue = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
                             rotateDataX[i] = xValue;
                             rotateDataY[i] = yValue;
                         }
@@ -480,7 +495,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
 
                     // '**** Process Slide drilling data  ======================================================''
-                    if (selectionType== "1") //depth
+                    if (selectionType == "1") //depth
                     {
                         strSQL = "SELECT HDTH AS [DEPTH], [" + yMnemonic + "] AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + fromDepth.ToString() + " AND HDTH<=" + toDepth.ToString() + " ";
                     }
@@ -505,7 +520,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     strSQL = strSQL + " ORDER BY HDTH";
                     CData = paramRequest.objDataService.getTable(strSQL);
 
-                    
+
 
                     objData = Common.DownSample.downSampleByDepthEx(CData, "DEPTH", yMnemonic, 0, objUserSetting.NoOfDataPoints);
                     if (objData.Rows.Count > 0)
@@ -517,10 +532,10 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
 
 
-                        for (int i = 0; i< objData.Rows.Count - 1;  i++)
+                        for (int i = 0; i < objData.Rows.Count - 1; i++)
                         {
-                            double yValue =Convert.ToDouble( DataService.checkNull(objData.Rows[i][yMnemonic], 0));
-                            double xValue =Convert.ToDouble( DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+                            double yValue = Convert.ToDouble(DataService.checkNull(objData.Rows[i][yMnemonic], 0));
+                            double xValue = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
                             slideDataX[i] = xValue;
                             slideDataY[i] = yValue;
                         }
@@ -571,8 +586,8 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     CData = paramRequest.objDataService.getTable(strSQL);
                     if (CData.Rows.Count > 0)
                     {
-                        offsetDepthIn = Convert.ToDouble( DataService.checkNull(CData.Rows[0]["DEPTH"], 0));
-                        offsetDepthOut = Convert.ToDouble( DataService.checkNull(CData.Rows[CData.Rows.Count - 1]["DEPTH"], 0));
+                        offsetDepthIn = Convert.ToDouble(DataService.checkNull(CData.Rows[0]["DEPTH"], 0));
+                        offsetDepthOut = Convert.ToDouble(DataService.checkNull(CData.Rows[CData.Rows.Count - 1]["DEPTH"], 0));
                     }
 
 
@@ -581,7 +596,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
 
 
-                    if (selectionType=="1")//depth selection
+                    if (selectionType == "1")//depth selection
                     {
                         strSQL = "SELECT AVG([" + yMnemonic + "]) AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + fromDepth.ToString() + " AND HDTH<=" + toDepth.ToString() + " ";
                     }
@@ -605,11 +620,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     objData = paramRequest.objDataService.getTable(strSQL);
                     if (objData.Rows.Count > 0)
                     {
-                        AvgRotaryROP = Convert.ToDouble( DataService.checkNull(objData.Rows[0][yMnemonic], 0));
+                        AvgRotaryROP = Convert.ToDouble(DataService.checkNull(objData.Rows[0][yMnemonic], 0));
                     }
 
                     AvgSlideROP = 0;
-                    if (selectionType=="1")//depth selection
+                    if (selectionType == "1")//depth selection
                     {
                         strSQL = "SELECT AVG([" + yMnemonic + "]) AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + fromDepth.ToString() + " AND HDTH<=" + toDepth.ToString() + " ";
                     }
@@ -629,15 +644,15 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                     strSQL = strSQL + " AND [" + yMnemonic + "]>=0 ";
                     strSQL = strSQL + " AND (RIG_STATE=1 OR RIG_STATE=19) ";
-                    objData =paramRequest.objDataService.getTable(strSQL);
+                    objData = paramRequest.objDataService.getTable(strSQL);
                     if (objData.Rows.Count > 0)
                     {
-                        AvgSlideROP = Convert.ToDouble( DataService.checkNull(objData.Rows[0][yMnemonic], 0));
+                        AvgSlideROP = Convert.ToDouble(DataService.checkNull(objData.Rows[0][yMnemonic], 0));
                     }
 
                     TotalFootage = 0;
-                    double TotalTimePeriod =0;
-                    if (selectionType=="1") //depth selection
+                    double TotalTimePeriod = 0;
+                    if (selectionType == "1") //depth selection
                     {
                         strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + fromDepth.ToString() + " AND HDTH<=" + toDepth.ToString() + " AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0";
                     }
@@ -657,7 +672,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     //}
 
                     TotalFootage = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
-                    if (selectionType=="1") //depth selection
+                    if (selectionType == "1") //depth selection
                     {
                         strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + fromDepth.ToString() + " AND HDTH<=" + toDepth.ToString() + " AND RIG_STATE IN (0,1,19) ";
                     }
@@ -702,7 +717,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     //}
 
                     RotaryFootage = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
-                    if (selectionType=="1") //depth selection
+                    if (selectionType == "1") //depth selection
                     {
                         strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + fromDepth.ToString() + " AND HDTH<=" + toDepth.ToString() + " AND RIG_STATE IN (0) ";
                     }
@@ -781,7 +796,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                     MedRotaryROP = 0;
                     MedSlideROP = 0;
-                    if (rotateDataY.Length> 0)
+                    if (rotateDataY.Length > 0)
                     {
                         if (rotateDataY.Length > 1)
                         {
@@ -837,7 +852,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
 
                     // 'Recalculate ROP
-                    if (RotaryTimePeriod >0 & RotaryFootage > 0)
+                    if (RotaryTimePeriod > 0 & RotaryFootage > 0)
                     {
                         AvgRotaryROP = RotaryFootage / (RotaryTimePeriod / 60 / 60); // ft/hours
                     }
@@ -846,7 +861,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         AvgRotaryROP = 0;
                     }
 
-                    if (SlideTimePeriod >0 & SlideFootage >0)
+                    if (SlideTimePeriod > 0 & SlideFootage > 0)
                     {
                         AvgSlideROP = SlideFootage / (SlideTimePeriod / 60 / 60); // ft/hours
                     }
@@ -870,7 +885,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         // 'Nothing to do ...
                         else
                         {
-                        //    objMnemonicMappingMgr.loadMappings(ref paramRequest.objDataService); //prath 15-10-2020
+                            //    objMnemonicMappingMgr.loadMappings(ref paramRequest.objDataService); //prath 15-10-2020
                             yMnemonic = objMnemonicMappingMgr.getMappedMnemonic(yMnemonic, objOffsetTimeLog.logCurves);
                             if (string.IsNullOrEmpty(yMnemonic.Trim()))
                             {
@@ -880,10 +895,10 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                             }
                         }
 
-                        
+
                         offsetFromDate = objOffsetTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
                         offsetToDate = objOffsetTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
-                       
+
 
                         // '**** Process rotary drilling data  ======================================================''
                         if (objUserSetting.MatchDepthByFormationTops)
@@ -912,11 +927,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                             Array.Resize(ref offsetrotateDataX, objData.Rows.Count - 1);
                             Array.Resize(ref offsetrotateDataY, objData.Rows.Count - 1);
 
-                             
-                            for (int i = 0; i< objData.Rows.Count - 1;  i++)
+
+                            for (int i = 0; i < objData.Rows.Count - 1; i++)
                             {
-                                double yValue = Convert.ToDouble( DataService.checkNull(objData.Rows[i][yMnemonic], 0));
-                                double xValue = Convert.ToDouble( DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+                                double yValue = Convert.ToDouble(DataService.checkNull(objData.Rows[i][yMnemonic], 0));
+                                double xValue = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
                                 offsetrotateDataX[i] = xValue;
                                 offsetrotateDataY[i] = yValue;
                             }
@@ -928,7 +943,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                             if (objUserSetting.MatchDepthByFormationTops)
                             {
 
-                                
+
                                 // 'get the list of formation tops of both the wells ...
                                 Dictionary<string, FormationTop> offsetTops = FormationTop.getList(ref paramRequest.objDataService, objOffsetTimeLog.WellID);
                                 Dictionary<string, FormationTop> mainTops = FormationTop.getList(ref paramRequest.objDataService, wellId);
@@ -942,7 +957,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                                 // 'Now count the no. of elements that matches the depth criteria
                                 int elementCount = 0;
-                                for (int i = 0; i< offsetrotateDataX.Length - 1; i++)
+                                for (int i = 0; i < offsetrotateDataX.Length - 1; i++)
                                 {
                                     if (offsetrotateDataX[i] >= fromDepth & offsetrotateDataX[i] <= toDepth)
                                     {
@@ -954,7 +969,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                                 var tempXData = new double[elementCount];
                                 var tempYData = new double[elementCount];
                                 int subCounter = 0;
-                                for (int i = 0; i< offsetrotateDataX.Length - 1;  i++)
+                                for (int i = 0; i < offsetrotateDataX.Length - 1; i++)
                                 {
                                     if (offsetrotateDataX[i] >= fromDepth & offsetrotateDataX[i] <= toDepth)
                                     {
@@ -963,14 +978,14 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                                         subCounter += 1;
                                     }
 
-                                  
+
                                 };
 
                                 Array.Resize(ref offsetrotateDataX, elementCount - 1);
                                 Array.Resize(ref offsetrotateDataY, elementCount - 1);
 
-                           
-                                for (int i = 0; i< tempXData.Length - 1; i++)
+
+                                for (int i = 0; i < tempXData.Length - 1; i++)
                                 {
                                     offsetrotateDataX[i] = tempXData[i];
                                     offsetrotateDataX[i] = tempYData[i];
@@ -1010,11 +1025,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                             Array.Resize(ref offsetslideDataX, objData.Rows.Count - 1);
                             Array.Resize(ref offsetslideDataY, objData.Rows.Count - 1);
 
-                        
-                            for (int i = 0; i< objData.Rows.Count - 1; i++)
+
+                            for (int i = 0; i < objData.Rows.Count - 1; i++)
                             {
-                                double yValue = Convert.ToDouble( DataService.checkNull(objData.Rows[i][yMnemonic], 0));
-                                double xValue = Convert.ToDouble( DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+                                double yValue = Convert.ToDouble(DataService.checkNull(objData.Rows[i][yMnemonic], 0));
+                                double xValue = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
                                 offsetslideDataX[i] = xValue;
                                 offsetslideDataY[i] = yValue;
                             }
@@ -1039,7 +1054,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                                 // 'Now count the no. of elements that matches the depth criteria
                                 int elementCount = 0;
-                                for (int i = 0; i< offsetslideDataX.Length - 1;  i++)
+                                for (int i = 0; i < offsetslideDataX.Length - 1; i++)
                                 {
                                     if (offsetslideDataX[i] >= fromDepth & offsetslideDataX[i] <= toDepth)
                                     {
@@ -1051,7 +1066,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                                 var tempXData = new double[elementCount];
                                 var tempYData = new double[elementCount];
                                 int subCounter = 0;
-                                for (int i = 0; i< offsetslideDataX.Length - 1; i++)
+                                for (int i = 0; i < offsetslideDataX.Length - 1; i++)
                                 {
                                     if (offsetslideDataX[i] >= fromDepth & offsetslideDataX[i] <= toDepth)
                                     {
@@ -1065,8 +1080,8 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                                 Array.Resize(ref offsetslideDataX, elementCount - 1);
                                 Array.Resize(ref offsetslideDataY, elementCount - 1);
-                                
-                                for (int i = 0;i< tempXData.Length - 1;  i++)
+
+                                for (int i = 0; i < tempXData.Length - 1; i++)
                                 {
                                     offsetslideDataX[i] = tempXData[i];
                                     offsetslideDataY[i] = tempYData[i];
@@ -1079,11 +1094,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         }
 
                         TotalFootage = 0;
-                        RotaryFootage =0;
-                        SlideFootage =0;
-                        RotaryTimePeriod =0;
-                        TotalTimePeriod =0;
-                        SlideTimePeriod =0;
+                        RotaryFootage = 0;
+                        SlideFootage = 0;
+                        RotaryTimePeriod = 0;
+                        TotalTimePeriod = 0;
+                        SlideTimePeriod = 0;
 
                         strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + objOffsetTimeLog.__dataTableName + " WHERE [HDTH]>=" + offsetDepthIn.ToString() + " AND [HDTH]<=" + offsetDepthOut.ToString() + " AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
                         TotalFootage = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
@@ -1098,13 +1113,13 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         strSQL = "SELECT SUM(TIME_DURATION) FROM " + objOffsetTimeLog.__dataTableName + " WHERE [HDTH]>=" + offsetDepthIn.ToString() + " AND [HDTH]<=" + offsetDepthOut.ToString() + " AND RIG_STATE IN (1,19) ";
                         SlideTimePeriod = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
                         OffsetRotaryPercent = 0;
-                        if (RotaryFootage >0)
+                        if (RotaryFootage > 0)
                         {
                             OffsetRotaryPercent = Math.Round(RotaryFootage * 100d / TotalFootage, 2);
                         }
 
                         OffsetSlidePercent = 0;
-                        if (SlideFootage >0)
+                        if (SlideFootage > 0)
                         {
                             OffsetSlidePercent = Math.Round(SlideFootage * 100d / TotalFootage, 2);
                         }
@@ -1130,7 +1145,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         objData = paramRequest.objDataService.getTable(strSQL);
                         if (objData.Rows.Count > 0)
                         {
-                            AvgRotaryROPOffset = Convert.ToDouble( VuMaxDR.Data.DataService.checkNull(objData.Rows[0][yMnemonic], 0));
+                            AvgRotaryROPOffset = Convert.ToDouble(VuMaxDR.Data.DataService.checkNull(objData.Rows[0][yMnemonic], 0));
                         }
 
                         AvgSlideROPOffset = 0;
@@ -1150,7 +1165,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         objData = paramRequest.objDataService.getTable(strSQL);
                         if (objData.Rows.Count > 0)
                         {
-                            AvgSlideROPOffset =Convert.ToDouble( DataService.checkNull(objData.Rows[0][yMnemonic], 0));
+                            AvgSlideROPOffset = Convert.ToDouble(DataService.checkNull(objData.Rows[0][yMnemonic], 0));
                         }
 
                         MedRotaryROPOffset = 0;
@@ -1179,7 +1194,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                             }
                         }
 
-                        if (RotaryTimePeriod >0 & RotaryFootage >0)
+                        if (RotaryTimePeriod > 0 & RotaryFootage > 0)
                         {
                             AvgRotaryROPOffset = RotaryFootage / (RotaryTimePeriod / 60 / 60); // ft/hours
                         }
@@ -1190,7 +1205,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                         }
 
-                        if (SlideTimePeriod >0 & SlideFootage >0)
+                        if (SlideTimePeriod > 0 & SlideFootage > 0)
                         {
                             AvgSlideROPOffset = SlideFootage / (SlideTimePeriod / 60 / 60); // ft/hours
                         }
@@ -1203,14 +1218,14 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         // '//*************************************************************************************//
 
                     }
-                    // '########################################################################################''
+                // '########################################################################################''
 
                 //Nishant 27/08/2021     
                 over:
                     detectTripOuts(paramRequest);
 
                     // Save to ROP Summary object
-                 
+
 
                     objROPSummaryData.AvgRotaryROP = AvgRotaryROP;
                     objROPSummaryData.MedRotaryROP = MedRotaryROP;
@@ -1233,13 +1248,13 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                     for (int i = 0; i < rotateDataX.Length; i++)
                     {
-                        DataRow objNewRow =  objROPSummaryData.rotateData.NewRow();
+                        DataRow objNewRow = objROPSummaryData.rotateData.NewRow();
                         objNewRow["X"] = rotateDataX[i];
                         objNewRow["Y"] = rotateDataY[i];
                         objROPSummaryData.rotateData.Rows.Add(objNewRow);
                     }
 
-                
+
                     for (int i = 0; i < offsetrotateDataX.Length; i++)
                     {
                         DataRow objNewRow = objROPSummaryData.offsetRotateData.NewRow();
@@ -1249,7 +1264,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     }
 
                     //Slide data
-                    
+
                     for (int i = 0; i < slideDataX.Length; i++)
                     {
                         DataRow objNewRow = objROPSummaryData.slideData.NewRow();
@@ -1267,7 +1282,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         objROPSummaryData.offsetSlideData.Rows.Add(objNewRow);
                     }
 
-                    objROPSummaryData.fromDate =fromDate;
+                    objROPSummaryData.fromDate = fromDate;
                     objROPSummaryData.toDate = toDate;
 
                     objROPSummaryData.fromDepth = fromDepth;
@@ -1308,20 +1323,20 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     //    objROPSummaryData.offsetSlideData.Rows.Add(objNewRow);
                     //}
 
-              
+
 
 
                 }
-//Commented below code Nishant 27/08/2021
-            //over:
-            //    bool doNothing = true;
+                //Commented below code Nishant 27/08/2021
+                //over:
+                //    bool doNothing = true;
                 //return
 
             }
             catch (Exception ex)
             {
 
-          
+
             }
 
         }
@@ -1458,11 +1473,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                 // 'Get all the connections falling in the 
                 DataTable objData = paramRequest.objDataService.getTable("SELECT FROM_DATE,TO_DATE,DEPTH FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND ((FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "') OR (TO_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "')) ORDER BY FROM_DATE");
-                for (int i = 0; i< objData.Rows.Count - 2; i++)
+                for (int i = 0; i < objData.Rows.Count - 2; i++)
                 {
-                    DateTime connEndDate =Convert.ToDateTime(  DataService.checkNull(objData.Rows[i]["TO_DATE"], DateTime.MinValue));
-                    DateTime nextConnStartDate = Convert.ToDateTime( DataService.checkNull(objData.Rows[i + 1]["FROM_DATE"], DateTime.MinValue));
-                    double connDepth = Convert.ToDouble( DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+                    DateTime connEndDate = Convert.ToDateTime(DataService.checkNull(objData.Rows[i]["TO_DATE"], DateTime.MinValue));
+                    DateTime nextConnStartDate = Convert.ToDateTime(DataService.checkNull(objData.Rows[i + 1]["FROM_DATE"], DateTime.MinValue));
+                    double connDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
 
                     // 'Find Min. Depth between these two connections
                     double minDepth = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>'" + connEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + nextConnStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "'"));
@@ -1476,13 +1491,13 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         DataTable minDateData = paramRequest.objDataService.getTable("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>'" + connEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + nextConnStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH=" + minDepth.ToString());
                         if (minDateData.Rows.Count > 0)
                         {
-                            DateTime minDepthDate =Convert.ToDateTime( minDateData.Rows[0]["DATETIME"]);
+                            DateTime minDepthDate = Convert.ToDateTime(minDateData.Rows[0]["DATETIME"]);
 
                             // 'Find the drilling end
                             DataTable drillingEndData = paramRequest.objDataService.getTable("SELECT TOP 1 DATETIME,HDTH FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>'" + connEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<'" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC");
                             if (drillingEndData.Rows.Count > 0)
                             {
-                                double tripOutDepth = Convert.ToDouble( DataService.checkNull(drillingEndData.Rows[0]["HDTH"], 0));
+                                double tripOutDepth = Convert.ToDouble(DataService.checkNull(drillingEndData.Rows[0]["HDTH"], 0));
                                 tripOuts.Add(tripOutDepth, tripOutDepth);
                             }
                         }
@@ -1494,11 +1509,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     DateTime offsetFromDate = objOffsetTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
                     DateTime offsetToDate = objOffsetTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
                     objData = paramRequest.objDataService.getTable("SELECT FROM_DATE,TO_DATE,DEPTH FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + objOffsetTimeLog.WellID + "' AND ((FROM_DATE>='" + offsetFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + offsetToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "') OR (TO_DATE>='" + offsetFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + offsetToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "')) ORDER BY FROM_DATE");
-                    for (int i = 0; i< objData.Rows.Count - 2; i++)
+                    for (int i = 0; i < objData.Rows.Count - 2; i++)
                     {
-                        DateTime connEndDate =Convert.ToDateTime( DataService.checkNull(objData.Rows[i]["TO_DATE"], DateTime.MinValue));
-                        DateTime nextConnStartDate = Convert.ToDateTime( DataService.checkNull(objData.Rows[i + 1]["FROM_DATE"], DateTime.MinValue));
-                        double connDepth = Convert.ToDouble( DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+                        DateTime connEndDate = Convert.ToDateTime(DataService.checkNull(objData.Rows[i]["TO_DATE"], DateTime.MinValue));
+                        DateTime nextConnStartDate = Convert.ToDateTime(DataService.checkNull(objData.Rows[i + 1]["FROM_DATE"], DateTime.MinValue));
+                        double connDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
 
                         // 'Find Min. Depth between these two connections
                         double minDepth = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objOffsetTimeLog.__dataTableName + " WHERE DATETIME>'" + connEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + nextConnStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "'"));
@@ -1512,13 +1527,13 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                             DataTable minDateData = paramRequest.objDataService.getTable("SELECT TOP 1 DATETIME FROM " + objOffsetTimeLog.__dataTableName + " WHERE DATETIME>'" + connEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + nextConnStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH=" + minDepth.ToString());
                             if (minDateData.Rows.Count > 0)
                             {
-                                DateTime minDepthDate =Convert.ToDateTime(minDateData.Rows[0]["DATETIME"]);
+                                DateTime minDepthDate = Convert.ToDateTime(minDateData.Rows[0]["DATETIME"]);
 
                                 // 'Find the drilling end
                                 DataTable drillingEndData = paramRequest.objDataService.getTable("SELECT TOP 1 DATETIME,HDTH FROM " + objOffsetTimeLog.__dataTableName + " WHERE DATETIME>'" + connEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<'" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC");
                                 if (drillingEndData.Rows.Count > 0)
                                 {
-                                    double tripOutDepth = Convert.ToDouble( DataService.checkNull(drillingEndData.Rows[0]["HDTH"], 0));
+                                    double tripOutDepth = Convert.ToDouble(DataService.checkNull(drillingEndData.Rows[0]["HDTH"], 0));
                                     tripOutsOffset.Add(tripOutDepth, tripOutDepth);
                                 }
                             }

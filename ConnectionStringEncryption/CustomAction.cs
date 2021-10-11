@@ -65,9 +65,17 @@ namespace ConnectionStringEncryption
                 string DB_PASSWORD = session["DB_PASSWORD"];
                 string DB_USER = session["DB_USER"];
 
-                session["DB_USER"] = CustomActions.EnryptString(DB_USER);
-                session["DB_PASSWORD"] = CustomActions.EnryptString(DB_PASSWORD);
-                session["DB_SERVER"] = CustomActions.EnryptString(DB_SERVER);
+                var objAES = new VuMaxDR.Common.AES();
+
+
+                //session["DB_USER"] = CustomActions.EnryptString(DB_USER);
+                //session["DB_PASSWORD"] = CustomActions.EnryptString(DB_PASSWORD);
+                //session["DB_SERVER"] = CustomActions.EnryptString(DB_SERVER);
+
+
+                session["DB_USER"] = objAES.Encrypt(DB_USER,eVuMax.DataBroker.Global.EncryptionKey,128);
+                session["DB_PASSWORD"] = objAES.Encrypt(DB_PASSWORD, eVuMax.DataBroker.Global.EncryptionKey, 128); 
+                session["DB_SERVER"] = objAES.Encrypt(DB_SERVER, eVuMax.DataBroker.Global.EncryptionKey, 128); 
 
 
 

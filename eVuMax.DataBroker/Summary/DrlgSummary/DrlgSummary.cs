@@ -142,7 +142,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
                 fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                 toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
-                
+
 
                 bool isRealTime = false;
                 int refreshHrs = 24;
@@ -256,9 +256,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         selectionType = "0";
                     }
 
-                    }
+                }
 
-               
+
 
                 //Nishant : get FromDate and ToDate from Depth  Range
                 //depthwise
@@ -267,6 +267,8 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                     getDateRangeFromDepth(paramRequest, fromDepth, toDepth, ref fromDate, ref toDate);
 
                 }
+
+
                 //***************************
                 if (objWell.offsetWells.Count > 0)
                 {
@@ -297,7 +299,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                 //  ''#4 ROP Main + Offset Line Data
                 string ropWarnings = "";
-                generateROPData(ref paramRequest.objDataService,out ropWarnings);
+                generateROPData(ref paramRequest.objDataService, out ropWarnings);
 
                 __Warnings = __Warnings + " " + ropWarnings;
 
@@ -308,7 +310,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                 // Set data
                 objSummaryData.StartDate = fromDate;
-                objSummaryData.EndDate= toDate;
+                objSummaryData.EndDate = toDate;
                 objSummaryData.MainDepthIn = fromDepth;
                 objSummaryData.MainDepthOut = toDepth;
 
@@ -399,7 +401,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
             try
             {
-                
+
 
                 objMnemonicMappingMgr.loadMappings(ref objDataService);
                 DataTable objROPData = new DataTable();
@@ -427,7 +429,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                 }
 
-                if(mainROPMnemonic.Trim()=="")
+                if (mainROPMnemonic.Trim() == "")
                 {
                     paramWarnings = "ROP data of main well not found. Check the mnemonic mappings.";
                 }
@@ -511,9 +513,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         Array.Resize(ref offsetROPX, objData.Rows.Count);
                         Array.Resize(ref offsetROPY, objData.Rows.Count);
 
-                        for (int i = 0; i <= objData.Rows.Count-1; i++)
-                            {
-                          
+                        for (int i = 0; i <= objData.Rows.Count - 1; i++)
+                        {
+
                             Double ROP = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["ROP"], 0));
                             Double Depth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["HDTH"], 0));
 
@@ -535,7 +537,8 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         //}
 
 
-                        if (offsetROPY.Length > 0) {
+                        if (offsetROPY.Length > 0)
+                        {
                             offsetDepthOut = offsetROPY[offsetROPY.Length - 1];
                         }
 
@@ -585,7 +588,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                             ////''Now again, resize the main arrays and copy temp data...
                             Array.Resize(ref offsetROPX, elementCount - 1);
                             Array.Resize(ref offsetROPY, elementCount - 1);
-                          
+
 
 
 
@@ -670,27 +673,43 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
         //get Date from Depth Range
         private void getDateRangeFromDepth(Broker.BrokerRequest paramRequest, double paramFromDepth, double paramToDepth, ref DateTime paramFromDate, ref DateTime paramToDate)
         {
-            DateTime limitFromDate = new DateTime();
-            DateTime limitToDate = new DateTime();
-            getDateRangeFromSideTrack(paramRequest, ref limitFromDate, ref limitToDate);
 
-            string dataTableName = objTimeLog.getDataTableName(ref paramRequest.objDataService);
-            string strSQL = "";
-            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + paramFromDepth.ToString() + " ORDER BY DATETIME";
-            DataTable objData = paramRequest.objDataService.getTable(strSQL);
-            if (objData.Rows.Count > 0)
+            try
             {
-                paramFromDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+
+                string dataTableName = objTimeLog.getDataTableName(ref paramRequest.objDataService);
+                string strSQL = "";
+                strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE HDTH>=" + paramFromDepth.ToString() + " ORDER BY DATETIME";
+                DataTable objData = paramRequest.objDataService.getTable(strSQL);
+                if (objData.Rows.Count > 0)
+                {
+                    paramFromDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+                }
+
+
+                strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE HDTH>=" + paramToDepth.ToString() + " ORDER BY DATETIME";
+                objData = paramRequest.objDataService.getTable(strSQL);
+                if (objData.Rows.Count > 0)
+                {
+                    paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+                }
+
+                if(objData!=null)
+                {
+                    objData.Dispose();
+                }
+
+            }
+            catch (Exception)
+            {
+
+                
             }
 
-            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH<=" + paramToDepth.ToString() + " ORDER BY DATETIME DESC";
-            objData = paramRequest.objDataService.getTable(strSQL);
-            if (objData.Rows.Count > 0)
-            {
-                paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
-            }
 
         }
+
+
 
         //getDateRangeFromSideTrack
         private void getDateRangeFromSideTrack(Broker.BrokerRequest paramRequest, ref DateTime paramFromDate, ref DateTime paramToDate)
@@ -874,9 +893,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         {
 
                             // 'Check if using 
-                            
+
                             double result = objOffsetTimeLog.EvaluateStatColumn(ref objDataService, ref objOffsetTimeLog, FromDate, ToDate, objStatItem.toDRItemVuMax());
-                            
+
                             result = Math.Round(result, 3);
 
 

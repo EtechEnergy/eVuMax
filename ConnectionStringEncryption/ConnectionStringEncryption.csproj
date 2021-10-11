@@ -59,6 +59,9 @@
     <Reference Include="Microsoft.Deployment.WindowsInstaller">
       <Private>True</Private>
     </Reference>
+    <Reference Include="VuMaxDR.Common">
+      <HintPath>..\lib\VuMaxDR.Common.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +71,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\eVuMax.DataBroker\eVuMax.DataBroker.csproj">
+      <Project>{d410ef8d-47ed-4b64-a70d-f1b32037f791}</Project>
+      <Name>eVuMax.DataBroker</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(WixCATargetsPath)" Condition=" '$(WixCATargetsPath)' != '' " />

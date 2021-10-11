@@ -179,7 +179,7 @@ namespace eVuMax.DataBroker.Summary.Toolface
                     }
                 }
 
-                             
+
 
                 if (selectionType == "1") // Depth Range
                 {
@@ -266,12 +266,12 @@ namespace eVuMax.DataBroker.Summary.Toolface
                 Trajectory objActualTraj = Trajectory.loadActualTrajectory(ref paramRequest.objDataService, wellId);
 
 
-                if(objPlanTraj==null)
+                if (objPlanTraj == null)
                 {
                     paramWarnings = paramWarnings + " " + "Plan Trajectory not found.";
                 }
 
-                if(objActualTraj==null)
+                if (objActualTraj == null)
                 {
                     paramWarnings = paramWarnings + " " + "Actual Trajectory not found";
                 }
@@ -334,11 +334,11 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 //GTF and MTF Data
                 string gtfWarning = "";
-                objToolfaceSummary.GTFData = getGTFData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog,out gtfWarning);
+                objToolfaceSummary.GTFData = getGTFData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog, out gtfWarning);
                 paramWarnings = paramWarnings + " " + gtfWarning;
 
                 string mtfWarning = "";
-                objToolfaceSummary.MTFData = getMTFData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog,out mtfWarning);
+                objToolfaceSummary.MTFData = getMTFData(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog, out mtfWarning);
                 paramWarnings = paramWarnings + " " + mtfWarning;
 
                 objToolfaceSummary.RotarySections = getRotarySections(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog);
@@ -370,8 +370,8 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 calculateInZoneROP(paramRequest, wellId, fromDepth, toDepth, fromDate, toDate, objToolfaceSettings, objTimeLog, out InZoneROPPercent);
 
-                objToolfaceSummary.OutOfDrlgWindowPercent = Math.Round(100 - InZonePercent,2); //Nishant 12/08/2021
-                objToolfaceSummary.OutOfROPWindowPercent = Math.Round(100 - InZoneROPPercent,2); //Nishant 12/08/2021
+                objToolfaceSummary.OutOfDrlgWindowPercent = Math.Round(100 - InZonePercent, 2); //Nishant 12/08/2021
+                objToolfaceSummary.OutOfROPWindowPercent = Math.Round(100 - InZoneROPPercent, 2); //Nishant 12/08/2021
 
                 Dictionary<string, FormationTop> topsList = new Dictionary<string, FormationTop>();
                 topsList = FormationTop.getList(ref paramRequest.objDataService, wellId, fromDepth, toDepth);
@@ -646,9 +646,9 @@ namespace eVuMax.DataBroker.Summary.Toolface
                     }
                     else
                     {
-                        DataTable objData2= paramRequest.objDataService.getTable("SELECT TOP 1 MD FROM VMX_TRAJ_DATA WHERE WELL_ID='" + WellId + "' AND TRAJ_ID='" + planTrajId + "'  ORDER BY MD DESC");
+                        DataTable objData2 = paramRequest.objDataService.getTable("SELECT TOP 1 MD FROM VMX_TRAJ_DATA WHERE WELL_ID='" + WellId + "' AND TRAJ_ID='" + planTrajId + "'  ORDER BY MD DESC");
 
-                        if(objData2.Rows.Count>0)
+                        if (objData2.Rows.Count > 0)
                         {
                             planMaxMD = double.Parse(DataService.checkNull(objData2.Rows[0]["MD"], 0).ToString());
                         }
@@ -684,9 +684,9 @@ namespace eVuMax.DataBroker.Summary.Toolface
                     }
                     else
                     {
-                        DataTable objData2= paramRequest.objDataService.getTable("SELECT TOP 1 MD FROM VMX_TRAJ_DATA WHERE WELL_ID='" + WellId + "' AND TRAJ_ID='" + actualTrajId + "'  ORDER BY MD DESC");
+                        DataTable objData2 = paramRequest.objDataService.getTable("SELECT TOP 1 MD FROM VMX_TRAJ_DATA WHERE WELL_ID='" + WellId + "' AND TRAJ_ID='" + actualTrajId + "'  ORDER BY MD DESC");
 
-                        if(objData2.Rows.Count>0)
+                        if (objData2.Rows.Count > 0)
                         {
                             actualMaxMD = double.Parse(DataService.checkNull(objData2.Rows[0]["MD"], 0).ToString());
                         }
@@ -752,135 +752,135 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 var motorYieldsData = new Dictionary<double, double>();
 
-                
+
                 if (objTraj != null)
                 {
                     TrajectoryData[] arrTrajData = objTraj.trajectoryData.Values.ToArray();
-                
-                
-                Array.Sort(arrTrajData);
 
-                for (int i = 1; i <= arrTrajData.Count() - 1; i++)
-                {
-                    double prevMD = arrTrajData[i - 1].MD;
 
-                    double MD = arrTrajData[i].MD;
+                    Array.Sort(arrTrajData);
 
-                    if (MD >= fromDepth & MD <= trajMaxMD)
+                    for (int i = 1; i <= arrTrajData.Count() - 1; i++)
                     {
-                        //Nothing to do ...
-                    }
-                    else
-                    {
-                        continue;
-                    }
+                        double prevMD = arrTrajData[i - 1].MD;
 
-                    bool firstIndexFound = false;
-                    int firstIndex = 0;
-                    bool lastIndexFound = false;
-                    int lastIndex = 0;
-                    double sumFootage = 0d;
+                        double MD = arrTrajData[i].MD;
 
-                    for (int j = 0; j <= objSlideData.Rows.Count - 1; j++)
-                    {
-                        if (double.Parse(objSlideData.Rows[j]["DEPTH"].ToString()) >= prevMD)
+                        if (MD >= fromDepth & MD <= trajMaxMD)
                         {
-                            firstIndexFound = true;
-                            firstIndex = j;
-                            break;
+                            //Nothing to do ...
                         }
-                    }
+                        else
+                        {
+                            continue;
+                        }
 
-                    if (firstIndexFound)
-                    {
+                        bool firstIndexFound = false;
+                        int firstIndex = 0;
+                        bool lastIndexFound = false;
+                        int lastIndex = 0;
+                        double sumFootage = 0d;
+
                         for (int j = 0; j <= objSlideData.Rows.Count - 1; j++)
                         {
-                            if (double.Parse(objSlideData.Rows[j]["DEPTH"].ToString()) >= MD)
+                            if (double.Parse(objSlideData.Rows[j]["DEPTH"].ToString()) >= prevMD)
                             {
-                                lastIndexFound = true;
-                                lastIndex = j;
+                                firstIndexFound = true;
+                                firstIndex = j;
                                 break;
                             }
                         }
 
-                        if (!lastIndexFound)
+                        if (firstIndexFound)
                         {
-                            lastIndex = objSlideData.Rows.Count - 1;
-                        }
+                            for (int j = 0; j <= objSlideData.Rows.Count - 1; j++)
+                            {
+                                if (double.Parse(objSlideData.Rows[j]["DEPTH"].ToString()) >= MD)
+                                {
+                                    lastIndexFound = true;
+                                    lastIndex = j;
+                                    break;
+                                }
+                            }
 
-                        for (int j = firstIndex; j <= lastIndex; j++)
-                        {
+                            if (!lastIndexFound)
+                            {
+                                lastIndex = objSlideData.Rows.Count - 1;
+                            }
 
-                            double lnRigState = double.Parse(DataService.checkNull(objSlideData.Rows[j]["RIG_STATE"], 0).ToString());
-
-                            if (lnRigState == 1 | lnRigState == 19)
+                            for (int j = firstIndex; j <= lastIndex; j++)
                             {
 
-                                double lnFootage = double.Parse(DataService.checkNull(objSlideData.Rows[j]["FOOTAGE"], 0).ToString());
+                                double lnRigState = double.Parse(DataService.checkNull(objSlideData.Rows[j]["RIG_STATE"], 0).ToString());
 
-                                if (lnFootage < 0d)
+                                if (lnRigState == 1 | lnRigState == 19)
                                 {
-                                    lnFootage = 0d;
-                                }
 
-                                sumFootage = sumFootage + lnFootage;
+                                    double lnFootage = double.Parse(DataService.checkNull(objSlideData.Rows[j]["FOOTAGE"], 0).ToString());
+
+                                    if (lnFootage < 0d)
+                                    {
+                                        lnFootage = 0d;
+                                    }
+
+                                    sumFootage = sumFootage + lnFootage;
+                                }
                             }
                         }
-                    }
 
-                    double slideFootage = sumFootage;
-                    if (slideFootage <= 1d)
-                    {
-                        slideFootage = 0d;
-                    }
-
-                    double MotorYield = 0d;
-
-                    if (slideFootage > 0d)
-                    {
-
-                        double SurveyDistance = MD - prevMD;
-                        double DLS = arrTrajData[i].Dogleg;
-                        double slidePercentage = slideFootage * 100d / SurveyDistance;
-
-                        MotorYield = Math.Round(SurveyDistance * DLS / slideFootage, 2);
-
-                        if (slidePercentage < 2d)
+                        double slideFootage = sumFootage;
+                        if (slideFootage <= 1d)
                         {
-                            MotorYield = -999.25d;
+                            slideFootage = 0d;
                         }
 
-                        if (slidePercentage > 98d)
-                        {
-                            MotorYield = DLS;
-                        }
+                        double MotorYield = 0d;
 
-
-                        if (objSettings.FilterByMinSlideLength)
+                        if (slideFootage > 0d)
                         {
-                            if (slideFootage < objSettings.MinSlideLength)
+
+                            double SurveyDistance = MD - prevMD;
+                            double DLS = arrTrajData[i].Dogleg;
+                            double slidePercentage = slideFootage * 100d / SurveyDistance;
+
+                            MotorYield = Math.Round(SurveyDistance * DLS / slideFootage, 2);
+
+                            if (slidePercentage < 2d)
                             {
                                 MotorYield = -999.25d;
-                                // MotorYield = 0
                             }
+
+                            if (slidePercentage > 98d)
+                            {
+                                MotorYield = DLS;
+                            }
+
+
+                            if (objSettings.FilterByMinSlideLength)
+                            {
+                                if (slideFootage < objSettings.MinSlideLength)
+                                {
+                                    MotorYield = -999.25d;
+                                    // MotorYield = 0
+                                }
+                            }
+
+                            motorYieldsData.Add(MD, MotorYield);
+                        }
+                        else
+                        {
+                            motorYieldsData.Add(MD, 0d);
                         }
 
-                        motorYieldsData.Add(MD, MotorYield);
+                        DataRow objMYRow = MYTable.NewRow();
+                        objMYRow["MD"] = MD;
+                        objMYRow["PrevMD"] = prevMD;
+                        objMYRow["TotalFootage"] = MD - prevMD;
+                        objMYRow["SlideFootage"] = Math.Round(slideFootage, 2);
+                        objMYRow["DogLeg"] = arrTrajData[i].Dogleg;
+                        objMYRow["MotorYield"] = Math.Round(MotorYield, 2);
+                        MYTable.Rows.Add(objMYRow);
                     }
-                    else
-                    {
-                        motorYieldsData.Add(MD, 0d);
-                    }
-
-                    DataRow objMYRow = MYTable.NewRow();
-                    objMYRow["MD"] = MD;
-                    objMYRow["PrevMD"] = prevMD;
-                    objMYRow["TotalFootage"] = MD - prevMD;
-                    objMYRow["SlideFootage"] = Math.Round(slideFootage, 2);
-                    objMYRow["DogLeg"] = arrTrajData[i].Dogleg;
-                    objMYRow["MotorYield"] = Math.Round(MotorYield, 2);
-                    MYTable.Rows.Add(objMYRow);
-                }
 
                 }
                 foreach (double lnMD in motorYieldsData.Keys)
@@ -1874,7 +1874,7 @@ namespace eVuMax.DataBroker.Summary.Toolface
             }
         }
 
-        private DataTable getGTFData(Broker.BrokerRequest paramRequest, string WellId, double fromDepth, double toDepth, DateTime fromDate, DateTime toDate, ToolfaceSettings objSettings, TimeLog objLog,out string paramWarnings)
+        private DataTable getGTFData(Broker.BrokerRequest paramRequest, string WellId, double fromDepth, double toDepth, DateTime fromDate, DateTime toDate, ToolfaceSettings objSettings, TimeLog objLog, out string paramWarnings)
         {
             paramWarnings = "";
 
@@ -1996,7 +1996,7 @@ namespace eVuMax.DataBroker.Summary.Toolface
             }
         }
 
-        private DataTable getMTFData(Broker.BrokerRequest paramRequest, string WellId, double fromDepth, double toDepth, DateTime fromDate, DateTime toDate, ToolfaceSettings objSettings, TimeLog objLog,out string paramWarnings)
+        private DataTable getMTFData(Broker.BrokerRequest paramRequest, string WellId, double fromDepth, double toDepth, DateTime fromDate, DateTime toDate, ToolfaceSettings objSettings, TimeLog objLog, out string paramWarnings)
         {
             paramWarnings = "";
 
@@ -2271,25 +2271,39 @@ namespace eVuMax.DataBroker.Summary.Toolface
         //get Date from Depth Range
         private void getDateRangeFromDepth(Broker.BrokerRequest paramRequest, double paramFromDepth, double paramToDepth, ref DateTime paramFromDate, ref DateTime paramToDate)
         {
-            DateTime limitFromDate = new DateTime();
-            DateTime limitToDate = new DateTime();
-            getDateRangeFromSideTrack(paramRequest, ref limitFromDate, ref limitToDate);
 
-            string dataTableName = objTimeLog.getDataTableName(ref paramRequest.objDataService);
-            string strSQL = "";
-            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + paramFromDepth.ToString() + " ORDER BY DATETIME";
-            DataTable objData = paramRequest.objDataService.getTable(strSQL);
-            if (objData.Rows.Count > 0)
+            try
             {
-                paramFromDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+
+                string dataTableName = objTimeLog.getDataTableName(ref paramRequest.objDataService);
+                string strSQL = "";
+                strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE HDTH>=" + paramFromDepth.ToString() + " ORDER BY DATETIME";
+                DataTable objData = paramRequest.objDataService.getTable(strSQL);
+                if (objData.Rows.Count > 0)
+                {
+                    paramFromDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+                }
+
+
+                strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE HDTH>=" + paramToDepth.ToString() + " ORDER BY DATETIME";
+                objData = paramRequest.objDataService.getTable(strSQL);
+                if (objData.Rows.Count > 0)
+                {
+                    paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+                }
+
+                if (objData != null)
+                {
+                    objData.Dispose();
+                }
+
+            }
+            catch (Exception)
+            {
+
+
             }
 
-            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH<=" + paramToDepth.ToString() + " ORDER BY DATETIME DESC";
-            objData = paramRequest.objDataService.getTable(strSQL);
-            if (objData.Rows.Count > 0)
-            {
-                paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
-            }
 
         }
 
