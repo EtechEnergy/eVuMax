@@ -1,69 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <Product Id="*"
-           Name="eVuMax App"
-           Language="1033"
-           Version="$(var.BuildVersion)"
-           Manufacturer="ETECH"
-					 UpgradeCode="{4AE3166F-7BCF-47C2-8AC0-BFBD82D78E8D}">
+	<Product Id="*"
+			 Name="eVuMax App"
+			 Language="1033"
+			 Version="$(var.BuildVersion)"
+			 Manufacturer="ETECH"
+					   UpgradeCode="{4AE3166F-7BCF-47C2-8AC0-BFBD82D78E8D}">
 
 
-    <Package InstallerVersion="200"
-             Compressed="yes"
-             InstallScope="perMachine" />
+		<Package InstallerVersion="200"
+				 Compressed="yes"
+				 InstallScope="perMachine" />
 
-    <MajorUpgrade Schedule="afterInstallInitialize"
-                  DowngradeErrorMessage="A newer version of [ProductName] is already installed."
-                  AllowSameVersionUpgrades="yes" />
+		<MajorUpgrade Schedule="afterInstallInitialize"
+					  DowngradeErrorMessage="A newer version of [ProductName] is already installed."
+					  AllowSameVersionUpgrades="yes" />
 
-    <Media Id="1"
-           Cabinet="eVuMaxApp.cab"
-           EmbedCab="yes" />
-    
-      
-    <Property Id="DB_USER" Value="user"/>
-    <Property Id="DB_PASSWORD" Value="password"/>
-    <Property Id="DB_SERVER" Value="localhost"/>
-
-    <Feature Id="ProductFeature" Title="eVuMax App" Level="1">
-      <ComponentGroupRef Id="IISConfigComponent" />
-      <ComponentGroupRef Id="WebAPIComponents" />
-      <ComponentGroupRef Id="WebUIComponents" />
-      <ComponentGroupRef Id="WebUICustomComponents" />
-    </Feature>
-    
-    
-  
-
-    <UIRef Id="UI"/>
-    <UIRef Id="UIDialog"/>
-    <Property Id="WIXUI_INSTALLDIR" Value="dir_eVuMaxAPI" />
-
-    <Property Id="MsiLogging" Value="v!" />
-
-    <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\img\EtechBanner.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\img\EtechBackground.bmp" />
+		<Media Id="1"
+			   Cabinet="eVuMaxApp.cab"
+			   EmbedCab="yes" />
 
 
-    <!--################################################################# Encryption Start ################################################################################-->
+		<Property Id="DB_USER" Value="user"/>
+		<Property Id="DB_PASSWORD" Value="password"/>
+		<Property Id="DB_SERVER" Value="localhost"/>
+		<Property Id="ISWINDOWSAUTHENTICATION" Secure="yes" Value="True"  />
+		<Property Id="INTEGRATEDSECURITY" Value="0" />
+
+		<Feature Id="ProductFeature" Title="eVuMax App" Level="1">
+			<ComponentGroupRef Id="IISConfigComponent" />
+			<ComponentGroupRef Id="WebAPIComponents" />
+			<ComponentGroupRef Id="WebUIComponents" />
+			<ComponentGroupRef Id="WebUICustomComponents" />
+		</Feature>
 
 
-    <!--Excution sequence-->
-    <InstallExecuteSequence>
-      <Custom Action="EncryptConfigurationFiles" After="InstallInitialize" ></Custom>
-    </InstallExecuteSequence>
 
 
-    <Binary Id="ConnectionStringEncryption.dll" SourceFile="$(var.ConnectionStringEncryption.ProjectDir)\bin\Release\ConnectionStringEncryption.CA.dll" />
-    <CustomAction Execute="immediate"  Id="EncryptConfigurationFiles" BinaryKey="ConnectionStringEncryption.dll" DllEntry="EncryptParameters" Return="ignore" />
+		<UIRef Id="UI"/>
+		<UIRef Id="UIDialog"/>
+		<Property Id="WIXUI_INSTALLDIR" Value="dir_eVuMaxAPI" />
 
-    <!--################################################################# Encryption End ################################################################################-->
+		<Property Id="MsiLogging" Value="v!" />
 
-    
-  </Product>
+		<WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\img\EtechBanner.bmp" />
+		<WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\img\EtechBackground.bmp" />
 
- 
 
-  
+		<!--################################################################# Encryption Start ################################################################################-->
+
+
+		<!--Excution sequence-->
+		<InstallExecuteSequence>
+			<Custom Action="EncryptConfigurationFiles" After="InstallInitialize" ></Custom>
+		</InstallExecuteSequence>
+
+
+		<Binary Id="ConnectionStringEncryption.dll" SourceFile="$(var.ConnectionStringEncryption.ProjectDir)\bin\Release\ConnectionStringEncryption.CA.dll" />
+		<CustomAction Execute="immediate"  Id="EncryptConfigurationFiles" BinaryKey="ConnectionStringEncryption.dll" DllEntry="EncryptParameters" Return="ignore" />
+
+		<!--################################################################# Encryption End ################################################################################-->
+
+
+	</Product>
+
+
+
+
 </Wix>

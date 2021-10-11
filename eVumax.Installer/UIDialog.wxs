@@ -7,13 +7,22 @@
       <TextStyle Id="DialogTitle" Bold="yes" Underline="yes" Size="10" FaceName="Tahoma"/>
       <TextStyle Id="DialogNotes" Bold="yes" Size="8" Red="0" Green="128" Blue="0"   FaceName="Tahoma" />
       <Dialog Id="DatabaseDlg"   Width="370" Height="270" Title="Database Settings" NoMinimize="yes">
-        <Control Id="Label"  Type="Text" X="10" Y="10" Width="220" Height="15" TabSkip="no" Text="{\DialogTitle}Database Connection Information" />      
+        <Control Id="Label"  Type="Text" X="10" Y="10" Width="220" Height="15" TabSkip="no" Text="{\DialogTitle}Database Connection Information" />
+
+		  <Control Id="WACheckbox" Type="CheckBox" X="130" Y="30"
+				   Width="220" Height="15" Property="ISWINDOWSAUTHENTICATION"
+				   CheckBoxValue="True"
+				   Text=" Windows User Authentication"  >
+			  <Publish Property="INTEGRATEDSECURITY" Value="1">NOT ISWINDOWSAUTHENTICATION </Publish>
+			  <Publish Property="INTEGRATEDSECURITY" Value="0"> ISWINDOWSAUTHENTICATION </Publish>
 
 
-       
+		  </Control>
 
 
-        <Control Id="ServerNameLabel" Type="Text" X="20" Y="65" Width="220" Height="18" TabSkip="no" Text="Database server name or IP :" >
+
+
+		  <Control Id="ServerNameLabel" Type="Text" X="20" Y="65" Width="220" Height="18" TabSkip="no" Text="Database server name or IP :" >
          
         </Control>
         <Control Id="ServerNameEdit" Type="Edit" X="130" Y="61" Width="180" Height="18" Property="DB_SERVER" Text="{80}" >

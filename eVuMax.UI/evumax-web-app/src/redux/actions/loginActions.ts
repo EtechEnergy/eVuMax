@@ -9,6 +9,7 @@ import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
 import history from "../../history/history";
 import { setStatus } from "./statusActions";
+import { RSAService } from "../../utilFunctions/RSAService";
 
 let _gMod = new GlobalMod();
 let objBrokerResponse = new BrokerRequest();
@@ -51,7 +52,6 @@ export const startLog_Out = (login: Partial<Types.ILogin>) => {
 
 export const startLog_In = (login: Partial<Types.ILogin>) => {
   return (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
-
     objStatus = {};
     objStatus._statusMsg = "Please wait, connecting to the API....";
     objStatus._isLoading = true;
@@ -70,7 +70,10 @@ export const startLog_In = (login: Partial<Types.ILogin>) => {
     objParameter = new BrokerParameter("UserName", login._userName);
     objBrokerResponse.Parameters.push(objParameter);
 
-    objParameter = new BrokerParameter("Password", login._pwd);
+    objParameter = new BrokerParameter(
+      "Password",
+      RSAService.EncryptionToBas64(login._pwd)
+    );
     objBrokerResponse.Parameters.push(objParameter);
 
     axios
@@ -78,7 +81,6 @@ export const startLog_In = (login: Partial<Types.ILogin>) => {
         params: { paramRequest: JSON.stringify(objBrokerResponse) },
       })
       .then((res) => {
-
         if (res.data.RequestSuccessfull) {
           objStatus = {};
           // objStatus._statusMsg =  "Succesfully Log In";
@@ -96,7 +98,6 @@ export const startLog_In = (login: Partial<Types.ILogin>) => {
           dispatch(setStatus(objStatus));
 
           return dispatch(Log_In(objLogin));
-
         }
       })
       .catch((error) => {

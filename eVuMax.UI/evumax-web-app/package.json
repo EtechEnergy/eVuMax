@@ -55,6 +55,7 @@
     "@types/redux-thunk": "^2.1.0",
     "axios-progress-bar": "^1.2.0",
     "bootstrap": "^4.6.0",
+    "crypto-ts": "^1.0.2",
     "d3": "^5.16.0",
     "file-base64": "^1.0.0",
     "guid-typescript": "^1.0.9",

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using VuMaxDR.Data;
 
@@ -168,6 +169,14 @@ namespace eVuMax.DataBroker.Common.authentication
 					objBadResponse.Errors = "Invalid Request Parameter.Use proper function name in the Broker Request i.e UserName/Password/AuthType " + ex.Message + ex.StackTrace;
 					return objBadResponse;
 				}
+
+				byte[] data = Convert.FromBase64String(Password);
+				string decodedString = Encoding.UTF8.GetString(data);
+
+				var objAES = new VuMaxDR.Common.AES();
+				//Password = objAES.Decrypt(decodedString, Global.EncryptionKey,128);
+
+				Password  =  RSAService.DecryptStringAES(decodedString);
 
 				LDAP objLDAP = new LDAP(UserName, Password);
 

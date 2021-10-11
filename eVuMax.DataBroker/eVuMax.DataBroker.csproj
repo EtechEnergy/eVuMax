@@ -80,6 +80,7 @@
     <Compile Include="Broomstick\Document\BroomstickPlanData.cs" />
     <Compile Include="Broomstick\Document\PlanDataPoint.cs" />
     <Compile Include="Common\authentication\LDAP.cs" />
+    <Compile Include="Common\authentication\RSAService.cs" />
     <Compile Include="Common\authentication\UserAuthentication.cs" />
     <Compile Include="Common\CommonBroker.cs" />
     <Compile Include="Common\CommonFunctions.cs" />

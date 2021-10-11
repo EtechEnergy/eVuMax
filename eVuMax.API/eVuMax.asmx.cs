@@ -370,6 +370,7 @@ namespace eVuMax.API
             try
             {
                 var objAES = new VuMaxDR.Common.AES();
+                
                 decrypted = objAES.Decrypt(encrString,DataBroker.Global.EncryptionKey, 128);
             }
             catch (FormatException fe)

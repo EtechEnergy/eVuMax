@@ -41,71 +41,57 @@ let objBrokerRequest = new BrokerRequest();
 type Props = LinkStateProps & LinkDispatchProps;
 
 export class LoginPage extends React.Component<Props> {
-
   state = {
     //showPopupMenu: true
     showAboutDialog: false,
-    AuthType:"-1"
-
-  }
+    AuthType: "-1",
+  };
 
   ShowAboutDialog = () => {
     try {
       this.setState({
-        showAboutDialog: true
+        showAboutDialog: true,
       });
+    } catch (error) {}
+  };
+  componentDidMount() {
+    try {
+      objBrokerRequest.Module = "Common";
+      objBrokerRequest.Function = "getAuthType";
+      objBrokerRequest.Broker = "";
 
-    } catch (error) {
+      objBrokerRequest.Parameters.length = 0;
 
-    }
+      // let objLogin: any;
+      // objLogin = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).login);
+
+      // objParameter = new BrokerParameter("UserName", objLogin._userName);
+      // objBrokerRequest.Parameters.push(objParameter);
+
+      // objParameter = new BrokerParameter("Password", this.state.newPassword);
+      // objBrokerRequest.Parameters.push(objParameter);
+
+      axios
+        .get(_gMod._getData, {
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+        })
+        .then((res) => {
+          debugger;
+          if (res.data != "") {
+            sessionStorage.clear();
+            localStorage.clear();
+            this.setState({
+              AuthType: res.data,
+            });
+          } else {
+            this.setState({
+              AuthType: -1,
+            });
+          }
+        })
+        .catch((error) => {});
+    } catch (error) {}
   }
-componentDidMount(){
-  try {
-    objBrokerRequest.Module = "Common";
-    objBrokerRequest.Function = "getAuthType";
-    objBrokerRequest.Broker = "";
-
-    objBrokerRequest.Parameters.length = 0;
-
-    // let objLogin: any;
-    // objLogin = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).login);
-
- 
-    // objParameter = new BrokerParameter("UserName", objLogin._userName);
-    // objBrokerRequest.Parameters.push(objParameter);
-
-    // objParameter = new BrokerParameter("Password", this.state.newPassword);
-    // objBrokerRequest.Parameters.push(objParameter);
-
-
-    axios.get(_gMod._getData, {
-      params: { paramRequest: JSON.stringify(objBrokerRequest) },
-  })
-      .then((res) => {
-debugger;
-        if (res.data!="") {
-          sessionStorage.clear();
-          localStorage.clear();
-          this.setState({
-            AuthType: res.data
-          });
-       
-
-        } else {
-          
-          this.setState({
-            AuthType: -1
-          });
-
-        }
-      })
-      .catch((error) => {
-
-      });
-  } catch (error) {
-    
-  }
-}
 
   Login = () => {
     let userName: string = (
@@ -123,7 +109,7 @@ debugger;
         buttons: [
           {
             label: "Ok",
-            onClick: () => { },
+            onClick: () => {},
           },
           // {
           //     label: 'No',
@@ -146,13 +132,24 @@ debugger;
   render() {
     return (
       <div>
-        {this.state.showAboutDialog && <Dialog height="390px" width="800px" title="About"
-          onClose={() => { this.setState({ showAboutDialog: false }); }}
-        >
-          <div className="" style={{ paddingTop: "50px" }}>
-            <AboutPage handleClick={() => { this.setState({ showAboutDialog: false }) }} />
-          </div>
-        </Dialog>}
+        {this.state.showAboutDialog && (
+          <Dialog
+            height="390px"
+            width="800px"
+            title="About"
+            onClose={() => {
+              this.setState({ showAboutDialog: false });
+            }}
+          >
+            <div className="" style={{ paddingTop: "50px" }}>
+              <AboutPage
+                handleClick={() => {
+                  this.setState({ showAboutDialog: false });
+                }}
+              />
+            </div>
+          </Dialog>
+        )}
 
         <div className="d-md-flex d-xl-flex d-lg-flex d-sm-flex  h-md-100 align-items-center">
           <div
@@ -164,7 +161,9 @@ debugger;
                 <img
                   src={VuMaxLogo}
                   style={{ display: "inline-block", paddingBottom: "30px" }}
-                  onClick={() => { this.setState({ showAboutDialog: true }); }}
+                  onClick={() => {
+                    this.setState({ showAboutDialog: true });
+                  }}
                 />
                 <span
                   className="text-white"
@@ -246,7 +245,7 @@ debugger;
                     />
                   </div>
                 </div>
-              {this.state.AuthType=="1" &&  <div className="form-group pb-3">
+                <div className="form-group pb-3">
                   <div className="input-group flex-nowrap">
                     <input
                       type="password"
@@ -255,7 +254,7 @@ debugger;
                       placeholder="Password"
                     />
                   </div>
-                </div>}
+                </div>
 
                 <br />
                 <br />
