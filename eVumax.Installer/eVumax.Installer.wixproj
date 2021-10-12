@@ -112,6 +112,8 @@
     </PropertyGroup>
     <!--Run NPM Script UI-->
     <!--Run Publish Command API-->
+	  <Exec Command="npm -v" />
+	  <Exec Command="npm --prefix ../eVuMax.UI/evumax-web-app/ run-script build" />
     <HeatDirectory OutputFile="WebUI.wxs" DirectoryRefId="dir_eVuMaxUI" ComponentGroupName="WebUIComponents" SuppressCom="true" Directory="..\eVuMax.UI\evumax-web-app\build\" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" AutoGenerateGuids="false" GenerateGuidsNow="true" ToolPath="$(WixToolPath)" PreprocessorVariable="loc.eVuMaxUI" />
   </Target>
   <Target Name="AfterBuild">
