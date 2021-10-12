@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<UI Id="AuthUIDialog">
+
+
+			<TextStyle Id="AuthDialogTitle" Bold="yes" Underline="yes" Size="10" FaceName="Tahoma"/>
+			<TextStyle Id="AuthDialogNotes" Bold="yes" Size="8" Red="0" Green="128" Blue="0"   FaceName="Tahoma" />
+			<Dialog Id="AuthDlg"   Width="370" Height="270" Title="Authentication Settings" NoMinimize="yes">
+				<Control Id="Label"  Type="Text" X="10" Y="10" Width="220" Height="15" TabSkip="no" Text="{\AuthDialogTitle}Application User Authentication Mode" />
+				<Control X="30" Y="30" Id="radioGroup" Type="RadioButtonGroup" Width="320" Height="100" Property="ISWINDOWSAUTHENTICATION">
+				<RadioButtonGroup Property="ISWINDOWSAUTHENTICATION">
+					<RadioButton X="30" Y="20" Width="200" Height="20" Value="0" Text="Use Active Directory Integration" />
+					<RadioButton X="30" Y="40" Width="200" Height="20" Value="1" Text="Use VuMax username/password authentication" />
+				</RadioButtonGroup>
+				</Control>
+
+
+
+				<Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
+					
+				</Control>
+				<Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
+					
+				</Control>
+				<Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+					<Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+				</Control>
+			</Dialog>
+			
+
+		</UI>
+
+		<UIRef Id="WixUI_Common" />
+	</Fragment>
+
+
+</Wix>
