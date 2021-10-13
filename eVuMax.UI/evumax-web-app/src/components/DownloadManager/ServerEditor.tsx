@@ -59,6 +59,14 @@ export class ServerEditor extends PureComponent<IProps> {
 
     }
 
+    componentWillUpdate() {
+        _gMod = new GlobalMod();
+        if (_gMod._userId == "" || _gMod._userId == undefined) {
+            window.location.href = "/evumaxapp/";
+            return;
+        }
+
+    }
     setComboData = (WitsmlVersion: string) => {
 
 

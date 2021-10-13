@@ -115,7 +115,11 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 int refreshHrs = 24;
                 isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
                 refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
-                
+
+
+                string depthUnit = "";
+
+
                 if (isRealTime)
                 {
                     selectionType = "-1";
@@ -129,7 +133,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
                     toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
 
-                  
+
                     //Convert date to UTC
                     fromDate = fromDate.ToUniversalTime();
                     toDate = toDate.ToUniversalTime();
@@ -146,9 +150,29 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 VuMaxDR.Data.Objects.TimeLog objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
 
 
+                if (objTimeLog.logCurves.ContainsKey("DEPTH"))
+                {
+                    depthUnit = objTimeLog.logCurves["DEPTH"].VuMaxUnitID;
+                }
+
+                double connFactor = 0;
+
+                if (depthUnit.ToLower().StartsWith("f"))
+                {
+                    connFactor = 100;
+                }
+
+                if (depthUnit.ToLower().StartsWith("m"))
+                {
+                    connFactor = 30.48;
+                }
+
+
+
+
                 if (selectionType == "-1")
                 {
-               
+
                     if (objTimeLog != null)
                     {
 
@@ -160,15 +184,14 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         minDate = maxDate.AddSeconds(-1 * diff);
 
 
-
                         if (isRealTime)
                         {
                             minDate = maxDate.AddHours(-refreshHrs);
                             //secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
                             //minDate = maxDate.AddSeconds(-1 * secondsDiff);
                         }
-                        
-                        
+
+
 
                         fromDate = minDate;
                         toDate = maxDate;
@@ -274,9 +297,80 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 objDrlgConnSummary.histogramData = histogramData;
 
 
+                bool reProcessRequired = false;
+
+                if (depthUnit.Trim() != "")
+                {
+
+                    double __logFromDepth = 0;
+                    double __logToDepth = 0;
+
+                    if (selectionType == "0")
+                    {
+                        __logFromDepth = objTimeLog.getDepthFromDateTime(ref paramRequest.objDataService, fromDate.ToOADate());
+                        __logToDepth = objTimeLog.getDepthFromDateTime(ref paramRequest.objDataService, toDate.ToOADate());
+                    }
+                    else
+                    {
+                        __logFromDepth = fromDepth;
+                        __logToDepth = toDepth;
+                    }
+
+                    double depthFootage = __logToDepth - __logFromDepth;
+
+                    if (depthFootage > 0 && depthFootage > connFactor)
+                    {
+
+                        double expectedNoOfConnections = depthFootage / connFactor;
+
+                        expectedNoOfConnections = expectedNoOfConnections - ((expectedNoOfConnections * 10) / 100);
+
+                        if (selectionType == "0")
+                        {
+                            strSQL = "SELECT FROM_DATE FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
+                        }
+                        else
+                        {
+                            strSQL = "SELECT FROM_DATE FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND DEPTH>=" + fromDepth.ToString() + " AND DEPTH<=" + toDepth.ToString() + " ORDER BY FROM_DATE";
+                        }
+
+                        DataTable connCountData = paramRequest.objDataService.getTable(strSQL);
+
+                        if (connCountData.Rows.Count >= expectedNoOfConnections)
+                        {
+                            //No problem, found sufficient no. of connections
+                            reProcessRequired = false;
+                        }
+                        else
+                        {
+                            reProcessRequired = true;
+                        }
+
+                        if (reProcessRequired)
+                        {
+
+                            DateTime __logFromDate = fromDate;
+                            DateTime __logToDate = toDate;
+
+                            if (selectionType == "1")
+                            {
+                                __logFromDate = objTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
+                                __logToDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
+                            }
+
+                            ConnectionLogProcessor objConnProcessor = new ConnectionLogProcessor();
+                            objConnProcessor.ProcessPoints(ref paramRequest.objDataService, wellId, ref objTimeLog, __logFromDate, __logToDate);
+
+                        }
+
+
+                    }
+
+                }
+
                 if (selectionType == "0")
                 {
-                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='"+fromDate.ToString("dd-MMM-yyyy HH:mm:ss")+"' AND TO_DATE<='"+toDate.ToString("dd-MMM-yyyy HH:mm:ss")+"' ORDER BY FROM_DATE";
+                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
                 }
                 else
                 {
@@ -748,7 +842,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     {
 
                         double connDepth = DataService.checkNumericNull(objRow["DEPTH"]);
-                        string connComments = DataService.checkNull(objRow["COMMENTS"],"").ToString();
+                        string connComments = DataService.checkNull(objRow["COMMENTS"], "").ToString();
 
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
@@ -1074,7 +1168,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                     objResponse.Response = JsonConvert.SerializeObject(objDrlgConnSummary);
 
-                    if (objDrlgConnSummary.connData.Rows.Count==0)
+                    if (objDrlgConnSummary.connData.Rows.Count == 0)
                     {
                         objResponse.Warnings = "No Drlg. Connections found for the selection";
                     }

@@ -58,6 +58,14 @@ export class TripSpeedPlot2 extends Component {
   //==============
 
 
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
+
+  }
 
 
   componentDidMount() {
@@ -404,19 +412,19 @@ export class TripSpeedPlot2 extends Component {
           </div>
 
           <div className="col-lg-11">
-          <div className="eVumaxPanelController" style={{ float:"right",visibility:this.objLogger.LogList.length > 0 ? "visible" : "hidden",  width: "170px" }}>
-                         
-                         {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
-                           this.objLogger.downloadFile();
-                         }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
-                        
-                           this.objLogger.downloadFile();
-            
-                         }} /></>
-                         }
-                       </div>
+            <div className="eVumaxPanelController" style={{ float: "right", visibility: this.objLogger.LogList.length > 0 ? "visible" : "hidden", width: "170px" }}>
+
+              {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
+                this.objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+
+                this.objLogger.downloadFile();
+
+              }} /></>
+              }
+            </div>
           </div>
-      
+
         </div>
         <div className="clearfix"></div>
 

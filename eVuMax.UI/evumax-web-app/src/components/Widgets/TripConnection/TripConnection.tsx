@@ -122,6 +122,14 @@ class TripConnSummary extends Component {
     fromDepth: number = 0;
     toDepth: number = 0;
 
+    componentWillUpdate() {
+        _gMod = new GlobalMod();
+        if (_gMod._userId == "" || _gMod._userId == undefined) {
+            window.location.href = "/evumaxapp/";
+            return;
+        }
+
+    }
     componentDidMount() {
         try {
             //initialize chart

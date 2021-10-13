@@ -12,6 +12,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { confirmAlert } from "react-confirm-alert";
 import DataSelector2 from "../Common/DataSelector2";
 import DataSelector from "../Common/DataSelector";
+import { RSAService } from "../../utilFunctions/RSAService";
 
 
 let _gMod = new GlobalMod();
@@ -77,7 +78,8 @@ export default class changePassword extends React.Component {
       let objParameter = new BrokerParameter("UserName", objLogin._userName);
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("Password", this.state.oldPassword);
+      //objParameter = new BrokerParameter("Password", this.state.oldPassword);
+      objParameter = new BrokerParameter("Password", RSAService.EncryptionToBas64(this.state.oldPassword));
       objBrokerRequest.Parameters.push(objParameter);
 
 
@@ -115,6 +117,14 @@ export default class changePassword extends React.Component {
   }
 
 
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
+
+  }
   componentDidMount() {
     try {
 
@@ -190,7 +200,8 @@ export default class changePassword extends React.Component {
       let objParameter = new BrokerParameter("UserName", objLogin._userName);
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("Password", this.state.newPassword);
+      //objParameter = new BrokerParameter("Password", this.state.newPassword);
+      objParameter = new BrokerParameter("Password", RSAService.EncryptionToBas64(this.state.newPassword));
       objBrokerRequest.Parameters.push(objParameter);
 
 

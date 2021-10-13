@@ -34,6 +34,14 @@ class STDChannels extends PureComponent<IProps>{
     selectedChannel: new comboData("", "")
   };
 
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
+
+  }
   componentDidMount() {
 
     this.loadSTDChannels();

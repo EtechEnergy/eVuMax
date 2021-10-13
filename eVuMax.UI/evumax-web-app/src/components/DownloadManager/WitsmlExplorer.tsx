@@ -119,6 +119,14 @@ export default class WitsmlExplorer extends React.Component {
 
     };
 
+    componentWillUpdate() {
+        _gMod = new GlobalMod();
+        if (_gMod._userId == "" || _gMod._userId == undefined) {
+            window.location.href = "/evumaxapp/";
+            return;
+        }
+
+    }
     componentWillMount() {
 
         this.setState({

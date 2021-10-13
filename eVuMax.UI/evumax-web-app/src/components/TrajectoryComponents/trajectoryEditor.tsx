@@ -88,6 +88,14 @@ export default class TrajectoryEditor extends Component<IProps> {
         grdData: Object.values(this.props.objTrajectory.trajectoryData),
     };
 
+    componentWillUpdate() {
+        _gMod = new GlobalMod();
+        if (_gMod._userId == "" || _gMod._userId == undefined) {
+            window.location.href = "/evumaxapp/";
+            return;
+        }
+
+    }
     componentWillReceiveProps() {
         if (this.props.objTrajectory.ObjectID == this.objTrajectory.ObjectID) {
             return;

@@ -123,7 +123,7 @@ export default class WellEditorForm extends React.Component<IProps> {
   }
 
   componentDidMount() {
-    document.title= "eVuMax";//Nishant 02/09/2021
+    document.title = "eVuMax";//Nishant 02/09/2021
     this.setState({ isProcess: false });
     this.loadWell();
   }
@@ -721,6 +721,15 @@ export default class WellEditorForm extends React.Component<IProps> {
     this.forceUpdate();
 
   };
+
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
+
+  }
   componentDidUpdate(prevProps: any, prevState: any) {
     console.log("previous Prop ", prevProps);
     console.log("previous State ", prevState);
@@ -1006,10 +1015,10 @@ export default class WellEditorForm extends React.Component<IProps> {
               }}
                 onClose={e => {
                   let element: any = document.querySelector('.context-menu');
-                  if(element!=null){ //Nishant 26/08/2021
+                  if (element != null) { //Nishant 26/08/2021
                     element.removeEventListener('blur', this.closeContextMenu)
                   }
-                  
+
                 }}
               >
                 {/* <Popup className="context-menu" show={this.state.contextMenuShow} offset={this.state.contextMenuOffset}> */}

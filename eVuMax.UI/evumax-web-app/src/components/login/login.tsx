@@ -52,48 +52,48 @@ export class LoginPage extends React.Component<Props> {
       this.setState({
         showAboutDialog: true,
       });
-    } catch (error) {}
+    } catch (error) { }
   };
   componentDidMount() {
     try {
-      objBrokerRequest.Module = "Common";
-      objBrokerRequest.Function = "getAuthType";
-      objBrokerRequest.Broker = "";
+      //   objBrokerRequest.Module = "Common";
+      //   objBrokerRequest.Function = "getAuthType";
+      //   objBrokerRequest.Broker = "";
 
-      objBrokerRequest.Parameters.length = 0;
+      //   objBrokerRequest.Parameters.length = 0;
 
-      // let objLogin: any;
-      // objLogin = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).login);
+      //   // let objLogin: any;
+      //   // objLogin = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).login);
 
-      // objParameter = new BrokerParameter("UserName", objLogin._userName);
-      // objBrokerRequest.Parameters.push(objParameter);
+      //   // objParameter = new BrokerParameter("UserName", objLogin._userName);
+      //   // objBrokerRequest.Parameters.push(objParameter);
 
-      // objParameter = new BrokerParameter("Password", this.state.newPassword);
-      // objBrokerRequest.Parameters.push(objParameter);
+      //   // objParameter = new BrokerParameter("Password", this.state.newPassword);
+      //   // objBrokerRequest.Parameters.push(objParameter);
 
-      axios
-        .get(_gMod._getData, {
-          params: { paramRequest: JSON.stringify(objBrokerRequest) },
-        })
-        .then((res) => {
-          debugger;
-          if (res.data != "") {
-            sessionStorage.clear();
-            localStorage.clear();
-            this.setState({
-              AuthType: res.data,
-            });
-          } else {
-            this.setState({
-              AuthType: -1,
-            });
-          }
-        })
-        .catch((error) => {});
-    } catch (error) {}
+      //   axios
+      //     .get(_gMod._getData, {
+      //       params: { paramRequest: JSON.stringify(objBrokerRequest) },
+      //     })
+      //     .then((res) => {
+      //       debugger;
+      //       if (res.data != "") {
+      //         sessionStorage.clear();
+      //         localStorage.clear();
+      //         this.setState({
+      //           AuthType: res.data,
+      //         });
+      //       } else {
+      //         this.setState({
+      //           AuthType: -1,
+      //         });
+      //       }
+      //     })
+      //     .catch((error) => {});
+    } catch (error) { }
   }
 
-  Login = () => {
+  Login = async () => {
     let userName: string = (
       document.getElementById("txtUserName") as HTMLInputElement
     ).value;
@@ -109,7 +109,7 @@ export class LoginPage extends React.Component<Props> {
         buttons: [
           {
             label: "Ok",
-            onClick: () => {},
+            onClick: () => { },
           },
           // {
           //     label: 'No',
@@ -126,8 +126,9 @@ export class LoginPage extends React.Component<Props> {
     objLogin._pwd = pwd;
     objLogin._isLogged = true;
 
-    this.props.startLog_In(objLogin);
+    await this.props.startLog_In(objLogin);
   };
+
 
   render() {
     return (

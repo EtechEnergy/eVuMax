@@ -75,6 +75,7 @@ class TripConnSummary extends Component {
     this.WellId = props.match.params.WellId;
     this.objLogger.wellID = this.WellId;
   }
+
   objLogger: ClientLogger = new ClientLogger("TripConnSummary", _gMod._userId);
   state = {
     WellName: "",
@@ -133,14 +134,24 @@ class TripConnSummary extends Component {
     this.AxiosSource.cancel();
     clearInterval(this.intervalID);
     this.intervalID = null;
+
+
   }
   //==============
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
 
+  }
 
   componentDidMount() {
     try {
       //this.objLogger.SendLog("Test Logger");
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
+
 
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");

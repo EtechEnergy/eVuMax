@@ -28,6 +28,14 @@ export default class UserPref extends React.Component {
     _pId: "",
   };
 
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
+
+  }
   componentDidMount() {
     document.title = "eVuMax";//Nishant 02/09/2021
     this.Load();
@@ -120,6 +128,7 @@ export default class UserPref extends React.Component {
         })
 
         .then((res) => {
+          debugger;
           this.loadTheme(this.state._defaultValue);
           history.push("/dashboard/home");
           //window.location.reload(true);

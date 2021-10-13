@@ -72,11 +72,14 @@ export class Util {
       "statuIcon"
     ) as HTMLSpanElement;
 
-    spanElement.classList.remove(
-      "process-dual-ring",
-      "icon-error-circle",
-      "icon-success-circle"
-    );
+    if (spanElement != null && spanElement != undefined) {  //12-10-2021
+      spanElement.classList.remove(
+        "process-dual-ring",
+        "icon-error-circle",
+        "icon-success-circle"
+      );
+    }
+
 
     if (divElement.classList.contains("loadingStatus")) {
       divElement.classList.remove("loadingStatus");

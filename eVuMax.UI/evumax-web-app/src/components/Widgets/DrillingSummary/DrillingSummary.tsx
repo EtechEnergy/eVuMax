@@ -101,6 +101,17 @@ export class DrillingSummary extends Component {
     clearInterval(this.intervalID);
     this.intervalID = null;
   }
+
+
+
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
+
+  }
   //==============
 
   componentDidMount() {
@@ -1690,7 +1701,7 @@ export class DrillingSummary extends Component {
               {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
                 this.objLogger.downloadFile();
               }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
-             
+
                 this.objLogger.downloadFile();
 
               }} /></>

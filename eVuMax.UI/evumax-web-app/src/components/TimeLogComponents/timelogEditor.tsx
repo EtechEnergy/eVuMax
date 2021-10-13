@@ -120,6 +120,14 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
 
     }
 
+    componentWillUpdate() {
+        _gMod = new GlobalMod();
+        if (_gMod._userId == "" || _gMod._userId == undefined) {
+            window.location.href = "/evumaxapp/";
+            return;
+        }
+
+    }
     componentWillReceiveProps() {
         if (this.props.objTimeLog.ObjectID == this.objTimeLog.ObjectID) {
             return;
@@ -1125,7 +1133,7 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                             <TabStrip selected={this.state.selected} onSelect={this.handleTabSelect} keepTabsMounted={true}>
                                 {/* <TabStrip selected={this.state.selected} onSelect={this.handleSelect} > */}
                                 <TabStripTab title="Log Information">
-                                    <div id="tabWellInfo1" style={{marginLeft:"23px"}}>
+                                    <div id="tabWellInfo1" style={{ marginLeft: "23px" }}>
 
                                         <div>
                                             <div className="row pb-3">

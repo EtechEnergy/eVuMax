@@ -32,12 +32,12 @@ class App extends Component {
   };
 
   componentDidMount() {
-
     this.loadTheme();
   }
 
   loadTheme = () => {
     try {
+
       objBrokerRequest = new BrokerRequest();
       let objParameter = new BrokerParameter("UserId", _gMod._userId);
       objBrokerRequest.Parameters.push(objParameter);

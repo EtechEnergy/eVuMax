@@ -99,11 +99,16 @@ namespace eVuMax.DataBroker.Common.authentication
 					return objBadResponse;
 				}
 
-			
 
-				if (AuthType_ == "VuMaxDBUser")
+				byte[] data = Convert.FromBase64String(Password);
+				string decodedString = Encoding.UTF8.GetString(data);
+
+				var objAES = new VuMaxDR.Common.AES();
+				Password = RSAService.DecryptStringAES(decodedString);
+				  //0 = WindowsUser 1 = VuMaxDBUser
+				if (AuthType_ == "1")
 				{
-					AES objAES = new AES();
+					
 
 					string encPwd = objAES.Encrypt(Password, Global.EncryptionKey, 128);
 
@@ -174,7 +179,7 @@ namespace eVuMax.DataBroker.Common.authentication
 				string decodedString = Encoding.UTF8.GetString(data);
 
 				var objAES = new VuMaxDR.Common.AES();
-				//Password = objAES.Decrypt(decodedString, Global.EncryptionKey,128);
+				
 
 				Password  =  RSAService.DecryptStringAES(decodedString);
 

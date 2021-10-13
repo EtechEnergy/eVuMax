@@ -101,6 +101,124 @@ export default class ActiveWell extends React.Component {
     OpenInterfaceID: "",
     showOpenInterfaceDialogAsEditor: false //Nishant 02/09/2021
   };
+
+  // componentDidMount() {
+  //   _gMod = new GlobalMod();
+  //   if (_gMod._userId == "" || _gMod._userId == undefined) {
+  //     window.location.href = "/evumaxapp/";
+  //     return;
+  //   }
+  //   // this.loadTheme();
+  // }
+  loadTheme = () => {
+    try {
+
+      objBrokerRequest = new BrokerRequest();
+      let objParameter = new BrokerParameter("UserId", _gMod._userId);
+      objBrokerRequest.Parameters.push(objParameter);
+      objBrokerRequest.Module = "Config";
+      objBrokerRequest.Function = "LoadTheme";
+      objBrokerRequest.Broker = "Config.Themes";
+
+      axios
+        .get(_gMod._getData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+        })
+        .then((res) => {
+          const objData = res.data;
+
+          if (objData.RequestSuccessfull) {
+
+            this.applyTheme(JSON.parse(objData.Response));
+          } else {
+            // Error
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            // this.errors(error.response.message);
+          } else if (error.request) {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            console.log("error.request");
+          } else {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            console.log("Error", error);
+          }
+          // return <CustomeNotifications Key="success" Icon={false}  />
+          console.log("rejected");
+          this.setState({ isProcess: false });
+        });
+    } catch { }
+  };
+  applyTheme = (props: any) => {
+
+    if (props.length) {
+      //
+      this.setState({ _pId: props[0].Id.toString() });
+      props.forEach((items: any) => {
+        if (items.PropertyName === "WorkArea") {
+          document.documentElement.style.setProperty(
+            "--base-work-area",
+            items.Value
+          );
+        }
+
+        if (items.PropertyName === "MenuBar") {
+          document.documentElement.style.setProperty(
+            "--base-menu-top",
+            items.Value
+          );
+          document.documentElement.style.setProperty(
+            "--base-menu-left",
+            items.Value
+          );
+        }
+
+        if (items.PropertyName === "FontColor") {
+          document.documentElement.style.setProperty(
+            "--base-anchor-color",
+            items.Value
+          );
+        }
+
+        if (items.PropertyName === "PrimaryBackColor") {
+          document.documentElement.style.setProperty(
+            "--base-primary",
+            items.Value
+          );
+        }
+
+        if (items.PropertyName === "PrimaryColor") {
+          document.documentElement.style.setProperty(
+            "--base-primary-color",
+            items.Value
+          );
+        }
+
+        if (items.PropertyName === "ChartGridColor") {
+          document.documentElement.style.setProperty(
+            "--base-chart-grid-color",
+            items.Value
+          );
+        }
+
+        //prath
+        if (items.PropertyName === "ListBackColor") {
+          document.documentElement.style.setProperty(
+            "--base-list-bg-color",
+            items.Value
+          );
+        }
+
+
+      });
+    }
+  };
   //Nishant 07-10-2020
   loadUserFav = () => {
     try {

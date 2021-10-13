@@ -259,12 +259,24 @@ namespace eVuMax.DataBroker.Summary.TripConn
                 objTripConnSummary.tripInfoData = tripInfoData;
 
 
+                //Process points regardless ...
+                TripConnectionLogProcessor objConnProcessor = new TripConnectionLogProcessor();
+                
+
+
+
+
                 if (selectionType == "0")
                 {
                     strSQL = "SELECT * FROM VMX_AKPI_TRIP_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='"+fromDate.ToString("dd-MMM-yyyy HH:mm:ss")+"' AND TO_DATE<='"+toDate.ToString("dd-MMM-yyyy HH:mm:ss")+"' ORDER BY FROM_DATE";
+                    objConnProcessor.ProcessPoints(ref paramRequest.objDataService, wellId, ref objTimeLog, fromDate, toDate);
                 }
                 else
                 {
+                    DateTime __logFromDate = objTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
+                    DateTime __logToDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
+                    objConnProcessor.ProcessPoints(ref paramRequest.objDataService, wellId, ref objTimeLog, __logFromDate, __logToDate);
+
                     strSQL = "SELECT * FROM VMX_AKPI_TRIP_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND DEPTH>=" + fromDepth.ToString() + " AND DEPTH<=" + toDepth.ToString() + " ORDER BY FROM_DATE";
                 }
 
@@ -277,8 +289,9 @@ namespace eVuMax.DataBroker.Summary.TripConn
                     //Check if any connection was found. If not then process it
                     if (objData.Rows.Count == 0)
                     {
-                        TripConnectionLogProcessor objConnProcessor = new TripConnectionLogProcessor();
-                        objConnProcessor.processPointsBulk(ref paramRequest.objDataService, wellId);
+                        TripConnectionLogProcessor objConnProcessor1 = new TripConnectionLogProcessor();
+                        objConnProcessor1.processPointsBulk(ref paramRequest.objDataService, wellId);
+                        
 
                         //Run the query again
                         objData = paramRequest.objDataService.getTable(strSQL);
@@ -838,6 +851,8 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         objRow["TO_DATE"] = lnToDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm:ss");
 
                     }
+
+                    objTripConnSummary.ExcludedConns = exclList.Count;
 
 
                     objResponse.Response = JsonConvert.SerializeObject(objTripConnSummary);

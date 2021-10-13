@@ -54,6 +54,14 @@ export default class WellSelector extends React.PureComponent<IProps> {
     selectedWellID: [] as any,
   };
 
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
+
+  }
   componentDidMount() {
     this.getWellList();
   }
@@ -72,8 +80,8 @@ export default class WellSelector extends React.PureComponent<IProps> {
         if (this.props.getWithWellName == true) {
           selectedWellIDs.push(
             this.state.WellList[i]["WELL_ID"] +
-              "~" +
-              this.state.WellList[i]["WELL_NAME"]
+            "~" +
+            this.state.WellList[i]["WELL_NAME"]
           );
         } else {
           selectedWellIDs.push(this.state.WellList[i]["WELL_ID"]);
@@ -154,7 +162,7 @@ export default class WellSelector extends React.PureComponent<IProps> {
         });
 
       //this.intervalID = setTimeout(this.getWellList.bind(this), 5000);
-    } catch {}
+    } catch { }
   };
   selectionChange = (event: any) => {
     const checked = event.syntheticEvent.target.checked;

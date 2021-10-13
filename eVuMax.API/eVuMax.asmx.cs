@@ -48,11 +48,11 @@ namespace eVuMax.API
 
                 //Parse the request to Broker request
                 BrokerRequest objRequest = JsonConvert.DeserializeObject<BrokerRequest>(paramRequest);
-                if(objRequest.Function == "getAuthType")
-                {
-                    HttpContext.Current.Response.Write(JsonConvert.SerializeObject(AuthType));
-                    return;
-                }
+                //if(objRequest.Function == "getAuthType")
+                //{
+                //    HttpContext.Current.Response.Write(JsonConvert.SerializeObject(AuthType));
+                //    return;
+                //}
                 
                 //Nishant 08-09-2021
                 //This will be used to validate User from DB or Windows

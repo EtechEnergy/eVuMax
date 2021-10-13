@@ -61,13 +61,21 @@ export class TripSpeedPlot1 extends Component {
   //==============
 
 
+  componentWillUpdate() {
+    _gMod = new GlobalMod();
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+    }
+
+  }
 
 
 
   componentDidMount() {
     try {
       //initialize chart
-//this.objLogger.SendLog("Test Logger");
+      //this.objLogger.SendLog("Test Logger");
       this.initilizeCharts();
 
       this.loadConnections();
@@ -933,14 +941,14 @@ export class TripSpeedPlot1 extends Component {
                 }}
               />
             </div> */}
-             <div className="eVumaxPanelController" style={{ float:"right", width: this.objLogger.LogList.length > 0 ? "270px" : "180px" }}>
-             
+            <div className="eVumaxPanelController" style={{ float: "right", width: this.objLogger.LogList.length > 0 ? "270px" : "180px" }}>
+
               <label className=" ml-0 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
               <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
               {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
                 this.objLogger.downloadFile();
               }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
-             
+
                 this.objLogger.downloadFile();
 
               }} /></>

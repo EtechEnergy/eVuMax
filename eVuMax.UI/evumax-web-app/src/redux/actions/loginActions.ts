@@ -47,14 +47,15 @@ export const startLog_Out = (login: Partial<Types.ILogin>) => {
 
     dispatch(Log_Out(login));
     history.push("/");
+    window.location.reload();
   };
 };
 
 export const startLog_In = (login: Partial<Types.ILogin>) => {
   return (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     objStatus = {};
-    objStatus._statusMsg = "Please wait, connecting to the API....";
-    objStatus._isLoading = true;
+    //  objStatus._statusMsg = "Please wait, connecting to the API....";
+    // objStatus._isLoading = true;
 
     dispatch(setStatus(objStatus));
 

@@ -9,12 +9,12 @@ export default class GlobalMod {
   constructor() {
 
     let localUser = localStorage.getItem("persist:root");
-    //alert(localUser);
     if (localUser != null) {
       let logindetail = JSON.parse(JSON.parse(localUser).login);
       this._userId = logindetail._userId;
     } else {
       localUser = "";
+
     }
 
   }
