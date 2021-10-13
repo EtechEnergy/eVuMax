@@ -12,6 +12,7 @@ namespace eVuMax.DataBroker.Common.authentication
 {
     public class LDAP
     {
+        public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
         string _windowsUserName = "";
         string _password = "";
 
@@ -66,6 +67,7 @@ namespace eVuMax.DataBroker.Common.authentication
                 catch (Exception ex)
                 {
                     LastError = "Exception generated.. Possible cause is : " + ex.StackTrace + ex.Message;
+                    objLogger.LogMessage("isValidWindowUser: " + ex.StackTrace + ex.Message);
                     return false;
                 }
 
@@ -95,6 +97,7 @@ namespace eVuMax.DataBroker.Common.authentication
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                objLogger.LogMessage("isValidDAPUser: " + ex.StackTrace + ex.Message);
                 return false;
             }
         

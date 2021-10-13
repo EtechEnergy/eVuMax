@@ -76,7 +76,7 @@ export class LoginPage extends React.Component<Props> {
       //       params: { paramRequest: JSON.stringify(objBrokerRequest) },
       //     })
       //     .then((res) => {
-      //       debugger;
+
       //       if (res.data != "") {
       //         sessionStorage.clear();
       //         localStorage.clear();

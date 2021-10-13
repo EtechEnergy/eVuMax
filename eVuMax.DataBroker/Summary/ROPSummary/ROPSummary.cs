@@ -262,6 +262,8 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         toDate = maxDate;
 
                         selectionType = "0";
+
+                        
                     }
                 }
 

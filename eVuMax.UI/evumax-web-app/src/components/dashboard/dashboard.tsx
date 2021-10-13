@@ -59,7 +59,6 @@ export class Dashboard extends React.Component<Props> {
   async componentDidUpdate() {
 
     if (_gMod._userId == "" || _gMod._userId == undefined) {
-      alert("dashboard didupdate");
       await this.loadTheme();
     }
 
