@@ -876,7 +876,6 @@ export class TripSpeedPlot1 extends Component {
           let objData = JSON.parse(res.data.Response);
 
 
-          console.log(objData);
 
 
 
@@ -963,7 +962,7 @@ export class TripSpeedPlot1 extends Component {
           <TabStrip
             selected={this.state.selectedTab}
             onSelect={this.handleSelect}
-          // keepTabsMounted={true}
+            keepTabsMounted={true}
           >
             <TabStripTab title="Trip Speed Summary">
               <div id="tabTripSpeedPlot">

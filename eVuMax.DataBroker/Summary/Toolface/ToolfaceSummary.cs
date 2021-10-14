@@ -698,7 +698,17 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 }
 
+                if (planTrajId.Trim() == "")//Nishant 14-10-2021
+                {
+                    planMinMD = actualMinMD;
+                    planMaxMD = actualMaxMD;
+                }
 
+                if (actualTrajId.Trim() == "")//Nishant 14-10-2021
+                {
+                    actualMinMD = planMinMD;
+                    actualMaxMD = planMaxMD;
+                }
 
                 minMD = Math.Min(planMinMD, actualMinMD);
                 maxMD = Math.Max(planMaxMD, actualMaxMD);

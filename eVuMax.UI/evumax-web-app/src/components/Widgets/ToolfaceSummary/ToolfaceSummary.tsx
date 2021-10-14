@@ -124,6 +124,7 @@ class ToolfaceSummary extends Component {
       lineWidth: 1,
       //lineColor: util.getRandomColor(),
       lineColor: "#499DF5",
+      visible: true
     },
     MTF: {
       Mnemonic: "MTF",
@@ -132,13 +133,15 @@ class ToolfaceSummary extends Component {
       lineWidth: 2,
       //lineColor: util.getRandomColor(),
       lineColor: "#FF8C00",
+      visible: true
     },
     PlanDLS: {
       Mnemonic: "PlanDLS",
       dataMnemonic: "",
       lineStyle: 0,
       lineWidth: 2,
-      lineColor: "#B8B8B8"  //util.getRandomColor(),
+      lineColor: "#B8B8B8",  //util.getRandomColor(),
+      visible: true //14-10-2021
     },
     ActualDLS: {
       Mnemonic: "ActualDLS",
@@ -146,6 +149,7 @@ class ToolfaceSummary extends Component {
       lineStyle: 0,
       lineWidth: 2,
       lineColor: "#B8B8B8", // util.getRandomColor(),
+      visible: true
     },
     PlanTVD: {
       Mnemonic: "PlanTVD",
@@ -153,6 +157,7 @@ class ToolfaceSummary extends Component {
       lineStyle: 0,
       lineWidth: 2,
       lineColor: "#FF0000", //util.getRandomColor(),
+      visible: true
     },
     ActualTVD: {
       Mnemonic: "ActualTVD",
@@ -160,6 +165,7 @@ class ToolfaceSummary extends Component {
       lineStyle: 0,
       lineWidth: 2,
       lineColor: "#008037", //util.getRandomColor(),
+      visible: true
     },
     MY: {
       Mnemonic: "MY",
@@ -167,6 +173,7 @@ class ToolfaceSummary extends Component {
       lineStyle: 0,
       lineWidth: 2,
       lineColor: "#FF0000",
+      visible: true
     },
 
     adnlChannels: [] as any[],
@@ -404,7 +411,7 @@ class ToolfaceSummary extends Component {
     let newData: any = Object.values([...this.state.GeoDrlgWindowData]);
     let index = newData.findIndex((item: any) => item.SRNO === e.dataItem.SRNO); // use unique value like ID
     newData[index][e.field] = e.value;
-    //console.log("index", index);
+
     if (index > 0) {
       if (e.field == "StartMD") {
         newData[index - 1]["EndMD"] = e.value;
@@ -420,7 +427,7 @@ class ToolfaceSummary extends Component {
     let newData: any = Object.values([...this.state.ROPDrlgWindowData]);
     let index = newData.findIndex((item: any) => item.SRNO === e.dataItem.SRNO); // use unique value like ID
     newData[index][e.field] = e.value;
-    //console.log("index", index);
+
     if (index > 0) {
       if (e.field == "StartMD") {
         newData[index - 1]["EndMD"] = e.value;
@@ -582,14 +589,14 @@ class ToolfaceSummary extends Component {
 
 
 
-  componentDidMount() {
+  async componentDidMount() {
     try {
       //this.objLogger.SendLog("Logger Test");
       window.addEventListener("resize", this.displayData);
-      this.getPrimaryList();
+      await this.getPrimaryList();
       // this.getLineStyle();
 
-      this.getPrimaryList();
+      //this.getPrimaryList(); commented on 14-10-2021
       this.getLineStyle();
 
       //initialize chart
@@ -681,7 +688,7 @@ class ToolfaceSummary extends Component {
 
       this.loadData();
 
-      //console.log("lineStyle", this.state.LineStyle);
+
     } catch (error) { }
   }
 
@@ -1125,11 +1132,15 @@ class ToolfaceSummary extends Component {
             .attr("d", lineDude(lineData))
             .style(
               "fill",
-              util.rgb2hex(this.objUserSettings.GeoDrlgWindowColor)
+              //prath 14-10-2021
+              this.objUserSettings.GeoDrlgWindowColor
+              //util.rgb2hex(this.objUserSettings.GeoDrlgWindowColor)
             ) //Nishant 28/07/2021
             .style(
               "stroke",
-              util.rgb2hex(this.objUserSettings.GeoDrlgWindowColor)
+              //prath 14-10-2021
+              // util.rgb2hex(this.objUserSettings.GeoDrlgWindowColor)
+              this.objUserSettings.GeoDrlgWindowColor
             ) //Nishant 28/07/2021
             .style("filter", "opacity(" + (100 - this.objUserSettings.GeoDrlgWindowTrans) + "%)"); //Kuldip 28/08/2021
 
@@ -1325,6 +1336,7 @@ class ToolfaceSummary extends Component {
               return d.y;
             });
 
+          //alert(this.objUserSettings.ROPDrlgWindowColor);
           this.objChart.SVGRef.append("g")
             .attr("class", "drlg_windowROP")
             .append("path")
@@ -1332,11 +1344,15 @@ class ToolfaceSummary extends Component {
             .attr("d", lineDude(lineData))
             .style(
               "fill",
-              util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
+              //prath 14-10-2021
+              this.objUserSettings.ROPDrlgWindowColor
+              //util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
             ) //Nishant 28/07/2021
             .style(
               "stroke",
-              util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
+              //prath 14-10-2021
+              this.objUserSettings.ROPDrlgWindowColor
+              //util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
             )
             //.style("opacity", (this.objUserSettings.ROPDrlgWindowTrans / 100)); //Nishant 28/07/2021
             .style("filter", "opacity(" + (100 - this.objUserSettings.ROPDrlgWindowTrans) + "%)"); //Kuldip 28/08/2021
@@ -1358,9 +1374,6 @@ class ToolfaceSummary extends Component {
       let newROPDrlgWindowData: any = Object.values(
         this.objUserSettings.ROPDrlgWindowData
       ).map((item: any, key: number) => ({ ...item, SRNO: key }));
-
-      //alert("hi");
-
 
       if (this.objUserSettings.GTF.lineColor == "") {
         //this.objUserSettings.GTF.lineColor = util.getRandomColor();
@@ -1417,6 +1430,7 @@ class ToolfaceSummary extends Component {
         ActualDLS: this.objUserSettings.ActualDLS,
         PlanTVD: this.objUserSettings.PlanTVD,
         ActualTVD: this.objUserSettings.ActualTVD,
+        MY: this.objUserSettings.MY, //14-10-2021
 
         adnlChannels: this.objUserSettings.adnlChannels,
 
@@ -1566,10 +1580,9 @@ class ToolfaceSummary extends Component {
           Util.StatusSuccess("Data successfully retrived  ");
 
           this.objToolfaceData = JSON.parse(res.data.Response);
-          console.log("ToolfaceData", this.objToolfaceData);
 
 
-          //console.log(util.rgb2hex(this.objToolfaceData.formationTops[0].Color));
+
           // for (let index = 0; index < array.length; index++) {
           //   const element = array[index];
 
@@ -1747,6 +1760,7 @@ class ToolfaceSummary extends Component {
               this.setState({
                 adnlChannels: newData,
               });
+              this.onClick_Save();
               //    this.forceUpdate(); //change on 09-02-2021
             },
           },
@@ -2331,9 +2345,14 @@ class ToolfaceSummary extends Component {
       objActualTVD.Id = "ACTUAL_TVD";
       objActualTVD.Type = dataSeriesType.Line;
       objActualTVD.Title = "Actual TVD";
-      objActualTVD.Color = util.rgb2hex(
-        this.objUserSettings.ActualTVD.lineColor
-      ); // //Nishant 28/07/2021 "darkgreen";
+
+      //Change prath 14-10-2021
+      // objActualTVD.Color = util.rgb2hex(
+      //   this.objUserSettings.ActualTVD.lineColor
+      // ); // //Nishant 28/07/2021 "darkgreen";
+      objActualTVD.Color = this.objUserSettings.ActualTVD.lineColor; // //Nishant 28/07/2021 "darkgreen";
+      //==============
+
       objActualTVD.XAxisId = this.objChart.bottomAxis().Id;
       objActualTVD.YAxisId = this.objChart.leftAxis().Id;
       objActualTVD.LineWidth = this.objUserSettings.ActualTVD.lineWidth; //Nishant 28/07/2021
@@ -2353,7 +2372,9 @@ class ToolfaceSummary extends Component {
       objPlanTVD.Id = "PLAN_TVD";
       objPlanTVD.Type = dataSeriesType.Line;
       objPlanTVD.Title = "Plan TVD";
-      objPlanTVD.Color = util.rgb2hex(this.objUserSettings.PlanTVD.lineColor); //"#e5383b" //Nishant 28/07/2021
+      //prath 14-10-2021
+      //objPlanTVD.Color = util.rgb2hex(this.objUserSettings.PlanTVD.lineColor); //"#e5383b" //Nishant 28/07/2021
+      objPlanTVD.Color = this.objUserSettings.PlanTVD.lineColor; //"#e5383b" //Nishant 28/07/2021
       objPlanTVD.XAxisId = this.objChart.bottomAxis().Id;
       objPlanTVD.YAxisId = this.objChart.leftAxis().Id;
       objPlanTVD.LineWidth = this.objUserSettings.PlanTVD.lineWidth; // 4; Nishant 28/07/2021
@@ -2376,9 +2397,13 @@ class ToolfaceSummary extends Component {
 
       objActualDLS.CurveStyle = curveStyle.step;
       objActualDLS.Title = "Actual DLS";
-      objActualDLS.Color = util.rgb2hex(
-        this.objUserSettings.ActualDLS.lineColor
-      ); // "#f2cc8f"; //Nishant 28/07/2021
+      //prath 14-10-2021
+      // objActualDLS.Color = util.rgb2hex(
+      //   this.objUserSettings.ActualDLS.lineColor
+      // ); // "#f2cc8f"; //Nishant 28/07/2021
+
+      objActualDLS.Color = this.objUserSettings.ActualDLS.lineColor; // "#f2cc8f"; //Nishant 28/07/2021
+
       objActualDLS.XAxisId = this.objChart.bottomAxis().Id;
       objActualDLS.YAxisId = "dls";
       objActualDLS.LineWidth = this.objUserSettings.ActualDLS.lineWidth; // 4; Nishant 28/07/2021
@@ -2401,7 +2426,10 @@ class ToolfaceSummary extends Component {
 
       objPlanDLS.CurveStyle = curveStyle.step;
       objPlanDLS.Title = "Plan DLS";
-      objPlanDLS.Color = util.rgb2hex(this.objUserSettings.PlanDLS.lineColor); // //Nishant 28/07/2021  "#9d0208";
+      //prath 14-10-2021
+      //objPlanDLS.Color = util.rgb2hex(this.objUserSettings.PlanDLS.lineColor); // //Nishant 28/07/2021  "#9d0208";
+      objPlanDLS.Color = this.objUserSettings.PlanDLS.lineColor; // //Nishant 28/07/2021  "#9d0208";
+
       objPlanDLS.XAxisId = this.objChart.bottomAxis().Id;
       objPlanDLS.YAxisId = "dls";
       objPlanDLS.LineWidth = this.objUserSettings.PlanDLS.lineWidth; //1 //Nishant 28/07/2021
@@ -2424,7 +2452,7 @@ class ToolfaceSummary extends Component {
 
       objMY.CurveStyle = curveStyle.step;
       objMY.Title = "Motor Yields";
-      objMY.Color = "#f48c06"; //Nishant 28/07/2021
+      objMY.Color = this.objUserSettings.MY.lineColor;
       objMY.XAxisId = this.objChart.bottomAxis().Id;
       objMY.YAxisId = "MY";
       objMY.LineWidth = 2; //this.objUserSettings.MY.lineWidth; //1 //Nishant 28/07/2021;
@@ -2447,7 +2475,9 @@ class ToolfaceSummary extends Component {
       objGTF.PointStyle = pointStyle.Circle;
       objGTF.PointSize = this.objUserSettings.GTF.lineWidth; //3 //Nishant 28/07/2021;
       objGTF.Title = "GTF";
-      objGTF.Color = util.rgb2hex(this.objUserSettings.GTF.lineColor); // "#52b788"; //Nishant 28/07/2021
+      //prath 14-10-2021
+      //objGTF.Color = util.rgb2hex(this.objUserSettings.GTF.lineColor); // "#52b788"; //Nishant 28/07/2021
+      objGTF.Color = this.objUserSettings.GTF.lineColor; // "#52b788"; //Nishant 28/07/2021
       objGTF.XAxisId = this.objChart.bottomAxis().Id;
       objGTF.YAxisId = this.objChart.rightAxis().Id;
 
@@ -2471,7 +2501,9 @@ class ToolfaceSummary extends Component {
       objMTF.PointStyle = pointStyle.Circle;
       objMTF.PointSize = this.objUserSettings.MTF.lineWidth; //3 //Nishant 28/07/2021;4;
       objMTF.Title = "MTF";
-      objMTF.Color = util.rgb2hex(this.objUserSettings.MTF.lineColor); ////Nishant 28/07/2021; "#118ab2";
+      //prath 14-10-2021
+      //objMTF.Color = util.rgb2hex(this.objUserSettings.MTF.lineColor); ////Nishant 28/07/2021; "#118ab2";
+      objMTF.Color = this.objUserSettings.MTF.lineColor; ////Nishant 28/07/2021; "#118ab2";
       objMTF.XAxisId = this.objChart.bottomAxis().Id;
       objMTF.YAxisId = this.objChart.rightAxis().Id;
       objMYAxis.Inverted = false;
@@ -2568,10 +2600,13 @@ class ToolfaceSummary extends Component {
         let objToolfaceChannel = this.objUserSettings.adnlChannels[i];
 
         let objDataSeries = new DataSeries();
+
         objDataSeries.Id = objToolfaceChannel.Mnemonic;
         objDataSeries.Name = objToolfaceChannel.Mnemonic;
         objDataSeries.Type = dataSeriesType.Area;
-        objDataSeries.Color = util.rgb2hex(objToolfaceChannel.lineColor); //Nishant 28/07/2021
+        //prath 14-12-2021
+        //objDataSeries.Color = util.rgb2hex(objToolfaceChannel.lineColor); //Nishant 28/07/2021
+        objDataSeries.Color = objToolfaceChannel.lineColor; //Nishant 28/07/2021
         objDataSeries.XAxisId = this.objAdnlChart.bottomAxis().Id;
         objDataSeries.YAxisId = objToolfaceChannel.Mnemonic;
 
@@ -2736,12 +2771,6 @@ class ToolfaceSummary extends Component {
                 </div>
               </div>
             </div> */}
-
-
-
-
-
-
         </div>
 
         <TabStrip

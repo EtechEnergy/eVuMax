@@ -444,8 +444,7 @@ class TripConnSummary extends Component {
     ////Nishant
     selectionChanged = (paramDataSelector: DataSelector_) => {
 
-        //alert("new dataSelector Data");
-        //console.log("new DataSelector", paramDataSelector);
+
         this.setState({
             objDataSelector: paramDataSelector,
             isRealTime: false
@@ -481,7 +480,7 @@ class TripConnSummary extends Component {
                         <ProcessLoader />
                     </div>
                 </div>
-                <TabStrip selected={this.state.selected} onSelect={this.handleSelect}>
+                <TabStrip selected={this.state.selected} onSelect={this.handleSelect} keepTabsMounted={true}>
                     <TabStripTab title="Trip Connections Summary">
                         <div style={{ height: "45px", backgroundColor: "transparent" }}>
                             <div

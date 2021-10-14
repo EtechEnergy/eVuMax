@@ -249,7 +249,7 @@ export class TripSpeedPlot2 extends Component {
             objSeries2.Data.push(objVal);
 
             Counter++;
-            // console.log("ETECH ", objRange);
+
             //axis label
             this.objChart_TripSpeed2.bottomAxis().Labels.push(
               objRange.LabelText +
@@ -354,13 +354,12 @@ export class TripSpeedPlot2 extends Component {
           params: { paramRequest: JSON.stringify(objBrokerRequest) },
         })
         .then((res) => {
-          // $("#loader").hide();
 
           Util.StatusSuccess("Data successfully retrived  ");
 
           let objData = JSON.parse(res.data.Response);
 
-          //     console.log(objData);
+
           this.setState({
             WellName: objData.WellName,
             objTripSpeedData: objData,

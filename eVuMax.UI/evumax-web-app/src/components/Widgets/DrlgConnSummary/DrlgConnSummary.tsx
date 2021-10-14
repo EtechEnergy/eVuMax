@@ -420,12 +420,10 @@ class DrlgConnSummary extends Component {
           Util.StatusReady();
           this.objSummaryData = JSON.parse(res.data.Response);
 
-          //console.log("Summary data" + this.objSummaryData);
           this.setData();
         })
         .catch((error) => {
-          //alert(error);
-          console.log("this.AxiosSource.token", AxiosSource.token);
+
           Util.StatusError(error.message);
           Util.StatusReady();
           if (error.response) {
@@ -841,6 +839,7 @@ class DrlgConnSummary extends Component {
             <TabStrip
               selected={this.state.selected}
               onSelect={this.handleSelect}
+              keepTabsMounted={true}
             >
               <TabStripTab title="Drilling Connections Summary">
                 {/* vimal */}
@@ -953,8 +952,9 @@ class DrlgConnSummary extends Component {
                 ></div>
 
                 {/* <DataSelectorOriginal {...this} /> */}
-
-                <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+                <div className="Data">
+                  <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+                </div>
               </TabStripTab>
               <TabStripTab title="Numeric Summary">
                 <div style={{}}>

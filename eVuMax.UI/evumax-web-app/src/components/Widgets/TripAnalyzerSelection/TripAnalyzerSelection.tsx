@@ -273,7 +273,6 @@ export default class TripAnalyzerSelection extends Component<IProps> {
           let objGrdData = objData.map((dataItem: any) =>
             Object.assign({ selected: false, selected_: false }, dataItem)
           );
-          //   console.log("newData", objGrdData);
 
           this.setState({
             isProcess: false,
@@ -1551,7 +1550,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
         })
         .then((res) => {
           const objData = JSON.parse(res.data.Response);
-          console.log("tripAnalyzerSelection Data", objData);
+
 
           let customTagList: comboData[] = [];
 

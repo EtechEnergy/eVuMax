@@ -688,7 +688,7 @@ export class DrillingSummary extends Component {
 
       this.objChart_RigStateSummary.reDraw();
 
-      //console.log("Labels", this.objChart_RigStateSummary.bottomAxis().Labels);
+
     } catch (error) {
       this.objLogger.SendLog("refreshRigStateSummaryChart: TryCatch Error:" + error);
     }
