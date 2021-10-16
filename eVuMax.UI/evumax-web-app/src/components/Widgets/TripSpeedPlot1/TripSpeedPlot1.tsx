@@ -62,6 +62,7 @@ export class TripSpeedPlot1 extends Component {
 
 
   componentWillUpdate() {
+
     _gMod = new GlobalMod();
     if (_gMod._userId == "" || _gMod._userId == undefined) {
       window.location.href = "/evumaxapp/";
@@ -72,10 +73,17 @@ export class TripSpeedPlot1 extends Component {
 
 
 
+
   componentDidMount() {
     try {
+      _gMod = new GlobalMod();
+      if (_gMod._userId == "" || _gMod._userId == undefined) {
+        window.location.href = "/evumaxapp/";
+        return;
+      }
       //initialize chart
       //this.objLogger.SendLog("Test Logger");
+
       this.initilizeCharts();
 
       this.loadConnections();

@@ -65,16 +65,18 @@ export const startLog_In = (login: Partial<Types.ILogin>) => {
 
     objBrokerResponse.Parameters.length = 0;
 
-    let objParameter = new BrokerParameter("login", JSON.stringify(login));
+    // let objParameter = new BrokerParameter("login", JSON.stringify(login));
+    // objBrokerResponse.Parameters.push(objParameter);
+
+    let objParameter = new BrokerParameter("UserName", login._userName);
     objBrokerResponse.Parameters.push(objParameter);
 
-    objParameter = new BrokerParameter("UserName", login._userName);
-    objBrokerResponse.Parameters.push(objParameter);
 
     objParameter = new BrokerParameter(
       "Password",
       RSAService.EncryptionToBas64(login._pwd)
     );
+
     objBrokerResponse.Parameters.push(objParameter);
 
     axios
