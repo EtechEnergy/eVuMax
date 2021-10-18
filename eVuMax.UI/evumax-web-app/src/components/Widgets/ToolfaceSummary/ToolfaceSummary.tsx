@@ -1,45 +1,43 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import * as d3 from "d3";
 import $ from "jquery";
 import {
   Chart,
   curveStyle,
-  lineStyle,
+
 } from "../../../eVuMaxObjects/Chart/Chart";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
-import { formatNumber, parseDate } from "@telerik/kendo-intl";
+
 import {
   Axis,
-  axisLabelStyle,
+
   axisPosition,
 } from "../../../eVuMaxObjects/Chart/Axis";
 import DataSelector from "../../Common/DataSelector";
-import { Moment } from "moment";
+
 import {
   DataSeries,
   dataSeriesType,
   pointStyle,
 } from "../../../eVuMaxObjects/Chart/DataSeries";
-import { Guid } from "guid-typescript";
+
 import "@progress/kendo-react-layout";
-import { filterBy } from "@progress/kendo-data-query";
-import ProcessLoader from "../../loader/loader";
+
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import axios from "axios";
-import Moment_ from "react-moment";
+
 import {
-  Input,
-  MaskedTextBox,
+ 
   NumericTextBox,
   Checkbox,
   ColorPicker,
   Switch,
-  RadioGroup,
-  Slider,
-  SliderLabel,
-  RadioButton,
+ 
 } from "@progress/kendo-react-inputs";
+
+import { Notification } from '@progress/kendo-react-notification';
+
 import {
   Grid,
   GridColumn as Column,
@@ -55,6 +53,7 @@ import {
 
   ListView,
   ListViewHeader,
+  Fade,
 } from "@progress/kendo-react-all";
 
 
@@ -94,7 +93,7 @@ class ToolfaceSummary extends Component {
 
   objLogger: ClientLogger = new ClientLogger("ToolfaceSummary", _gMod._userId);
   state = {
-
+showWarning: false, //Nishant-PC 18/10/2021
     objDataSelector: new DataSelector_(),
     WellName: "",
     selected: 0,
@@ -229,6 +228,7 @@ class ToolfaceSummary extends Component {
   fromDepth: number = 0;
   toDepth: number = 0;
   refreshHrs: number = 24;
+  Warnings: string = ""; //Nishant 18/10/2021
   _selectedItem: any;
 
 
@@ -1627,6 +1627,23 @@ class ToolfaceSummary extends Component {
             this.objToolfaceData.adnlChannelsData = [];
           }
 
+          this.Warnings = res.data.Warnings;
+          
+
+          
+          if (this.Warnings.trim() != "") {
+            this.setState({showWarning:true});
+            $("#warning").css("backgroundColor", "#ffb74d");
+            $("#lblWarning").text(res.data.Warnings);
+          }
+          else {
+            this.setState({showWarning:false});
+            $("#warning").css("backgroundColor", "transparent");
+            $("#lblWarning").text("");
+          }
+
+
+
 
           this.displayData();
         })
@@ -2896,6 +2913,19 @@ class ToolfaceSummary extends Component {
               {/* <DataSelector {...this} /> */}
 
               <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+              <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
+              {/* <Fade>
+            {this.state.showWarning && (
+              <Notification
+                type={{ style: "warning", icon: true }}
+                
+                closable={false}
+                onClose={() => this.setState({ warning: false })}
+              >
+                <span>{this.Warnings}</span>
+              </Notification>
+            )}
+          </Fade> */}
             </div>
           </TabStripTab>
 
