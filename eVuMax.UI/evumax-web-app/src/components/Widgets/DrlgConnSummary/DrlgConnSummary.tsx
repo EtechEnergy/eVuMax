@@ -419,6 +419,7 @@ class DrlgConnSummary extends Component {
           Util.StatusSuccess("Data successfully retrived  ");
           Util.StatusReady();
           this.objSummaryData = JSON.parse(res.data.Response);
+          console.log("objSummaryData", this.objSummaryData);
 
           this.setData();
         })

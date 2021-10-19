@@ -374,7 +374,11 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 }
                 else
                 {
-                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND DEPTH>=" + fromDepth.ToString() + " AND DEPTH<=" + toDepth.ToString() + " ORDER BY FROM_DATE";
+                    fromDate =  objTimeLog.getDateTimeFromDepth(ref paramRequest.objDataService, fromDepth);
+                    toDate = objTimeLog.getDateTimeFromDepth(ref paramRequest.objDataService, toDepth);
+
+                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
+                    //strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND DEPTH>=" + fromDepth.ToString() + " AND DEPTH<=" + toDepth.ToString() + " ORDER BY FROM_DATE";
                 }
 
                 DataTable objData = paramRequest.objDataService.getTable(strSQL);
@@ -522,8 +526,15 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         TimeSpan objSpan = new TimeSpan(0, 0, (int)totalSeconds);
 
                         newRow["COMMENTS"] = DataService.checkNull(objRow["USER_COMMENT"], "").ToString();
-                        newRow["FROM_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
-                        newRow["TO_DATE"] = connToDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
+
+                        //Nishant 19-10-2021 to Make similar to VuMaxDR desktop version
+                        //newRow["FROM_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
+                        newRow["FROM_DATE"] = connFromDate.ToString("MMM-dd-yyyy HH:mm:ss");
+
+                        //newRow["TO_DATE"] = connToDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
+                        newRow["TO_DATE"] = connToDate.ToString("MMM-dd-yyyy HH:mm:ss");
+
+                        //******************************************
                         newRow["TOTAL_TIME"] = "[" + objSpan.Hours.ToString() + ":" + objSpan.Minutes.ToString() + ":" + objSpan.Seconds.ToString() + "]";
                         newRow["DAY_NIGHT"] = DataService.checkNull(objRow["TIME"], "D").ToString();
 
@@ -698,7 +709,9 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         {
                             if (dataSumDepth.Rows.Count > 0)
                             {
-                                sumDateTime = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());
+                                // sumDateTime = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString()); //Nitin
+                                //Nishant 19-10-2021
+                                sumDepth = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());
                             }
 
                             dataSumDepth.Dispose();
@@ -743,7 +756,9 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         {
                             if (dataSumDepth.Rows.Count > 0)
                             {
-                                sumDateTime = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());
+                                //sumDateTime = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());
+                                //Nishant 19-10-2021
+                                sumDepth = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());
                             }
 
                             dataSumDepth.Dispose();
@@ -886,7 +901,12 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                                     lnTimeDuraton = Math.Round(lnTimeDuraton / 60, 2); //Converting to minutes
                                 }
 
-                                strTimes = strTimes + "," + lnTimeDuraton;
+                                //Nishant 19-10-2021 
+                                if (lnTimeDuraton > 0)
+                                {
+                                    strTimes = strTimes + "," + lnTimeDuraton;
+                                }
+                                
                             }
                         }
 
@@ -895,11 +915,15 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                             strTimes = strTimes.Substring(1);
                         }
 
-                        newRow["DEPTH"] = Math.Round(connDepth, 2);
-                        newRow["TIMES"] = strTimes;
-                        newRow["COMMENTS"] = connComments;
+                        if (strTimes != "")
+                        {
+                            newRow["DEPTH"] = Math.Round(connDepth, 2);
+                            newRow["TIMES"] = strTimes;
+                            newRow["COMMENTS"] = connComments;
 
-                        rigStateData.Rows.Add(newRow);
+                            rigStateData.Rows.Add(newRow);
+                        }
+                        
 
                     }
 
