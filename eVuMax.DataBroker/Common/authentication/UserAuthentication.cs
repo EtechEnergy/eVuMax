@@ -191,7 +191,7 @@ namespace eVuMax.DataBroker.Common.authentication
 				{
 					//isValidUser = objLDAP.isValidLDAPUser();
 
-					isValidUser = objLDAP.isValidWindowUser();
+					isValidUser = objLDAP.isValidLDAPUser();
                 }
 				if (AuthType_ == "1") //1VuMaxDBUser
 				{
