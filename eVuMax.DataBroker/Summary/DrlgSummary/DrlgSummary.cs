@@ -244,12 +244,6 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         fromDate = minDate;
                         toDate = maxDate;
 
-                        //Nishant Get DepthFrom and DepthTo Also from TimeLog to use that in offset Well
-                        //fromDepth = objTimeLog.getDepthFromDateTime(ref paramRequest.objDataService,fromDate.ToOADate());
-                        //toDepth = objTimeLog.getDepthFromDateTime(ref paramRequest.objDataService, toDate.ToOADate());
-
-
-                        //PRATH
                         fromDepth = objTimeLog.getHoleDepthFromDateTime(ref paramRequest.objDataService, fromDate.ToOADate());
                         toDepth = objTimeLog.getHoleDepthFromDateTime(ref paramRequest.objDataService, toDate.ToOADate());
 
@@ -260,11 +254,12 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
 
 
-                //Nishant : get FromDate and ToDate from Depth  Range
-                //depthwise
+               
                 if (selectionType == "1") // Depth Range
                 {
-                    getDateRangeFromDepth(paramRequest, fromDepth, toDepth, ref fromDate, ref toDate);
+                    //Nitin Changes n 21-10-2021
+                    fromDate = objTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
+                    toDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
 
                 }
 
@@ -406,13 +401,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 objMnemonicMappingMgr.loadMappings(ref objDataService);
                 DataTable objROPData = new DataTable();
 
-                ////  ReDim mainROPX(-1)
-                //Array.Resize(ref mainROPX,-1);
-                //Array.Resize(ref mainROPX, -1);
-                //Array.Resize(ref mainROPY, -1);
-
-                //Array.Resize(ref offsetROPX, -1);
-                //Array.Resize(ref offsetROPY, -1);
+            
 
                 string mainROPMnemonic = ROPMnemonic;
                 string offsetROPMnemonic = ROPMnemonic;
@@ -525,17 +514,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         }
 
                         offsetDepthIn = offsetROPY[0];
-                        //Change by prath on 26-07-2021
-                        //if (offsetROPY.Length > 1) //Nishant : 28-09-2020 Case: only One offset Well data is coming...
-
-                        //{
-                        //    offsetDepthOut = offsetROPY[offsetROPY.Length - 1];
-                        //}
-                        //else
-                        //{
-                        //    offsetDepthOut = offsetDepthIn;
-                        //}
-
+                      
 
                         if (offsetROPY.Length > 0)
                         {

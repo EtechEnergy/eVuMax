@@ -278,6 +278,9 @@ namespace eVuMax.DataBroker.Summary.TripConn
                     objConnProcessor.ProcessPoints(ref paramRequest.objDataService, wellId, ref objTimeLog, __logFromDate, __logToDate);
 
                     strSQL = "SELECT * FROM VMX_AKPI_TRIP_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND DEPTH>=" + fromDepth.ToString() + " AND DEPTH<=" + toDepth.ToString() + " ORDER BY FROM_DATE";
+
+                    fromDate = objTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
+                    toDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
                 }
 
                 DataTable objData = paramRequest.objDataService.getTable(strSQL);

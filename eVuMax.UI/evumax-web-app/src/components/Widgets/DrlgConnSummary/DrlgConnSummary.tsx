@@ -420,6 +420,7 @@ class DrlgConnSummary extends Component {
           Util.StatusReady();
           this.objSummaryData = JSON.parse(res.data.Response);
           console.log("objSummaryData", this.objSummaryData);
+          debugger;
 
           this.setData();
         })

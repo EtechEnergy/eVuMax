@@ -187,8 +187,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         if (isRealTime)
                         {
                             minDate = maxDate.AddHours(-refreshHrs);
-                            //secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
-                            //minDate = maxDate.AddSeconds(-1 * secondsDiff);
+
                         }
 
 
@@ -332,6 +331,10 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         else
                         {
                             strSQL = "SELECT FROM_DATE FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND DEPTH>=" + fromDepth.ToString() + " AND DEPTH<=" + toDepth.ToString() + " ORDER BY FROM_DATE";
+                            //Nitin Changes 21-10-2021
+                            fromDate = objTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
+                            toDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
+
                         }
 
                         DataTable connCountData = paramRequest.objDataService.getTable(strSQL);
@@ -374,11 +377,12 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 }
                 else
                 {
-                    fromDate =  objTimeLog.getDateTimeFromDepth(ref paramRequest.objDataService, fromDepth);
-                    toDate = objTimeLog.getDateTimeFromDepth(ref paramRequest.objDataService, toDepth);
+                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND DEPTH>=" + fromDepth.ToString() + " AND DEPTH<=" + toDepth.ToString() + " ORDER BY FROM_DATE";
 
-                    strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
-                    //strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND DEPTH>=" + fromDepth.ToString() + " AND DEPTH<=" + toDepth.ToString() + " ORDER BY FROM_DATE";
+                    //Nitin Changes 21-10-2021
+                    fromDate = objTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
+                    toDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
+
                 }
 
                 DataTable objData = paramRequest.objDataService.getTable(strSQL);
@@ -526,15 +530,12 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         TimeSpan objSpan = new TimeSpan(0, 0, (int)totalSeconds);
 
                         newRow["COMMENTS"] = DataService.checkNull(objRow["USER_COMMENT"], "").ToString();
+                        //newRow["FROM_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
+                        //newRow["TO_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
 
-                        //Nishant 19-10-2021 to Make similar to VuMaxDR desktop version
-                        //newRow["FROM_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
-                        newRow["FROM_DATE"] = connFromDate.ToString("MMM-dd-yyyy HH:mm:ss");
-
-                        //newRow["TO_DATE"] = connToDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
+                        newRow["FROM_DATE"] = connFromDate.ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
                         newRow["TO_DATE"] = connToDate.ToString("MMM-dd-yyyy HH:mm:ss");
 
-                        //******************************************
                         newRow["TOTAL_TIME"] = "[" + objSpan.Hours.ToString() + ":" + objSpan.Minutes.ToString() + ":" + objSpan.Seconds.ToString() + "]";
                         newRow["DAY_NIGHT"] = DataService.checkNull(objRow["TIME"], "D").ToString();
 
@@ -709,8 +710,8 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         {
                             if (dataSumDepth.Rows.Count > 0)
                             {
-                                // sumDateTime = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString()); //Nitin
-                                //Nishant 19-10-2021
+                                // Nishant 20-10-2021
+                                //sumDateTime = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString()); //Nitin
                                 sumDepth = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());
                             }
 
@@ -756,8 +757,8 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         {
                             if (dataSumDepth.Rows.Count > 0)
                             {
-                                //sumDateTime = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());
-                                //Nishant 19-10-2021
+                                //Nishant 20-10-2021 
+                                //sumDateTime = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());//Nitin
                                 sumDepth = double.Parse(DataService.checkNull(dataSumDepth.Rows[0]["SUMVALUE"], 0).ToString());
                             }
 
@@ -862,6 +863,8 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
 
+
+
                         DataRow newRow = rigStateData.NewRow();
 
                         Dictionary<double, double> rigStateTimes = new Dictionary<double, double>();
@@ -901,12 +904,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                                     lnTimeDuraton = Math.Round(lnTimeDuraton / 60, 2); //Converting to minutes
                                 }
 
-                                //Nishant 19-10-2021 
-                                if (lnTimeDuraton > 0)
-                                {
-                                    strTimes = strTimes + "," + lnTimeDuraton;
-                                }
-                                
+                                strTimes = strTimes + "," + lnTimeDuraton;
                             }
                         }
 
@@ -923,7 +921,12 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                             rigStateData.Rows.Add(newRow);
                         }
-                        
+                        ////=================
+                        //newRow["DEPTH"] = Math.Round(connDepth, 2);
+                        //newRow["TIMES"] = strTimes;
+                        //newRow["COMMENTS"] = connComments;
+
+                        //rigStateData.Rows.Add(newRow);
 
                     }
 
@@ -1178,17 +1181,20 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     #endregion
 
 
-                    ////Convert display dates to local  (Already converted to local while create table)
-                    //foreach (DataRow objRow in connData.Rows)
-                    //{
 
-                    //    DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
-                    //    DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
 
-                    //    objRow["FROM_DATE"] = lnFromDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm:ss");
-                    //    objRow["TO_DATE"] = lnToDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm:ss");
+                    //convert connection dates to local 
+                    foreach (DataRow objRow in objDrlgConnSummary.connData.Rows)
+                    {
 
-                    //}
+                        DateTime connFromDate = DateTime.Parse(DataService.checkNull(objRow["FROM_DATE"], new DateTime()).ToString());
+                        DateTime connToDate = DateTime.Parse(DataService.checkNull(objRow["TO_DATE"], new DateTime()).ToString());
+
+                        objRow["FROM_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
+                        objRow["TO_DATE"] = connToDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
+
+                    }
+                    //objDrlgConnSummary.connData = objData;
 
                     objResponse.Response = JsonConvert.SerializeObject(objDrlgConnSummary);
 

@@ -268,8 +268,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                 }
 
                 string strSQL = "";
-                //double paramFromDepth = 0;
-                //double paramToDepth = 0;
+              
                 if (selectionType == "0") //date wise
                 {
                     fromDepth = objTimeLog.getHoleDepthFromDateTime(ref paramRequest.objDataService, fromDate.ToOADate());
@@ -278,8 +277,10 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                 else
                 {
                     //depth wise
+                    //Nitin Changes 21-10-2021
+                    fromDate = objTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
+                    toDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
 
-                    getDateRangeFromDepth(paramRequest, fromDepth, toDepth, ref fromDate, ref toDate);
                 }
 
 
@@ -425,10 +426,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     // 'Nothing to do ...
                     else
                     {
-                        //prath 15-10-2020
-                        //objMnemonicMappingMgr.loadMappings(ref paramRequest.objDataService);
-
-
+                     
 
                         yMnemonic = objMnemonicMappingMgr.getMappedMnemonic(yMnemonic, objTimeLog.logCurves);
 
@@ -457,25 +455,17 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         strSQL = "SELECT HDTH AS [DEPTH], [" + yMnemonic + "] AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ";
                     }
 
-                    //PENDING 99999
-                    //if (selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                 
 
                     strSQL = strSQL + " AND [" + yMnemonic + "]>=0 ";
                     strSQL = strSQL + " AND RIG_STATE=0 ";
 
-                    // 'strSQL = strSQL + " GROUP BY ROUND(HDTH,2) ORDER BY ROUND(HDTH,2)"
+                  
 
                     strSQL = strSQL + " ORDER BY HDTH";
                     DataTable CData = paramRequest.objDataService.getTable(strSQL);
 
-                    // 'Dim objData As DataTable = DownSample.downSampleByMovingAvg(CData, "DEPTH", yMnemonic, 0, objDataSelection.NoOfDataPoints)
+                 
                     objUserSetting = loadSettings(paramRequest);
                     DataTable objData = Common.DownSample.downSampleByDepthEx(CData, "DEPTH", yMnemonic, 0, objUserSetting.NoOfDataPoints);
 
@@ -503,19 +493,11 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     }
                     else
                     {
-                        // 'strSQL = "SELECT ROUND(HDTH,2) AS [DEPTH], AVG([" + yMnemonic + "]) AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' "
+                        
                         strSQL = "SELECT HDTH AS [DEPTH], [" + yMnemonic + "] AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ";
                     }
 
-                    //PENDING 9999999999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                    
 
                     strSQL = strSQL + " AND [" + yMnemonic + "]>=0 ";
                     strSQL = strSQL + " AND (RIG_STATE=1 OR RIG_STATE=19) ";
@@ -573,15 +555,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         strSQL = "SELECT HDTH AS [DEPTH], [" + yMnemonic + "] AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ";
                     }
 
-                    //PENDING 9999999999999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                
 
                     strSQL = strSQL + " AND [" + yMnemonic + "]>=0 ";
                     strSQL = strSQL + " ORDER BY HDTH";
@@ -607,15 +581,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         strSQL = "SELECT AVG([" + yMnemonic + "]) AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ";
                     }
 
-                    //PENDING 999999999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                    
 
                     strSQL = strSQL + " AND [" + yMnemonic + "]>=0 ";
                     strSQL = strSQL + " AND (RIG_STATE=0) ";
@@ -634,15 +600,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     {
                         strSQL = "SELECT AVG([" + yMnemonic + "]) AS [" + yMnemonic + "] FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ";
                     }
-                    //PENDING 99999999999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                   
 
                     strSQL = strSQL + " AND [" + yMnemonic + "]>=0 ";
                     strSQL = strSQL + " AND (RIG_STATE=1 OR RIG_STATE=19) ";
@@ -663,15 +621,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
                     }
 
-                    //PEDNING 99999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                   
 
                     TotalFootage = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
                     if (selectionType == "1") //depth selection
@@ -708,15 +658,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0) AND NEXT_DEPTH>0 AND HDTH>=0 ";
                     }
 
-                    // PENDING 99999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                   
 
                     RotaryFootage = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
                     if (selectionType == "1") //depth selection
@@ -728,15 +670,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0) ";
                     }
 
-                    //PENDING 9999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                   
 
                     RotaryTimePeriod = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
                     if (selectionType == "1")
@@ -748,15 +682,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
                     }
 
-                    // PENDING 99999999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                   
 
                     SlideFootage = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
                     if (selectionType == "1")
@@ -767,15 +693,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     {
                         strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (1,19)  ";
                     }
-                    // PENDING 9999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                  
 
                     SlideTimePeriod = Common.Util.ValEx(paramRequest.objDataService.getValueFromDatabase(strSQL));
 
@@ -832,15 +750,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     {
                         strSQL = "SELECT MIN(HDTH) AS MIN_DEPTH,MAX(HDTH) AS MAX_DEPTH FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
                     }
-                    //PENDING 99999999
-                    //if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
-                    //{
-                    //    string strTopsCondition = objDataSelection.getTopsFilter();
-                    //    if (!string.IsNullOrEmpty(strTopsCondition.Trim()))
-                    //    {
-                    //        strSQL = strSQL + " AND " + strTopsCondition;
-                    //    }
-                    //}
+                   
 
                     objData = paramRequest.objDataService.getTable(strSQL);
                     if (objData.Rows.Count > 0)
@@ -849,9 +759,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                         maxDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MAX_DEPTH"], 0));
                     }
 
-                    //objFrmLog.clearLog();
-
-
+                   
 
                     // 'Recalculate ROP
                     if (RotaryTimePeriod > 0 & RotaryFootage > 0)
@@ -917,7 +825,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                         strSQL = strSQL + " AND RIG_STATE=0 ";
 
-                        // 'strSQL = strSQL + " GROUP BY ROUND(HDTH,2) ORDER BY ROUND(HDTH,2)"
+                     
                         strSQL = strSQL + " ORDER BY HDTH";
                         CData = paramRequest.objDataService.getTable(strSQL);
 
@@ -1299,40 +1207,8 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                     objROPSummaryData.tripOuts = tripOuts;
                     objROPSummaryData.tripOutsOffset = tripOutsOffset;
 
-
-                    ////Add Blank row if No data present in SlideX Y and others
-                    //if (objROPSummaryData.rotateData.Rows.Count == 0)
-                    //{
-                    //    DataRow objNewRow = objROPSummaryData.rotateData.NewRow();
-                    //    objROPSummaryData.rotateData.Rows.Add(objNewRow);
-                    //}
-
-                    //if (objROPSummaryData.offsetRotateData.Rows.Count == 0)
-                    //{
-                    //    DataRow objNewRow = objROPSummaryData.offsetRotateData.NewRow();
-                    //    objROPSummaryData.offsetRotateData.Rows.Add(objNewRow);
-                    //}
-
-                    //if (objROPSummaryData.slideData.Rows.Count == 0)
-                    //{
-                    //    DataRow objNewRow = objROPSummaryData.slideData.NewRow();
-                    //    objROPSummaryData.slideData.Rows.Add(objNewRow);
-                    //}
-
-                    //  if (objROPSummaryData.offsetSlideData.Rows.Count == 0)
-                    //{
-                    //    DataRow objNewRow = objROPSummaryData.offsetSlideData.NewRow();
-                    //    objROPSummaryData.offsetSlideData.Rows.Add(objNewRow);
-                    //}
-
-
-
-
                 }
-                //Commented below code Nishant 27/08/2021
-                //over:
-                //    bool doNothing = true;
-                //return
+             
 
             }
             catch (Exception ex)

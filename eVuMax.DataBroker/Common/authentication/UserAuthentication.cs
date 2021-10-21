@@ -13,6 +13,8 @@ namespace eVuMax.DataBroker.Common.authentication
 		const string ValidateUser = "ValidateUser";
 		const string ChangePassword_ = "ChangePassword";
 
+		public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
+
 		public Broker.BrokerResponse getData(Broker.BrokerRequest paramRequest)
 		{
 			try
@@ -152,10 +154,7 @@ namespace eVuMax.DataBroker.Common.authentication
 			try
 			{
 
-				//List<Broker.BrokerParameter> paramList = Global.getParameters(objRequest);
-
-				//string UserName = Global.getParameterValue(paramList, "UserName");
-				//string Password = Global.getParameterValue(paramList, "Password");
+				
 
 				string LastError = "";
 				string UserName = "";
@@ -191,7 +190,7 @@ namespace eVuMax.DataBroker.Common.authentication
 				{
 					//isValidUser = objLDAP.isValidLDAPUser();
 
-					isValidUser = objLDAP.isValidLDAPUser();
+					isValidUser = objLDAP.ValidateActiveDirectoryLogin();
                 }
 				if (AuthType_ == "1") //1VuMaxDBUser
 				{
@@ -253,7 +252,8 @@ namespace eVuMax.DataBroker.Common.authentication
             }
             catch (Exception ex)
             {
-                lastError = ex.Message + " - " + ex.StackTrace;
+				objLogger.LogMessage(ex.Message + ex.StackTrace);
+				lastError = ex.Message + " - " + ex.StackTrace;
                 return false;
             }
 
