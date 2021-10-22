@@ -73,6 +73,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
         private TimeLog objTimeLog = new TimeLog();
 
+        public string Warnings = ""; //Nishant 22-10-2021
+
         public TripAnalyzer()
         {
         }
@@ -181,7 +183,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
 
                 if (objTag == null)
-                    return;
+                    Warnings += "No Tags are selected or present.";
+                return;
 
                 objLogger.LogMessage("objTag loaded as: " + JsonConvert.SerializeObject(objTag));
 
@@ -190,6 +193,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 objTimeLog = getTimeLogFromDateRange(objTag.StartDate, objTag.EndDate);
 
                 if (objTimeLog == null)
+                    Warnings += "TimeLog is not present.";
                     return;
 
                 ProcessStatus = 1;
@@ -1247,6 +1251,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
                 if (TagSelection.Count <= 0)
                 {
+                    Warnings += "No Tags are selected.";
                     return;
                 }
 
@@ -1265,6 +1270,8 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
                     if (objTag is null)
                     {
+                        Warnings += "Tags are not defined.";
+                        
                         return;
                     }
 
@@ -1409,178 +1416,6 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 return;
             }
         }
-
-
-
-
-
-
-
-
-
-        //public void loadFromDB()
-        //{
-        //    try
-        //    {
-        //        DataTable objData = objDataService.getTable("SELECT * FROM VMX_TRIPAN_SETTINGS WHERE WELL_ID='" + WellID + "'");
-
-        //        if (objData.Rows.Count > 0)
-        //        {
-        //            DataRow objRow = objData.Rows(0);
-
-        //            UseDepthRanges = IIf(DataService.checkNull(objRow["USE_DEPTH_RANGE"], 0) == 1, true, false);
-        //            DepthThreshold = DataService.checkNull(objRow("DEPTH_THRESHOLD"), 100);
-        //            TripDirection = DataService.checkNull(objRow("TRIP_DIRECTION"), 0);
-        //            UseCustomTags = IIf(DataService.checkNull(objRow("USE_CUSTOM"), 0) == 1, true, false);
-        //            TagSourceID = DataService.checkNull(objRow("TAG_SOURCE_ID"), "");
-
-        //            RemoveFillUpTime = IIf(DataService.checkNull(objRow("REMOVE_FILLUP_TIME"), 0) == 1, true, false);
-        //        }
-
-        //        TagSelection.Clear();
-
-        //        objData = objDataService.getTable("SELECT * FROM VMX_TRIPAN_TAG_SELECTION WHERE WELL_ID='" + WellID + "'");
-
-        //        foreach (DataRow objRow in objData.Rows)
-        //        {
-        //            double phaseIndex = DataService.checkNull(objRow("PHASE_INDEX"), 0);
-
-        //            TagSelection.Add(phaseIndex, phaseIndex);
-        //        }
-
-
-        //        objData = objDataService.getTable("SELECT * FROM VMX_TRIPAN_DEPTH_INFO_HEADER WHERE WELL_ID='" + WellID + "'");
-
-        //        foreach (DataRow objRow in objData.Rows)
-        //        {
-        //            TripDepthInformation objItem = new TripDepthInformation();
-
-        //            objItem.PhaseIndex = DataService.checkNull(objRow("PHASE_INDEX"), 0);
-        //            objItem.TimeLogName = DataService.checkNull(objRow("LOG_NAME"), "");
-
-        //            DataTable objRangeData = objDataService.getTable("SELECT * FROM VMX_TRIPAN_DEPTH_RANGES WHERE WELL_ID='" + WellID + "' AND PHASE_INDEX=" + objItem.PhaseIndex.ToString);
-
-        //            foreach (DataRow objRangeRow in objRangeData.Rows)
-        //            {
-        //                TripDepthRange objRange = new TripDepthRange();
-        //                objRange.FromDepth = DataService.checkNull(objRangeRow("FROM_DEPTH"), 0);
-        //                objRange.ToDetph = DataService.checkNull(objRangeRow("TO_DEPTH"), 0);
-        //                objRange.LabelText = DataService.checkNull(objRangeRow("LABEL"), 0);
-        //                objRange.TimeLogName = DataService.checkNull(objRangeRow("LOG_NAME"), 0);
-        //                objRange.WithBenchhmark = DataService.checkNull(objRangeRow("WITH_BM"), 0);
-        //                objRange.WOBenchmark = DataService.checkNull(objRangeRow("WO_BM"), 0);
-
-        //                objItem.DepthRanges.Add(objItem.DepthRanges.Count + 1, objRange);
-        //            }
-
-        //            TagDepthInformation.Add(objItem.PhaseIndex, objItem);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //    }
-        //}
-
-        //public void saveToDB()
-        //{
-        //    try
-        //    {
-        //        string strSQL = "";
-
-
-        //        strSQL = "DELETE FROM VMX_TRIPAN_SETTINGS WHERE WELL_ID='" + WellID + "'";
-        //        objDataService.executeNonQuery(strSQL);
-
-        //        strSQL = "DELETE FROM VMX_TRIPAN_TAG_SELECTION WHERE WELL_ID='" + WellID + "'";
-        //        objDataService.executeNonQuery(strSQL);
-
-        //        strSQL = "DELETE FROM VMX_TRIPAN_DEPTH_INFO_HEADER WHERE WELL_ID='" + WellID + "'";
-        //        objDataService.executeNonQuery(strSQL);
-
-        //        strSQL = "DELETE FROM VMX_TRIPAN_DEPTH_RANGES WHERE WELL_ID='" + WellID + "'";
-        //        objDataService.executeNonQuery(strSQL);
-
-
-        //        int lnTripDirection = this.TripDirection;
-
-
-        //        // 'prath ticket no : 486
-        //        // strSQL = "INSERT INTO VMX_TRIPAN_SETTINGS (WELL_ID,USE_DEPTH_RANGE,DEPTH_THRESHOLD,TRIP_DIRECTION,USE_CUSTOM,TAG_SOURCE_ID,REMOVE_FILLUP_TIME) VALUES("
-        //        strSQL = "INSERT INTO VMX_TRIPAN_SETTINGS (WELL_ID,USE_DEPTH_RANGE,DEPTH_THRESHOLD,TRIP_DIRECTION,USE_CUSTOM,TAG_SOURCE_ID,REMOVE_FILLUP_TIME,INCLUDE_PIPE_MOVEMENT) VALUES(";
-        //        // '-----
-        //        strSQL += "'" + WellID + "',";
-        //        strSQL += "" + Interaction.IIf(UseDepthRanges, 1, 0).ToString() + ",";
-        //        strSQL += "" + DepthThreshold.ToString() + ",";
-        //        strSQL += "" + lnTripDirection.ToString() + ",";
-        //        strSQL += "" + Interaction.IIf(UseCustomTags == true, 1, 0).ToString() + ",";
-        //        strSQL += "'" + TagSourceID + "',";
-        //        // 'prath ticket no : 486
-        //        // strSQL += "" + IIf(RemoveFillUpTime = True, 1, 0).ToString + ")"
-        //        strSQL += "" + Interaction.IIf(RemoveFillUpTime == true, 1, 0).ToString() + ",";
-        //        strSQL += "" + Interaction.IIf(IncludePipeMovement == true, 1, 0).ToString() + ")";
-        //        // '-------
-        //        objDataService.executeNonQuery(strSQL);
-
-
-        //        foreach (double lnKey in TagSelection.Keys)
-        //        {
-        //            strSQL = "INSERT INTO VMX_TRIPAN_TAG_SELECTION (WELL_ID,PHASE_INDEX) VALUES(";
-        //            strSQL += "'" + WellID + "',";
-        //            strSQL += "" + lnKey.ToString() + ")";
-
-        //            if (objDataService.executeNonQuery(strSQL))
-        //            {
-        //            }
-        //            else
-        //                MsgBox("Failed to save Trip Data" + objDataService.LastError, MsgBoxStyle.Critical, SYSTEM_TITLE);
-        //        }
-
-        //        foreach (TripDepthInformation objItem in TagDepthInformation.Values)
-        //        {
-        //            strSQL = "INSERT INTO VMX_TRIPAN_DEPTH_INFO_HEADER (WELL_ID,PHASE_INDEX,LOG_NAME) VALUES(";
-        //            strSQL += "'" + WellID + "',";
-        //            strSQL += "" + objItem.PhaseIndex.ToString + ",";
-        //            strSQL += "'" + objItem.TimeLogName.Replace("'", "''") + "')";
-
-        //            if (objDataService.executeNonQuery(strSQL))
-        //            {
-        //            }
-        //            else
-        //                MsgBox("Failed to save Trip Data" + objDataService.LastError, MsgBoxStyle.Critical, SYSTEM_TITLE);
-
-        //            int counter = 1;
-
-        //            foreach (TripDepthRange objRange in objItem.DepthRanges.Values)
-        //            {
-        //                strSQL = "INSERT INTO VMX_TRIPAN_DEPTH_RANGES (WELL_ID,SR_NO,PHASE_INDEX,FROM_DEPTH,TO_DEPTH,LABEL,LOG_NAME,WITH_BM,WO_BM) VALUES(";
-        //                strSQL += "'" + WellID + "',";
-        //                strSQL += "" + counter.ToString() + ",";
-        //                strSQL += "" + objItem.PhaseIndex.ToString + ",";
-        //                strSQL += "" + objRange.FromDepth.ToString + ",";
-        //                strSQL += "" + objRange.ToDetph.ToString + ",";
-        //                strSQL += "'" + objRange.LabelText.Replace("'", "''") + "',";
-        //                strSQL += "'" + objRange.TimeLogName.Replace("'", "''") + "',";
-        //                strSQL += "" + objRange.WithBenchhmark.ToString + ",";
-        //                strSQL += "" + objRange.WOBenchmark.ToString + ")";
-
-
-        //                if (objDataService.executeNonQuery(strSQL))
-        //                {
-        //                }
-        //                else
-        //                    MsgBox("Failed to save Trip Data" + objDataService.LastError, MsgBoxStyle.Critical, SYSTEM_TITLE);
-
-        //                counter += 1;
-        //            }
-        //        }
-        //    }
-
-        //    catch (Exception ex)
-        //    {
-        //    }
-        //}
-        //===
-
 
 
 

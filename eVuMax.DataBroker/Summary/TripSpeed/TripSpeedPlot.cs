@@ -97,6 +97,10 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
         {
             try
             {
+
+                
+                string paramWarnings = ""; //Nishant 22-10-2021
+
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 string wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
@@ -110,13 +114,14 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 TripAnalyzer objTripAnalyzer = new TripAnalyzer(paramRequest.objDataService, wellId, UserId);
                 
                 objTripAnalyzer.processTripSpeed1Data(ref objTripSpeedData);
+                paramWarnings = objTripAnalyzer.Warnings;//Nishant 22-10-2021;
                 objTripSpeedData.objUserSettings = objTripAnalyzer.objUserSettings;
 
                 string lastError = "";
                 VuMaxDR.Data.Objects.Well objWell = VuMaxDR.Data.Objects.Well.loadObject(ref paramRequest.objDataService, wellId, ref lastError);
                 objTripSpeedData.WellName = objWell.name;
 
-
+                objResponse.Warnings = paramWarnings;
                 objResponse.RequestSuccessfull = true;
                 objResponse.Response = JsonConvert.SerializeObject(objTripSpeedData);
 
@@ -135,6 +140,7 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
         {
             try
             {
+                string paramWarnings = ""; //Nishant 22-10-2021
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 string wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
@@ -146,6 +152,9 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 objTripAnalyzer.processTripSpeed2Data(ref objTripSpeedData);
                 objTripSpeedData.objUserSettings = objTripAnalyzer.objUserSettings;
                 objTripSpeedData.WellName = objWell.name;
+
+                paramWarnings = objTripAnalyzer.Warnings;//Nishant 22-10-2021
+                objResponse.Warnings = paramWarnings;//Nishant 22-10-2021
 
                 objResponse.RequestSuccessfull = true;
                 objResponse.Response = JsonConvert.SerializeObject(objTripSpeedData);
