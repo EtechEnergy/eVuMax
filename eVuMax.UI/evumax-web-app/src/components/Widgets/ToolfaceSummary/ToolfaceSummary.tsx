@@ -28,15 +28,15 @@ import BrokerParameter from "../../../broker/BrokerParameter";
 import axios from "axios";
 
 import {
- 
+
   NumericTextBox,
   Checkbox,
   ColorPicker,
   Switch,
- 
+
 } from "@progress/kendo-react-inputs";
 
-import { Notification } from '@progress/kendo-react-notification';
+
 
 import {
   Grid,
@@ -44,28 +44,11 @@ import {
   GridColumn,
   GridToolbar,
 } from "@progress/kendo-react-grid";
-import {
-  TabStrip,
-  TabStripTab,
-
-  DropDownList,
-  Button,
-
-  ListView,
-  ListViewHeader,
-  Fade,
-} from "@progress/kendo-react-all";
+import { TabStrip, TabStripTab, DropDownList, Button, ListView, ListViewHeader } from "@progress/kendo-react-all";
 
 
-import moment from "moment";
 import "./ToolfaceSummary.css";
-import {
-  faListAlt,
-  faPlus,
-  faSearchMinus,
-  faTrash,
-  faUndo,
-} from "@fortawesome/free-solid-svg-icons";
+import { faListAlt, faPlus, faSearchMinus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 
 import GlobalMod from "../../../objects/global";
@@ -79,6 +62,11 @@ import { Util } from "../../../Models/eVuMax";
 import * as util from "../../../utilFunctions/utilFunctions";
 import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
+
+import NotifyMe from 'react-notification-timeline';
+
+
+
 let _gMod = new GlobalMod();
 
 // LOG_TYPE=1 THEN 'Time Log' WHEN LOG_TYPE=2 THEN 'Depth Log'
@@ -93,7 +81,7 @@ class ToolfaceSummary extends Component {
 
   objLogger: ClientLogger = new ClientLogger("ToolfaceSummary", _gMod._userId);
   state = {
-showWarning: false, //Nishant-PC 18/10/2021
+    warningMsg: [],
     objDataSelector: new DataSelector_(),
     WellName: "",
     selected: 0,
@@ -1583,16 +1571,6 @@ showWarning: false, //Nishant-PC 18/10/2021
 
 
 
-          // for (let index = 0; index < array.length; index++) {
-          //   const element = array[index];
-
-          // }
-
-
-          // for (let i = 0; i < this.objToolfaceData.formationTops.length; i++) {
-          //   this.objToolfaceData.formationTops[i].Color = this.objToolfaceData.formationTops[i].Color.toString(16).replace("-", "#");
-          // }
-          //let hexString = this.objToolfaceData.formationTops[0].Color.toString(16).replace("-", "#");
 
           if (this.objToolfaceData.MTFData == null) {
             this.objToolfaceData.MTFData = [];
@@ -1627,20 +1605,38 @@ showWarning: false, //Nishant-PC 18/10/2021
             this.objToolfaceData.adnlChannelsData = [];
           }
 
-          this.Warnings = res.data.Warnings;
-          
 
-          
-          if (this.Warnings.trim() != "") {
-            this.setState({showWarning:true});
-            $("#warning").css("backgroundColor", "#ffb74d");
-            $("#lblWarning").text(res.data.Warnings);
+
+          //Warnings Notifications
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          }else{
+            this.setState({
+              warningMsg: []
+            });
           }
-          else {
-            this.setState({showWarning:false});
-            $("#warning").css("backgroundColor", "transparent");
-            $("#lblWarning").text("");
-          }
+
+
+
+          //this.Warnings = res.data.Warnings;
+
+
+
+          // if (this.Warnings.trim() != "") {
+          //   this.setState({ showWarning: true });
+          //   $("#warning").css("backgroundColor", "#ffb74d");
+          //   $("#lblWarning").text(res.data.Warnings);
+          // }
+          // else {
+          //   this.setState({ showWarning: false });
+          //   $("#warning").css("backgroundColor", "transparent");
+          //   $("#lblWarning").text("");
+          // }
 
 
 
@@ -2755,6 +2751,21 @@ showWarning: false, //Nishant-PC 18/10/2021
               }} /></>
               }
             </div>
+            <NotifyMe
+              data={this.state.warningMsg}
+              storageKey='notific_key'
+              notific_key='timestamp'
+              notific_value='update'
+              heading='Warnings'
+              sortedByKey={false}
+              showDate={false}
+              size={24}
+              color="yellow"
+            // markAsReadFn={() => 
+            //   this.state.warningMsg = []
+            // }
+            />
+
 
 
           </div>
@@ -2910,22 +2921,11 @@ showWarning: false, //Nishant-PC 18/10/2021
             ></div>
 
             <div style={{ padding: "20px" }}>
-              {/* <DataSelector {...this} /> */}
+
 
               <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
               <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
-              {/* <Fade>
-            {this.state.showWarning && (
-              <Notification
-                type={{ style: "warning", icon: true }}
-                
-                closable={false}
-                onClose={() => this.setState({ warning: false })}
-              >
-                <span>{this.Warnings}</span>
-              </Notification>
-            )}
-          </Fade> */}
+
             </div>
           </TabStripTab>
 

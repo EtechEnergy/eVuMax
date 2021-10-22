@@ -6,17 +6,16 @@ import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import {
   DataSeries,
   dataSeriesType,
-  pointStyle,
+
 } from "../../../eVuMaxObjects/Chart/DataSeries";
-import DataSelector from "../../Common/DataSelector";
 import ProcessLoader from "../../loader/loader";
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import "./TripSpeedPlot2.css";
 
-import * as utilFunc from "../../../utilFunctions/utilFunctions";
+
 import GlobalMod from "../../../objects/global";
-import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
+
 import { TabStrip, TabStripTab } from "@progress/kendo-react-all";
 import TripAnalyzerSelection from "../TripAnalyzerSelection/TripAnalyzerSelection";
 import { axisLabelStyle } from "../../../eVuMaxObjects/Chart/Axis";
@@ -24,6 +23,10 @@ import { Util } from "../../../Models/eVuMax";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListAlt } from "@fortawesome/free-solid-svg-icons";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
+
+import NotifyMe from 'react-notification-timeline';
+import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
+
 
 let _gMod = new GlobalMod();
 
@@ -36,11 +39,12 @@ export class TripSpeedPlot2 extends Component {
 
   objLogger: ClientLogger = new ClientLogger("TripSpeedPlot2", _gMod._userId);
   state = {
+    warningMsg: [],
     WellName: "",
     selectedTab: 0,
     objTripSpeedData: {} as any,
     objUserSettings: {} as any,
-
+    maxWithAndWOConn: 0,
     isProcess: false,
   };
 
@@ -75,7 +79,7 @@ export class TripSpeedPlot2 extends Component {
         window.location.href = "/evumaxapp/";
         return;
       }
-      //this.objLogger.SendLog("Test Logger");
+      // this.objLogger.SendLog("Test Logger");
       //initialize chart
       this.initilizeCharts();
       //alert("Component Mount");
@@ -85,12 +89,6 @@ export class TripSpeedPlot2 extends Component {
     } catch (error) { }
   }
 
-
-  componentDidUpdate() {
-    try {
-      this.refreshChart();
-    } catch (error) { }
-  }
 
   initilizeCharts = () => {
     try {
@@ -149,6 +147,7 @@ export class TripSpeedPlot2 extends Component {
   };
 
   refreshTripSpeed2Chart() {
+    this.getMaxTripSpeed();
     this.objChart_TripSpeed2.initialize();
     this.objChart_TripSpeed2.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
     //Clear all the series
@@ -181,6 +180,16 @@ export class TripSpeedPlot2 extends Component {
     this.objChart_TripSpeed2.rightAxis().Visible = false;
     this.objChart_TripSpeed2.rightAxis().ShowLabels = false;
     this.objChart_TripSpeed2.rightAxis().ShowTitle = false;
+
+    //Nishant 22-10-2021
+    // this.objChart_TripSpeed2.leftAxis().AutoScale = false;
+    // this.objChart_TripSpeed2.leftAxis().Max = this.state.maxWithAndWOConn;
+    ////***************** */
+
+    this.objChart_TripSpeed2.onBeforeSeriesDraw.subscribe((e, i) => {
+      this.onBeforeDrawSeries(e, i);
+    });
+
 
     let objSeries = new DataSeries();
     objSeries.Id = "Series1"; // + index;
@@ -321,8 +330,113 @@ export class TripSpeedPlot2 extends Component {
     this.objChart_TripSpeed2.reDraw();
   }
 
+  onBeforeDrawSeries = (e: ChartEventArgs, i: number) => {
+    try {
+      d3.select(".tripWO_benchmark").remove();
+
+      let lnBenchMarkWOConn =
+        this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection;
+
+      if (lnBenchMarkWOConn > 0) {
+        let x1 = this.objChart_TripSpeed2.__chartRect.left;
+        let x2 = this.objChart_TripSpeed2.__chartRect.right;
+        let y1 = this.objChart_TripSpeed2.leftAxis().ScaleRef(lnBenchMarkWOConn);
+        let y2 = y1 + 4;
+
+        this.objChart_TripSpeed2.SVGRef.append("g")
+          .attr("class", "tripWO_benchmark")
+          .append("rect")
+          .attr("id", "tripWO_benchmark")
+          .attr("x", x1)
+          .attr("y", y1)
+          .attr("width", x2 - x1)
+          .attr("height", y2 - y1)
+          .style("fill", "#228B22");
+      }
+
+
+      d3.select(".tripWith_benchmark").remove();
+
+      let lnBenchMarkWithConn =
+        this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection;
+      //alert(lnBenchMarkWithConn);
+
+      if (lnBenchMarkWithConn > 0) {
+        // if (this.objChart_BarWithConn.leftAxis().Max < lnBenchMarkWithConn) {
+        //     this.objChart_BarWithConn.leftAxis().Max = lnBenchMarkWithConn + lnBenchMarkWithConn * 0.10;
+        //
+
+        // }
+
+        let x1 = this.objChart_TripSpeed2.__chartRect.left;
+        let x2 = this.objChart_TripSpeed2.__chartRect.right;
+        let y1 = this.objChart_TripSpeed2
+          .leftAxis()
+          .ScaleRef(lnBenchMarkWithConn);
+        let y2 = y1 + 4;
+
+        this.objChart_TripSpeed2.SVGRef.append("g")
+          .attr("class", "tripWith_benchmark")
+          .append("rect")
+          .attr("id", "tripWith_benchmark")
+          .attr("x", x1)
+          .attr("y", y1)
+          .attr("width", x2 - x1)
+          .attr("height", y2 - y1)
+          .style("fill", "#1E90FF");
+      }
+
+    } catch (error) { }
+  };
+
+  //Nishant 22-10-2021
+  getMaxTripSpeed = () => {
+    try {
+      
+      //Check BanchMark Value if greater then Max value of Axis then set
+      let maxTripSpeed = Math.max(
+        ...this.state.objTripSpeedData.bar1Data.map((item) => item.X)
+      );
+
+
+      //Check BanchMark Value if greater then Max value of Axis then set
+      let maxTripSpeedWO = Math.max(
+        ...this.state.objTripSpeedData.bar2Data.map((item) => item.X)
+      );
+
+      let maxBenchMarkWO = this.state.objUserSettings.objBenchMarks.TripSpeedWOConnection
+      let maxBenchMarkWithConn = this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection
+
+      let max = 0;
+      if (maxTripSpeed > maxTripSpeedWO) {
+        max = maxTripSpeed;
+      } else {
+        max = maxTripSpeedWO;
+      }
+
+
+      if (maxBenchMarkWO > max) {
+        max = maxBenchMarkWO;
+      }
+
+      if (maxBenchMarkWithConn > max) {
+        max = maxBenchMarkWithConn;
+      }
+
+      max = max + max * 0.10
+      this.setState({ maxWithAndWOConn: max });
+
+
+
+    } catch (error) {
+
+    }
+
+  }
+
   loadConnections = () => {
     try {
+      
       Util.StatusInfo("Getting data from the server  ");
       this.setState({
         //isProcess: true,
@@ -361,8 +475,22 @@ export class TripSpeedPlot2 extends Component {
         .then((res) => {
 
           Util.StatusSuccess("Data successfully retrived  ");
-
+          
           let objData = JSON.parse(res.data.Response);
+          
+          //Warnings Notifications
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          } else {
+            this.setState({
+              warningMsg: []
+            });
+          }
 
 
           this.setState({
@@ -373,6 +501,9 @@ export class TripSpeedPlot2 extends Component {
           });
           Util.StatusReady();
           document.title = this.state.WellName + " -Trip Speed-2"; //Nishant 02/09/2021
+
+this.refreshChart();
+
         })
         .catch((error) => {
           // this.setState({
@@ -408,14 +539,14 @@ export class TripSpeedPlot2 extends Component {
 
     return (
       <div>
-        <div className="row">
-          <div className="col-lg-2 row">
+        <div className="row" style={{justifyContent:"space-between"}}>
+          <div className="">
 
             <label className="summaryTitle">{this.state.WellName}  </label>
             {loader ? <ProcessLoader /> : ""}
           </div>
 
-          <div className="col-lg-11">
+          <div className="form-inline m-1">
             <div className="eVumaxPanelController" style={{ float: "right", visibility: this.objLogger.LogList.length > 0 ? "visible" : "hidden", width: "170px" }}>
 
               {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
@@ -427,6 +558,21 @@ export class TripSpeedPlot2 extends Component {
               }} /></>
               }
             </div>
+
+            <NotifyMe
+              data={this.state.warningMsg}
+              storageKey='notific_key'
+              notific_key='timestamp'
+              notific_value='update'
+              heading='Warnings'
+              sortedByKey={false}
+              showDate={false}
+              size={24}
+              color="yellow"
+            // markAsReadFn={() => 
+            //   this.state.warningMsg = []
+            // }
+            />
           </div>
 
         </div>
@@ -445,7 +591,7 @@ export class TripSpeedPlot2 extends Component {
                     <div
                       id="TripSpeed2"
                       style={{
-                        height: "calc(77vh)",
+                        height: "calc(75vh)",
 
                         width: "calc(90vw)",
                         backgroundColor: "transparent",

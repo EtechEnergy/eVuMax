@@ -71,6 +71,7 @@
     "react-images-upload": "^1.2.8",
     "react-images-uploading": "^3.0.1",
     "react-moment": "^0.9.7",
+    "react-notification-timeline": "0.0.9",
     "react-redux": "^7.2.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.1.2",

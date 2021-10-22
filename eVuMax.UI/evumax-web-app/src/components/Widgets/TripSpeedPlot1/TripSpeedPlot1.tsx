@@ -7,11 +7,7 @@ import {
   curveStyle,
 } from "../../../eVuMaxObjects/Chart/Chart";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
-import {
-  DataSeries,
-  dataSeriesType,
-
-} from "../../../eVuMaxObjects/Chart/DataSeries";
+import { DataSeries, dataSeriesType, } from "../../../eVuMaxObjects/Chart/DataSeries";
 
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
@@ -26,6 +22,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
+import NotifyMe from 'react-notification-timeline';
+
+
 let _gMod = new GlobalMod();
 
 export class TripSpeedPlot1 extends Component {
@@ -37,6 +36,7 @@ export class TripSpeedPlot1 extends Component {
 
   objLogger: ClientLogger = new ClientLogger("TripSpeedPlot1", _gMod._userId);
   state = {
+    warningMsg: [],
     WellName: "",
     selectedTab: 0,
     objTripSpeedData: {} as any,
@@ -95,11 +95,11 @@ export class TripSpeedPlot1 extends Component {
   //   window.removeEventListener("resize", this.refreshChart);
   // }
 
-  componentDidUpdate() {
-    try {
-      this.refreshChart();
-    } catch (error) { }
-  }
+  // componentDidUpdate() {
+  //   try {
+  //     this.refreshChart();
+  //   } catch (error) { }
+  // }
 
   initilizeCharts = () => {
     try {
@@ -883,25 +883,33 @@ export class TripSpeedPlot1 extends Component {
 
           let objData = JSON.parse(res.data.Response);
 
-
-
-
+          //Warnings Notifications
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          } else {
+            this.setState({
+              warningMsg: []
+            });
+          }
 
           this.setState({
             WellName: objData.WellName,
             objTripSpeedData: objData,
             objUserSettings: objData.objUserSettings,
-            //isProcess: false,
           });
           Util.StatusSuccess("Data successfully retrived");
           document.title = this.state.WellName + " -Trip Speed-1"; //Nishant 02/09/2021
+          this.refreshChart();
+
         })
         .catch((error) => {
-          // this.setState({
-          //   isProcess: false,
-          // });
+
           Util.StatusError(error.message);
-          // this.forceUpdate();
 
           if (error.response) {
             // return <CustomeNotifications Key="success" Icon={false}  />
@@ -933,37 +941,50 @@ export class TripSpeedPlot1 extends Component {
 
     return (
       <div>
-        <div className="row">
-          <div className="col-lg-6">
-            <label className="summaryTitle">{this.state.WellName}  </label>
-
-            {/* {loader ? <ProcessLoader /> : ""} */}
-          </div>
-          <div className="col-lg-6">
-            {/* <div className="float-right mr-2">
-              <FontAwesomeIcon
-                icon={faUndo}
-                onClick={() => {
-                  this.refreshChart();
-                }}
-              />
-            </div> */}
-            <div className="eVumaxPanelController" style={{ float: "right", width: this.objLogger.LogList.length > 0 ? "270px" : "180px" }}>
-
-              <label className=" ml-0 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
-              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
-              {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
-                this.objLogger.downloadFile();
-              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
-
-                this.objLogger.downloadFile();
-
-              }} /></>
-              }
-            </div>
-
-          </div>
+        <div className="row" style={{justifyContent:"space-between"}}>
+        <div className="">
+          <label className="summaryTitle">{this.state.WellName}  </label>
         </div>
+        <div className="form-inline m-1">
+
+          {/* <div className="col-lg-6"> */}
+
+          <div className="eVumaxPanelController" style={{ float: "right", width: this.objLogger.LogList.length > 0 ? "270px" : "180px" }}>
+
+            <label className=" ml-0 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+            <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
+            {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
+              this.objLogger.downloadFile();
+            }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+
+              this.objLogger.downloadFile();
+
+            }} /></>
+            }
+
+
+          </div>
+          <NotifyMe
+            data={this.state.warningMsg}
+            storageKey='notific_key'
+            notific_key='timestamp'
+            notific_value='update'
+            heading='Warnings'
+            sortedByKey={false}
+            showDate={false}
+            size={24}
+            color="yellow"
+          // markAsReadFn={() => 
+          //   this.state.warningMsg = []
+          // }
+          />
+
+
+          {/* </div> */}
+        </div>
+
+        </div>
+       
         <div className="clearfix"></div>
 
         <div className="row">

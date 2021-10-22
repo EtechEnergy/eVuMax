@@ -18,6 +18,11 @@ import { DropDownList } from "@progress/kendo-react-dropdowns";
 
 import { Util } from "../../../Models/eVuMax";
 import { Switch } from "@progress/kendo-react-all";
+
+
+import NotifyMe from 'react-notification-timeline';
+
+
 let _gMod = new GlobalMod();
 
 class Broomstick extends Component {
@@ -29,6 +34,7 @@ class Broomstick extends Component {
   }
 
   state = {
+    warningMsg: [],
     WellName: "",
     objBroomstickData: {} as any,
     isProcess: false,
@@ -155,6 +161,22 @@ class Broomstick extends Component {
           params: { paramRequest: JSON.stringify(objBrokerRequest) },
         })
         .then((res) => {
+
+
+          //Warnings Notifications
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          }else{
+            this.setState({
+              warningMsg: []
+            });
+          }
+
 
           let objData = JSON.parse(res.data.Response);
 
@@ -575,6 +597,20 @@ class Broomstick extends Component {
               />
 
             </div>
+            <NotifyMe
+              data={this.state.warningMsg}
+              storageKey='notific_key'
+              notific_key='timestamp'
+              notific_value='update'
+              heading='Warnings'
+              sortedByKey={false}
+              showDate={false}
+              size={24}
+              color="yellow"
+            // markAsReadFn={() => 
+            //   this.state.warningMsg = []
+            // }
+            />
 
 
           </div>

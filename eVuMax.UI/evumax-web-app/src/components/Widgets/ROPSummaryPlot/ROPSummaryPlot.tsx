@@ -8,7 +8,7 @@ import {
   pointStyle,
 } from "../../../eVuMaxObjects/Chart/DataSeries";
 import DataSelector from "../../Common/DataSelector";
-import ProcessLoader from "../../loader/loader";
+
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import "./ROPSummaryPlot.css";
@@ -19,11 +19,15 @@ import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListAlt, faSearchMinus, faUndo } from "@fortawesome/free-solid-svg-icons";
 
-import $ from "jquery";
+
 import { Util } from "../../../Models/eVuMax";
 import DataSelector_ from "../../Common/DataSelector_";
 import { Switch } from "@progress/kendo-react-inputs/dist/npm/switch/Switch";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
+
+import NotifyMe from 'react-notification-timeline';
+
+
 let _gMod = new GlobalMod();
 
 export class ROPSummaryPlot extends Component {
@@ -36,6 +40,7 @@ export class ROPSummaryPlot extends Component {
   objLogger: ClientLogger = new ClientLogger("ROPSummaryPlot", _gMod._userId);
 
   state = {
+    warningMsg: [],
     selected: 0,
     //selectionType: "-1",
     objROPSummaryData: {} as any,
@@ -849,19 +854,27 @@ export class ROPSummaryPlot extends Component {
 
           let objData = JSON.parse(res.data.Response);
 
-
-          this.Warnings = res.data.Warnings;
-
-          //this.objLogger.SendLog("Connection Loaded");
-
-          if (this.Warnings.trim() != "") {
-            $("#warning").css("backgroundColor", "#ffb74d");
-            $("#lblWarning").text(res.data.Warnings);
+          //Warnings Notifications
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
           }
-          else {
-            $("#warning").css("backgroundColor", "transparent");
-            $("#lblWarning").text("");
-          }
+          // this.Warnings = res.data.Warnings;
+
+          // //this.objLogger.SendLog("Connection Loaded");
+
+          // if (this.Warnings.trim() != "") {
+          //   $("#warning").css("backgroundColor", "#ffb74d");
+          //   $("#lblWarning").text(res.data.Warnings);
+          // }
+          // else {
+          //   $("#warning").css("backgroundColor", "transparent");
+          //   $("#lblWarning").text("");
+          // }
 
 
 
@@ -1156,6 +1169,21 @@ export class ROPSummaryPlot extends Component {
               }} /></>
               }
             </div>
+
+            <NotifyMe
+              data={this.state.warningMsg}
+              storageKey='notific_key'
+              notific_key='timestamp'
+              notific_value='update'
+              heading='Warnings'
+              sortedByKey={false}
+              showDate={false}
+              size={24}
+              color="yellow"
+            // markAsReadFn={() => 
+            //   this.state.warningMsg = []
+            // }
+            />
 
 
           </div>

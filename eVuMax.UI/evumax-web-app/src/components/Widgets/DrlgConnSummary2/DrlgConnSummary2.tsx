@@ -4,21 +4,16 @@ import $ from "jquery";
 import { Chart, lineStyle } from "../../../eVuMaxObjects/Chart/Chart";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import { formatNumber, parseDate } from "@telerik/kendo-intl";
-import {
-  Axis,
-  axisLabelStyle,
-  axisPosition,
-} from "../../../eVuMaxObjects/Chart/Axis";
+
 import DataSelector from "../../Common/DataSelector";
-import { Moment } from "moment";
+
 import {
   DataSeries,
   dataSeriesType,
 } from "../../../eVuMaxObjects/Chart/DataSeries";
-import { Guid } from "guid-typescript";
+
 import "@progress/kendo-react-layout";
-import { filterBy } from "@progress/kendo-data-query";
-import ProcessLoader from "../../loader/loader";
+
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import axios from "axios";
@@ -28,18 +23,12 @@ import {
   MaskedTextBox,
   NumericTextBox,
   Checkbox,
-  ColorPicker,
   Switch,
-  RadioGroup,
-  Slider,
-  SliderLabel,
-  RadioButton,
 } from "@progress/kendo-react-inputs";
 import {
   Grid,
   GridColumn as Column,
-  GridColumn,
-  GridToolbar,
+
 } from "@progress/kendo-react-grid";
 import {
   TabStrip,
@@ -49,7 +38,7 @@ import {
 } from "@progress/kendo-react-all";
 
 
-import moment from "moment";
+
 
 import "./DrlgConnSummary2.css";
 import { faListAlt, faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
@@ -59,6 +48,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
 import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
+
+import NotifyMe from 'react-notification-timeline';
 
 let _gMod = new GlobalMod();
 
@@ -71,6 +62,7 @@ class DrlgConnSummary2 extends Component {
   }
 
   state = {
+    warningMsg: [],
     WellName: "",
     selected: 0,
     summaryData: [],
@@ -475,6 +467,19 @@ class DrlgConnSummary2 extends Component {
         .then((res) => {
           this.objSummaryData = JSON.parse(res.data.Response);
           Util.StatusSuccess("Data successfully retrived  ");
+          //Warnings Notifications
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          }else{
+            this.setState({
+              warningMsg: []
+            });
+          }
 
           this.setData();
         })
@@ -688,6 +693,21 @@ class DrlgConnSummary2 extends Component {
               }} /></>
               }
             </div>
+            <NotifyMe
+              data={this.state.warningMsg}
+              storageKey='notific_key'
+              notific_key='timestamp'
+              notific_value='update'
+              heading='Warnings'
+              sortedByKey={false}
+              showDate={false}
+              size={24}
+              color="yellow"
+            // markAsReadFn={() => 
+            //   this.state.warningMsg = []
+            // }
+            />
+
           </div>
 
         </div>

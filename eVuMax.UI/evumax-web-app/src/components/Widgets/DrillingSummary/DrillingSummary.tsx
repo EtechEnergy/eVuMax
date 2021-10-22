@@ -34,11 +34,11 @@ import { faListAlt, faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import { Util } from "../../../Models/eVuMax";
 
 import DataSelector_ from "../../Common/DataSelector_";
-import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
+
 import DataSelector from "../../Common/DataSelector";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
-import LogViewer from "../../ClientLogger/LogViewer";
-import { json } from "d3-fetch";
+
+import NotifyMe from 'react-notification-timeline';
 
 let _gMod = new GlobalMod();
 
@@ -63,6 +63,7 @@ export class DrillingSummary extends Component {
   WellId: string = "";
   state = {
 
+    warningMsg:[],
     selectionType: "-1",
     selected: 0,
     objDrlgSummary: {} as any,
@@ -1323,6 +1324,20 @@ export class DrillingSummary extends Component {
 
           let objData = JSON.parse(res.data.Response);
 
+          //Warnings Notifications
+          let warnings:string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          }else{
+            this.setState({
+              warningMsg: []
+            });
+          }
+
           let offSetWellNumericData: any = [];
           if (objData.offSetWellNumericData.length > 0) {
             offSetWellNumericData = objData.offSetWellNumericData[0];
@@ -1707,6 +1722,20 @@ export class DrillingSummary extends Component {
               }} /></>
               }
             </div>
+            <NotifyMe
+                data={this.state.warningMsg}
+                storageKey='notific_key'
+                notific_key='timestamp'
+                notific_value='update'
+                heading='Warnings'
+                sortedByKey={false}
+                showDate={false}
+                size={24}
+                color="yellow"
+              // markAsReadFn={() => 
+              //   this.state.warningMsg = []
+              // }
+              />
           </div>
         </div>
 

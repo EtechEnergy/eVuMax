@@ -1381,33 +1381,34 @@ export default class TripAnalyzerSelection extends Component<IProps> {
                 </Dialog>
               )}
             </TabStripTab>
-            {(this.props.plotID == "TripSpeed2" ? false : true) && (
-              <TabStripTab title="Benchmarks">
-                <div className="row ml-5">
-                  <div className="col lg-2">
-                    <label className="mr-3">Speed Without Connection</label>
-                    <NumericTextBox
-                      onChange={(e) =>
-                        this.handleChange(e, "TripSpeedWOConnection")
-                      }
-                      value={this.state.objBenchMarks.TripSpeedWOConnection}
-                      format="n0"
-                      width={100}
-                    />
-                  </div>
-                  <div className="col lg-8">
-                    <label className="mr-3"> Speed With Connection</label>
-                    <NumericTextBox
-                      onChange={(e) =>
-                        this.handleChange(e, "TripSpeedWithConnection")
-                      }
-                      value={this.state.objBenchMarks.TripSpeedWithConnection}
-                      format="n2"
-                      width={100}
-                    />
-                  </div>
+            {/* {(this.props.plotID == "TripSpeed2" ? false : true) && ( */}
+            <TabStripTab title="Benchmarks">
+              <div className="row ml-5">
+                <div className="form inline ml-3 mr-2">
+                  <label className="mr-3">Speed Without Connection</label>
+                  <NumericTextBox
+                    onChange={(e) =>
+                      this.handleChange(e, "TripSpeedWOConnection")
+                    }
+                    value={this.state.objBenchMarks.TripSpeedWOConnection}
+                    format="n0"
+                    width={100}
+                  />
                 </div>
+                <div className="ml-2">
+                  <label className="mr-3"> Speed With Connection</label>
+                  <NumericTextBox
+                    onChange={(e) =>
+                      this.handleChange(e, "TripSpeedWithConnection")
+                    }
+                    value={this.state.objBenchMarks.TripSpeedWithConnection}
+                    format="n2"
+                    width={100}
+                  />
+                </div>
+              </div>
 
+              {(this.props.plotID == "TripSpeed2" ? false : true) && (
                 <div className="row ml-5">
                   <div className="col lg-10">
                     <Grid
@@ -1505,9 +1506,9 @@ export default class TripAnalyzerSelection extends Component<IProps> {
                       />
                     </Grid>
                   </div>
-                </div>
+                </div>)}
               </TabStripTab>
-            )}
+            {/* )} */}
           </TabStrip>
         </div>
       </React.Fragment>

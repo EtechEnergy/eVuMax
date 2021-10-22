@@ -1,70 +1,41 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import * as d3 from "d3";
 import $ from "jquery";
-import { Chart, lineStyle } from "../../../eVuMaxObjects/Chart/Chart";
+import { Chart } from "../../../eVuMaxObjects/Chart/Chart";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import { formatNumber, parseDate } from "@telerik/kendo-intl";
-import {
-  Axis,
-  axisLabelStyle,
-  axisPosition,
-} from "../../../eVuMaxObjects/Chart/Axis";
+import { axisLabelStyle } from "../../../eVuMaxObjects/Chart/Axis";
 import DataSelector from "../../Common/DataSelector";
-import { Moment } from "moment";
+
 import { confirmAlert } from "react-confirm-alert";
-import {
-  DataSeries,
-  dataSeriesType,
-} from "../../../eVuMaxObjects/Chart/DataSeries";
-import { Guid } from "guid-typescript";
+import { DataSeries, dataSeriesType, } from "../../../eVuMaxObjects/Chart/DataSeries";
+
 import "@progress/kendo-react-layout";
-import { filterBy } from "@progress/kendo-data-query";
+
 import ProcessLoader from "../../loader/loader";
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import axios from "axios";
-import Moment_ from "react-moment";
-import {
-  Input,
-  MaskedTextBox,
-  NumericTextBox,
-  Checkbox,
-  ColorPicker,
-  Switch,
-  RadioGroup,
-  Slider,
-  SliderLabel,
-  RadioButton,
-} from "@progress/kendo-react-inputs";
-import {
-  Grid,
-  GridColumn as Column,
-  GridColumn,
-  GridSelectionChangeEvent,
-  GridToolbar,
-} from "@progress/kendo-react-grid";
-import {
-  TabStrip,
-  TabStripTab,
 
-  Button,
-
-  Dialog
-} from "@progress/kendo-react-all";
+import { Input, MaskedTextBox, NumericTextBox, Checkbox, Switch, RadioButton, } from "@progress/kendo-react-inputs";
+import { Grid, GridColumn as Column, GridSelectionChangeEvent, } from "@progress/kendo-react-grid";
+import { TabStrip, TabStripTab, Button, Dialog } from "@progress/kendo-react-all";
 
 
-import { axisBottom, gray, json } from "d3";
-import moment from "moment";
-import { stat } from "fs";
+
 import "./TripConnSummary.css";
 import { faListAlt, faMoon, faSun, faUnderline, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Util } from "../../../Models/eVuMax";
-import { isThisTypeNode } from "typescript";
+
 import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
+
+import NotifyMe from 'react-notification-timeline';
+
+
 
 let _gMod = new GlobalMod();
 
@@ -78,6 +49,7 @@ class TripConnSummary extends Component {
 
   objLogger: ClientLogger = new ClientLogger("TripConnSummary", _gMod._userId);
   state = {
+    warningMsg: [],
     WellName: "",
     showCommentDialog: false,
     selected: 0,
@@ -357,17 +329,31 @@ class TripConnSummary extends Component {
 
           this.objSummaryData = JSON.parse(res.data.Response);
 
-          this.Warnings = res.data.Warnings;
+          //Warnings Notifications
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          }else{
+            this.setState({
+              warningMsg: []
+            });
+          }
+
+          // this.Warnings = res.data.Warnings;
 
 
-          if (this.Warnings.trim() != "") {
-            $("#warning").css("backgroundColor", "#ffb74d");
-            $("#lblWarning").text(res.data.Warnings);
-          }
-          else {
-            $("#warning").css("backgroundColor", "transparent");
-            $("#lblWarning").text("");
-          }
+          // if (this.Warnings.trim() != "") {
+          //   $("#warning").css("backgroundColor", "#ffb74d");
+          //   $("#lblWarning").text(res.data.Warnings);
+          // }
+          // else {
+          //   $("#warning").css("backgroundColor", "transparent");
+          //   $("#lblWarning").text("");
+          // }
 
 
           this.setData();
@@ -815,6 +801,21 @@ class TripConnSummary extends Component {
               }} /></>
               }
             </div>
+
+            <NotifyMe
+              data={this.state.warningMsg}
+              storageKey='notific_key'
+              notific_key='timestamp'
+              notific_value='update'
+              heading='Warnings'
+              sortedByKey={false}
+              showDate={false}
+              size={24}
+              color="yellow"
+            // markAsReadFn={() => 
+            //   this.state.warningMsg = []
+            // }
+            />
 
 
           </div>
