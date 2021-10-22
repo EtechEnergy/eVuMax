@@ -183,8 +183,10 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
 
 
                 if (objTag == null)
+                {
                     Warnings += "No Tags are selected or present.";
-                return;
+                    return;
+                }
 
                 objLogger.LogMessage("objTag loaded as: " + JsonConvert.SerializeObject(objTag));
 
@@ -193,8 +195,10 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 objTimeLog = getTimeLogFromDateRange(objTag.StartDate, objTag.EndDate);
 
                 if (objTimeLog == null)
+                {
                     Warnings += "TimeLog is not present.";
                     return;
+                }
 
                 ProcessStatus = 1;
 
