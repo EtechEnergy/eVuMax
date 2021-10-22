@@ -1435,10 +1435,10 @@ class ToolfaceSummary extends Component {
         Direction: this.objUserSettings.Direction,
 
         // Table
-        SlidePercent: this.objToolfaceData.SlidePercent,
+        SlidePercent: this.objToolfaceData.SlidePercent==NaN?this.objToolfaceData.SlidePercent:0,
         SlideROP: this.objToolfaceData.SlideROP,
-        RotaryPercent: this.objToolfaceData.RotaryPercent,
-        RotaryROP: this.objToolfaceData.RotaryROP,
+        RotaryPercent: this.objToolfaceData.RotaryPercent==NaN?this.objToolfaceData.RotaryPercent:0,
+        RotaryROP: this.objToolfaceData.RotaryROP==NaN?this.objToolfaceData.RotaryROP:0,
         OutOfDrlgWindow: this.objToolfaceData.OutOfDrlgWindowPercent,
         OutOfROPWindow: this.objToolfaceData.OutOfROPWindowPercent,
       });
