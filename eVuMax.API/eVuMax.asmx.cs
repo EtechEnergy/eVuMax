@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
-using VuMaxDR.Data;
 using Newtonsoft.Json;
 using eVuMax.DataBroker;
 using eVuMax.DataBroker.Broker;
@@ -14,9 +13,10 @@ using System.IO;
 using log4net;
 using System.Configuration;
 
+
 namespace eVuMax.API
 {
-        
+
     /// <summary>
     /// Summary description for eVuMax
     /// </summary>
@@ -25,11 +25,12 @@ namespace eVuMax.API
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     [System.Web.Script.Services.ScriptService]
-    public  class eVuMax : System.Web.Services.WebService
+    public class eVuMax : System.Web.Services.WebService
     {
 
+
         string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
-      
+
         /// <summary>
         /// Handles the request to get data and returns the response coming from broker
         /// </summary>
@@ -37,25 +38,19 @@ namespace eVuMax.API
         /// <returns></returns>
         [WebMethod]
         [ScriptMethod(UseHttpGet = true, ResponseFormat = ResponseFormat.Json)]
-        public  void getData(string paramRequest)
+        public void getData(string paramRequest)
         {
             try
             {
+
                 ILog APILogger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-                APILogger =  log4net.LogManager.GetLogger("eVuMaxAPILog");
-                
+                APILogger = log4net.LogManager.GetLogger("eVuMaxAPILog");
+
                 string AuthType = System.Configuration.ConfigurationManager.AppSettings["AuthType"];
 
                 //Parse the request to Broker request
                 BrokerRequest objRequest = JsonConvert.DeserializeObject<BrokerRequest>(paramRequest);
-                //if(objRequest.Function == "getAuthType")
-                //{
-                //    HttpContext.Current.Response.Write(JsonConvert.SerializeObject(AuthType));
-                //    return;
-                //}
-                
-                //Nishant 08-09-2021
-                //This will be used to validate User from DB or Windows
+
                 BrokerParameter objParameter = new BrokerParameter();
                 objParameter.ParamName = "AuthType";
                 objParameter.ParamValue = AuthType;
@@ -64,14 +59,30 @@ namespace eVuMax.API
 
                 string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
                 connString = getConnectionString();//for Decrepting password and user Name
-                DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
+
+                string __username = "";
+                string __password = "";
+                string __servername = "";
+
+                getConnStringComponents(out __servername, out __username, out __password);
+
+                VuMaxDR.Data.DataService objDataService;
+
+                if(AuthType=="0")
+                {
+                    objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
+                }
+                else
+                {
+                    objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true,false);
+                }
                 
 
-                if (!objDataService.OpenConnection2(connString))
+                if (!objDataService.OpenConnection(__username, __password, __servername))
                 {
                     //Error opening database connection
                     BrokerResponse objBadResponse = objRequest.createResponseObject();
-                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.RequestSuccessfull = true;
                     objBadResponse.Errors = "Error opening database connection. \n " + objDataService.LastError;
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objBadResponse));
                 }
@@ -80,8 +91,8 @@ namespace eVuMax.API
                     //Assign data service
                     objRequest.objDataService = objDataService;
                     IBroker objBroker = BrokerFactory.createBroker(objRequest);
-                    
-                    
+
+
                     var objResponse = objBroker.getData(objRequest);
 
                     if (objRequest != null)
@@ -109,7 +120,7 @@ namespace eVuMax.API
                 {
 
                     BrokerResponse objResponse = new BrokerResponse();
-                    objResponse.RequestSuccessfull = false;
+                    objResponse.RequestSuccessfull = true;
                     objResponse.Errors = "Error parsing request. " + ex.Message + ex.StackTrace;
                     //  return JsonConvert.SerializeObject(objResponse);
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objResponse));
@@ -126,8 +137,9 @@ namespace eVuMax.API
         }
 
         [WebMethod]
-        [ScriptMethod(ResponseFormat = ResponseFormat.Json)] 
-        public void performTask(string paramRequest) {
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public void performTask(string paramRequest)
+        {
 
             try
             {
@@ -146,18 +158,34 @@ namespace eVuMax.API
                 objParameter.ParamValue = AuthType;
                 objRequest.Parameters.Add(objParameter);
                 //****************************************
-                                            
+
 
                 string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
                 connString = getConnectionString();//for Decrepting password and user Name
-                DataService objDataService = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
+
+                VuMaxDR.Data.DataService objDataService;
+
+                if (AuthType == "0")
+                {
+                    objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
+                }
+                else
+                {
+                    objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
+                }
 
 
-                if (!objDataService.OpenConnection(connString))
+                string __username = "";
+                string __password = "";
+                string __servername = "";
+
+                getConnStringComponents(out __servername, out __username, out __password);
+
+                if (!objDataService.OpenConnection(__username,__password,__servername))
                 {
                     //Error opening database connection
                     BrokerResponse objBadResponse = objRequest.createResponseObject();
-                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.RequestSuccessfull = true;
                     objBadResponse.Errors = "Error opening database connection. \n " + objDataService.LastError;
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objBadResponse));
                 }
@@ -166,7 +194,6 @@ namespace eVuMax.API
                 objRequest.objDataService = objDataService;
 
                 IBroker objBroker = BrokerFactory.createBroker(objRequest);
-                
 
                 var objResponse = objBroker.performTask(objRequest);
 
@@ -193,7 +220,7 @@ namespace eVuMax.API
                 {
 
                     BrokerResponse objResponse = new BrokerResponse();
-                    objResponse.RequestSuccessfull = false;
+                    objResponse.RequestSuccessfull = true;
                     objResponse.Errors = "Error parsing request. " + ex.Message + ex.StackTrace;
                     //  return JsonConvert.SerializeObject(objResponse);
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objResponse));
@@ -210,17 +237,19 @@ namespace eVuMax.API
         }
 
 
-     
+
 
         /// <summary>
         /// Returns Assembly version
         /// </summary>
         /// <returns>Version Installed</returns>
         [WebMethod]
+        [ScriptMethod(UseHttpGet = true, ResponseFormat = ResponseFormat.Json)]
         public void getAssemblyVersion()
         {
             try
             {
+
                 Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 string version = assembly.GetName().Version.ToString();
                 //FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -232,7 +261,7 @@ namespace eVuMax.API
 
 
                 HttpContext.Current.Response.Write(JsonConvert.SerializeObject(VerDateInfo));
-                
+
 
 
             }
@@ -242,7 +271,7 @@ namespace eVuMax.API
             }
         }
 
-        public  DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
+        public DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
         {
             var filePath = assembly.Location;
             const int c_PeHeaderOffset = 60;
@@ -277,13 +306,13 @@ namespace eVuMax.API
 
 
                 string ErrorMessage = objRequest.Parameters.Where(x => x.ParamName.Contains("ErrorMessage")).FirstOrDefault().ParamValue;
-                string  UserFolderName= objRequest.Parameters.Where(x => x.ParamName.Contains("UserFolderName")).FirstOrDefault().ParamValue;
-                
-                if(UserFolderName == "" || UserFolderName == null)
+                string UserFolderName = objRequest.Parameters.Where(x => x.ParamName.Contains("UserFolderName")).FirstOrDefault().ParamValue;
+
+                if (UserFolderName == "" || UserFolderName == null)
                 {
                     BrokerResponse objResponse = new BrokerResponse();
                     objResponse.RequestSuccessfull = false;
-                    objResponse.Errors = "UserFolderName is Blank "; 
+                    objResponse.Errors = "UserFolderName is Blank ";
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objResponse));
                 }
 
@@ -294,7 +323,8 @@ namespace eVuMax.API
                 {
                     try
                     {
-                        if (appender.Name == "clientSideLogger") {
+                        if (appender.Name == "clientSideLogger")
+                        {
 
                             string file = Path.GetDirectoryName(((log4net.Appender.RollingFileAppender)appender).File);
 
@@ -310,11 +340,12 @@ namespace eVuMax.API
                             //        ((log4net.Appender.RollingFileAppender)appender).RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Size;
                             //        break;
                             //}
-                        ((log4net.Appender.FileAppender)appender).File = filename;
+                            ((log4net.Appender.FileAppender)appender).File = filename;
                             ((log4net.Appender.FileAppender)appender).ActivateOptions();
                         }
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                     }
                 }
 
@@ -336,12 +367,12 @@ namespace eVuMax.API
         {
             try
             {
-                System.Data.OleDb.OleDbConnectionStringBuilder builder = new System.Data.OleDb.OleDbConnectionStringBuilder();
+                System.Data.SqlClient.SqlConnectionStringBuilder builder = new System.Data.SqlClient.SqlConnectionStringBuilder();
                 builder.ConnectionString = ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
                 string dataSource = DecryptString(builder.DataSource);
                 builder.DataSource = dataSource;
 
-               // if (builder["Trusted_Connection"].ToString() != "yes") //Will be used when Windows Auth is used
+                // if (builder["Trusted_Connection"].ToString() != "yes") //Will be used when Windows Auth is used
                 {
 
                     string userName = DecryptString(builder["User ID"].ToString());
@@ -363,6 +394,46 @@ namespace eVuMax.API
         }
 
 
+
+        private void getConnStringComponents(out string paramServerName, out string paramUserName, out string paramPassword)
+        {
+            paramServerName = "";
+            paramUserName = "";
+            paramPassword = "";
+
+            try
+            {
+                System.Data.SqlClient.SqlConnectionStringBuilder builder = new System.Data.SqlClient.SqlConnectionStringBuilder();
+
+                builder.ConnectionString = ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
+                string dataSource = DecryptString(builder.DataSource);
+                builder.DataSource = dataSource;
+
+                paramServerName = dataSource;
+
+                try
+                {
+
+                    string userName = DecryptString(builder["User ID"].ToString());
+                    string password = DecryptString(builder["Password"].ToString());
+
+                    paramUserName = userName;
+                    paramPassword = password;
+
+                }
+                catch (Exception)
+                {
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
         private static string DecryptString(string encrString)
         {
             byte[] b;
@@ -370,8 +441,8 @@ namespace eVuMax.API
             try
             {
                 var objAES = new VuMaxDR.Common.AES();
-                
-                decrypted = objAES.Decrypt(encrString,DataBroker.Global.EncryptionKey, 128);
+
+                decrypted = objAES.Decrypt(encrString, DataBroker.Global.EncryptionKey, 128);
             }
             catch (FormatException fe)
             {
@@ -380,7 +451,7 @@ namespace eVuMax.API
             return decrypted;
         }
 
-       
+
 
     }//Class
-    }//Namespace
+}//Namespace

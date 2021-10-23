@@ -222,31 +222,18 @@ namespace eVuMax.DataBroker.Common.authentication
         {
             try
             {
-				
 
-				//Check connection status
-				if (!objDataService.checkConnection())
+
+				DataService objConnCheckDataService = new DataService(DataService.vmDatabaseType.SQLServer, "2008", true, false);
+
+				if(objConnCheckDataService.OpenConnection(UserName,Passwd,objDataService.ServerName))
                 {
-                    //Connection is not open
-                    lastError = "Database connection is not open";
-                    return false;
-                }
-
-                AES objAES = new AES();
-
-                string encPwd = objAES.Encrypt(Passwd, Global.EncryptionKey, 128);
-
-                bool isValidUser = false;
-                isValidUser = objDataService.IsRecordExist("SELECT user_id FROM VMX_USER WHERE USER_NAME='" + UserName + "' AND PASSWORD='" + encPwd + "'");
-                if (isValidUser)
-                {
-                    
-                    return true;
+					objConnCheckDataService.closeConnection();
+					return true;
                 }
                 else
                 {
-                    lastError = "invalid User Name or Password";
-                    return false;
+					return false;
                 }
 
             }
