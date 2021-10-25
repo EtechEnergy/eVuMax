@@ -1113,9 +1113,11 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         objDrlgConnSummary.avgTimeN = Math.Round(sumNightConnTimes / totalNightConnCount, 2);
                     }
 
-                    if (sumNightSTB > 0 && totalNightConnCount > 0)
+                    //if (sumNightSTB > 0 && totalNightConnCount > 0)
+                    if (sumNightBTS > 0 && totalNightConnCount > 0)
                     {
-                        objDrlgConnSummary.avgBTSN = Math.Round(sumNightSTB / totalNightConnCount, 2);
+                        //objDrlgConnSummary.avgBTSN = Math.Round(sumNightSTB / totalNightConnCount, 2);
+                        objDrlgConnSummary.avgBTSN = Math.Round(sumNightBTS / totalNightConnCount, 2);
                     }
 
                     if (sumNightSTS > 0 && totalNightConnCount > 0)
@@ -1183,7 +1185,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
 
 
-                    //convert connection dates to local 
+                    //convert connection dates to local  Nitin 21-10-2021
                     foreach (DataRow objRow in objDrlgConnSummary.connData.Rows)
                     {
 
@@ -1194,7 +1196,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         objRow["TO_DATE"] = connToDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
 
                     }
-                    //objDrlgConnSummary.connData = objData;
+                    
 
                     objResponse.Response = JsonConvert.SerializeObject(objDrlgConnSummary);
 
