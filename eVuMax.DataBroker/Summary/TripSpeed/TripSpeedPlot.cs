@@ -111,6 +111,18 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                     return objResponse;
                 }
 
+                //Check if time log exist, else return empty JSON
+                if (!VuMaxDR.Data.Objects.Well.isTimeLogExist(ref paramRequest.objDataService, wellId))
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Response = "{}";
+                    objBadResponse.Errors = "No time logs found in this well ";
+                    return objBadResponse;
+
+                }
+
                 TripAnalyzer objTripAnalyzer = new TripAnalyzer(paramRequest.objDataService, wellId, UserId);
                 
                 objTripAnalyzer.processTripSpeed1Data(ref objTripSpeedData);
@@ -144,6 +156,18 @@ namespace eVuMax.DataBroker.Summary.TripSpeed
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 string UserId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
                 string wellId = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellId")).FirstOrDefault().ParamValue;
+
+                //Check if time log exist, else return empty JSON
+                if (!VuMaxDR.Data.Objects.Well.isTimeLogExist(ref paramRequest.objDataService, wellId))
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Response = "{}";
+                    objBadResponse.Errors = "No time logs found in this well ";
+                    return objBadResponse;
+
+                }
 
                 string lastError = "";
                 VuMaxDR.Data.Objects.Well objWell = VuMaxDR.Data.Objects.Well.loadObject(ref paramRequest.objDataService, wellId, ref lastError);

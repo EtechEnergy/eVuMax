@@ -125,6 +125,20 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                 objTripConnSummary.WellName = DataService.checkNull(paramRequest.objDataService.getValueFromDatabase("SELECT WELL_NAME FROM VMX_WELL WHERE WELL_ID='" + wellId.Replace("'", "'''") + "'"), "").ToString();
 
+
+                //Check if time log exist, else return empty JSON
+                if (!VuMaxDR.Data.Objects.Well.isTimeLogExist(ref paramRequest.objDataService, wellId))
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Response = "{}";
+                    objBadResponse.Errors = "No time logs found in this well ";
+                    return objBadResponse;
+
+                }
+
+
                 //Get the primary time log 
                 VuMaxDR.Data.Objects.TimeLog objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
 

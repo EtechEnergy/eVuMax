@@ -31,6 +31,45 @@ namespace eVuMax.API
 
         string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
 
+        [WebMethod]
+        [ScriptMethod(UseHttpGet = true, ResponseFormat = ResponseFormat.Json)]
+        public void testconn()
+        {
+            try
+            {
+
+                string connString = System.Configuration.ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
+                connString = getConnectionString();//for Decrepting password and user Name
+
+                string __username = "";
+                string __password = "";
+                string __servername = "";
+
+                getConnStringComponents(out __servername, out __username, out __password);
+
+                VuMaxDR.Data.DataService objDataService;
+
+                objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true,false);
+
+                if (!objDataService.OpenConnection(__username, __password, __servername))
+                {
+
+                    string response = "Error opening database connection " + objDataService.LastError + " \n  User Info "+__username+" pwd "+__password+" server "+__servername+" ==>Connection string was " + objDataService.ConnectionString;
+                    HttpContext.Current.Response.Write(response);
+                }
+                else
+                {
+                    HttpContext.Current.Response.Write("Database connection opened successfully");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Current.Response.Write("Exception "+ex.Message+ex.StackTrace);
+            }
+        }
+
+
         /// <summary>
         /// Handles the request to get data and returns the response coming from broker
         /// </summary>
@@ -68,15 +107,8 @@ namespace eVuMax.API
 
                 VuMaxDR.Data.DataService objDataService;
 
-                if(AuthType=="0")
-                {
-                    objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
-                }
-                else
-                {
-                    objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true,false);
-                }
-                
+                objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
+               
 
                 if (!objDataService.OpenConnection(__username, __password, __servername))
                 {
@@ -165,15 +197,7 @@ namespace eVuMax.API
 
                 VuMaxDR.Data.DataService objDataService;
 
-                if (AuthType == "0")
-                {
-                    objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
-                }
-                else
-                {
-                    objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
-                }
-
+                objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
 
                 string __username = "";
                 string __password = "";
@@ -404,7 +428,7 @@ namespace eVuMax.API
             try
             {
                 System.Data.SqlClient.SqlConnectionStringBuilder builder = new System.Data.SqlClient.SqlConnectionStringBuilder();
-
+                
                 builder.ConnectionString = ConfigurationManager.ConnectionStrings["VuMax"].ConnectionString;
                 string dataSource = DecryptString(builder.DataSource);
                 builder.DataSource = dataSource;

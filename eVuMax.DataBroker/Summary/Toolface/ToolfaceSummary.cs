@@ -114,6 +114,18 @@ namespace eVuMax.DataBroker.Summary.Toolface
                     selectionType = "-1";
                 }
 
+                //Check if time log exist, else return empty JSON
+                if (!VuMaxDR.Data.Objects.Well.isTimeLogExist(ref paramRequest.objDataService, wellId))
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Response = "{}";
+                    objBadResponse.Errors = "No time logs found in this well ";
+                    return objBadResponse;
+
+                }
+
                 //Get the primary time log 
                 objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
 
