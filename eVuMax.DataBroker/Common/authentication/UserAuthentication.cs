@@ -226,6 +226,7 @@ namespace eVuMax.DataBroker.Common.authentication
 
 				DataService objConnCheckDataService = new DataService(DataService.vmDatabaseType.SQLServer, "2008", true, false);
 
+
 				if(objConnCheckDataService.OpenConnection(UserName,Passwd,objDataService.ServerName))
                 {
 					objConnCheckDataService.closeConnection();
