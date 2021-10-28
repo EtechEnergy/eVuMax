@@ -291,9 +291,9 @@ export class Dashboard extends React.Component<Props> {
                   aria-labelledby="navbarDropdown"
                   style={{ width: "190px" }}
                 >
-                  <NavLink className="nav-link" exact to="/dashboard/changePassword">
+                  {/* <NavLink className="nav-link" exact to="/dashboard/changePassword">
                     <FontAwesomeIcon icon={faKey} className="mr-2" /> Change Password
-                  </NavLink>
+                  </NavLink> */}
 
 
                   <a className="nav-link" onClick={this.ShowAboutDialog}>
