@@ -54,6 +54,8 @@ export default class WidgetSelector extends React.Component<IProps> {
   loadUserFav = () => {
     try {
 
+      _gMod = new GlobalMod();
+
       objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Well.Data.Objects";
       objBrokerRequest.Function = "getUserFav";

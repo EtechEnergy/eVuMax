@@ -32,18 +32,18 @@ export const Log_Details = (login: Partial<Types.ILogin>): AppActions => ({
 });
 
 export const startLog_Details = (login: Partial<Types.ILogin>) => {
-  return (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
-    dispatch(Log_In(login));
+  return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
+    await dispatch(Log_In(login));
   };
 };
 
 export const startLog_Out = (login: Partial<Types.ILogin>) => {
-  return (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
+  return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     localStorage.clear();
     objStatus = {};
     objStatus._statusMsg = "";
     objStatus._isLoading = false;
-    dispatch(setStatus(objStatus));
+    await dispatch(setStatus(objStatus));
 
     dispatch(Log_Out(login));
     history.push("/");
@@ -95,6 +95,7 @@ export const startLog_In = (login: Partial<Types.ILogin>) => {
           history.push("/dashboard/home");
           return dispatch(Log_In(login));
         } else {
+
           objStatus = {};
           objStatus._statusMsg = res.data.Warnings;
           objStatus._isLoading = false;

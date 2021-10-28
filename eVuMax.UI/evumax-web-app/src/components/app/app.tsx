@@ -37,7 +37,9 @@ class App extends Component {
 
   loadTheme = () => {
     try {
-
+      if (_gMod._userId == undefined || _gMod._userId == "") {
+        return;
+      }
       objBrokerRequest = new BrokerRequest();
       let objParameter = new BrokerParameter("UserId", _gMod._userId);
       objBrokerRequest.Parameters.push(objParameter);

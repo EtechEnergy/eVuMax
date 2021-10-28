@@ -656,9 +656,10 @@ export default class ActiveWell extends React.Component {
   //************** */
 
   ////18-08-2020
-  showOpenInterfaceDialog = (dataItem: any) => {
+  showOpenInterfaceDialog = async (dataItem: any) => {
 
-    this.setState({
+
+    await this.setState({
       showOpenInterfaceDialog: true,
       currentWellID: dataItem.WELL_ID,
       showOpenInterfaceDialogAsEditor: false,
