@@ -111,11 +111,11 @@ namespace eVuMax.API
                
 
 
-                if (!objDataService.OpenConnection(__username, __password, __servername))
+                if (!objDataService.OpenConnectionSqlPassword(__username, __password, __servername))
                 {
                     //Error opening database connection
                     BrokerResponse objBadResponse = objRequest.createResponseObject();
-                    objBadResponse.RequestSuccessfull = true;
+                    objBadResponse.RequestSuccessfull = false;
                     objBadResponse.Errors = "Error opening database connection. \n " + objDataService.LastError;
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objBadResponse));
                 }
@@ -153,7 +153,7 @@ namespace eVuMax.API
                 {
 
                     BrokerResponse objResponse = new BrokerResponse();
-                    objResponse.RequestSuccessfull = true;
+                    objResponse.RequestSuccessfull = false;
                     objResponse.Errors = "Error parsing request. " + ex.Message + ex.StackTrace;
                     //  return JsonConvert.SerializeObject(objResponse);
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objResponse));
