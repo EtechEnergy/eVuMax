@@ -11,7 +11,7 @@
 				<Control X="30" Y="30" Id="radioGroup" Type="RadioButtonGroup" Width="320" Height="100" Property="ISWINDOWSAUTHENTICATION">
 				<RadioButtonGroup Property="ISWINDOWSAUTHENTICATION">
 					<RadioButton X="30" Y="20" Width="200" Height="20" Value="0" Text="Use Active Directory Integration" />
-					<RadioButton X="30" Y="40" Width="200" Height="20" Value="1" Text="Use VuMax username/password authentication" />
+					<RadioButton X="30" Y="40" Width="200" Height="20" Value="1" Text="Use SQL Server username/password authentication" />
 				</RadioButtonGroup>
 				</Control>
 
