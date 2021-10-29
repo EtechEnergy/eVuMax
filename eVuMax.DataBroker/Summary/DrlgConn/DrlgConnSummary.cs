@@ -100,7 +100,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
             try
             {
 
-                MnemonicMappingMgr objMnemonicMgr = new MnemonicMappingMgr();
+                 MnemonicMappingMgr objMnemonicMgr = new MnemonicMappingMgr();
                 objMnemonicMgr.loadMappings(ref paramRequest.objDataService);
 
                 DrlgConnData objDrlgConnSummary = new DrlgConnData();
@@ -531,6 +531,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
 
                         if (!ContinueAhead)
+                        
                         {
                             //skip this connection
                             continue;

@@ -197,24 +197,31 @@ namespace eVuMax.DataBroker.Common.authentication
 					isValidUser = isValidDBUser(ref objRequest.objDataService, UserName, Password, ref LastError);
 				}
 
-				
+				Broker.BrokerResponse objResponse = objRequest.createResponseObject();
+				if (isValidUser) {
+					
+					objResponse.RequestSuccessfull = isValidUser;					
+
+				}
+
 
 
 				//TO-DO Authenticate the user and create response
 
-				Broker.BrokerResponse objResponse = objRequest.createResponseObject();
+
+
+				
 				objResponse.RequestSuccessfull = isValidUser;
-				objResponse.Warnings = LastError;
-				objResponse.Response = JsonConvert.SerializeObject(isValidUser);
+				objResponse.Errors = "Invalid username/password. Please check and try again";				
 
 				return objResponse;
 			}
 			catch (Exception ex)
 			{
-
 				Broker.BrokerResponse objResponse = objRequest.createResponseObject();
 				objResponse.RequestSuccessfull = false;
 				objResponse.Response = JsonConvert.SerializeObject(ex.Message + ex.StackTrace);
+				objResponse.Errors = JsonConvert.SerializeObject(ex.Message + ex.StackTrace);
 				return objResponse;
 			}
         }

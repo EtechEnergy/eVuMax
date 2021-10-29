@@ -378,7 +378,7 @@ export default class WidgetSelector extends React.Component<IProps> {
       >
 
 
-        <div>
+        <div style={{ paddingTop: "20px" }}>
 
           {
             <ListView
