@@ -119,7 +119,7 @@ class TripConnSummary extends Component {
 
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     try {
       //this.objLogger.SendLog("Test Logger");
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
@@ -164,6 +164,15 @@ class TripConnSummary extends Component {
       window.addEventListener("resize", this.refreshChart);
 
       this.loadConnections();
+
+      //RealTime 
+      let isRealtimeRunning = sessionStorage.getItem("realTimeTripConnSummary");
+      if (isRealtimeRunning == "true") {
+        await this.setState({ isRealTime: !this.state.isRealTime });
+        this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+      }
+      //==============
+
     } catch (error) { }
   }
 
@@ -337,7 +346,7 @@ class TripConnSummary extends Component {
             this.setState({
               warningMsg: warningList
             });
-          }else{
+          } else {
             this.setState({
               warningMsg: []
             });
@@ -760,6 +769,7 @@ class TripConnSummary extends Component {
       this.intervalID = null;
       this.loadConnections();
     }
+    sessionStorage.setItem("realTimeTripConnSummary", this.state.isRealTime.toString());
   };
 
 

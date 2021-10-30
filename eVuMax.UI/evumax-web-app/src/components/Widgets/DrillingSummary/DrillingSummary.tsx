@@ -63,7 +63,7 @@ export class DrillingSummary extends Component {
   WellId: string = "";
   state = {
 
-    warningMsg:[],
+    warningMsg: [],
     selectionType: "-1",
     selected: 0,
     objDrlgSummary: {} as any,
@@ -115,7 +115,7 @@ export class DrillingSummary extends Component {
   }
   //==============
 
-  componentDidMount() {
+  async componentDidMount() {
 
     //this.objLogger.SendLog("Component did Mount")
     this.initilizeCharts();
@@ -127,8 +127,14 @@ export class DrillingSummary extends Component {
     });
 
 
-
     this.loadDrlgSummary();
+    //RealTime 
+    let isRealtimeRunning = sessionStorage.getItem("realTimeDrillingSummary");
+    if (isRealtimeRunning == "true") {
+      await this.setState({ isRealTime: !this.state.isRealTime });
+      this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
+    }
+    //==============
 
     window.addEventListener("resize", this.refreshChart);
   }
@@ -1167,7 +1173,6 @@ export class DrillingSummary extends Component {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
 
-
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
@@ -1177,6 +1182,9 @@ export class DrillingSummary extends Component {
       this.objLogger.SendLog("loadDrlgSummary from handleToggleSwitch");
       this.loadDrlgSummary();
     }
+
+    sessionStorage.setItem("realTimeDrillingSummary", this.state.isRealTime.toString());
+
   };
 
   selectionType: string = "-1"; //"-1 Default,0= DateRange and 1 = Depth Range"
@@ -1325,14 +1333,14 @@ export class DrillingSummary extends Component {
           let objData = JSON.parse(res.data.Response);
 
           //Warnings Notifications
-          let warnings:string = res.data.Warnings;
+          let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {
             let warningList = [];
             warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
             this.setState({
               warningMsg: warningList
             });
-          }else{
+          } else {
             this.setState({
               warningMsg: []
             });
@@ -1723,19 +1731,19 @@ export class DrillingSummary extends Component {
               }
             </div>
             <NotifyMe
-                data={this.state.warningMsg}
-                storageKey='notific_key'
-                notific_key='timestamp'
-                notific_value='update'
-                heading='Warnings'
-                sortedByKey={false}
-                showDate={false}
-                size={24}
-                color="yellow"
-              // markAsReadFn={() => 
-              //   this.state.warningMsg = []
-              // }
-              />
+              data={this.state.warningMsg}
+              storageKey='notific_key'
+              notific_key='timestamp'
+              notific_value='update'
+              heading='Warnings'
+              sortedByKey={false}
+              showDate={false}
+              size={24}
+              color="yellow"
+            // markAsReadFn={() => 
+            //   this.state.warningMsg = []
+            // }
+            />
           </div>
         </div>
 

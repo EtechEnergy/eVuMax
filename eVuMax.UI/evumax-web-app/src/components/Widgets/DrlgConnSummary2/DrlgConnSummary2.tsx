@@ -150,7 +150,7 @@ class DrlgConnSummary2 extends Component {
   //==============
 
 
-  componentDidMount() {
+  async componentDidMount() {
     try {
 
       //this.objLogger.SendLog("test Logger");
@@ -293,7 +293,14 @@ class DrlgConnSummary2 extends Component {
       window.addEventListener("resize", this.refreshChart);
 
       this.loadConnections();
-      //this.realTime();
+
+      //RealTime 
+      let isRealtimeRunning = sessionStorage.getItem("realTimeDrlgConnSummary2");
+      if (isRealtimeRunning == "true") {
+        await this.setState({ isRealTime: !this.state.isRealTime });
+        this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+      }
+      //==============
     } catch (error) { }
   }
 
@@ -475,7 +482,7 @@ class DrlgConnSummary2 extends Component {
             this.setState({
               warningMsg: warningList
             });
-          }else{
+          } else {
             this.setState({
               warningMsg: []
             });
@@ -653,6 +660,7 @@ class DrlgConnSummary2 extends Component {
       this.intervalID = null;
       this.loadConnections();
     }
+    sessionStorage.setItem("realTimeDrlgConnSummary2", this.state.isRealTime.toString());
   };
 
 

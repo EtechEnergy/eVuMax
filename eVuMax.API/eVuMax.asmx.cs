@@ -51,7 +51,7 @@ namespace eVuMax.API
 
                 objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true,false);
 
-                if (!objDataService.OpenConnection(__username, __password, __servername))
+                if (!objDataService.OpenConnectionSqlPassword(__username, __password, __servername))
                 {
 
                     string response = "Error opening database connection " + objDataService.LastError + " \n  User Info "+__username+" pwd "+__password+" server "+__servername+" ==>Connection string was " + objDataService.ConnectionString;

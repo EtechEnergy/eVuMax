@@ -151,7 +151,7 @@ class DrlgConnSummary extends Component {
   }
   //==============
 
-  componentDidMount() {
+  async componentDidMount() {
     try {
       //this.objLogger.SendLog("test Logger");
       //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
@@ -197,6 +197,25 @@ class DrlgConnSummary extends Component {
       });
       window.addEventListener("resize", this.refreshChart);
       this.loadConnections();
+
+      //RealTime 
+      let isRealtimeRunning = sessionStorage.getItem("realTimeDrlgConnSummary");
+      if (isRealtimeRunning == "true") {
+        await this.setState({ isRealTime: !this.state.isRealTime });
+        this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+      }
+      //==============
+
+      // if (isRealtimeRunning == null || isRealtimeRunning == "false") {
+      //   this.setState({ "isRealTime": false })
+      //   AxiosSource.cancel();
+      //   clearInterval(this.intervalID);
+      //   this.intervalID = null;
+      // } else {
+      //   await this.setState({ isRealTime: !this.state.isRealTime });
+      //   this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+      // }
+
     } catch (error) { }
   }
 
@@ -221,6 +240,7 @@ class DrlgConnSummary extends Component {
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
     });
+
 
 
     this.selectionType = paramDataSelector.selectedval;
@@ -421,7 +441,7 @@ class DrlgConnSummary extends Component {
             this.setState({
               warningMsg: warningList
             });
-          }else{
+          } else {
             this.setState({
               warningMsg: []
             });
@@ -776,8 +796,6 @@ class DrlgConnSummary extends Component {
 
   cmdCancelComment_click = () => {
     try {
-
-
       this.setState({
         Comment: "",
         showCommentDialog: false
@@ -799,6 +817,8 @@ class DrlgConnSummary extends Component {
       this.intervalID = null;
       this.loadConnections();
     }
+
+    sessionStorage.setItem("realTimeDrlgConnSummary", this.state.isRealTime.toString());
   };
 
 

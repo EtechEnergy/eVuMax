@@ -676,6 +676,14 @@ class ToolfaceSummary extends Component {
 
       this.loadData();
 
+      //RealTime 
+      let isRealtimeRunning = sessionStorage.getItem("realTimeToolfaceSummary");
+      if (isRealtimeRunning == "true") {
+        await this.setState({ isRealTime: !this.state.isRealTime });
+        this.intervalID = setInterval(this.loadData.bind(this), 15000);
+      }
+      //==============
+
 
     } catch (error) { }
   }
@@ -1435,10 +1443,10 @@ class ToolfaceSummary extends Component {
         Direction: this.objUserSettings.Direction,
 
         // Table
-        SlidePercent: this.objToolfaceData.SlidePercent==NaN?this.objToolfaceData.SlidePercent:0,
+        SlidePercent: this.objToolfaceData.SlidePercent == NaN ? this.objToolfaceData.SlidePercent : 0,
         SlideROP: this.objToolfaceData.SlideROP,
-        RotaryPercent: this.objToolfaceData.RotaryPercent==NaN?this.objToolfaceData.RotaryPercent:0,
-        RotaryROP: this.objToolfaceData.RotaryROP==NaN?this.objToolfaceData.RotaryROP:0,
+        RotaryPercent: this.objToolfaceData.RotaryPercent == NaN ? this.objToolfaceData.RotaryPercent : 0,
+        RotaryROP: this.objToolfaceData.RotaryROP == NaN ? this.objToolfaceData.RotaryROP : 0,
         OutOfDrlgWindow: this.objToolfaceData.OutOfDrlgWindowPercent,
         OutOfROPWindow: this.objToolfaceData.OutOfROPWindowPercent,
       });
@@ -1615,7 +1623,7 @@ class ToolfaceSummary extends Component {
             this.setState({
               warningMsg: warningList
             });
-          }else{
+          } else {
             this.setState({
               warningMsg: []
             });
@@ -2659,6 +2667,7 @@ class ToolfaceSummary extends Component {
       this.intervalID = null;
       this.loadData();
     }
+    sessionStorage.setItem("realTimeToolfaceSummary", this.state.isRealTime.toString());
   };
 
 
