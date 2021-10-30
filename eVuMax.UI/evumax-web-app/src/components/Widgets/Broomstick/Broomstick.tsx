@@ -85,10 +85,18 @@ class Broomstick extends Component {
 
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     try {
       this.initilizeCharts();
       this.loadConnections();
+
+      //RealTime 
+      let isRealtimeRunning = sessionStorage.getItem("realTimeBroomstick");
+      if (isRealtimeRunning == "true") {
+        await this.setState({ isRealTime: !this.state.isRealTime });
+        this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+      }
+      //==============
       window.addEventListener("resize", this.refreshChart);
     } catch (error) { }
   }
@@ -171,7 +179,7 @@ class Broomstick extends Component {
             this.setState({
               warningMsg: warningList
             });
-          }else{
+          } else {
             this.setState({
               warningMsg: []
             });
@@ -557,6 +565,7 @@ class Broomstick extends Component {
       this.intervalID = null;
       this.loadConnections();
     }
+    sessionStorage.setItem("realTimeBroomstick", this.state.isRealTime.toString());
   };
 
 

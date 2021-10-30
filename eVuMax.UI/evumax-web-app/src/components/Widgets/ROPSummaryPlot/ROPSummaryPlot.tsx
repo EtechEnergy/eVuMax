@@ -90,12 +90,21 @@ export class ROPSummaryPlot extends Component {
   }
 
 
-  componentDidMount() {
+  async componentDidMount() {
     try {
       //initialize chart
       this.initilizeCharts();
 
       this.loadConnections();
+
+      //RealTime 
+      let isRealtimeRunning = sessionStorage.getItem("realTimeROPSummaryPlot");
+      if (isRealtimeRunning == "true") {
+        await this.setState({ isRealTime: !this.state.isRealTime });
+        this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+      }
+      //==============
+
       window.addEventListener("resize", this.refreshChart);
     } catch (error) { }
   }
@@ -1015,6 +1024,7 @@ export class ROPSummaryPlot extends Component {
       this.intervalID = null;
       this.loadConnections();
     }
+    sessionStorage.setItem("realTimeROPSummaryPlot", this.state.isRealTime.toString());
   };
 
 
