@@ -33,9 +33,11 @@
 
         <util:XmlFile Id="VuMaxConfig" Action="setValue" Permanent="yes" File="[#Web.config]"
        ElementPath="/configuration/connectionStrings/add[\[]@name='VuMax'[\]]" Name="connectionString"
-       Value="Provider=SQLNCLI11;Data Source=[DB_SERVER]; User Id=[DB_USER];Password=[DB_PASSWORD];MARS Connection=True;Database=VuMaxDR;"/>
+       Value="Data Source=[DB_SERVER]; User Id=[DB_USER];Password=[DB_PASSWORD];MultipleActiveResultSets=True;Initial Catalog=VuMaxDR;Encrypt=True;TrustServerCertificate=True;Authentication=Sql Password"/>
 
-		  <util:XmlFile Id="WAVuMaxConfig" Action="setValue" Permanent="yes" File="[#Web.config]"
+        
+
+        <util:XmlFile Id="WAVuMaxConfig" Action="setValue" Permanent="yes" File="[#Web.config]"
 	 ElementPath="/configuration/appSettings/add[\[]@key='AuthType'[\]]" Name="value"
 	 Value="[ISWINDOWSAUTHENTICATION]"/>
        
