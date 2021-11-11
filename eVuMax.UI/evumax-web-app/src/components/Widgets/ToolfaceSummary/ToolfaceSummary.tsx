@@ -291,8 +291,9 @@ class ToolfaceSummary extends Component {
   };
 
   OnChange(e: any, field: string) {
-    // Line formatting
+    this.disableRealTime(); //prath 11-11-2021
 
+    // Line formatting
     if (field == "LineColor") {
       this.setState({ LineColor: e.value, isDirty: true });
     }
@@ -440,8 +441,27 @@ class ToolfaceSummary extends Component {
     //this.forceUpdate(); //change on 09-02-2021
   };
 
+  disableRealTime = () => {
+    try {
+      if (this.state.isRealTime) {
+        this.setState({
+          isRealTime: false //prath 10-Oct-20201
+        });
+        sessionStorage.setItem("realTimeToolfaceSummary", "false");
+        this.AxiosSource.cancel();
+        clearInterval(this.intervalID);
+        this.intervalID = null;
+      }
+
+    } catch (error) {
+
+    }
+  }
   addGeoDrlgWindowData = () => {
     try {
+
+      this.disableRealTime();  //11-11-2021 prath
+
       let newRow = {
         StartMD: 0,
         EndMD: 0,
@@ -473,6 +493,8 @@ class ToolfaceSummary extends Component {
 
   addROPDrlgWindowData = () => {
     try {
+
+      this.disableRealTime(); //11-11-2021 prath
 
       let newRow = {
         StartMD: 0,
@@ -509,6 +531,17 @@ class ToolfaceSummary extends Component {
         {
           label: "Yes",
           onClick: () => {
+            if (this.state.isRealTime) {
+              this.setState({
+                isRealTime: false //prath 10-Oct-20201
+              });
+              sessionStorage.setItem("realTimeToolfaceSummary", "false");
+              this.AxiosSource.cancel();
+              clearInterval(this.intervalID);
+              this.intervalID = null;
+            }
+
+
             let geoData = this.state.GeoDrlgWindowData;
             let objRow = rowData;
             let srNo = objRow.SRNO;
@@ -1358,7 +1391,7 @@ class ToolfaceSummary extends Component {
     } catch (error) { }
   };
 
-  displayData = () => {
+  displayData = async () => {
     try {
       this.objUserSettings = JSON.parse(this.objToolfaceData.userSettings);
 
@@ -1406,7 +1439,9 @@ class ToolfaceSummary extends Component {
       }
       //****************** */
 
-      this.setState({
+      //alert(this.objUserSettings.ShowDrillingWindow);
+
+      await this.setState({
         WellName: this.objToolfaceData.WellName,
         //GEO
         ShowDrillingWindow: this.objUserSettings.ShowDrillingWindow,
@@ -1577,7 +1612,7 @@ class ToolfaceSummary extends Component {
 
           this.objToolfaceData = JSON.parse(res.data.Response);
 
-
+          //alert("load data");
 
 
           if (this.objToolfaceData.MTFData == null) {
@@ -2675,6 +2710,7 @@ class ToolfaceSummary extends Component {
 
   render() {
     //this.objToolfaceData.adnlChannelsData.length
+    //alert("render called -" + this.state.ShowDrillingWindow);
 
     let section1 = (
       <div
