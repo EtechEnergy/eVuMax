@@ -663,7 +663,22 @@ class DrlgConnSummary2 extends Component {
     sessionStorage.setItem("realTimeDrlgConnSummary2", this.state.isRealTime.toString());
   };
 
+  disableRealTime = () => {
+    try {
+      if (this.state.isRealTime) {
+        this.setState({
+          isRealTime: false //prath 10-Oct-20201
+        });
+        sessionStorage.setItem("realTimeDrlgConnSummary2", "false");
+        this.AxiosSource.cancel();
+        clearInterval(this.intervalID);
+        this.intervalID = null;
+      }
 
+    } catch (error) {
+
+    }
+  }
 
 
   render() {
@@ -1320,6 +1335,7 @@ class DrlgConnSummary2 extends Component {
                     label={"Show Excluded Connections"}
                     checked={this.state.ShowExcludedConn}
                     onChange={(event) => {
+                      this.disableRealTime();
                       this.setState({ ShowExcludedConn: event.value });
                     }}
                   />
@@ -1331,6 +1347,7 @@ class DrlgConnSummary2 extends Component {
                     label={"Skip connection having more time than"}
                     checked={this.state.SkipConnMaxTime}
                     onChange={(event) => {
+                      this.disableRealTime();
                       this.setState({ SkipConnMaxTime: event.value });
                     }}
                   />
@@ -1340,6 +1357,7 @@ class DrlgConnSummary2 extends Component {
                       format="n2"
                       width="100px"
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ MaxConnTime: event.target.value });
                       }}
                     />
@@ -1355,6 +1373,7 @@ class DrlgConnSummary2 extends Component {
                     label={"Hightlight Day & Night Connections"}
                     checked={this.state.HighlightDayNight}
                     onChange={(event) => {
+                      this.disableRealTime();
                       this.setState({ HighlightDayNight: event.value });
                     }}
                   />
@@ -1365,6 +1384,7 @@ class DrlgConnSummary2 extends Component {
                       width="50px"
                       value={this.state.DayTimeFrom}
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ DayTimeFrom: event.target.value });
                       }}
                     />
@@ -1376,6 +1396,7 @@ class DrlgConnSummary2 extends Component {
                       width="50px"
                       value={this.state.DayTimeTo}
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ DayTimeTo: event.target.value });
                       }}
                     />
@@ -1404,6 +1425,7 @@ class DrlgConnSummary2 extends Component {
                       width="80px"
                       value={this.state.DrlgBenchMark}
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ DrlgBenchMark: event.target.value });
                       }}
                     />
@@ -1420,6 +1442,7 @@ class DrlgConnSummary2 extends Component {
                       width="80px"
                       value={this.state.BTSBenchMark}
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ BTSBenchMark: event.target.value });
                       }}
                     />
@@ -1436,6 +1459,7 @@ class DrlgConnSummary2 extends Component {
                       width="80px"
                       value={this.state.STSBenchMark}
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ STSBenchMark: event.target.value });
                       }}
                     />
@@ -1453,6 +1477,7 @@ class DrlgConnSummary2 extends Component {
                       width="80px"
                       value={this.state.STBBenchMark}
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ STBBenchMark: event.target.value });
                       }}
                     />
@@ -1469,6 +1494,7 @@ class DrlgConnSummary2 extends Component {
                       width="100px"
                       value={this.state.TargetTime}
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ TargetTime: event.target.value });
                       }}
                     />
@@ -1484,6 +1510,7 @@ class DrlgConnSummary2 extends Component {
                       width="100px"
                       value={this.state.RigCost}
                       onChange={(event) => {
+                        this.disableRealTime();
                         this.setState({ RigCost: event.target.value });
                       }}
                     />
