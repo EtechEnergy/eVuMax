@@ -208,16 +208,6 @@ class DrlgConnSummary extends Component {
       }
       //==============
 
-      // if (isRealtimeRunning == null || isRealtimeRunning == "false") {
-      //   this.setState({ "isRealTime": false })
-      //   AxiosSource.cancel();
-      //   clearInterval(this.intervalID);
-      //   this.intervalID = null;
-      // } else {
-      //   await this.setState({ isRealTime: !this.state.isRealTime });
-      //   this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
-      // }
-
     } catch (error) { }
   }
 
@@ -1506,7 +1496,6 @@ class DrlgConnSummary extends Component {
                         label={"Show Comments"}
                         checked={this.state.ShowComments}
                         onChange={(event) => {
-                          this.disableRealTime();
                           this.setState({ ShowComments: event.value });
                         }}
                       />
