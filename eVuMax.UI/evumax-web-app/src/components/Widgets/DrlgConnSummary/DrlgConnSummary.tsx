@@ -56,7 +56,7 @@ import NotifyMe from 'react-notification-timeline';
 let _gMod = new GlobalMod();
 
 //Cancel all Axios Request
-let AxiosSource = axios.CancelToken.source();
+
 // AxiosConfig = { cancelToken: this.AxiosSource.token };
 
 class DrlgConnSummary extends Component {
@@ -64,8 +64,10 @@ class DrlgConnSummary extends Component {
   constructor(props: any) {
     super(props);
     this.WellId = props.match.params.WellId;
-    AxiosSource = axios.CancelToken.source();
+    //AxiosSource = axios.CancelToken.source();
   }
+
+  AxiosSource = axios.CancelToken.source();
 
   state = {
     warningMsg: [],
@@ -135,7 +137,7 @@ class DrlgConnSummary extends Component {
 
   componentWillUnmount() {
 
-    AxiosSource.cancel();
+    this.AxiosSource.cancel();
     clearInterval(this.intervalID);
     this.intervalID = null;
   }
@@ -254,7 +256,7 @@ class DrlgConnSummary extends Component {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
 
-      AxiosSource.cancel();
+      this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
 
@@ -418,11 +420,11 @@ class DrlgConnSummary extends Component {
       objBrokerRequest.Parameters.push(paramLastHrs);
       //alert(this.refreshHrs);
 
-      AxiosSource = axios.CancelToken.source();
+      this.AxiosSource = axios.CancelToken.source();
 
       axios
         .get(_gMod._getData, {
-          cancelToken: AxiosSource.token,
+          cancelToken: this.AxiosSource.token,
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
@@ -812,7 +814,7 @@ class DrlgConnSummary extends Component {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
 
-      AxiosSource.cancel();
+      this.AxiosSource.cancel();
       clearInterval(this.intervalID);
       this.intervalID = null;
       this.loadConnections();
@@ -822,7 +824,22 @@ class DrlgConnSummary extends Component {
   };
 
 
+  disableRealTime = () => {
+    try {
+      if (this.state.isRealTime) {
+        this.setState({
+          isRealTime: false //prath 10-Oct-20201
+        });
+        sessionStorage.setItem("realTimeDrlgConnSummary", "false");
+        this.AxiosSource.cancel();
+        clearInterval(this.intervalID);
+        this.intervalID = null;
+      }
 
+    } catch (error) {
+
+    }
+  }
 
 
 
@@ -1489,6 +1506,7 @@ class DrlgConnSummary extends Component {
                         label={"Show Comments"}
                         checked={this.state.ShowComments}
                         onChange={(event) => {
+                          this.disableRealTime();
                           this.setState({ ShowComments: event.value });
                         }}
                       />
@@ -1498,6 +1516,7 @@ class DrlgConnSummary extends Component {
                         label={"Show Excluded Connections"}
                         checked={this.state.ShowExcludedConn}
                         onChange={(event) => {
+                          this.disableRealTime();
                           this.setState({ ShowExcludedConn: event.value });
                         }}
                       />
@@ -1509,6 +1528,7 @@ class DrlgConnSummary extends Component {
                         label={"Skip connection having more time than"}
                         checked={this.state.SkipConnMaxTime}
                         onChange={(event) => {
+                          this.disableRealTime();
                           this.setState({ SkipConnMaxTime: event.value });
                         }}
                       />
@@ -1518,6 +1538,7 @@ class DrlgConnSummary extends Component {
                           format="n2"
                           width="100px"
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({ MaxConnTime: event.target.value });
                           }}
                         />
@@ -1533,6 +1554,7 @@ class DrlgConnSummary extends Component {
                         label={"Hightlight Day & Night Connections"}
                         checked={this.state.HighlightDayNight}
                         onChange={(event) => {
+                          this.disableRealTime();
                           this.setState({ HighlightDayNight: event.value });
                         }}
                       />
@@ -1543,6 +1565,7 @@ class DrlgConnSummary extends Component {
                           width="50px"
                           value={this.state.DayTimeFrom}
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({ DayTimeFrom: event.target.value });
                           }}
                         />
@@ -1554,6 +1577,7 @@ class DrlgConnSummary extends Component {
                           width="50px"
                           value={this.state.DayTimeTo}
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({ DayTimeTo: event.target.value });
                           }}
                         />
@@ -1582,6 +1606,7 @@ class DrlgConnSummary extends Component {
                           width="80px"
                           value={this.state.DrlgBenchMark}
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({
                               DrlgBenchMark: event.target.value,
                             });
@@ -1601,6 +1626,7 @@ class DrlgConnSummary extends Component {
                           width="80px"
                           value={this.state.BTSBenchMark}
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({ BTSBenchMark: event.target.value });
                           }}
                         />
@@ -1617,6 +1643,7 @@ class DrlgConnSummary extends Component {
                           width="80px"
                           value={this.state.STSBenchMark}
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({ STSBenchMark: event.target.value });
                           }}
                         />
@@ -1634,6 +1661,7 @@ class DrlgConnSummary extends Component {
                           width="80px"
                           value={this.state.STBBenchMark}
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({ STBBenchMark: event.target.value });
                           }}
                         />
@@ -1650,6 +1678,7 @@ class DrlgConnSummary extends Component {
                           width="80px"
                           value={this.state.TargetTime}
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({ TargetTime: event.target.value });
                           }}
                         />
@@ -1665,6 +1694,7 @@ class DrlgConnSummary extends Component {
                           width="80px"
                           value={this.state.RigCost}
                           onChange={(event) => {
+                            this.disableRealTime();
                             this.setState({ RigCost: event.target.value });
                           }}
                         />
