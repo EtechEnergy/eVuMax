@@ -467,6 +467,25 @@ class TripConnSummary extends Component {
 
     handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
 
+    disableRealTime = () => {
+        try {
+            if (this.state.isRealTime) {
+                this.setState({
+                    isRealTime: false //prath 10-Oct-20201
+                });
+                sessionStorage.setItem("realTimeToolfaceSummary", "false");
+                this.AxiosSource.cancel();
+                clearInterval(this.intervalID);
+                this.intervalID = null;
+            }
+
+        } catch (error) {
+
+        }
+    }
+
+
+
     render() {
 
         return (
