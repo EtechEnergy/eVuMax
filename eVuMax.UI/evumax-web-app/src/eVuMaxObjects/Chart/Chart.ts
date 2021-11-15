@@ -60,7 +60,7 @@ export class Chart {
   //constructor(parentRef, chartId) {
   constructor(parentRef, chartId, isPie?: boolean) {
     try {
-       
+
       this.__parentRef = parentRef;
       if (this.__parentRef.objLogger != undefined) {
         this.objLogger = this.__parentRef.objLogger;
@@ -111,6 +111,11 @@ export class Chart {
   zoom: any;
 
   ZoomSteps: Map<number, ZoomStep[]> = new Map();
+
+  ZoomFamilyId: string = ""; //12-11-2021 prath
+  ZoomFamily: Map<string, ZoomStep[]> = new Map(); //12-11-2021 prath
+
+
   isZoomByRect: boolean = true;
   //isZoomByRect: boolean = false;
 
@@ -303,7 +308,7 @@ export class Chart {
 
   createDefaultAxes = () => {
     try {
-       
+
 
       if (this.Axes.get(this.Id + "-left") == undefined) {
         //Create default left axis
@@ -1207,6 +1212,7 @@ export class Chart {
         .on("end", () => { $("#" + this.ContainerId).css("cursor", "default"); })
         .on("zoom", this.onScroll);
       this.SVGRef.call(this.scroll);
+
       //ZOOM LOGIC START BELOW - prath 08-12-2020 for ZOOM-CHART
       if (this.isZoomByRect) {
         SVGRef.on("mousedown", (d: any, i: any) => {
@@ -1448,7 +1454,7 @@ export class Chart {
 
   mouseUpZoom = (d: any, origin: any, rect: any) => {
     try {
-      //  alert("mouse up......");
+      //alert("mouse up......");
       d3.select(window).on("mousemove", null).on("mouseup", null);
       d3.select(this.ContainerId).classed("noselect", false);
       var m = d3.mouse(d);
@@ -1476,6 +1482,7 @@ export class Chart {
         this.zoomingDisableForAxies();
 
         let ZoomAxisArr = [];
+        let ZoomAxisArrFamily = [];
         for (let key of this.Axes.keys()) {
           let Axis_ = this.Axes.get(key);
 
@@ -1492,6 +1499,7 @@ export class Chart {
                 [origin[0], m[0]].map(Axis_.ScaleRef.invert, Axis_.ScaleRef)
               );
             } else {
+
               Axis_.ScaleRef.domain(
                 [origin[0], m[0]].map(Axis_.ScaleRef, Axis_.ScaleRef)
               );
@@ -1535,6 +1543,7 @@ export class Chart {
                   [origin[0], m[0]].map(Axis_.ScaleRef, Axis_.ScaleRef)
                 );
               }
+              this.setMinMaxZoomFamily(ZoomAxisArrFamily, Axis_, "X");
             }
 
             if (
@@ -1544,24 +1553,37 @@ export class Chart {
               Axis_.ScaleRef.domain(
                 [origin[1], m[1]].map(Axis_.ScaleRef.invert, Axis_.ScaleRef)
               );
+              this.setMinMaxZoomFamily(ZoomAxisArrFamily, Axis_, "Y");
             }
 
             this.setMinMaxZoom(ZoomAxisArr, Axis_); //updated Axis set in Zoom Step
+
           }
 
           //Axis_.formatAxis(); //21-01-2021 Require ????
         }
 
         this.ZoomSteps.set(this.ZoomSteps.size + 1, ZoomAxisArr);
+        //prath Zoom Familty
+        this.ZoomFamily.set(this.ZoomFamilyId, ZoomAxisArrFamily);
+
+
+
         if (this.__parentRef.updateZoomDropDownList != undefined) {
           this.__parentRef.updateZoomDropDownList(this.ZoomSteps.size);
         }
+
         this.refreshOnZoom(origin, m); //Used to only update axies - Line Update code bypassed
 
         this.updateChart(true); //Update Chart without axies
       }
       $("#" + this.ContainerId).css("cursor", "default");
       rect.remove();
+      //zoom all charts - with same chart family
+      if (this.__parentRef.reDrawChartFamily != undefined) {
+        this.__parentRef.reDrawChartFamily(this.ContainerId); //prath 12-11-2021
+      }
+
     } catch (error) {
       this.objLogger.SendLog("Error ->CHART-mouseUpZoom : " + error);
     }
@@ -1578,6 +1600,20 @@ export class Chart {
       this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error);
     }
   };
+
+
+  setMinMaxZoomFamily = (ZoomAxisArr, Axis_, AxisPosition) => {
+    try {
+      let objZoomStep = new ZoomStep();
+      objZoomStep.AxisId = AxisPosition;
+      objZoomStep.Min = Axis_.ScaleRef.domain()[0];
+      objZoomStep.Max = Axis_.ScaleRef.domain()[1]; //xxxx wip-prath
+      ZoomAxisArr.push(objZoomStep);
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error);
+    }
+  };
+
   restoreZoomStep = (zoomStep: number, ClearZoom?: boolean) => {
     try {
       if (ClearZoom == true) {

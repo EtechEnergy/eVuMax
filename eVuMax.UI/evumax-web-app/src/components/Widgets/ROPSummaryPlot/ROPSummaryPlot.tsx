@@ -67,6 +67,7 @@ export class ROPSummaryPlot extends Component {
   toDepth: number = 0;
   Warnings: string = ""; //Nishant 27/08/2021
   refreshHrs: number = 24;
+  chartFamily: Chart[] = []; //12-11-2021
 
   //Cancel all Axios Request
   AxiosSource = axios.CancelToken.source();
@@ -121,6 +122,7 @@ export class ROPSummaryPlot extends Component {
   }
 
   initilizeCharts = () => {
+
     this.objChart_Pie = new Chart(this, "CurrentChart", true);
     this.objChart_Pie.ContainerId = "CurrentPie_Chart";
 
@@ -248,7 +250,101 @@ export class ROPSummaryPlot extends Component {
 
     this.objChart_Combine.initialize();
     this.objChart_Combine.reDraw();
+
+
   };
+
+
+
+  reDrawChartFamily = (ZoomChartId) => {
+    try {
+      let objChart = new Chart(this, "");
+      if (this.objChart_Rotary.ZoomFamily.size > 0 || this.objChart_Slide.ZoomFamily.size > 0 || this.objChart_Combine.ZoomFamily.size > 0) {
+
+        let axisMinX;
+        let axisMaxX;
+        let axisMinY;
+        let axisMaxY;
+        for (let index = 0; index < this.chartFamily.length; index++) {
+          if (this.chartFamily[index].ContainerId == ZoomChartId) {
+            objChart = this.chartFamily[index];
+            let arr = objChart.ZoomFamily.get("1");
+
+            //========First Array element
+            let axisId = arr[0].AxisId;
+            let min = arr[0].Min;;
+            let max = arr[0].Max;
+            if (min > max) {
+              min = arr[0].Max;
+              max = arr[0].Min;
+            }
+            if (axisId == "Y") {
+              axisMinY = min;
+              axisMaxY = max;
+            } else {
+              axisMinX = min;
+              axisMaxX = max;
+            }
+
+            //========Second Array element
+            axisId = arr[1].AxisId;
+            min = arr[1].Min;
+            max = arr[1].Max;
+            if (arr[1].Min > arr[1].Max) {
+              min = arr[1].Max;
+              max = arr[1].Min;
+            }
+
+            if (axisId == "Y") {
+              axisMinY = min;
+              axisMaxY = max;
+            } else {
+              axisMinX = min;
+              axisMaxX = max;
+            }
+          }
+        }
+
+        for (let index = 0; index < this.chartFamily.length; index++) {
+          if (this.chartFamily[index].ContainerId != ZoomChartId) {
+
+            //alert(this.chartFamily[index].leftAxis().Id + this.chartFamily[index].leftAxis().Inverted);
+
+
+            objChart = this.chartFamily[index];
+            this.chartFamily[index].leftAxis().AutoScale = false;
+            // if (this.chartFamily[index].leftAxis().Inverted) {
+
+            //   
+
+            //   objChart.leftAxis().Min = axisMaxY;
+            //   objChart.leftAxis().Max = axisMinY;
+
+            // } else {
+            objChart.leftAxis().Min = axisMinY;
+            objChart.leftAxis().Max = axisMaxY;
+            //}
+
+            this.chartFamily[index].bottomAxis().AutoScale = false;
+
+            // if (this.chartFamily[index].bottomAxis().Inverted) {
+            //   objChart.bottomAxis().Min = axisMaxX;
+            //   objChart.bottomAxis().Max = axisMinX;
+            // } else {
+            objChart.bottomAxis().Min = axisMinX;
+            objChart.bottomAxis().Max = axisMaxX;
+            // }
+            objChart.reDraw();
+          }
+
+        }
+      }
+
+
+    } catch (error) {
+
+    }
+  }
 
   //Nishant
   getRigStateColor = (number) => {
@@ -267,6 +363,9 @@ export class ROPSummaryPlot extends Component {
 
   refreshChart = () => {
     try {
+      //this.chartFamily as Chart[]; //12-11-2021
+      this.chartFamily = []; //12-11-2021
+
 
       this.refreshPieChart();
       this.refreshOffsetPieChart();
@@ -363,10 +462,15 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Rotary.DataSeries.clear();
       this.objChart_Rotary.updateChart();
       this.objChart_Rotary.Title = "ROP (Rotary)";
+      this.objChart_Rotary.ZoomFamilyId = "1";  //12-11-2021 prath (used in feature for multiple ZoomFamily)
+
+
+      this.chartFamily.push(this.objChart_Rotary);
+
 
       this.objChart_Rotary.leftAxis().AutoScale = true;
 
-      this.objChart_Rotary.leftAxis().Inverted = false;
+      this.objChart_Rotary.leftAxis().Inverted = true;
       this.objChart_Rotary.leftAxis().ShowLabels = true;
       this.objChart_Rotary.leftAxis().ShowTitle = true;
       this.objChart_Rotary.leftAxis().Title =
@@ -458,6 +562,8 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Slide.DataSeries.clear();
       this.objChart_Slide.updateChart();
       this.objChart_Slide.Title = "ROP (Slide)";
+      this.objChart_Slide.ZoomFamilyId = "1";  //12-11-2021 prath
+      this.chartFamily.push(this.objChart_Slide);
 
       this.objChart_Slide.leftAxis().AutoScale = true;
 
@@ -614,6 +720,9 @@ export class ROPSummaryPlot extends Component {
           .style("stroke", "#17a2b8")
           .style("stroke-dasharray", "5,5");
       }
+
+
+
     } catch (error) { }
   };
   refreshCombineChart = () => {
@@ -627,15 +736,18 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Combine.DataSeries.clear();
       this.objChart_Combine.updateChart();
       this.objChart_Combine.Title = "ROP (Rotary & Slide)";
+      this.objChart_Combine.ZoomFamilyId = "1"; //12-11-2021
+      this.chartFamily.push(this.objChart_Combine);
 
       this.objChart_Combine.leftAxis().AutoScale = true;
 
-      this.objChart_Combine.leftAxis().Inverted = false;
+      this.objChart_Combine.leftAxis().Inverted = true;
       this.objChart_Combine.leftAxis().ShowLabels = true;
       this.objChart_Combine.leftAxis().ShowTitle = true;
       this.objChart_Combine.leftAxis().Title =
         "ROP  (" + this.state.objROPSummaryData.DepthUnit + "/hr)";
 
+      this.objChart_Combine.bottomAxis().Inverted = true;
       this.objChart_Combine.bottomAxis().AutoScale = true;
       this.objChart_Combine.bottomAxis().IsDateTime = false;
 
@@ -1046,14 +1158,6 @@ export class ROPSummaryPlot extends Component {
         <div className="row mb-2" style={{ justifyContent: "space-between" }}>
           <div className="">
             <div className="drillingSummaryContainer">
-
-
-
-
-
-
-
-
               <div className="mr-2">
                 <div className="statusCard">
                   <div className="card-body">
@@ -1199,36 +1303,7 @@ export class ROPSummaryPlot extends Component {
           </div>
 
         </div>
-        {/* Nishant 28/08/2021 */}
-        {/* <div className="col-lg-12">
-          <div className="float-right mr-2">
-            <FontAwesomeIcon
-              icon={faUndo}
-              onClick={() => {
-                this.refreshChart();
-              }}
-            />
-          </div>
-        </div> */}
-        {/* <div className="row">
-          <div className="col-lg-12 eVumaxPanelTitle">
-            <div>
-              <label className="summaryTitle">
-                {this.state.objROPSummaryData.WellName}
-              </label>
-            </div>
-          </div>
-          <div className="col-lg-12">
-            <div className="float-right mr-2">
-              <FontAwesomeIcon
-                icon={faUndo}
-                onClick={() => {
-                  this.forceUpdate();
-                }}
-              />
-            </div>
-          </div>
-        </div> */}
+
         <div className="clearfix"></div>
 
 

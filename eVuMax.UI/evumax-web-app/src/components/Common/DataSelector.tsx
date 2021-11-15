@@ -114,7 +114,6 @@ class DataSelector extends Component<IProps> {
   //Initialize chart after component was mounted
   componentDidMount() {
     try {
-
       //Prepare chart object
       //initialize chart
       this.objChart = new Chart(this, "SelectorChart");
