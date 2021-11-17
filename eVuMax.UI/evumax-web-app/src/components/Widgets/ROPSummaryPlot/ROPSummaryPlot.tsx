@@ -26,9 +26,19 @@ import { Switch } from "@progress/kendo-react-inputs/dist/npm/switch/Switch";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
+import $ from "jquery";
+import * as d3 from "d3";
+import { Axis, axisPosition, axisLabelStyle } from "../../../eVuMaxObjects/Chart/Axis";
 
+// export enum axisPosition {
+//   left = 0,
+//   bottom = 1,
+//   right = 2,
+//   top = 3,
+// }
 
 let _gMod = new GlobalMod();
+
 
 export class ROPSummaryPlot extends Component {
   intervalID: NodeJS.Timeout | undefined;
@@ -67,7 +77,7 @@ export class ROPSummaryPlot extends Component {
   toDepth: number = 0;
   Warnings: string = ""; //Nishant 27/08/2021
   refreshHrs: number = 24;
-  chartFamily: Chart[] = []; //12-11-2021
+  chartFamily: Chart[] = []; //12-11-2021 prath for Group Charts for Multi Chart Zoom/Scroll
 
   //Cancel all Axios Request
   AxiosSource = axios.CancelToken.source();
@@ -255,16 +265,18 @@ export class ROPSummaryPlot extends Component {
   };
 
 
-
+  //To ReDraw All Chart with same Family on Zoom
   reDrawChartFamily = (ZoomChartId) => {
     try {
-      let objChart = new Chart(this, "");
-      if (this.objChart_Rotary.ZoomFamily.size > 0 || this.objChart_Slide.ZoomFamily.size > 0 || this.objChart_Combine.ZoomFamily.size > 0) {
 
+      let objChart = new Chart(this, "");
+
+      if (this.objChart_Rotary.ZoomFamily.size > 0 || this.objChart_Slide.ZoomFamily.size > 0 || this.objChart_Combine.ZoomFamily.size > 0) {
         let axisMinX;
         let axisMaxX;
         let axisMinY;
         let axisMaxY;
+
         for (let index = 0; index < this.chartFamily.length; index++) {
           if (this.chartFamily[index].ContainerId == ZoomChartId) {
             objChart = this.chartFamily[index];
@@ -307,44 +319,97 @@ export class ROPSummaryPlot extends Component {
 
         for (let index = 0; index < this.chartFamily.length; index++) {
           if (this.chartFamily[index].ContainerId != ZoomChartId) {
-
-            //alert(this.chartFamily[index].leftAxis().Id + this.chartFamily[index].leftAxis().Inverted);
-
-
             objChart = this.chartFamily[index];
             this.chartFamily[index].leftAxis().AutoScale = false;
-            // if (this.chartFamily[index].leftAxis().Inverted) {
-
-            //   
-
-            //   objChart.leftAxis().Min = axisMaxY;
-            //   objChart.leftAxis().Max = axisMinY;
-
-            // } else {
             objChart.leftAxis().Min = axisMinY;
             objChart.leftAxis().Max = axisMaxY;
-            //}
-
             this.chartFamily[index].bottomAxis().AutoScale = false;
 
-            // if (this.chartFamily[index].bottomAxis().Inverted) {
-            //   objChart.bottomAxis().Min = axisMaxX;
-            //   objChart.bottomAxis().Max = axisMinX;
-            // } else {
             objChart.bottomAxis().Min = axisMinX;
             objChart.bottomAxis().Max = axisMaxX;
-            // }
             objChart.reDraw();
           }
 
         }
       }
-
-
     } catch (error) {
 
     }
   }
+
+  //To ReDraw All Chart with same Family on Scroll
+  reDrawChartFamilyOnScroll = (ScrollChartId, minX1, minX2) => {
+    try {
+
+      let objChart = new Chart(this, "");
+      if (this.objChart_Rotary.ScrollFamily.size > 0 || this.objChart_Slide.ScrollFamily.size > 0 || this.objChart_Combine.ScrollFamily.size > 0) {
+        let axisMinX;
+        let axisMaxX;
+        let axisMinY;
+        let axisMaxY;
+        for (let index = 0; index < this.chartFamily.length; index++) {
+          if (this.chartFamily[index].ContainerId == ScrollChartId) {
+            objChart = this.chartFamily[index];
+            let arr = objChart.ScrollFamily.get("1");
+
+            //========First Array element
+            let axisId = arr[0].AxisId;
+            let min = arr[0].Min;;
+            let max = arr[0].Max;
+            if (min > max) {
+              min = arr[0].Max;
+              max = arr[0].Min;
+            }
+            if (axisId == "Y") {
+              axisMinY = min;
+              axisMaxY = max;
+            } else {
+              axisMinX = min;
+              axisMaxX = max;
+            }
+
+            //========Second Array element
+            axisId = arr[1].AxisId;
+            min = arr[1].Min;
+            max = arr[1].Max;
+            if (arr[1].Min > arr[1].Max) {
+              min = arr[1].Max;
+              max = arr[1].Min;
+            }
+
+            if (axisId == "Y") {
+              axisMinY = min;
+              axisMaxY = max;
+            } else {
+              axisMinX = min;
+              axisMaxX = max;
+            }
+          }
+        }
+
+        for (let index = 0; index < this.chartFamily.length; index++) {
+          if (this.chartFamily[index].ContainerId != ScrollChartId) {
+
+            objChart = this.chartFamily[index];
+            this.chartFamily[index].leftAxis().AutoScale = false;
+            objChart.leftAxis().Min = axisMinY;
+            objChart.leftAxis().Max = axisMaxY;
+
+            this.chartFamily[index].bottomAxis().AutoScale = false;
+
+            objChart.bottomAxis().Min = axisMinX;
+            objChart.bottomAxis().Max = axisMaxX;
+            objChart.reDraw();
+          }
+
+        }
+      }
+    } catch (error) {
+
+    }
+  }
+
+
 
   //Nishant
   getRigStateColor = (number) => {
@@ -463,14 +528,14 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Rotary.updateChart();
       this.objChart_Rotary.Title = "ROP (Rotary)";
       this.objChart_Rotary.ZoomFamilyId = "1";  //12-11-2021 prath (used in feature for multiple ZoomFamily)
-
+      this.objChart_Rotary.ScrollFamilyId = "1";  //12-11-2021 prath (used in feature for multiple ZoomFamily)
 
       this.chartFamily.push(this.objChart_Rotary);
 
 
       this.objChart_Rotary.leftAxis().AutoScale = true;
 
-      this.objChart_Rotary.leftAxis().Inverted = true;
+      this.objChart_Rotary.leftAxis().Inverted = false;
       this.objChart_Rotary.leftAxis().ShowLabels = true;
       this.objChart_Rotary.leftAxis().ShowTitle = true;
       this.objChart_Rotary.leftAxis().Title =
@@ -562,7 +627,9 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Slide.DataSeries.clear();
       this.objChart_Slide.updateChart();
       this.objChart_Slide.Title = "ROP (Slide)";
-      this.objChart_Slide.ZoomFamilyId = "1";  //12-11-2021 prath
+      this.objChart_Slide.ZoomFamilyId = "1";  //12-11-2021 prath for Group Id for Multi Chart Zoom
+      this.objChart_Slide.ScrollFamilyId = "1";  //12-11-2021 prath for Group Id for Multi Chart Scroll
+
       this.chartFamily.push(this.objChart_Slide);
 
       this.objChart_Slide.leftAxis().AutoScale = true;
@@ -736,18 +803,19 @@ export class ROPSummaryPlot extends Component {
       this.objChart_Combine.DataSeries.clear();
       this.objChart_Combine.updateChart();
       this.objChart_Combine.Title = "ROP (Rotary & Slide)";
-      this.objChart_Combine.ZoomFamilyId = "1"; //12-11-2021
+      this.objChart_Combine.ZoomFamilyId = "1"; //12-11-2021 prath for Group Id for Multi Chart Zoom
+      this.objChart_Combine.ScrollFamilyId = "1"; //12-11-2021 prath for Group Id for Multi Chart Scroll
       this.chartFamily.push(this.objChart_Combine);
 
       this.objChart_Combine.leftAxis().AutoScale = true;
 
-      this.objChart_Combine.leftAxis().Inverted = true;
+      this.objChart_Combine.leftAxis().Inverted = false;
       this.objChart_Combine.leftAxis().ShowLabels = true;
       this.objChart_Combine.leftAxis().ShowTitle = true;
       this.objChart_Combine.leftAxis().Title =
         "ROP  (" + this.state.objROPSummaryData.DepthUnit + "/hr)";
 
-      this.objChart_Combine.bottomAxis().Inverted = true;
+      this.objChart_Combine.bottomAxis().Inverted = false;
       this.objChart_Combine.bottomAxis().AutoScale = true;
       this.objChart_Combine.bottomAxis().IsDateTime = false;
 
@@ -1122,9 +1190,6 @@ export class ROPSummaryPlot extends Component {
 
     //clearInterval(this.intervalID);
   }
-
-
-
   handleToggleSwitch = async () => {
 
     await this.setState({ isRealTime: !this.state.isRealTime });

@@ -767,8 +767,6 @@ class ToolfaceSummary extends Component {
 
             .attr('dy', '.75em')
             .text(this.objToolfaceData.formationTops[index].TopName);
-
-
         }
       }
 
@@ -781,11 +779,13 @@ class ToolfaceSummary extends Component {
 
   onBeforeDrawSeries = (e: ChartEventArgs, i: number) => {
     try {
-      d3.select(".drlg_window").remove();
-      d3.select(".rop_window").remove();
-      d3.select(".rotary_sections").remove();
-      d3.select(".gtf_vector").remove();
-      d3.select(".mtf_vector").remove();
+
+      d3.selectAll(".drlg_window").remove();
+      d3.selectAll(".rop_window").remove();
+      d3.selectAll(".rotary_sections").remove();
+      d3.selectAll(".gtf_vector").remove();
+      d3.selectAll(".mtf_vector").remove();
+      debugger;
 
       //Highlight GTF Vectors
       if (this.state.GTFVector) {

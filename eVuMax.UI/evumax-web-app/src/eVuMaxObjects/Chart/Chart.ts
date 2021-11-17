@@ -57,10 +57,8 @@ export enum zoomOnAxies {
 
 export class Chart {
   //prath 01-10-2020  (added para isPie in constructor for Pie Chart)
-  //constructor(parentRef, chartId) {
   constructor(parentRef, chartId, isPie?: boolean) {
     try {
-
       this.__parentRef = parentRef;
       if (this.__parentRef.objLogger != undefined) {
         this.objLogger = this.__parentRef.objLogger;
@@ -112,9 +110,10 @@ export class Chart {
 
   ZoomSteps: Map<number, ZoomStep[]> = new Map();
 
-  ZoomFamilyId: string = ""; //12-11-2021 prath
-  ZoomFamily: Map<string, ZoomStep[]> = new Map(); //12-11-2021 prath
-
+  ZoomFamilyId: string = ""; //12-11-2021 prath  Group Id for Multiple Chart Zoom at same Time
+  ZoomFamily: Map<string, ZoomStep[]> = new Map(); //12-11-2021 prath Group of List of Chart Zooming at a time
+  ScrollFamilyId: string = ""; //12-11-2021 prath Group Id for Multiple Chart Scroll at same Time
+  ScrollFamily: Map<string, ZoomStep[]> = new Map(); //12-11-2021 prath Group of List of Chart Scrolling at a time
 
   isZoomByRect: boolean = true;
   //isZoomByRect: boolean = false;
@@ -1312,7 +1311,7 @@ export class Chart {
   }
   onScroll = () => {
     try {
-
+      let ScrollAxisArrFamily = [];
 
 
       //alert("onScroll method");
@@ -1331,6 +1330,8 @@ export class Chart {
                 .tickSize(-objAxis.__tickSize)
                 .ticks(objAxis.__noOfTicks);
               this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(sxBottom.domain())));
+              this.setMinMaxScrollFamily(ScrollAxisArrFamily, sxBottom, "X"); //Set domain value used for multiple chart scrolling
+
               break;
             case axisPosition.top:
               let sxTop = t.rescaleX(objAxis.ScaleRef);
@@ -1340,6 +1341,7 @@ export class Chart {
                 .tickSize(-objAxis.__tickSize)
                 .ticks(objAxis.__noOfTicks);
               this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(sxTop.domain())));
+              this.setMinMaxScrollFamily(ScrollAxisArrFamily, sxTop, "X"); //Set domain value used for multiple chart scrolling
               break;
             case axisPosition.left:
               let syLeft = t.rescaleY(objAxis.ScaleRef);
@@ -1349,6 +1351,7 @@ export class Chart {
                 .tickSize(-objAxis.__tickSize)
                 .ticks(objAxis.__noOfTicks);
               this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(syLeft.domain())));
+              this.setMinMaxScrollFamily(ScrollAxisArrFamily, syLeft, "Y"); //Set domain value used for multiple chart scrolling
               break;
             case axisPosition.right:
               let syRight = t.rescaleX(objAxis.ScaleRef); //<-- rescale the scales
@@ -1357,13 +1360,25 @@ export class Chart {
                 d3.axisRight(syRight).ticks(objAxis.__noOfTicks)
               );
               this.ScaleBackup.set(objAxis.Id, JSON.parse(JSON.stringify(syRight.domain())));
+              this.setMinMaxScrollFamily(ScrollAxisArrFamily, syRight, "Y"); //Set domain value used for multiple chart scrolling
               break;
             default:
               break;
           }
           objAxis.formatAxis();
+
         }
+
+
       }
+
+      //Scrolling Multiple Chart base on Group
+      this.ScrollFamily.set(this.ScrollFamilyId, ScrollAxisArrFamily);
+      if (this.__parentRef.reDrawChartFamilyOnScroll != undefined) {
+        this.__parentRef.reDrawChartFamilyOnScroll(this.ContainerId);
+      }
+
+      //=======================================
       this.updateChart(true); //Update Chart without axies
       this.isScrollingInProgress = false;
 
@@ -1564,14 +1579,12 @@ export class Chart {
         }
 
         this.ZoomSteps.set(this.ZoomSteps.size + 1, ZoomAxisArr);
-        //prath Zoom Familty
+        //Zooming Multiple Chart base on Group
         this.ZoomFamily.set(this.ZoomFamilyId, ZoomAxisArrFamily);
-
-
-
         if (this.__parentRef.updateZoomDropDownList != undefined) {
           this.__parentRef.updateZoomDropDownList(this.ZoomSteps.size);
         }
+        //====================================
 
         this.refreshOnZoom(origin, m); //Used to only update axies - Line Update code bypassed
 
@@ -1579,7 +1592,7 @@ export class Chart {
       }
       $("#" + this.ContainerId).css("cursor", "default");
       rect.remove();
-      //zoom all charts - with same chart family
+      //ZOOM ALL CHARTS - with same chart family
       if (this.__parentRef.reDrawChartFamily != undefined) {
         this.__parentRef.reDrawChartFamily(this.ContainerId); //prath 12-11-2021
       }
@@ -1614,6 +1627,19 @@ export class Chart {
     }
   };
 
+
+
+  setMinMaxScrollFamily = (ScrollAxisArr, Axis_, AxisPosition) => {
+    try {
+      let objZoomStep = new ZoomStep();
+      objZoomStep.AxisId = AxisPosition;
+      objZoomStep.Min = Axis_.domain()[0];
+      objZoomStep.Max = Axis_.domain()[1]; //xxxx wip-prath
+      ScrollAxisArr.push(objZoomStep);
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error);
+    }
+  };
   restoreZoomStep = (zoomStep: number, ClearZoom?: boolean) => {
     try {
       if (ClearZoom == true) {
@@ -1873,7 +1899,9 @@ export class Chart {
       this._onBeforeAxisDraw.dispatch(null, 0);
 
       if (isRefresh == false) {
+
         this.updateAxes();
+
       }
 
       this._onAfterAxisDraw.dispatch(null, 0);
