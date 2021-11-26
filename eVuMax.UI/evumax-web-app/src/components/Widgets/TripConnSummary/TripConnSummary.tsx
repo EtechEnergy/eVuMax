@@ -190,9 +190,6 @@ class TripConnSummary extends Component {
     try {
       this.objUserSettings = JSON.parse(this.objSummaryData.userSettings);
 
-      // alert("xxx");
-      //
-
       this.setState({
         WellName: this.objSummaryData.WellName,
         summaryData: this.objSummaryData.connData,
@@ -499,7 +496,8 @@ class TripConnSummary extends Component {
   ////Nishant
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
-
+    //alert("TripConnection Summary --> SelectionChanged");
+    debugger;
     let realtimeStatus: boolean = paramRefreshHrs;
 
     await this.setState({
@@ -767,7 +765,7 @@ class TripConnSummary extends Component {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      this.loadConnections();
+      //this.loadConnections();
     }
     sessionStorage.setItem("realTimeTripConnSummary", this.state.isRealTime.toString());
   };

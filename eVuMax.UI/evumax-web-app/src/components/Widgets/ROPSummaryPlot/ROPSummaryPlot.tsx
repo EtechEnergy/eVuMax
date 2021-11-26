@@ -1199,7 +1199,7 @@ export class ROPSummaryPlot extends Component {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      this.loadConnections();
+      //this.loadConnections();
     }
     sessionStorage.setItem("realTimeROPSummaryPlot", this.state.isRealTime.toString());
   };

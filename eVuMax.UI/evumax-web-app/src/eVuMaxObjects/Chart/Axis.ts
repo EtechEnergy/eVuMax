@@ -1054,7 +1054,10 @@ export class Axis {
           }
 
           if (diffSeconds > 60) {
-            let addDiff = (diffSeconds * 10) / 100;
+            // prath 24-Nov-2021 (Selector change from 10% to 1 day)
+            //let addDiff = (diffSeconds * 10) / 100;
+            let addDiff = 86400;
+            //=============
             this.__selectorEndDatePos = this.MaxDate;
             this.__selectorStartDatePos = new Date(
               this.MaxDate.valueOf() - addDiff * 1000
@@ -1084,10 +1087,10 @@ export class Axis {
         if (this.__selectorStartPos == 0 && this.__selectorEndPos == 0) {
           //calculate difference of range
           let diff = this.Max - this.Min;
-
+          debugger;
           if (diff > 0) {
+            //For Not a date axes
             let addDiff = (diff * 10) / 100;
-
             this.__selectorEndPos = this.Max;
             this.__selectorStartPos = this.Max - addDiff;
           } else {

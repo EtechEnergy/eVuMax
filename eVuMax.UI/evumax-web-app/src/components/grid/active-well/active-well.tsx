@@ -454,7 +454,7 @@ export default class ActiveWell extends React.Component {
           if (res.data.RequestSuccessfull) {
             _Data = JSON.parse(res.data.Response);
             wellList = _Data;
-            debugger;
+
             console.log(columnList);
 
             this.setState({

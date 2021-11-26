@@ -785,7 +785,7 @@ class ToolfaceSummary extends Component {
       d3.selectAll(".rotary_sections").remove();
       d3.selectAll(".gtf_vector").remove();
       d3.selectAll(".mtf_vector").remove();
-      debugger;
+
 
       //Highlight GTF Vectors
       if (this.state.GTFVector) {
@@ -2700,7 +2700,7 @@ class ToolfaceSummary extends Component {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      this.loadData();
+      //this.loadData();
     }
     sessionStorage.setItem("realTimeToolfaceSummary", this.state.isRealTime.toString());
   };

@@ -149,14 +149,13 @@ export class DrillingSummary extends Component {
 
   ////Nishant
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
-
+    //alert("Drilling Summary --> SelectionChanged");
     let realtimeStatus: boolean = paramRefreshHrs;
 
     await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
     });
-    //alert(paramDataSelector.selectedval);
     this.selectionType = paramDataSelector.selectedval;
     this.fromDate = paramDataSelector.fromDate;
     this.toDate = paramDataSelector.toDate;
@@ -164,6 +163,7 @@ export class DrillingSummary extends Component {
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
 
+    //alert(this.state.isRealTime);
 
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
@@ -171,6 +171,7 @@ export class DrillingSummary extends Component {
       await this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
+      //alert("Load connections");
       this.loadDrlgSummary();
     }
 
@@ -206,7 +207,7 @@ export class DrillingSummary extends Component {
 
   initilizeCharts = () => {
     this.objLogger.SendLog("initilizeCharts:this.objChart");
-
+    //alert("load connections");
     this.objChart = new Chart(this, "ROP_RigState");
     this.objChart.ContainerId = "drlgSummary";
     this.objChart.Title = "ROP";
@@ -1172,6 +1173,7 @@ export class DrillingSummary extends Component {
   handleToggleSwitch = async () => {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
+    //alert("DrillingSummary -->" + this.selectionType.toString() + " - " + this.state.isRealTime);
 
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
@@ -1180,7 +1182,7 @@ export class DrillingSummary extends Component {
       await clearInterval(this.intervalID);
       this.intervalID = null;
       this.objLogger.SendLog("loadDrlgSummary from handleToggleSwitch");
-      this.loadDrlgSummary();
+      //this.loadDrlgSummary();
     }
 
     sessionStorage.setItem("realTimeDrillingSummary", this.state.isRealTime.toString());

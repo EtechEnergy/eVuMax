@@ -6,6 +6,7 @@ export default class DataSelector_ {
     toDepth: number = 0;
     refreshHrs: number = 24;
     wellID: string = "";
+    matchDepthByTops: boolean = false;
 
 
 }

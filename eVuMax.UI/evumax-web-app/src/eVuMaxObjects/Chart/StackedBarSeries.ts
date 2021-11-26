@@ -322,12 +322,8 @@ export class StackedBarSeries {
 						}
 
 						// // Show lables on Bar //Parth 26-07-2021
-
 						if (s == stackValues.length - 1 && this.ChartRef.ShowCustomComments) {
-
-
 							if (isNaN(xPos + barWidth / 2) || isNaN(this.ChartRef.__chartRect.height - 20)) {
-
 							}
 							else {
 
@@ -342,7 +338,7 @@ export class StackedBarSeries {
 									.attr(
 										'transform',
 										//										'translate(' + (xPos + barWidth / 2) + ',' + (yPos - 25) + ') rotate(-90)'
-										'translate(' + (xPos + barWidth / 2) + ',' + (this.ChartRef.__chartRect.height - 20) + ') rotate(-90)'
+										'translate(' + (xPos + barWidth / 2) + ',' + (this.ChartRef.__chartRect.height - 15) + ') rotate(-90)'
 									)
 									.text(function (d) {
 										return customLabels[i];
