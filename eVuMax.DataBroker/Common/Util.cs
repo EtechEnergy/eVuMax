@@ -318,7 +318,34 @@ namespace eVuMax.DataBroker.Common
         }
 
 
+        public static DateTime convertWellTimeZoneToUTC(DateTime paramDate, VuMaxDR.Data.Objects.Well paramObjWell)
+        {
+            try
+            {
+
+                // '(1) Parse the date ... it will be in target timze of the well
+                DateTime dtDate = paramDate; // 'The date will already be in local time zone ...
+
+                string localOffset = paramObjWell.timeZone;
+                string newOffset = TimeOffsetInfo.getLocalTimeZoneUTCOffset(dtDate);
+
+                int Difference = TimeOffsetInfo.getTimeZoneDifferenceMinutes(localOffset, newOffset);
+
+                // '(2) Convert it to local time zone ...
+                dtDate = dtDate.AddMinutes(Difference);
+
+                // '(3) Convert the local date to UTC and return ...
+                return dtDate.ToUniversalTime();
+            }
+            catch (Exception ex)
+            {
+                return paramDate;
+            }
+        }
+
+
     }
+
 
 
     //public static DateTime convertWellTimeZoneToUTC(DateTime paramDate)

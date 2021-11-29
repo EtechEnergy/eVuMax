@@ -78,7 +78,13 @@ namespace eVuMax.DataBroker
 					return objBroker;
 				}
 
+				//Nishant 27-11-2021
+				if (paramRequest.Module == Global.Mod_GenericDrillingSummary_Manager)
+				{
 
+					GenericDrillingSummary.gdSummaryBroker objBroker = new GenericDrillingSummary.gdSummaryBroker();
+					return objBroker;
+				}
 				return null;
 			}
 			catch (Exception)

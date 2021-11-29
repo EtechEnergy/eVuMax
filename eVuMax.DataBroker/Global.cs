@@ -21,6 +21,7 @@ namespace eVuMax.DataBroker
         public const string Mod_Broomstick_Manager = "Broomstick.Manager";
 
         //Nishant
+        public const string Mod_GenericDrillingSummary_Manager = "GenericDrillingSummary.Manager";
         public const string Mod_eVuMaxLogger = "eVuMaxLogger";
 
         public const string Mod_DownloadManager = "DownloadManager"; //Nishant 27-11-2020
@@ -62,6 +63,11 @@ namespace eVuMax.DataBroker
         public const string SM_TripSpeedPlot = "TripSpeedPlot";
         public const string SM_TripAnalyzerSelection = "TripAnalyzerSelection"; //Nishant 20-10-2020
 
+        #endregion
+
+        //Nishant 27-11-2021
+        #region GenericDrillingSummary
+        public const string GD_Summary = "GenericDrillingSummary";
         #endregion
 
 
@@ -123,6 +129,28 @@ namespace eVuMax.DataBroker
             }
         }
 
+
+
+        //Nishant 25-11-2021
+
+        public static T Iif<T>(bool cond, T left, T right)
+        {
+            return cond ? left : right;
+        }
+        public static double ValEx(object strNumber)
+        {
+            try
+            {
+                if (strNumber.ToString().Contains(","))
+                    return Convert.ToDouble(strNumber.ToString().Replace(',', '.'));
+                else
+                    return Convert.ToDouble(strNumber);
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
 
 
     }
