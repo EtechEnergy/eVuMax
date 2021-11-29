@@ -51,7 +51,8 @@ namespace eVuMax.API
 
                 objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true,false);
 
-                if (!objDataService.OpenConnectionSqlPassword(__username, __password, __servername))
+                //if (!objDataService.OpenConnectionSqlPassword(__username, __password, __servername))
+                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername))
                 {
 
                     string response = "Error opening database connection " + objDataService.LastError + " \n  User Info "+__username+" pwd "+__password+" server "+__servername+" ==>Connection string was " + objDataService.ConnectionString;
@@ -108,10 +109,11 @@ namespace eVuMax.API
                 VuMaxDR.Data.DataService objDataService;
 
                 objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
-               
 
 
-                if (!objDataService.OpenConnectionSqlPassword(__username, __password, __servername))
+
+                //if (!objDataService.OpenConnectionSqlPassword(__username, __password, __servername))
+                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername))
                 {
                     //Error opening database connection
                     BrokerResponse objBadResponse = objRequest.createResponseObject();
@@ -121,6 +123,8 @@ namespace eVuMax.API
                 }
                 else
                 {
+
+               
                     //Assign data service
                     objRequest.objDataService = objDataService;
                     IBroker objBroker = BrokerFactory.createBroker(objRequest);
@@ -206,7 +210,8 @@ namespace eVuMax.API
 
                 getConnStringComponents(out __servername, out __username, out __password);
 
-                if (!objDataService.OpenConnectionSqlPassword(__username,__password,__servername))
+                //if (!objDataService.OpenConnectionSqlPassword(__username,__password,__servername))
+                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername))
                 {
                     //Error opening database connection
                     BrokerResponse objBadResponse = objRequest.createResponseObject();

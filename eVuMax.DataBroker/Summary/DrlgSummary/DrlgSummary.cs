@@ -151,8 +151,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                 if (isRealTime)
                 {
-                    selectionType = "-1";
+                    selectionType = "2";
                 }
+
                 try
                 {
                     //Nishant
@@ -229,7 +230,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
 
                 //get FromDate and ToDate from Timelog 10%
-                if (selectionType == "-1")
+                if (selectionType == "-1" || selectionType == "2")
                 {
 
                     if (objTimeLog != null)
@@ -239,19 +240,31 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         DateTime minDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref paramRequest.objDataService));
                         DateTime maxDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref paramRequest.objDataService));
 
-                        double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                        //double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                        //double diff = (secondsDiff * 10) / 100; //10% data for slider
+                        //double diff = (secondsDiff * 50) / 100; //10% data for slider
 
-                        double diff = (secondsDiff * 10) / 100; //10% data for slider
-                        minDate = maxDate.AddSeconds(-1 * diff);
+                        double diff=0;
+                        if (selectionType == "-1" && !isRealTime)
+                        {
+                            diff = 86400; //10% data for slider
+                            minDate = maxDate.AddSeconds(-1 * diff);
+                        }
+                        else
+                        {
+                            minDate = maxDate.AddHours(-refreshHrs);
+                        }
+                        
+                        
 
                         //only to test for 1 day data
                         // minDate = maxDate.AddDays(-1);
-                        if (isRealTime)
-                        {
-                            minDate = maxDate.AddHours(-refreshHrs);
-                            //secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
-                            //minDate = maxDate.AddSeconds(-1 * secondsDiff);
-                        }
+                        //if (isRealTime)
+                        //{
+                        //    minDate = maxDate.AddHours(-refreshHrs);
+                        //    //secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                        //    //minDate = maxDate.AddSeconds(-1 * secondsDiff);
+                        //}
 
 
                         fromDate = minDate;
@@ -267,7 +280,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
 
 
-               
+
                 if (selectionType == "1") // Depth Range
                 {
                     //Nitin Changes n 21-10-2021
@@ -414,7 +427,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 objMnemonicMappingMgr.loadMappings(ref objDataService);
                 DataTable objROPData = new DataTable();
 
-            
+
 
                 string mainROPMnemonic = ROPMnemonic;
                 string offsetROPMnemonic = ROPMnemonic;
@@ -527,7 +540,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         }
 
                         offsetDepthIn = offsetROPY[0];
-                      
+
 
                         if (offsetROPY.Length > 0)
                         {
@@ -686,7 +699,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                     paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
                 }
 
-                if(objData!=null)
+                if (objData != null)
                 {
                     objData.Dispose();
                 }
@@ -695,7 +708,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
             catch (Exception)
             {
 
-                
+
             }
 
 

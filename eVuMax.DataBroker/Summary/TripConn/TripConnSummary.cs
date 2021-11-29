@@ -103,7 +103,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                 
                 if (isRealTime)
                 {
-                    selectionType = "-1";
+                    selectionType = "2";
                 }
 
                 try
@@ -143,7 +143,8 @@ namespace eVuMax.DataBroker.Summary.TripConn
                 VuMaxDR.Data.Objects.TimeLog objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
 
 
-                if (selectionType == "-1")
+                //if (selectionType == "-1")
+                if (selectionType == "-1" || selectionType == "2")
                 {
 
                     if (objTimeLog != null)
@@ -154,16 +155,20 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                         double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
 
-                        double diff = (secondsDiff * 10) / 100;
+                        //double diff = (secondsDiff * 10) / 100;
 
-                        minDate = maxDate.AddSeconds(-1 * diff);
-
-                        if (isRealTime)
+                        double diff = 0;
+                        if (selectionType == "-1" && !isRealTime)
+                        {
+                            diff = 86400; //10% data for slider
+                            minDate = maxDate.AddSeconds(-1 * diff);
+                        }
+                        else
                         {
                             minDate = maxDate.AddHours(-refreshHrs);
-                            //secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
-                            //minDate = maxDate.AddSeconds(-1 * secondsDiff);
                         }
+
+                                         
 
                         fromDate = minDate;
                         toDate = maxDate;

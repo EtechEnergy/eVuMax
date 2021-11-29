@@ -288,6 +288,7 @@ export default class ActiveWell extends React.Component {
   componentWillMount() {
     document.title = "eVuMax"; //Nishant 02/09/2021
     //this.loadUserFav();
+
     this.getColumnWell();
 
 
@@ -428,6 +429,7 @@ export default class ActiveWell extends React.Component {
 
   getActiveWellList = () => {
     try {
+
       if (this.state.removeWells) {
         return;
       }
@@ -452,6 +454,8 @@ export default class ActiveWell extends React.Component {
           if (res.data.RequestSuccessfull) {
             _Data = JSON.parse(res.data.Response);
             wellList = _Data;
+
+            console.log(columnList);
 
             this.setState({
               columnNames: columnList,

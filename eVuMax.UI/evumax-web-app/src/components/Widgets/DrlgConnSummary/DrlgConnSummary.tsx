@@ -253,9 +253,7 @@ class DrlgConnSummary extends Component {
       this.loadConnections();
     }
 
-    //alert(this.fromDate + " " + this.toDate);
 
-    //this.loadConnections();
   }
 
   setData = () => {
@@ -425,6 +423,8 @@ class DrlgConnSummary extends Component {
           Util.StatusSuccess("Data successfully retrived  ");
           Util.StatusReady();
           this.objSummaryData = JSON.parse(res.data.Response);
+
+
           //Warnings Notifications
           let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {
@@ -807,7 +807,7 @@ class DrlgConnSummary extends Component {
       this.AxiosSource.cancel();
       clearInterval(this.intervalID);
       this.intervalID = null;
-      this.loadConnections();
+      //this.loadConnections();
     }
 
     sessionStorage.setItem("realTimeDrlgConnSummary", this.state.isRealTime.toString());

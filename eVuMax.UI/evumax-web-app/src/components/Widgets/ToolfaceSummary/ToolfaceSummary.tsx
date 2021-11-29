@@ -767,8 +767,6 @@ class ToolfaceSummary extends Component {
 
             .attr('dy', '.75em')
             .text(this.objToolfaceData.formationTops[index].TopName);
-
-
         }
       }
 
@@ -781,11 +779,13 @@ class ToolfaceSummary extends Component {
 
   onBeforeDrawSeries = (e: ChartEventArgs, i: number) => {
     try {
-      d3.select(".drlg_window").remove();
-      d3.select(".rop_window").remove();
-      d3.select(".rotary_sections").remove();
-      d3.select(".gtf_vector").remove();
-      d3.select(".mtf_vector").remove();
+
+      d3.selectAll(".drlg_window").remove();
+      d3.selectAll(".rop_window").remove();
+      d3.selectAll(".rotary_sections").remove();
+      d3.selectAll(".gtf_vector").remove();
+      d3.selectAll(".mtf_vector").remove();
+
 
       //Highlight GTF Vectors
       if (this.state.GTFVector) {
@@ -2700,7 +2700,7 @@ class ToolfaceSummary extends Component {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      this.loadData();
+      //this.loadData();
     }
     sessionStorage.setItem("realTimeToolfaceSummary", this.state.isRealTime.toString());
   };

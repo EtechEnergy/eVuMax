@@ -122,7 +122,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                 if (isRealTime)
                 {
-                    selectionType = "-1";
+                    selectionType = "2";
                 }
 
                 DateTime fromDate = DateTime.Now;
@@ -187,7 +187,8 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
 
 
-                if (selectionType == "-1")
+                //if (selectionType == "-1")
+                if (selectionType == "-1" || selectionType == "2")
                 {
 
                     if (objTimeLog != null)
@@ -196,17 +197,27 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         DateTime minDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref paramRequest.objDataService));
                         DateTime maxDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref paramRequest.objDataService));
 
-                        double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
-                        double diff = (secondsDiff * 10) / 100;
-                        minDate = maxDate.AddSeconds(-1 * diff);
+                        //double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                        //double diff = (secondsDiff * 10) / 100;
+                        //minDate = maxDate.AddSeconds(-1 * diff);
 
 
-                        if (isRealTime)
+                        //if (isRealTime)
+                        //{
+                        //    minDate = maxDate.AddHours(-refreshHrs);
+
+                        //}
+
+                        double diff = 0;
+                        if (selectionType == "-1" && !isRealTime)
+                        {
+                            diff = 86400; //10% data for slider
+                            minDate = maxDate.AddSeconds(-1 * diff);
+                        }
+                        else
                         {
                             minDate = maxDate.AddHours(-refreshHrs);
-
                         }
-
 
 
                         fromDate = minDate;

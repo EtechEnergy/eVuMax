@@ -128,7 +128,7 @@ export default class UserPref extends React.Component {
         })
 
         .then((res) => {
-          debugger;
+
           this.loadTheme(this.state._defaultValue);
           history.push("/dashboard/home");
           //window.location.reload(true);

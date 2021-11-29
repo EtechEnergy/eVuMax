@@ -111,7 +111,7 @@ namespace eVuMax.DataBroker.Summary.Toolface
 
                 if (isRealTime)
                 {
-                    selectionType = "-1";
+                    selectionType = "2";
                 }
 
                 //Check if time log exist, else return empty JSON
@@ -159,7 +159,8 @@ namespace eVuMax.DataBroker.Summary.Toolface
                     }
                 }
 
-                if (selectionType == "-1")
+                //if (selectionType == "-1")
+                if (selectionType == "-1" || selectionType == "2")
                 {
 
                     if (objTimeLog != null)
@@ -168,13 +169,21 @@ namespace eVuMax.DataBroker.Summary.Toolface
                         DateTime minDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref paramRequest.objDataService));
                         DateTime maxDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref paramRequest.objDataService));
 
-                        double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                        //double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                        //double diff = (secondsDiff * 10) / 100;
+                        //minDate = maxDate.AddSeconds(-1 * diff);
+                        //if (isRealTime)
+                        //{
+                        //    minDate = maxDate.AddHours(-refreshHrs);
+                        //}
 
-                        double diff = (secondsDiff * 10) / 100;
-
-                        minDate = maxDate.AddSeconds(-1 * diff);
-
-                        if (isRealTime)
+                        double diff = 0;
+                        if (selectionType == "-1" && !isRealTime)
+                        {
+                            diff = 86400; //10% data for slider
+                            minDate = maxDate.AddSeconds(-1 * diff);
+                        }
+                        else
                         {
                             minDate = maxDate.AddHours(-refreshHrs);
                         }

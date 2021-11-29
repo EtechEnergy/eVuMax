@@ -1573,13 +1573,17 @@ class DrlgConnSummary2 extends Component {
       //Clear all the series
       Util.StatusInfo("Please wait, plotting data");
       this.objBTSChart.DataSeries.clear();
+      this.objBTSChart.ShowCustomComments = this.state.ShowComments;
       this.objBTSChart.updateChart();
+
 
       this.objSTSChart.DataSeries.clear();
       this.objSTSChart.updateChart();
+      this.objSTSChart.ShowCustomComments = this.state.ShowComments;
 
       this.objSTBChart.DataSeries.clear();
       this.objSTBChart.updateChart();
+      this.objSTBChart.ShowCustomComments = this.state.ShowComments;
 
       this.objBTSChart.leftAxis().AutoScale = true;
       this.objBTSChart.leftAxis().Min = 0;
@@ -1708,7 +1712,10 @@ class DrlgConnSummary2 extends Component {
         let objBTSPoint = new ChartData();
         objBTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objBTSPoint.y = this.objSummaryData.connData[i]["BOTTOM_TO_SLIPS"];
+        objBTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         objBTS.Data.push(objBTSPoint);
+
+
 
         let objSTSPoint = new ChartData();
         objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
@@ -1723,12 +1730,14 @@ class DrlgConnSummary2 extends Component {
         } else {
           objSTSPoint.color = "#00E676"; //ffc93c
         }
-
+        objSTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         objSTS.Data.push(objSTSPoint);
+
 
         let objSTBPoint = new ChartData();
         objSTBPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objSTBPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_BOTTOM"];
+        objSTBPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         objSTB.Data.push(objSTBPoint);
 
         if (this.objSummaryData.connData[i]["STS_COST"]) {
