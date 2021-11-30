@@ -86,7 +86,7 @@ namespace eVuMax.DataBroker.Broomstick.Document
 
                 if (isRealTime)
                 {
-                    selectionType = "-1";
+                    selectionType = "2";
                 }
 
                 DateTime fromDate = DateTime.Now;
@@ -128,7 +128,8 @@ namespace eVuMax.DataBroker.Broomstick.Document
                     objBroomstickData.torqueUnit = objTimeLog.logCurves["STOR"].VuMaxUnitID;
                 }
 
-                if (selectionType == "-1")
+                //if (selectionType == "-1")
+                if (selectionType == "-1" || selectionType == "2")
                 {
 
                     if (objTimeLog != null)
@@ -137,11 +138,21 @@ namespace eVuMax.DataBroker.Broomstick.Document
                         DateTime minDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref paramRequest.objDataService));
                         DateTime maxDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref paramRequest.objDataService));
 
-                        double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                        //double secondsDiff = Math.Abs((maxDate - minDate).TotalSeconds);
+                        //double diff = (secondsDiff * 10) / 100;
+                        //if (isRealTime)
+                        //{
+                        //    minDate = maxDate.AddHours(-refreshHrs);
+                        //}
 
-                        double diff = (secondsDiff * 10) / 100;
 
-                        if (isRealTime)
+                        double diff = 0;
+                        if (selectionType == "-1" && !isRealTime)
+                        {
+                            diff = 86400; //10% data for slider
+                            minDate = maxDate.AddSeconds(-1 * diff);
+                        }
+                        else
                         {
                             minDate = maxDate.AddHours(-refreshHrs);
                         }

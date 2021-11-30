@@ -165,6 +165,9 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
             try
             {
 
+                
+
+
                 string __Warnings = "";
 
                 userId = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserId")).FirstOrDefault().ParamValue;
