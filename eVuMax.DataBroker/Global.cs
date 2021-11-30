@@ -129,12 +129,7 @@ namespace eVuMax.DataBroker
             }
         }
 
-        //Nishant 25-11-2021
-
-        public static T Iif<T>(bool cond, T left, T right)
-        {
-            return cond ? left : right;
-        }
+      
 
         //Nishant 25-11-2021
 
