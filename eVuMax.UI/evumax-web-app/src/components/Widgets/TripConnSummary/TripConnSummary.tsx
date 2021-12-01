@@ -34,6 +34,7 @@ import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
+import DataSelectorInfo from "../../Common/DataSelectorInfo";
 
 
 
@@ -916,6 +917,7 @@ class TripConnSummary extends Component {
                   }}
                 />
               </div>
+              <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
               {/* vimal */}
               <div
                 className="form-inline eVumaxPanelChart"

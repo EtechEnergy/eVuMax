@@ -29,6 +29,7 @@ import { Util } from "../../Models/eVuMax";
 import DataSelector_ from "./DataSelector_";
 import * as utilFunc from '../../utilFunctions/utilFunctions';
 import { confirmAlert } from "react-confirm-alert";
+import DataSelectorInfo from "./DataSelectorInfo";
 
 let _gMod = new GlobalMod();
 
@@ -83,6 +84,8 @@ class DataSelector extends Component<IProps> {
     try {
       //Prepare chart object
       //initialize chart
+      // alert("DataSelector didmount");
+
       this.objChart = new Chart(this, "SelectorChart");
       this.objChart.ContainerId = "selector_chart";
       this.objChart.isZoomByRect = false; //No need to zoom
@@ -431,7 +434,6 @@ class DataSelector extends Component<IProps> {
 
     return (
       <React.Fragment>
-
         <div style={{ height: "100px", display: "flex" }}>
           <TabStrip
             selected={this.state.selectedTab}
@@ -462,24 +464,29 @@ class DataSelector extends Component<IProps> {
                 }}
               >
               </div>
+
               <div
                 id="selector_chart"
                 style={{
                   //height: "100%",
                   height: "90px",
                   flex: 1,
-                  //width: "98%",
-                  padding: "10px",
+                  //width: "70%",
+                  // padding: "10px",
                 }}
               ></div>
+
+
               {/* </div> */}
             </TabStripTab>
+
             <TabStripTab title={<FontAwesomeIcon icon={faCogs} style={{ width: "20px", height: "20px" }} />}>
             </TabStripTab>
 
 
 
           </TabStrip>
+
           {/* <div
             style={{
               height: "100%",
@@ -819,6 +826,7 @@ class DataSelector extends Component<IProps> {
                         this.setState({
                           showSettings: false
                         });
+
                       }
                       }
                       className="btn-custom btn-custom-primary ml-5 mr-1"
@@ -977,7 +985,9 @@ class DataSelector extends Component<IProps> {
                 
               </TabStripTab> */}
             </TabStrip>
+
           </div>
+
         </Dialog>}
 
 

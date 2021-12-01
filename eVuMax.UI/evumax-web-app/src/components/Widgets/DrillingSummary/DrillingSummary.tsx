@@ -39,6 +39,7 @@ import DataSelector from "../../Common/DataSelector";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
+import DataSelectorInfo from "../../Common/DataSelectorInfo";
 
 let _gMod = new GlobalMod();
 
@@ -1696,7 +1697,12 @@ export class DrillingSummary extends Component {
                         )}
                     </div>
                   </div>
+
                 </div>
+
+              </div>
+              <div style={{ paddingTop: "20px" }}>
+                <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
               </div>
             </div>
 
@@ -2214,6 +2220,8 @@ export class DrillingSummary extends Component {
 
               </div>
             </TabStripTab>
+
+
             {/* <TabStripTab title="Settings" >
               <div className="row">
                 <div className="col">

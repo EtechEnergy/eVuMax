@@ -64,6 +64,7 @@ import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
+import DataSelectorInfo from "../../Common/DataSelectorInfo";
 
 
 
@@ -2765,6 +2766,10 @@ class ToolfaceSummary extends Component {
               </div>
             </div>
           </div>
+          <div style={{ paddingTop: "20px" }}>
+            <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
+          </div>
+
           <div className="form-inline m-1">
             {/* <div className="eVumaxPanelController" style={{ width: "270px" }}>
 
@@ -2781,6 +2786,8 @@ class ToolfaceSummary extends Component {
               />
 
             </div> */}
+
+
             <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "380px" : "255px" }}>
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               <label className=" ml-5 mr-1" onClick={() => { this.displayData(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>

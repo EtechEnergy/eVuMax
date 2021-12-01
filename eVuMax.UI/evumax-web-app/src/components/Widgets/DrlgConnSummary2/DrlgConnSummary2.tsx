@@ -50,6 +50,7 @@ import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
+import DataSelectorInfo from "../../Common/DataSelectorInfo";
 
 let _gMod = new GlobalMod();
 
@@ -774,6 +775,7 @@ class DrlgConnSummary2 extends Component {
                 /> */}
               </div>
 
+              <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
               <div
                 //vimal
                 className="form-inline eVumaxPanelChart"
