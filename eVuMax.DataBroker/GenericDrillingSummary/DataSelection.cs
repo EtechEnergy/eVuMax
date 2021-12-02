@@ -45,6 +45,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public Dictionary<string, string> topList = new Dictionary<string, string>();
         public Dictionary<string, string> trajList = new Dictionary<string, string>();
         public TimeLog objTimeLog;
+        
 
         public int NoOfDataPoints = 6;
 
@@ -146,6 +147,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public DataBroker.Broker.BrokerRequest objRequest = new Broker.BrokerRequest(); //Nishant 
         public string WellID = "";
         private string LastError = "";
+        //public string userName = "";
 
         private VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
 
@@ -154,11 +156,14 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
         }
 
+        //public DataSelection(string paramWellID, DataBroker.Broker.BrokerRequest paramRequest, string paramUserName)
         public DataSelection(string paramWellID, DataBroker.Broker.BrokerRequest paramRequest)
+
         {
             this.WellID = paramWellID;
             this.objRequest = paramRequest;
             this.objWell = VuMaxDR.Data.Objects.Well.loadObject(ref objRequest.objDataService, paramWellID, ref LastError);
+            
 
         }
 
@@ -212,7 +217,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                             if (topName.Trim().ToUpper() == strKey.Trim().ToUpper())
                             {
-                                double topDepth = (double)DataService.checkNull(objTops.Rows[i]["DEPTH"], 0);
+                                double topDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i]["DEPTH"], 0));
 
                                 minDepth = topDepth;
 
@@ -224,7 +229,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                                 }
                                 else
                                 {
-                                    maxDepth = (double)DataService.checkNull(objTops.Rows[i + 1]["DEPTH"], 0);
+                                    maxDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i + 1]["DEPTH"], 0));
                                     strCondition = strCondition + "OR (DEPTH>=" + minDepth.ToString() + " AND DEPTH<=" + maxDepth.ToString() + ") ";
                                 }
                             }
@@ -285,7 +290,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                             if (topName.Trim().ToUpper() == strKey.Trim().ToUpper())
                             {
-                                double topDepth = (double)DataService.checkNull(objTops.Rows[i]["DEPTH"], 0);
+                                double topDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i]["DEPTH"], 0));
 
                                 minDepth = topDepth;
 
@@ -297,7 +302,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                                 }
                                 else
                                 {
-                                    maxDepth = (double)DataService.checkNull(objTops.Rows[i + 1]["DEPTH"], 0);
+                                    maxDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i + 1]["DEPTH"], 0));
                                     strCondition = strCondition + "OR (DEPTH>=" + minDepth.ToString() + " AND DEPTH<=" + maxDepth.ToString() + ") ";
                                 }
                             }
@@ -354,12 +359,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                             if (topName.Trim().ToUpper() == strKey.Trim().ToUpper())
                             {
-                                double topDepth = (double)DataService.checkNull(objTops.Rows[i]["DEPTH"], 0);
+                                double topDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i]["DEPTH"], 0));
 
                                 maxDepth = topDepth;
 
                                 if (i > 0)
-                                    minDepth = (double)DataService.checkNull(objTops.Rows[i - 1]["DEPTH"], 0);
+                                    minDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i - 1]["DEPTH"], 0));
                                 else
                                     minDepth = 0;
 
@@ -391,12 +396,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                             if (topName.Trim().ToUpper() == strKey.Trim().ToUpper())
                             {
-                                double topDepth = (double)DataService.checkNull(objTops.Rows[i]["DEPTH"], 0);
+                                double topDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i]["DEPTH"], 0));
 
                                 maxDepth = topDepth;
 
                                 if (i > 0)
-                                    minDepth = (double)DataService.checkNull(objTops.Rows[i - 1]["DEPTH"], 0);
+                                    minDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i - 1]["DEPTH"], 0));
                                 else
                                     minDepth = 0;
 
@@ -1082,37 +1087,37 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
 
 
-        public void loadDataSelection(string paramPlotID)
+        public void loadDataSelection( string paramPlotID)
         {
             try
             {
-                DataTable objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + objRequest.objDataService.UserName + "' AND PLOT_ID='" + paramPlotID + "'");
+                DataTable objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName + "' AND PLOT_ID='" + paramPlotID + "'");
 
                 if (objData.Rows.Count > 0)
                 {
-                    selectionType = (sPlotSelectionType)DataService.checkNull(objData.Rows[0]["SELECTION_TYPE"], 0);
-                    LastHours = (int)DataService.checkNull(objData.Rows[0]["HOURS"], 0);
+                    selectionType = (sPlotSelectionType)Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SELECTION_TYPE"], 0));
+                    LastHours = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["HOURS"], 0));
                     FromDate = (DateTime)DataService.checkNull(objData.Rows[0]["FROM_DATE"], DateTime.Now);
                     ToDate = (DateTime)DataService.checkNull(objData.Rows[0]["TO_DATE"], DateTime.Now);
-                    FromDepth = (double)DataService.checkNull(objData.Rows[0]["FROM_DEPTH"], 0);
-                    ToDepth = (double)DataService.checkNull(objData.Rows[0]["TO_DEPTH"], 0);
+                    FromDepth = Convert.ToDouble( DataService.checkNull(objData.Rows[0]["FROM_DEPTH"], 0));
+                    ToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TO_DEPTH"], 0));
                     sideTrackKey = (string)DataService.checkNull(objData.Rows[0]["SIDE_TRACK_ID"], 0);
 
-                    NoOfDataPoints = (int)DataService.checkNull(objData.Rows[0]["DATA_POINTS"], 0);
+                    NoOfDataPoints = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["DATA_POINTS"], 0));
 
-                    FilterGTF = (bool)DataService.checkNull(objData.Rows[0]["FILTER_GTF"], 0);
-                    GTFFromDepth = (double)DataService.checkNull(objData.Rows[0]["GTF_DEPTH_FROM"], 0);
-                    GTFToDepth = (double)DataService.checkNull(objData.Rows[0]["GTF_DEPTH_TO"], 0);
+                    FilterGTF = Convert.ToBoolean(DataService.checkNull(objData.Rows[0]["FILTER_GTF"], 0));
+                    GTFFromDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["GTF_DEPTH_FROM"], 0));
+                    GTFToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["GTF_DEPTH_TO"], 0));
 
-                    FilterMTF = (bool)DataService.checkNull(objData.Rows[0]["FILTER_MTF"], 0);
-                    MTFFromDepth = (double)DataService.checkNull(objData.Rows[0]["MTF_DEPTH_FROM"], 0);
-                    MTFToDepth = (double)DataService.checkNull(objData.Rows[0]["MTF_DEPTH_TO"], 0);
+                    FilterMTF = Convert.ToBoolean(DataService.checkNull(objData.Rows[0]["FILTER_MTF"], 0));
+                    MTFFromDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MTF_DEPTH_FROM"], 0));
+                    MTFToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MTF_DEPTH_TO"], 0));
 
                     RunNo = (string)DataService.checkNull(objData.Rows[0]["RUN_NO"], "");
                     PreparedBy = (string)DataService.checkNull(objData.Rows[0]["PREPARED_BY"], "");
 
-                    StandPlot_ShowOffset = Global.Iif((int)DataService.checkNull(objData.Rows[0]["STND_SHOW_OFFSET"], 0) == 1, true, false);
-                    StandPlot_ComparisonWindow = (double)DataService.checkNull(objData.Rows[0]["COMP_WINDOW"], 0);
+                    StandPlot_ShowOffset = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STND_SHOW_OFFSET"], 0)) == 1, true, false);
+                    StandPlot_ComparisonWindow = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["COMP_WINDOW"], 0));
 
 
                     try
@@ -1141,9 +1146,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        TrackWidth = (int)DataService.checkNull(objData.Rows[0]["TRACK_WIDTH"], 200);
-                        ShowFormationTops = Global.Iif((int)DataService.checkNull(objData.Rows[0]["SHOW_FORMATION_TOPS"], 0) == 1, true, false);
-                        ScrollIncrement = (double)DataService.checkNull(objData.Rows[0]["SCROLL_INC"], 100);
+                        TrackWidth = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["TRACK_WIDTH"], 200));
+                        ShowFormationTops = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SHOW_FORMATION_TOPS"], 0)) == 1, true, false);
+                        ScrollIncrement = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["SCROLL_INC"], 100));
                         DepthLogID = (string)DataService.checkNull(objData.Rows[0]["DEPTH_LOG_ID"], "");
                     }
                     catch (Exception ex)
@@ -1153,17 +1158,17 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        DrlgBenchmark = (double)DataService.checkNull(objData.Rows[0]["DRLG_BM"], 0);
+                        DrlgBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DRLG_BM"], 0));
 
 
-                        DrlgBSBenchmark = (double)DataService.checkNull(objData.Rows[0]["DRLG_BM_BS"], 0);
-                        DrlgSSBenchmark = (double)DataService.checkNull(objData.Rows[0]["DRLG_BM_SS"], 0);
-                        DrlgSBBenchmark = (double)DataService.checkNull(objData.Rows[0]["DRLG_BM_SB"], 0);
+                        DrlgBSBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DRLG_BM_BS"], 0));
+                        DrlgSSBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DRLG_BM_SS"], 0));
+                        DrlgSBBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DRLG_BM_SB"], 0));
 
-                        TripBenchmark = (double)DataService.checkNull(objData.Rows[0]["TRIP_BM"], 0);
+                        TripBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TRIP_BM"], 0));
 
-                        TargetTime = (double)DataService.checkNull(objData.Rows[0]["TRG_DRLG_CONN_TIME"], 0);
-                        RigCost = (double)DataService.checkNull(objData.Rows[0]["RIG_COST"], 0);
+                        TargetTime = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TRG_DRLG_CONN_TIME"], 0));
+                        RigCost = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["RIG_COST"], 0));
                     }
                     catch (Exception ex)
                     {
@@ -1172,7 +1177,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        MatchDepthByFormationTops = Global.Iif((int)DataService.checkNull(objData.Rows[0]["MATCH_DEPTH"], 0) == 1, true, false);
+                        MatchDepthByFormationTops = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MATCH_DEPTH"], 0)) == 1, true, false);
                     }
                     catch (Exception ex)
                     {
@@ -1181,15 +1186,15 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        ShowMainRotarySmoothCurve = Global.Iif((int)DataService.checkNull(objData.Rows[0]["ROT_SMTH"], 0) == 1, true, false);
-                        ShowMainSlideSmoothCurve = Global.Iif((int)DataService.checkNull(objData.Rows[0]["SLD_SMTH"], 0) == 1, true, false);
-                        ShowOffsetRotarySmoothCurve = Global.Iif((int)DataService.checkNull(objData.Rows[0]["O_ROT_SMTH"], 0) == 1, true, false);
-                        ShowOffsetSlideSmoothCurve = Global.Iif((int)DataService.checkNull(objData.Rows[0]["O_SLD_SMTH"], 0) == 1, true, false);
+                        ShowMainRotarySmoothCurve = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["ROT_SMTH"], 0)) == 1, true, false);
+                        ShowMainSlideSmoothCurve = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SLD_SMTH"], 0)) == 1, true, false);
+                        ShowOffsetRotarySmoothCurve = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["O_ROT_SMTH"], 0)) == 1, true, false);
+                        ShowOffsetSlideSmoothCurve = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["O_SLD_SMTH"], 0)) == 1, true, false);
 
-                        MainRotarySmoothColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["ROT_SMTH_COLOR"], 0));
-                        MainSlideSmoothColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["SLD_SMTH_COLOR"], 0));
-                        OffsetRotarySmoothColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["O_ROT_SMTH_COLOR"], 0));
-                        OffsetSlideSmoothColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["O_SLD_SMTH_COLOR"], 0));
+                        MainRotarySmoothColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["ROT_SMTH_COLOR"], 0)));
+                        MainSlideSmoothColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SLD_SMTH_COLOR"], 0)));
+                        OffsetRotarySmoothColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["O_ROT_SMTH_COLOR"], 0)));
+                        OffsetSlideSmoothColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["O_SLD_SMTH_COLOR"], 0)));
                     }
                     catch (Exception ex)
                     {
@@ -1197,7 +1202,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        AvgPoints = (int)DataService.checkNull(objData.Rows[0]["AVG_POINTS"], 0);
+                        AvgPoints = Convert.ToInt32( DataService.checkNull(objData.Rows[0]["AVG_POINTS"], 0));
                     }
                     catch (Exception ex)
                     {
@@ -1206,9 +1211,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        FracPointStyle = (int)DataService.checkNull(objData.Rows[0]["FR_POINT_STYLE"], 0);
-                        FracPointSize = (int)DataService.checkNull(objData.Rows[0]["FR_POINT_SIZE"], 0);
-                        FracPointColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["FR_POINT_COLOR"], 0));
+                        FracPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_STYLE"], 0));
+                        FracPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_SIZE"], 0));
+                        FracPointColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_COLOR"], 0)));
 
                         FracWellboreID = (string)DataService.checkNull(objData.Rows[0]["FR_WELLBORE_ID"], "");
                         FracLogID = (string)DataService.checkNull(objData.Rows[0]["FR_LOG_ID"], "");
@@ -1220,8 +1225,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        GTFVector = Global.Iif((int)DataService.checkNull(objData.Rows[0]["GTF_VECTOR"], 0) == 1, true, false);
-                        MTFVector = Global.Iif((int)DataService.checkNull(objData.Rows[0]["MTF_VECTOR"], 0) == 1, true, false);
+                        GTFVector = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["GTF_VECTOR"], 0)) == 1, true, false);
+                        MTFVector = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MTF_VECTOR"], 0)) == 1, true, false);
                     }
                     catch (Exception ex)
                     {
@@ -1230,8 +1235,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        FracClosurePressure = (double)DataService.checkNull(objData.Rows[0]["FR_CL_PRESS"], 0);
-                        FluidType = (int)DataService.checkNull(objData.Rows[0]["FR_FL_TYPE"], 0);
+                        FracClosurePressure = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["FR_CL_PRESS"], 0));
+                        FluidType = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_FL_TYPE"], 0));
                     }
                     catch (Exception ex)
                     {
@@ -1255,12 +1260,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     filterConditions.Clear();
 
-                    objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION_FILTERS WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + objRequest.objDataService.UserName + "' AND PLOT_ID='" + paramPlotID + "'");
+                    objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION_FILTERS WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName + "' AND PLOT_ID='" + paramPlotID + "'");
 
                     foreach (DataRow objRow in objData.Rows)
                     {
                         TFAdnlFilter objItem = new TFAdnlFilter();
-                        objItem.FilterID = (int)DataService.checkNull(objRow["FILTER_ID"], 0);
+                        objItem.FilterID = Convert.ToInt32( DataService.checkNull(objRow["FILTER_ID"], 0));
                         objItem.Mnemonic = (string)DataService.checkNull(objRow["MNEMONIC"], "");
                         objItem.JoinOperator = (string)DataService.checkNull(objRow["JOIN_OPERATOR"], "");
                         objItem.Value = (string)DataService.checkNull(objRow["VALUE"], 0);
@@ -1271,7 +1276,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     offsetWells.Clear();
 
-                    objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION_OFFSET WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + objRequest.objDataService.UserName + "' AND PLOT_ID='" + paramPlotID + "'");
+                    objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION_OFFSET WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName + "' AND PLOT_ID='" + paramPlotID + "'");
 
                     foreach (DataRow objRow in objData.Rows)
                     {
@@ -1282,7 +1287,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             LogCorOffsetWellInfo objOffset = new LogCorOffsetWellInfo();
                             objOffset.OffsetWellID = strWellID;
                             objOffset.DepthLogID = (string)DataService.checkNull(objRow["DEPTH_LOG_ID"], "");
-                            objOffset.DepthOffset = (double)DataService.checkNull(objRow["OFFSET_DEPTH"], 0);
+                            objOffset.DepthOffset = Convert.ToDouble(DataService.checkNull(objRow["OFFSET_DEPTH"], 0));
                             objOffset.ShortName = (string)DataService.checkNull(objRow["SHORT_NAME"], "");
 
                             offsetWells.Add(strWellID, objOffset);
@@ -1292,7 +1297,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     logCurves.Clear();
 
-                    objData = objRequest.objDataService.getTable("SELECT * FROM VMX_LOG_COR_CURVES WHERE WELL_ID='" + WellID + "' AND USER_NAME='" +objRequest. objDataService.UserName + "' ");
+                    objData = objRequest.objDataService.getTable("SELECT * FROM VMX_LOG_COR_CURVES WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName + "' ");
 
                     foreach (DataRow objRow in objData.Rows)
                     {
@@ -1300,21 +1305,21 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         objCurve.EntryID = (string)DataService.checkNull(objRow["ENTRY_ID"], "");
                         objCurve.Mnemonic = (string)DataService.checkNull(objRow["MNEMONIC"], "");
                         objCurve.Name = (string)DataService.checkNull(objRow["NAME"], "");
-                        objCurve.LineColor = Color.FromArgb((int)DataService.checkNull(objRow["LINE_COLOR"], 0));
-                        objCurve.LineStyle = (int)DataService.checkNull(objRow["LINE_STYLE"], 0);
-                        objCurve.LineWidth = (int)DataService.checkNull(objRow["LINE_WIDTH"], 0);
-                        objCurve.InverseScale = Global.Iif((int)DataService.checkNull(objRow["INVERSE_SCALE"], 0) == 1, true, false);
-                        objCurve.AutoScale = Global.Iif((int)DataService.checkNull(objRow["AUTO_SCALE"], 0) == 1, true, false);
-                        objCurve.MinValue = (double)DataService.checkNull(objRow["MIN_VALUE"], 0);
-                        objCurve.MaxValue = (double)DataService.checkNull(objRow["MAX_VALUE"], 0);
-                        objCurve.Visible = Global.Iif((int)DataService.checkNull(objRow["VISIBLE"], 0) == 1, true, false);
-                        objCurve.IgnoreNegative = Global.Iif((int)DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0) == 1, true, false);
-                        objCurve.Color1 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR1"], 0));
-                        objCurve.Color2 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR2"], 0));
-                        objCurve.Color3 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR3"], 0));
-                        objCurve.Color4 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR4"], 0));
-                        objCurve.Color5 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR5"], 0));
-                        objCurve.DisplayOrder = (int)DataService.checkNull(objRow["DISPLAY_ORDER"], 0);
+                        objCurve.LineColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], 0)));
+                        objCurve.LineStyle = Convert.ToInt32(DataService.checkNull(objRow["LINE_STYLE"], 0));
+                        objCurve.LineWidth = Convert.ToInt32(DataService.checkNull(objRow["LINE_WIDTH"], 0));
+                        objCurve.InverseScale = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["INVERSE_SCALE"], 0)) == 1, true, false);
+                        objCurve.AutoScale = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["AUTO_SCALE"], 0)) == 1, true, false);
+                        objCurve.MinValue = Convert.ToDouble(DataService.checkNull(objRow["MIN_VALUE"], 0));
+                        objCurve.MaxValue = Convert.ToDouble(DataService.checkNull(objRow["MAX_VALUE"], 0));
+                        objCurve.Visible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["VISIBLE"], 0)) == 1, true, false);
+                        objCurve.IgnoreNegative = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0)) == 1, true, false);
+                        objCurve.Color1 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], 0)));
+                        objCurve.Color2 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], 0)));
+                        objCurve.Color3 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], 0)));
+                        objCurve.Color4 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], 0)));
+                        objCurve.Color5 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR5"], 0)));
+                        objCurve.DisplayOrder = Convert.ToInt32(DataService.checkNull(objRow["DISPLAY_ORDER"], 0));
 
                         if (!logCurves.ContainsKey(objCurve.Mnemonic))
                             logCurves.Add(objCurve.Mnemonic, objCurve);
@@ -1333,15 +1338,15 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             LogCorCurve withBlock = topComparisionCurve;
                             withBlock.Mnemonic = (string)DataService.checkNull(objRow["MNEMONIC"], "");
                             withBlock.Name = (string)DataService.checkNull(objRow["NAME"], "");
-                            withBlock.LineColor = Color.FromArgb((int)DataService.checkNull(objRow["LINE_COLOR"], 0));
-                            withBlock.LineStyle = (int)DataService.checkNull(objRow["LINE_STYLE"], 0);
-                            withBlock.LineWidth = (int)DataService.checkNull(objRow["LINE_WIDTH"], 0);
-                            withBlock.InverseScale = Global.Iif((int)DataService.checkNull(objRow["INVERSE_SCALE"], 0) == 1, true, false);
-                            withBlock.AutoScale = Global.Iif((int)DataService.checkNull(objRow["AUTO_SCALE"], 0) == 1, true, false);
-                            withBlock.MinValue = (double)DataService.checkNull(objRow["MIN_VALUE"], 0);
-                            withBlock.MaxValue = (double)DataService.checkNull(objRow["MAX_VALUE"], 0);
-                            withBlock.Visible = Global.Iif((int)DataService.checkNull(objRow["VISIBLE"], 0) == 1, true, false);
-                            withBlock.IgnoreNegative = Global.Iif((int)DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0) == 1, true, false);
+                            withBlock.LineColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], 0)));
+                            withBlock.LineStyle = Convert.ToInt32(DataService.checkNull(objRow["LINE_STYLE"], 0));
+                            withBlock.LineWidth = Convert.ToInt32(DataService.checkNull(objRow["LINE_WIDTH"], 0));
+                            withBlock.InverseScale = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["INVERSE_SCALE"], 0)) == 1, true, false);
+                            withBlock.AutoScale = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["AUTO_SCALE"], 0)) == 1, true, false);
+                            withBlock.MinValue = Convert.ToDouble(DataService.checkNull(objRow["MIN_VALUE"], 0));
+                            withBlock.MaxValue = Convert.ToDouble(DataService.checkNull(objRow["MAX_VALUE"], 0));
+                            withBlock.Visible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["VISIBLE"], 0)) == 1, true, false);
+                            withBlock.IgnoreNegative = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0)) == 1, true, false);
                         }
                     }
 
@@ -1374,41 +1379,41 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     ROP_ShowOffset = false;
 
 
-                    objData = objRequest.objDataService.getTable("SELECT * FROM VMX_ROP_PLOT_FORMAT WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + objRequest.objDataService.UserName + "'");
+                    objData = objRequest.objDataService.getTable("SELECT * FROM VMX_ROP_PLOT_FORMAT WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName + "'");
 
                     if (objData.Rows.Count > 0)
                     {
-                        ROP_MainPointStyle = (int)DataService.checkNull(objData.Rows[0]["MAIN_POINT_STYLE"], 0);
-                        ROP_MainPointSize = (int)DataService.checkNull(objData.Rows[0]["MAIN_POINT_SIZE"], 0);
-                        ROP_MainPointColorRotary = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_R"], 0));
-                        ROP_MainPointColorSlide = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_S"], 0));
+                        ROP_MainPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_STYLE"], 0));
+                        ROP_MainPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_SIZE"], 0));
+                        ROP_MainPointColorRotary = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_R"], 0)));
+                        ROP_MainPointColorSlide = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_S"], 0)));
 
 
-                        ROP_OffsetPointStyle = (int)DataService.checkNull(objData.Rows[0]["OFFSET_POINT_STYLE"], 0);
-                        ROP_OffsetPointSize = (int)DataService.checkNull(objData.Rows[0]["OFFSET_POINT_SIZE"], 0);
-                        ROP_OffsetPointColorRotary = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_R"], 0));
-                        ROP_OffsetPointColorSlide = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_S"], 0));
+                        ROP_OffsetPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_STYLE"], 0));
+                        ROP_OffsetPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_SIZE"], 0));
+                        ROP_OffsetPointColorRotary = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_R"], 0)));
+                        ROP_OffsetPointColorSlide = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_S"], 0)));
 
                         ROP_AxisFontName = (string)DataService.checkNull(objData.Rows[0]["AXIS_FONT_NAME"], "Arial");
-                        ROP_AxisFontSize = (int)DataService.checkNull(objData.Rows[0]["AXIS_FONT_SIZE"], 10);
-                        ROP_AxisFontBold = Global.Iif((int)DataService.checkNull(objData.Rows[0]["AXIS_FONT_BOLD"], 0) == 1, true, false);
-                        ROP_AxisFontItalic = Global.Iif((int)DataService.checkNull(objData.Rows[0]["AXIS_FONT_ITALIC"], 0) == 1, true, false);
-                        ROP_AxisFontUnderline = Global.Iif((int)DataService.checkNull(objData.Rows[0]["AXIS_FONT_UNDERLINE"], 0) == 1, true, false);
+                        ROP_AxisFontSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_SIZE"], 10));
+                        ROP_AxisFontBold = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_BOLD"], 0)) == 1, true, false);
+                        ROP_AxisFontItalic = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_ITALIC"], 0)) == 1, true, false);
+                        ROP_AxisFontUnderline = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_UNDERLINE"], 0)) == 1, true, false);
 
                         ROP_StatFontName = (string)DataService.checkNull(objData.Rows[0]["STAT_FONT_NAME"], "Arial");
-                        ROP_StatFontSize = (int)DataService.checkNull(objData.Rows[0]["STAT_FONT_SIZE"], 10);
-                        ROP_StatFontBold = Global.Iif((int)DataService.checkNull(objData.Rows[0]["STAT_FONT_BOLD"], 0) == 1, true, false);
-                        ROP_StatFontItalic = Global.Iif((int)DataService.checkNull(objData.Rows[0]["STAT_FONT_ITALIC"], 0) == 1, true, false);
-                        ROP_StatFontUnderline = Global.Iif((int)DataService.checkNull(objData.Rows[0]["STAT_FONT_UNDERLINE"], 0) == 1, true, false);
+                        ROP_StatFontSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STAT_FONT_SIZE"], 10));
+                        ROP_StatFontBold = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STAT_FONT_BOLD"], 0)) == 1, true, false);
+                        ROP_StatFontItalic = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STAT_FONT_ITALIC"], 0)) == 1, true, false);
+                        ROP_StatFontUnderline = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STAT_FONT_UNDERLINE"], 0)) == 1, true, false);
 
-                        ROP_ShowOffset = Global.Iif((int)DataService.checkNull(objData.Rows[0]["SHOW_OFFSET"], 0) == 1, true, false);
+                        ROP_ShowOffset = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SHOW_OFFSET"], 0)) == 1, true, false);
                     }
                 }
 
 
                 timeLogs.Clear();
 
-                objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION_LOGS WHERE PLOT_ID='" + paramPlotID + "' AND USER_NAME='" + objRequest.objDataService.UserName.Replace("'", "''") + "'");
+                objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION_LOGS WHERE PLOT_ID='" + paramPlotID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName.Replace("'", "''") + "'");
 
                 foreach (DataRow objRow in objData.Rows)
                 {
@@ -1470,28 +1475,28 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 if (objData.Rows.Count > 0)
                 {
                     selectionType = (sPlotSelectionType)DataService.checkNull(objData.Rows[0]["SELECTION_TYPE"], 0);
-                    LastHours = (int)DataService.checkNull(objData.Rows[0]["HOURS"], 0);
+                    LastHours = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["HOURS"], 0));
                     FromDate = (DateTime)DataService.checkNull(objData.Rows[0]["FROM_DATE"], DateTime.Now);
                     ToDate = (DateTime)DataService.checkNull(objData.Rows[0]["TO_DATE"], DateTime.Now);
-                    FromDepth = (double)DataService.checkNull(objData.Rows[0]["FROM_DEPTH"], 0);
-                    ToDepth = (double)DataService.checkNull(objData.Rows[0]["TO_DEPTH"], 0);
+                    FromDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["FROM_DEPTH"], 0));
+                    ToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TO_DEPTH"], 0));
                     sideTrackKey = (string)DataService.checkNull(objData.Rows[0]["SIDE_TRACK_ID"], 0);
 
-                    NoOfDataPoints = (int)DataService.checkNull(objData.Rows[0]["DATA_POINTS"], 0);
+                    NoOfDataPoints = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["DATA_POINTS"], 0));
 
-                    FilterGTF = (bool)DataService.checkNull(objData.Rows[0]["FILTER_GTF"], 0);
-                    GTFFromDepth = (double)DataService.checkNull(objData.Rows[0]["GTF_DEPTH_FROM"], 0);
-                    GTFToDepth = (double)DataService.checkNull(objData.Rows[0]["GTF_DEPTH_TO"], 0);
+                    FilterGTF = Convert.ToBoolean(DataService.checkNull(objData.Rows[0]["FILTER_GTF"], 0));
+                    GTFFromDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["GTF_DEPTH_FROM"], 0));
+                    GTFToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["GTF_DEPTH_TO"], 0));
 
                     FilterMTF = (bool)DataService.checkNull(objData.Rows[0]["FILTER_MTF"], 0);
-                    MTFFromDepth = (double)DataService.checkNull(objData.Rows[0]["MTF_DEPTH_FROM"], 0);
-                    MTFToDepth = (double)DataService.checkNull(objData.Rows[0]["MTF_DEPTH_TO"], 0);
+                    MTFFromDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MTF_DEPTH_FROM"], 0));
+                    MTFToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MTF_DEPTH_TO"], 0));
 
                     RunNo = (string)DataService.checkNull(objData.Rows[0]["RUN_NO"], "");
                     PreparedBy = (string)DataService.checkNull(objData.Rows[0]["PREPARED_BY"], "");
 
-                    StandPlot_ShowOffset = Global.Iif((int)DataService.checkNull(objData.Rows[0]["STND_SHOW_OFFSET"], 0) == 1, true, false);
-                    StandPlot_ComparisonWindow = (double)DataService.checkNull(objData.Rows[0]["COMP_WINDOW"], 0);
+                    StandPlot_ShowOffset = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STND_SHOW_OFFSET"], 0)) == 1, true, false);
+                    StandPlot_ComparisonWindow = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["COMP_WINDOW"], 0));
 
                     try
                     {
@@ -1519,9 +1524,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        TrackWidth = (int)DataService.checkNull(objData.Rows[0]["TRACK_WIDTH"], 200);
-                        ShowFormationTops = Global.Iif((int)DataService.checkNull(objData.Rows[0]["SHOW_FORMATION_TOPS"], 0) == 1, true, false);
-                        ScrollIncrement = (double)DataService.checkNull(objData.Rows[0]["SCROLL_INC"], 100);
+                        TrackWidth = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["TRACK_WIDTH"], 200));
+                        ShowFormationTops = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SHOW_FORMATION_TOPS"], 0)) == 1, true, false);
+                        ScrollIncrement = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["SCROLL_INC"], 100));
                         DepthLogID = (string)DataService.checkNull(objData.Rows[0]["DEPTH_LOG_ID"], "");
                     }
                     catch (Exception ex)
@@ -1531,18 +1536,18 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        DrlgBenchmark = (double)DataService.checkNull(objData.Rows[0]["DRLG_BM"], 0);
+                        DrlgBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DRLG_BM"], 0));
 
 
 
-                        DrlgBSBenchmark = (double)DataService.checkNull(objData.Rows[0]["DRLG_BM_BS"], 0);
-                        DrlgSSBenchmark = (double)DataService.checkNull(objData.Rows[0]["DRLG_BM_SS"], 0);
-                        DrlgSBBenchmark = (double)DataService.checkNull(objData.Rows[0]["DRLG_BM_SB"], 0);
+                        DrlgBSBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DRLG_BM_BS"], 0));
+                        DrlgSSBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DRLG_BM_SS"], 0));
+                        DrlgSBBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DRLG_BM_SB"], 0));
 
-                        TripBenchmark = (double)DataService.checkNull(objData.Rows[0]["TRIP_BM"], 0);
+                        TripBenchmark = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TRIP_BM"], 0));
 
-                        TargetTime = (double)DataService.checkNull(objData.Rows[0]["TRG_DRLG_CONN_TIME"], 0);
-                        RigCost = (double)DataService.checkNull(objData.Rows[0]["RIG_COST"], 0);
+                        TargetTime = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TRG_DRLG_CONN_TIME"], 0));
+                        RigCost = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["RIG_COST"], 0));
                     }
                     catch (Exception ex)
                     {
@@ -1551,7 +1556,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        MatchDepthByFormationTops = Global.Iif((int)DataService.checkNull(objData.Rows[0]["MATCH_DEPTH"], 0) == 1, true, false);
+                        MatchDepthByFormationTops = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MATCH_DEPTH"], 0)) == 1, true, false);
                     }
                     catch (Exception ex)
                     {
@@ -1560,15 +1565,15 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        ShowMainRotarySmoothCurve = Global.Iif((int)DataService.checkNull(objData.Rows[0]["ROT_SMTH"], 0) == 1, true, false);
-                        ShowMainSlideSmoothCurve = Global.Iif((int)DataService.checkNull(objData.Rows[0]["SLD_SMTH"], 0) == 1, true, false);
-                        ShowOffsetRotarySmoothCurve = Global.Iif((int)DataService.checkNull(objData.Rows[0]["O_ROT_SMTH"], 0) == 1, true, false);
-                        ShowOffsetSlideSmoothCurve = Global.Iif((int)DataService.checkNull(objData.Rows[0]["O_SLD_SMTH"], 0) == 1, true, false);
+                        ShowMainRotarySmoothCurve = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["ROT_SMTH"], 0)) == 1, true, false);
+                        ShowMainSlideSmoothCurve = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SLD_SMTH"], 0)) == 1, true, false);
+                        ShowOffsetRotarySmoothCurve = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["O_ROT_SMTH"], 0)) == 1, true, false);
+                        ShowOffsetSlideSmoothCurve = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["O_SLD_SMTH"], 0)) == 1, true, false);
 
-                        MainRotarySmoothColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["ROT_SMTH_COLOR"], 0));
-                        MainSlideSmoothColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["SLD_SMTH_COLOR"], 0));
-                        OffsetRotarySmoothColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["O_ROT_SMTH_COLOR"], 0));
-                        OffsetSlideSmoothColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["O_SLD_SMTH_COLOR"], 0));
+                        MainRotarySmoothColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["ROT_SMTH_COLOR"], 0)));
+                        MainSlideSmoothColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SLD_SMTH_COLOR"], 0)));
+                        OffsetRotarySmoothColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["O_ROT_SMTH_COLOR"], 0)));
+                        OffsetSlideSmoothColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["O_SLD_SMTH_COLOR"], 0)));
                     }
                     catch (Exception ex)
                     {
@@ -1577,7 +1582,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        AvgPoints = (int)DataService.checkNull(objData.Rows[0]["AVG_POINTS"], 0);
+                        AvgPoints = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AVG_POINTS"], 0));
                     }
                     catch (Exception ex)
                     {
@@ -1585,9 +1590,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        FracPointStyle = (int)DataService.checkNull(objData.Rows[0]["FR_POINT_STYLE"], 0);
-                        FracPointSize = (int)DataService.checkNull(objData.Rows[0]["FR_POINT_SIZE"], 0);
-                        FracPointColor = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["FR_POINT_COLOR"], 0));
+                        FracPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_STYLE"], 0));
+                        FracPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_SIZE"], 0));
+                        FracPointColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_COLOR"], 0)));
 
                         FracWellboreID = (string)DataService.checkNull(objData.Rows[0]["FR_WELLBORE_ID"], "");
                         FracLogID = (string)DataService.checkNull(objData.Rows[0]["FR_LOG_ID"], "");
@@ -1600,8 +1605,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        GTFVector = Global.Iif((int)DataService.checkNull(objData.Rows[0]["GTF_VECTOR"], 0) == 1, true, false);
-                        MTFVector = Global.Iif((int)DataService.checkNull(objData.Rows[0]["MTF_VECTOR"], 0) == 1, true, false);
+                        GTFVector = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["GTF_VECTOR"], 0)) == 1, true, false);
+                        MTFVector = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MTF_VECTOR"], 0)) == 1, true, false);
                     }
                     catch (Exception ex)
                     {
@@ -1610,8 +1615,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        FracClosurePressure = (double)DataService.checkNull(objData.Rows[0]["FR_CL_PRESS"], 0);
-                        FluidType = (int)DataService.checkNull(objData.Rows[0]["FR_FL_TYPE"], 0);
+                        FracClosurePressure = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["FR_CL_PRESS"], 0));
+                        FluidType = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_FL_TYPE"], 0));
                     }
                     catch (Exception ex)
                     {
@@ -1640,7 +1645,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     foreach (DataRow objRow in objData.Rows)
                     {
                         TFAdnlFilter objItem = new TFAdnlFilter();
-                        objItem.FilterID = (int)DataService.checkNull(objRow["FILTER_ID"], 0);
+                        objItem.FilterID = Convert.ToInt32(DataService.checkNull(objRow["FILTER_ID"], 0));
                         objItem.Mnemonic = (string)DataService.checkNull(objRow["MNEMONIC"], "");
                         objItem.JoinOperator = (string)DataService.checkNull(objRow["JOIN_OPERATOR"], "");
                         objItem.Value = (string)DataService.checkNull(objRow["VALUE"], 0);
@@ -1662,7 +1667,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             LogCorOffsetWellInfo objOffset = new LogCorOffsetWellInfo();
                             objOffset.OffsetWellID = strWellID;
                             objOffset.DepthLogID = (string)DataService.checkNull(objRow["DEPTH_LOG_ID"], "");
-                            objOffset.DepthOffset = (double)DataService.checkNull(objRow["OFFSET_DEPTH"], 0);
+                            objOffset.DepthOffset = Convert.ToDouble(DataService.checkNull(objRow["OFFSET_DEPTH"], 0));
                             objOffset.ShortName = (string)DataService.checkNull(objRow["SHORT_NAME"], "");
 
                             offsetWells.Add(strWellID, objOffset);
@@ -1680,21 +1685,21 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         objCurve.EntryID = (string)DataService.checkNull(objRow["ENTRY_ID"], "");
                         objCurve.Mnemonic = (string)DataService.checkNull(objRow["MNEMONIC"], "");
                         objCurve.Name = (string)DataService.checkNull(objRow["NAME"], "");
-                        objCurve.LineColor = Color.FromArgb((int)DataService.checkNull(objRow["LINE_COLOR"], 0));
-                        objCurve.LineStyle = (int)DataService.checkNull(objRow["LINE_STYLE"], 0);
-                        objCurve.LineWidth = (int)DataService.checkNull(objRow["LINE_WIDTH"], 0);
-                        objCurve.InverseScale = Global.Iif((int)DataService.checkNull(objRow["INVERSE_SCALE"], 0) == 1, true, false);
-                        objCurve.AutoScale = Global.Iif((int)DataService.checkNull(objRow["AUTO_SCALE"], 0) == 1, true, false);
-                        objCurve.MinValue = (double)DataService.checkNull(objRow["MIN_VALUE"], 0);
-                        objCurve.MaxValue = (double)DataService.checkNull(objRow["MAX_VALUE"], 0);
-                        objCurve.Visible = Global.Iif((int)DataService.checkNull(objRow["VISIBLE"], 0) == 1, true, false);
-                        objCurve.IgnoreNegative = Global.Iif((int)DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0) == 1, true, false);
-                        objCurve.Color1 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR1"], 0));
-                        objCurve.Color2 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR2"], 0));
-                        objCurve.Color3 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR3"], 0));
-                        objCurve.Color4 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR4"], 0));
-                        objCurve.Color5 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR5"], 0));
-                        objCurve.DisplayOrder = (int)DataService.checkNull(objRow["DISPLAY_ORDER"], 0);
+                        objCurve.LineColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], 0)));
+                        objCurve.LineStyle = Convert.ToInt32(DataService.checkNull(objRow["LINE_STYLE"], 0));
+                        objCurve.LineWidth = Convert.ToInt32(DataService.checkNull(objRow["LINE_WIDTH"], 0));
+                        objCurve.InverseScale = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["INVERSE_SCALE"], 0)) == 1, true, false);
+                        objCurve.AutoScale = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["AUTO_SCALE"], 0)) == 1, true, false);
+                        objCurve.MinValue = Convert.ToDouble(DataService.checkNull(objRow["MIN_VALUE"], 0));
+                        objCurve.MaxValue = Convert.ToDouble(DataService.checkNull(objRow["MAX_VALUE"], 0));
+                        objCurve.Visible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["VISIBLE"], 0)) == 1, true, false);
+                        objCurve.IgnoreNegative = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0)) == 1, true, false);
+                        objCurve.Color1 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], 0)));
+                        objCurve.Color2 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], 0)));
+                        objCurve.Color3 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], 0)));
+                        objCurve.Color4 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], 0)));
+                        objCurve.Color5 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR5"], 0)));
+                        objCurve.DisplayOrder = Convert.ToInt32(DataService.checkNull(objRow["DISPLAY_ORDER"], 0));
 
                         if (!logCurves.ContainsKey(objCurve.Mnemonic))
                             logCurves.Add(objCurve.Mnemonic, objCurve);
@@ -1713,15 +1718,15 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             LogCorCurve withBlock = topComparisionCurve;
                             withBlock.Mnemonic = (string)DataService.checkNull(objRow["MNEMONIC"], "");
                             withBlock.Name = (string)DataService.checkNull(objRow["NAME"], "");
-                            withBlock.LineColor = Color.FromArgb((int)DataService.checkNull(objRow["LINE_COLOR"], 0));
-                            withBlock.LineStyle = (int)DataService.checkNull(objRow["LINE_STYLE"], 0);
-                            withBlock.LineWidth = (int)DataService.checkNull(objRow["LINE_WIDTH"], 0);
-                            withBlock.InverseScale = Global.Iif((int)DataService.checkNull(objRow["INVERSE_SCALE"], 0) == 1, true, false);
-                            withBlock.AutoScale = Global.Iif((int)DataService.checkNull(objRow["AUTO_SCALE"], 0) == 1, true, false);
-                            withBlock.MinValue = (double)DataService.checkNull(objRow["MIN_VALUE"], 0);
-                            withBlock.MaxValue = (double)DataService.checkNull(objRow["MAX_VALUE"], 0);
-                            withBlock.Visible = Global.Iif((int)DataService.checkNull(objRow["VISIBLE"], 0) == 1, true, false);
-                            withBlock.IgnoreNegative = Global.Iif((int)DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0) == 1, true, false);
+                            withBlock.LineColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], 0)));
+                            withBlock.LineStyle = Convert.ToInt32(DataService.checkNull(objRow["LINE_STYLE"], 0));
+                            withBlock.LineWidth = Convert.ToInt32(DataService.checkNull(objRow["LINE_WIDTH"], 0));
+                            withBlock.InverseScale = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["INVERSE_SCALE"], 0)) == 1, true, false);
+                            withBlock.AutoScale = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["AUTO_SCALE"], 0)) == 1, true, false);
+                            withBlock.MinValue = Convert.ToDouble(DataService.checkNull(objRow["MIN_VALUE"], 0));
+                            withBlock.MaxValue = Convert.ToDouble(DataService.checkNull(objRow["MAX_VALUE"], 0));
+                            withBlock.Visible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["VISIBLE"], 0)) == 1, true, false);
+                            withBlock.IgnoreNegative = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0)) == 1, true, false);
                         }
                     }
 
@@ -1758,30 +1763,30 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     if (objData.Rows.Count > 0)
                     {
-                        ROP_MainPointStyle = (int)DataService.checkNull(objData.Rows[0]["MAIN_POINT_STYLE"], 0);
-                        ROP_MainPointSize = (int)DataService.checkNull(objData.Rows[0]["MAIN_POINT_SIZE"], 0);
-                        ROP_MainPointColorRotary = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_R"], 0));
-                        ROP_MainPointColorSlide = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_S"], 0));
+                        ROP_MainPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_STYLE"], 0));
+                        ROP_MainPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_SIZE"], 0));
+                        ROP_MainPointColorRotary = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_R"], 0)));
+                        ROP_MainPointColorSlide = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_S"], 0)));
 
 
-                        ROP_OffsetPointStyle = (int)DataService.checkNull(objData.Rows[0]["OFFSET_POINT_STYLE"], 0);
-                        ROP_OffsetPointSize = (int)DataService.checkNull(objData.Rows[0]["OFFSET_POINT_SIZE"], 0);
-                        ROP_OffsetPointColorRotary = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_R"], 0));
-                        ROP_OffsetPointColorSlide = Color.FromArgb((int)DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_S"], 0));
+                        ROP_OffsetPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_STYLE"], 0));
+                        ROP_OffsetPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_SIZE"], 0));
+                        ROP_OffsetPointColorRotary = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_R"], 0)));
+                        ROP_OffsetPointColorSlide = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_S"], 0)));
 
                         ROP_AxisFontName = (string)DataService.checkNull(objData.Rows[0]["AXIS_FONT_NAME"], "Arial");
-                        ROP_AxisFontSize = (int)DataService.checkNull(objData.Rows[0]["AXIS_FONT_SIZE"], 10);
-                        ROP_AxisFontBold = Global.Iif((int)DataService.checkNull(objData.Rows[0]["AXIS_FONT_BOLD"], 0) == 1, true, false);
-                        ROP_AxisFontItalic = Global.Iif((int)DataService.checkNull(objData.Rows[0]["AXIS_FONT_ITALIC"], 0) == 1, true, false);
-                        ROP_AxisFontUnderline = Global.Iif((int)DataService.checkNull(objData.Rows[0]["AXIS_FONT_UNDERLINE"], 0) == 1, true, false);
+                        ROP_AxisFontSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_SIZE"], 10));
+                        ROP_AxisFontBold = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_BOLD"], 0)) == 1, true, false);
+                        ROP_AxisFontItalic = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_ITALIC"], 0)) == 1, true, false);
+                        ROP_AxisFontUnderline = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_UNDERLINE"], 0)) == 1, true, false);
 
                         ROP_StatFontName = (string)DataService.checkNull(objData.Rows[0]["STAT_FONT_NAME"], "Arial");
-                        ROP_StatFontSize = (int)DataService.checkNull(objData.Rows[0]["STAT_FONT_SIZE"], 10);
-                        ROP_StatFontBold = Global.Iif((int)DataService.checkNull(objData.Rows[0]["STAT_FONT_BOLD"], 0) == 1, true, false);
-                        ROP_StatFontItalic = Global.Iif((int)DataService.checkNull(objData.Rows[0]["STAT_FONT_ITALIC"], 0) == 1, true, false);
-                        ROP_StatFontUnderline = Global.Iif((int)DataService.checkNull(objData.Rows[0]["STAT_FONT_UNDERLINE"], 0) == 1, true, false);
+                        ROP_StatFontSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STAT_FONT_SIZE"], 10));
+                        ROP_StatFontBold = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STAT_FONT_BOLD"], 0)) == 1, true, false);
+                        ROP_StatFontItalic = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STAT_FONT_ITALIC"], 0)) == 1, true, false);
+                        ROP_StatFontUnderline = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["STAT_FONT_UNDERLINE"], 0)) == 1, true, false);
 
-                        ROP_ShowOffset = Global.Iif((int)DataService.checkNull(objData.Rows[0]["SHOW_OFFSET"], 0) == 1, true, false);
+                        ROP_ShowOffset = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SHOW_OFFSET"], 0)) == 1, true, false);
                     }
                 }
 
@@ -2178,34 +2183,38 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             }
         }
 
-        //public void loadInitialData(gdSummary objGDSPlot)
-        //{
-        //    try
-        //    {
-        //        if (objGDSPlot.hasTimeData)
+        
+        
+        public void loadInitialData(gdSummary objGDSPlot)
+        {
+            try
+            {
+                if (objGDSPlot.hasTimeData())
 
-        //            // 'Select Primary time log ...
-        //            objTimeLog = objProject.getPrimaryTimeLog();
-
-
-        //        if (objGDSPlot.hasTrajectoryData)
-        //        {
-        //            trajList.Clear();
-
-        //            Trajectory objTrajectory = objProject.getActualTrajectory;
-
-        //            if (!objTrajectory == null)
-        //                trajList.Add(objTrajectory.WellboreID + "~" + objTrajectory.ObjectID, objTrajectory.WellboreID + "~" + objTrajectory.ObjectID);
-        //        }
+                    // 'Select Primary time log ...
+                    objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref this.objRequest.objDataService, objGDSPlot.wellID);
+                //objTimeLog = objProject.getPrimaryTimeLog();
 
 
-        //        loadDataSelection(objGDSPlot.SummaryPlotID);
-        //    }
+                if (objGDSPlot.hasTrajectoryData())
+                {
+                    trajList.Clear();
 
-        //    catch (Exception ex)
-        //    {
-        //    }
-        //}
+
+                    Trajectory objTrajectory = objGDSPlot.getActualTrajectory(); // objProject.getActualTrajectory;
+
+                    if (objTrajectory != null)
+                        trajList.Add(objTrajectory.WellboreID + "~" + objTrajectory.ObjectID, objTrajectory.WellboreID + "~" + objTrajectory.ObjectID);
+                }
+
+
+                loadDataSelection(objGDSPlot.SummaryPlotID);
+            }
+
+            catch (Exception ex)
+            {
+            }
+        }
 
 
         //public bool getRange3(ref DateTime paramFromDate, ref DateTime paramToDate, ref double paramFromDepth, ref double paramToDepth, ref string paramTitle, ref string paramPlotName)
@@ -2465,7 +2474,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                             if (topName.Trim().ToUpper() == strKey.Trim().ToUpper())
                             {
-                                double topDepth = (double)DataService.checkNull(objTops.Rows[i]["DEPTH"], 0);
+                                double topDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i]["DEPTH"], 0));
 
                                 minDepth = topDepth;
 
@@ -2474,10 +2483,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                                     maxDepth = 0;
 
                                     if (objLocalTimeLog != null)
-                                        maxDepth = (double)objRequest.objDataService.getValueFromDatabase("SELECT MAX(HDTH) FROM " + objLocalTimeLog.__dataTableName);
+                                        maxDepth = Convert.ToDouble(objRequest.objDataService.getValueFromDatabase("SELECT MAX(HDTH) FROM " + objLocalTimeLog.__dataTableName));
                                 }
                                 else
-                                    maxDepth = (double)DataService.checkNull(objTops.Rows[i + 1]["DEPTH"], 0);
+                                    maxDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i + 1]["DEPTH"], 0));
 
                                 if (minDepth < paramMinDepth)
                                     paramMinDepth = minDepth;
@@ -2505,7 +2514,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                             if (topName.Trim().ToUpper() == strKey.Trim().ToUpper())
                             {
-                                double topDepth = (double)DataService.checkNull(objTops.Rows[i]["DEPTH"], 0);
+                                double topDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i]["DEPTH"], 0));
 
                                 minDepth = topDepth;
 
@@ -2531,7 +2540,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                             if (topName.Trim().ToUpper() == strKey.Trim().ToUpper())
                             {
-                                double topDepth = (double)DataService.checkNull(objTops.Rows[i]["DEPTH"], 0);
+                                double topDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i]["DEPTH"], 0));
 
                                 minDepth = topDepth;
 
@@ -2540,10 +2549,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                                     maxDepth = 0;
 
                                     if (objLocalTimeLog != null)
-                                        maxDepth = (double)objRequest.objDataService.getValueFromDatabase("SELECT MAX(HDTH) FROM " + objLocalTimeLog.__dataTableName);
+                                        maxDepth = Convert.ToDouble(objRequest.objDataService.getValueFromDatabase("SELECT MAX(HDTH) FROM " + objLocalTimeLog.__dataTableName));
                                 }
                                 else
-                                    maxDepth = (double)DataService.checkNull(objTops.Rows[i + 1]["DEPTH"], 0);
+                                    maxDepth = Convert.ToDouble(DataService.checkNull(objTops.Rows[i + 1]["DEPTH"], 0));
 
 
                                 if (maxDepth > paramMaxDepth)

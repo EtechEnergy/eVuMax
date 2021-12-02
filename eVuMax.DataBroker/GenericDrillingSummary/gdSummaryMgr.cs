@@ -27,18 +27,32 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                 if (paramRequest.Function == generateGDSummary)
                 {
-                    string wellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("wellID")).FirstOrDefault().ParamValue;
-                    string UserID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue;
-                    string plotID = paramRequest.Parameters.Where(x => x.ParamName.Contains("PlotID")).FirstOrDefault().ParamValue;
+                    string wellID = "";
+                    string UserID = "";
+                    string plotID = "";
 
-                    gdSummary objSummary = new gdSummary();
+                    try
+                    {
+                        wellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("wellID")).FirstOrDefault().ParamValue;
+                        UserID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue;
+                        plotID = paramRequest.Parameters.Where(x => x.ParamName.Contains("PlotID")).FirstOrDefault().ParamValue;
+                    }
+                    catch (Exception ex)
+                    {
+
+                        Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                        objBadResponse.RequestSuccessfull = false;
+                        objBadResponse.Errors = "Error in Generic Drilling Summary GetData. Some of the parameters are not corrrect." + ex.Message + ex.StackTrace;
+                        return objBadResponse;
+                    }
+
+                    paramRequest.objDataService.UserName = UserID;
+                    gdSummary objSummary = new gdSummary(paramRequest,wellID,plotID);
+                    gdSummary.loadSummaryObject(ref objSummary);
                     
-                    objResponse = objSummary.loadSummaryData(wellID,plotID, ref paramRequest);
-
+                    objResponse = gdSummary.loadSummaryData(ref objSummary);
                     return objResponse;
                 }
-
-
                 return objResponse;
 
             }
@@ -46,7 +60,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             {
                 Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
                 objBadResponse.RequestSuccessfull = false;
-                objBadResponse.Errors = "Error in getDrlgConnections " + ex.Message + ex.StackTrace;
+                objBadResponse.Errors = "Error in Generic Drilling Summary GetData " + ex.Message + ex.StackTrace;
                 return objBadResponse;
 
             }
@@ -54,7 +68,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
         public BrokerResponse performTask(BrokerRequest paramRequest)
         {
-            throw new NotImplementedException();
+            return new BrokerResponse();
         }
     }
 }
