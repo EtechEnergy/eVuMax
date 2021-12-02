@@ -597,6 +597,14 @@ div.k-time-tab.k-datetime-wrap {
   text-decoration: underline;
   font-weight: bold !important;
 }
+
+.dataSelectorPeriod {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  /* color: var(--base-anchor-color); */
+  font-weight: bold !important;
+  color: #f6ab6c !important;
+}
+
 .k-i-close {
   color: var(--base-anchor-color) !important;
 }

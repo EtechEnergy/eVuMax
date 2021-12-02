@@ -7,7 +7,8 @@ import { formatNumber, parseDate } from "@telerik/kendo-intl";
 
 import DataSelector from "../../Common/DataSelector";
 import DataSelectorOriginal from "../../Common/DataSelectorOriginal";
-import { Moment } from "moment";
+//import { Moment } from "moment";
+import moment from "moment";
 import {
   DataSeries,
   dataSeriesType,
@@ -37,9 +38,6 @@ import {
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab, Button, Dialog } from "@progress/kendo-react-all";
 
-
-
-
 import "./DrlgConnSummary.css";
 
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
@@ -52,6 +50,8 @@ import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
+import DataSelectorInfo from "../../Common/DataSelectorInfo";
+
 
 let _gMod = new GlobalMod();
 
@@ -130,6 +130,7 @@ class DrlgConnSummary extends Component {
   fromDepth: number = 0;
   toDepth: number = 0;
   refreshHrs: number = 24;
+  connPeriod = "";
 
   // //Cancel all Axios Request
   // AxiosSource = axios.CancelToken.source();
@@ -155,9 +156,6 @@ class DrlgConnSummary extends Component {
 
   async componentDidMount() {
     try {
-      //this.objLogger.SendLog("test Logger");
-      //this.intervalID = setInterval(this.loadConnections.bind(this), 5000);
-      //alert("drlgconnsummy-" + this.WellId);
 
       //initialize chart
       this.objChart = new Chart(this, "ConnectionChart");
@@ -221,7 +219,7 @@ class DrlgConnSummary extends Component {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
 
-  ////Nishant
+
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
     //alert(paramRefreshHrs);
 
@@ -232,8 +230,6 @@ class DrlgConnSummary extends Component {
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
     });
-
-
 
     this.selectionType = paramDataSelector.selectedval;
     this.fromDate = new Date(paramDataSelector.fromDate);
@@ -444,7 +440,7 @@ class DrlgConnSummary extends Component {
         })
         .catch((error) => {
 
-          Util.StatusError(error.message);
+          //Util.StatusError(error.message);
           Util.StatusReady();
           if (error.response) {
             // return <CustomeNotifications Key="success" Icon={false}  />
@@ -832,8 +828,9 @@ class DrlgConnSummary extends Component {
   }
 
 
-
   render() {
+
+
     return (
       <>
         <div className="row ml-1 mr-1" style={{ justifyContent: "space-between" }}>
@@ -950,11 +947,14 @@ class DrlgConnSummary extends Component {
                     />
                   </div>
 
+                  {/* <label className="connPeriod" style={{ marginLeft: "30px" }}> {this.connPeriod} </label> */}
+
+                  <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
                   <div
                     //vimal
                     className="form-inline eVumaxPanelChart mb-1"
                     style={{
-                      marginTop: "10px",
+                      //marginTop: "10px",
                       marginRight: "50px",
                       float: "right",
                       height: "32px",
@@ -962,6 +962,7 @@ class DrlgConnSummary extends Component {
                       minWidth: "200px",
                     }}
                   >
+
                     <label className="connInfo" style={{ marginRight: "20px" }}>
                       ({this.state.ConnCount}) Connections
                     </label>
@@ -1714,8 +1715,12 @@ class DrlgConnSummary extends Component {
                   </div>
                 </div>
               </TabStripTab>
+
+
             </TabStrip>
+
           </div>
+
         </div>
 
         {this.state.showCommentDialog && (

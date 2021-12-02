@@ -429,7 +429,7 @@ class Broomstick extends Component {
         i < this.state.objBroomstickData.HkldPlanData.length;
         i++
       ) {
-        //alert(i);
+
         objData = this.state.objBroomstickData.HkldPlanData[i];
         objSeries = new DataSeries();
         objSeries.Id = i.toString(); // objData.PlanID;
@@ -456,8 +456,6 @@ class Broomstick extends Component {
         objSeries.YAxisId = this.objChart_Broomstick.leftAxis().Id;
         objSeries.LineWidth = 1;
         this.objChart_Broomstick.DataSeries.set(objSeries.Id, objSeries);
-        //alert(objSeries.Id);
-        //alert(this.objChart_Broomstick.DataSeries.size);
 
         //load data
         for (let j = 0; j < objData.PlanData.length; j++) {
@@ -563,7 +561,7 @@ class Broomstick extends Component {
       //  this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      this.loadConnections();
+      //this.loadConnections();
     }
     sessionStorage.setItem("realTimeBroomstick", this.state.isRealTime.toString());
   };

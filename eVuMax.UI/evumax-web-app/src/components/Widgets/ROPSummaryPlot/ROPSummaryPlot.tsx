@@ -29,6 +29,7 @@ import NotifyMe from 'react-notification-timeline';
 import $ from "jquery";
 import * as d3 from "d3";
 import { Axis, axisPosition, axisLabelStyle } from "../../../eVuMaxObjects/Chart/Axis";
+import DataSelectorInfo from "../../Common/DataSelectorInfo";
 
 // export enum axisPosition {
 //   left = 0,
@@ -1370,7 +1371,7 @@ export class ROPSummaryPlot extends Component {
         </div>
 
         <div className="clearfix"></div>
-
+        <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
 
         <div className="clearfix"></div>
         <hr />
