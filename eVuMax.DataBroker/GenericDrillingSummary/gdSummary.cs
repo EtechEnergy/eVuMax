@@ -2599,7 +2599,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objItem.variableRangeFrom = Convert.ToDouble(DataService.checkNull(objRow["FROM_RANGE"], 0));
                     objItem.variableRangeTo = Convert.ToDouble(DataService.checkNull(objRow["TO_RANGE"], 0));
                     objItem.variableRangeIncrement = Convert.ToDouble(DataService.checkNull(objRow["RANGE_INCREMENT"], 0));
-                    objItem.splitMnemonic = (string)DataService.checkNull(objRow["SPLIT_MNEMONIC"], 0);
+                    objItem.splitMnemonic = (string)DataService.checkNull(objRow["SPLIT_MNEMONIC"], "");
                     objItem.ShowMarks = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_MARKS"], 0)) == 1, true, false);
 
                     objItem.StackedBars = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["STACKED_BARS"], 0)) == 1, true, false);
