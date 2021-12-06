@@ -143,7 +143,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objChart.rightAxis().Visible = false;
       objChart.rightAxis().ShowLabels = false;
 
-      objChart.MarginLeft = 10;
+      objChart.MarginLeft = 150;
       objChart.MarginBottom = 10;
       objChart.MarginTop = 0;
       objChart.MarginRight = 10;
@@ -278,6 +278,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         objChart.Axes.clear();
         objChart.DataSeries.clear();
+
+        objChart.MarginLeft = 150;
+        objChart.MarginBottom = 10;
+        objChart.MarginTop = 0;
+        objChart.MarginRight = 50;
+
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
 
@@ -288,7 +294,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
           //Create Custom Left Axis 
           let objAxis = new Axis();
-
+          //alert(objSummaryAxis.AxisTitle);
           //objAxis.CustomPosition = true;
           objAxis.DisplayOrder = index;
           objAxis.Id = objSummaryAxis.ColumnID;
@@ -297,8 +303,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.IsDateTime = false;
           objAxis.bandScale = false; //as in Toolface
           objAxis.Title = objSummaryAxis.AxisTitle;
+          
           objAxis.ShowLabels = true;
-          objAxis.ShowTitle = false;
+          objAxis.ShowTitle = true;
           objAxis.EndPos = objSummaryAxis.EndPosition;
           objAxis.StartPos = objSummaryAxis.StartPosition;
           objAxis.GridVisible = objSummaryAxis.ShowGrid;
@@ -309,8 +316,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
-
-
 
 
 
@@ -343,7 +348,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.bandScale = false;
           objAxis.Title = objSummaryAxis.AxisTitle;
           objAxis.ShowLabels = true;
-          objAxis.ShowTitle = false;
+          objAxis.ShowTitle = true;
           objAxis.EndPos = objSummaryAxis.EndPosition;
           objAxis.StartPos = objSummaryAxis.StartPosition;
           objAxis.GridVisible = objSummaryAxis.ShowGrid;
@@ -390,7 +395,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.bandScale = false;
           objAxis.Title = objSummaryAxis.AxisTitle;
           objAxis.ShowLabels = true;
-          objAxis.ShowTitle = false;
+          objAxis.ShowTitle = true;
           objAxis.EndPos = objSummaryAxis.EndPosition;
           objAxis.StartPos = objSummaryAxis.StartPosition;
           objAxis.GridVisible = objSummaryAxis.ShowGrid;

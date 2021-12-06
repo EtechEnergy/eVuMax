@@ -311,6 +311,7 @@ export class Axis {
       }
 
       this.__axisWidth = titleSpace + labelSpace + 10;
+      
     } catch (error) { }
   };
 
@@ -566,7 +567,7 @@ export class Axis {
         }
       } else {
         if (this.ShowLabels) {
-          titleX = this.IRelativePos - textHeight - titleWidth;
+          titleX = this.IRelativePos - textHeight - titleWidth; 
         } else {
           titleX = this.IRelativePos - titleWidth;
         }
