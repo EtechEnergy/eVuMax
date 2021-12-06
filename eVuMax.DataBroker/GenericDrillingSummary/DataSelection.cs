@@ -80,12 +80,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public bool ROP_ShowOffset = false;
         public int ROP_MainPointStyle = 0;
         public int ROP_MainPointSize = 4;
-        public Color ROP_MainPointColorRotary = Color.LightGreen;
-        public Color ROP_MainPointColorSlide = Color.DarkGreen;
+        public string ROP_MainPointColorRotary = ColorTranslator.ToHtml(Color.LightGreen);
+        public string ROP_MainPointColorSlide = ColorTranslator.ToHtml(Color.DarkGreen);
         public int ROP_OffsetPointStyle = 0;
         public int ROP_OffsetPointSize = 4;
-        public Color ROP_OffsetPointColorRotary = Color.Blue;
-        public Color ROP_OffsetPointColorSlide = Color.LightBlue;
+        public string ROP_OffsetPointColorRotary = ColorTranslator.ToHtml(Color.Blue);
+        public string ROP_OffsetPointColorSlide = ColorTranslator.ToHtml(Color.LightBlue);
         public string ROP_AxisFontName = "Arial";
         public int ROP_AxisFontSize = 10;
         public bool ROP_AxisFontBold = false;
@@ -128,7 +128,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
         public int FracPointStyle = 0;
         public int FracPointSize = 4;
-        public Color FracPointColor = Color.Blue;
+        public string FracPointColor = ColorTranslator.ToHtml(Color.Blue);
 
         public string FracWellboreID = "";
         public string FracLogID = "";
@@ -1100,8 +1100,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     FromDate = (DateTime)DataService.checkNull(objData.Rows[0]["FROM_DATE"], DateTime.Now);
                     ToDate = (DateTime)DataService.checkNull(objData.Rows[0]["TO_DATE"], DateTime.Now);
                     FromDepth = Convert.ToDouble( DataService.checkNull(objData.Rows[0]["FROM_DEPTH"], 0));
-                    ToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TO_DEPTH"], 0));
-                    sideTrackKey = (string)DataService.checkNull(objData.Rows[0]["SIDE_TRACK_ID"], 0);
+                    ToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TO_DEPTH"], ""));
+                    sideTrackKey = (string)DataService.checkNull(objData.Rows[0]["SIDE_TRACK_ID"], "");
 
                     NoOfDataPoints = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["DATA_POINTS"], 0));
 
@@ -1213,7 +1213,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     {
                         FracPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_STYLE"], 0));
                         FracPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_SIZE"], 0));
-                        FracPointColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_COLOR"], 0)));
+                        FracPointColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_COLOR"], 0))));
 
                         FracWellboreID = (string)DataService.checkNull(objData.Rows[0]["FR_WELLBORE_ID"], "");
                         FracLogID = (string)DataService.checkNull(objData.Rows[0]["FR_LOG_ID"], "");
@@ -1355,13 +1355,13 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     ROP_MainPointStyle = 7;
                     ROP_MainPointSize = 4;
-                    ROP_MainPointColorRotary = Color.Blue;
-                    ROP_MainPointColorSlide = Color.Red;
+                    ROP_MainPointColorRotary = ColorTranslator.ToHtml(Color.Blue);
+                    ROP_MainPointColorSlide = ColorTranslator.ToHtml(Color.Red);
 
                     ROP_OffsetPointStyle = 1;
                     ROP_OffsetPointSize = 4;
-                    ROP_OffsetPointColorRotary = Color.Green;
-                    ROP_OffsetPointColorSlide = Color.Brown;
+                    ROP_OffsetPointColorRotary = ColorTranslator.ToHtml(Color.Green);
+                    ROP_OffsetPointColorSlide = ColorTranslator.ToHtml(Color.Brown);
 
 
                     ROP_AxisFontName = "Arial";
@@ -1385,14 +1385,14 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     {
                         ROP_MainPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_STYLE"], 0));
                         ROP_MainPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_SIZE"], 0));
-                        ROP_MainPointColorRotary = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_R"], 0)));
-                        ROP_MainPointColorSlide = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_S"], 0)));
+                        ROP_MainPointColorRotary = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_R"], 0))));
+                        ROP_MainPointColorSlide = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_S"], 0))));
 
 
                         ROP_OffsetPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_STYLE"], 0));
                         ROP_OffsetPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_SIZE"], 0));
-                        ROP_OffsetPointColorRotary = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_R"], 0)));
-                        ROP_OffsetPointColorSlide = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_S"], 0)));
+                        ROP_OffsetPointColorRotary = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_R"], 0))));
+                        ROP_OffsetPointColorSlide = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_S"], 0))));
 
                         ROP_AxisFontName = (string)DataService.checkNull(objData.Rows[0]["AXIS_FONT_NAME"], "Arial");
                         ROP_AxisFontSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_SIZE"], 10));
@@ -1592,7 +1592,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     {
                         FracPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_STYLE"], 0));
                         FracPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_SIZE"], 0));
-                        FracPointColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_COLOR"], 0)));
+                        FracPointColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FR_POINT_COLOR"], 0))));
 
                         FracWellboreID = (string)DataService.checkNull(objData.Rows[0]["FR_WELLBORE_ID"], "");
                         FracLogID = (string)DataService.checkNull(objData.Rows[0]["FR_LOG_ID"], "");
@@ -1735,13 +1735,13 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     ROP_MainPointStyle = 7;
                     ROP_MainPointSize = 4;
-                    ROP_MainPointColorRotary = Color.Blue;
-                    ROP_MainPointColorSlide = Color.Red;
+                    ROP_MainPointColorRotary = ColorTranslator.ToHtml(Color.Blue);
+                    ROP_MainPointColorSlide = ColorTranslator.ToHtml(Color.Red);
 
                     ROP_OffsetPointStyle = 1;
                     ROP_OffsetPointSize = 4;
-                    ROP_OffsetPointColorRotary = Color.Green;
-                    ROP_OffsetPointColorSlide = Color.Brown;
+                    ROP_OffsetPointColorRotary = ColorTranslator.ToHtml(Color.Green);
+                    ROP_OffsetPointColorSlide = ColorTranslator.ToHtml(Color.Brown);
 
 
                     ROP_AxisFontName = "Arial";
@@ -1765,14 +1765,14 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     {
                         ROP_MainPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_STYLE"], 0));
                         ROP_MainPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_SIZE"], 0));
-                        ROP_MainPointColorRotary = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_R"], 0)));
-                        ROP_MainPointColorSlide = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_S"], 0)));
+                        ROP_MainPointColorRotary = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_R"], 0))));
+                        ROP_MainPointColorSlide = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MAIN_POINT_COLOR_S"], 0))));
 
 
                         ROP_OffsetPointStyle = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_STYLE"], 0));
                         ROP_OffsetPointSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_SIZE"], 0));
-                        ROP_OffsetPointColorRotary = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_R"], 0)));
-                        ROP_OffsetPointColorSlide = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_S"], 0)));
+                        ROP_OffsetPointColorRotary = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_R"], 0))));
+                        ROP_OffsetPointColorSlide = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["OFFSET_POINT_COLOR_S"], 0))));
 
                         ROP_AxisFontName = (string)DataService.checkNull(objData.Rows[0]["AXIS_FONT_NAME"], "Arial");
                         ROP_AxisFontSize = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["AXIS_FONT_SIZE"], 10));
