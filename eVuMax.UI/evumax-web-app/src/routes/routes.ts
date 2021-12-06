@@ -22,6 +22,7 @@ import Broomstick from "../components/Widgets/Broomstick/Broomstick";
 
 import ChartTesting from "../components/ChartTesting/ChartTesting";
 import ChangePassword from "../components/login/changePassword";
+import customDrlgSummaryViewer from "../components/Widgets/CustomDrillingSummary/customDrlgSummaryViewer";
 
 
 
@@ -192,6 +193,14 @@ const dashbordRoutes = [
     name: "Change Password",
     icon: "",
     component: ChangePassword,
+    layout: "/dashboard",
+  },
+
+  {
+    path: "/customDrlgSummaryViewer/:WellId",
+    name: "customDrlgSummaryViewer",
+    icon: "",
+    component: customDrlgSummaryViewer,
     layout: "/dashboard",
   },
 ];

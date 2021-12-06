@@ -18,8 +18,27 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 if (paramRequest.Function == getGDSummaryList)
                 {
-                    
+
+                    string wellID = "";
+                  
+
+                    try
+                    {
+                        wellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("wellID")).FirstOrDefault().ParamValue;
+                        
+                    }
+                    catch (Exception ex)
+                    {
+
+                        Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                        objBadResponse.RequestSuccessfull = false;
+                        objBadResponse.Errors = "Error in Generic Drilling Summary GetData. Some of the parameters are not corrrect." + ex.Message + ex.StackTrace;
+                        return objBadResponse;
+                    }
                     objResponse = gdSummary.LoadgdSummaryList(ref paramRequest);
+                    string wellName = "";
+                    wellName = paramRequest.objDataService.getValueFromDatabase("SELECT WELL_NAME FROM VMX_WELL WHERE WELL_ID='" + wellID + "'").ToString();
+                    objResponse.Category = wellName;
 
                     return objResponse;
                 }

@@ -20,6 +20,7 @@ export default class customDrlgSummaryViewer extends Component {
   }
 
   WellID: string = "";
+  wellName: string = "";
   state = {
     panes: [{ size: "20%", collapsible: false }, {}],
     grdData: [{ template_Name: "Plot-1", template_Id: "Plot1" }],
@@ -27,6 +28,7 @@ export default class customDrlgSummaryViewer extends Component {
     currentPlotID: "",
     runReport: false,
     warningMsg: [],
+
 
   };
 
@@ -89,7 +91,7 @@ export default class customDrlgSummaryViewer extends Component {
           console.log("objData", objData);
           if (objData != null || objData != "") {
             let _data = Object.values(objData);
-
+            this.wellName = res.data.Category;
 
             //Warnings Notifications
             let warnings: string = res.data.Warnings;
@@ -188,6 +190,10 @@ export default class customDrlgSummaryViewer extends Component {
   render() {
     return (
       <div>
+
+        <div className="" style={{ display: "flex", justifyContent: "flex-start" }}>
+          <label>{this.wellName} </label>
+        </div>
         <div className="" style={{ display: "flex", justifyContent: "flex-end" }}>
           <NotifyMe
 

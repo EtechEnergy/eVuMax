@@ -1008,6 +1008,8 @@ export class Axis {
       this.Position == axisPosition.left ||
       this.Position == axisPosition.right
     ) {
+           
+      //Original
       x = this.IRelativePos;
       y = this.StartPos;
       if (this.Position == axisPosition.left) {

@@ -2131,7 +2131,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                 paramObjSummary.lastError = "";
                 paramObjSummary.objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref paramObjSummary.objRequest.objDataService, paramObjSummary.wellID);
-
+                objResponse.Category = paramObjSummary.objWell.name;
 
                 //Get the primary time log 
                 paramObjSummary.objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref paramObjSummary.objRequest.objDataService, paramObjSummary.wellID);
@@ -2545,7 +2545,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objItem.SeriesType = Convert.ToInt32(DataService.checkNull(objRow["SERIES_TYPE"], 0));
                     objItem.LineStyle = Convert.ToInt32(DataService.checkNull(objRow["LINE_STYLE"], 0));
                     objItem.LineWidth = Convert.ToDouble(DataService.checkNull(objRow["LINE_WIDTH"], 0));
-                    objItem.LineColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], 0)));
+                    objItem.LineColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], Color.Black.ToArgb()))));// Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], 0)));
                     objItem.StepLine = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["STEP_LINE"], 0)) == 1, true, false);
                     objItem.ShowPoints = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_POINTS"], 0)) == 1, true, false);
                     objItem.PointerStyle = Convert.ToInt32(DataService.checkNull(objRow["POINT_STYLE"], 0));
@@ -2639,9 +2639,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objAxis.EndPosition = Convert.ToDouble(DataService.checkNull(objRow["END_POSITION"], 0));
                     objAxis.RelativePosition = Convert.ToInt32(DataService.checkNull(objRow["RELATIVE_POSITION"], 0));
                     objAxis.ShowGrid = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_GRID"], 0)) == 1, true, false);
-                    objAxis.FontName = (string)DataService.checkNull(objRow["FONT_NAME"], "");
-                    objAxis.FontSize = Convert.ToInt32(DataService.checkNull(objRow["FONT_SIZE"], 0));
-                    objAxis.FontColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["FONT_COLOR"], 0)));
+                    objAxis.FontName = (string)DataService.checkNull(objRow["FONT_NAME"], "Arial");
+                    objAxis.FontSize = Convert.ToInt32(DataService.checkNull(objRow["FONT_SIZE"], 10));
+                    //objAxis.FontColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["FONT_COLOR"], "Black")));
+                    objAxis.FontColor =  ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["FONT_COLOR"], Color.Black.ToArgb()))));
                     objAxis.FontBold = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["FONT_BOLD"], 0)) == 1, true, false);
                     objAxis.FontItalic = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["FONT_ITALIC"], 0)) == 1, true, false);
 

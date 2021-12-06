@@ -28,7 +28,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
         public int LineStyle = 0;
         public double LineWidth = 0;
-        public Color LineColor = Color.Black;
+        //public Color LineColor = Color.Black;
+        public String LineColor = "Black";
         public bool StepLine = false;
         public bool ShowPoints = false;
 

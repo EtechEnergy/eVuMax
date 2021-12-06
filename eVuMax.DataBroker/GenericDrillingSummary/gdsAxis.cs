@@ -28,7 +28,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
         public string FontName = "Arial";
         public int FontSize = 9;
-        public Color FontColor = Color.Black;
+        //public Color FontColor = Color.Black;
+        public string FontColor = "Black";
         public bool FontBold = false;
         public bool FontItalic = false;
 

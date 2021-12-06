@@ -1,9 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BrokerParameter, BrokerRequest, Util } from "../../../Models/eVuMax";
 import GlobalMod from "../../../objects/global";
 import { Button } from "@progress/kendo-react-buttons";
 import { Chart } from "../../../eVuMaxObjects/Chart/Chart";
+import { DataSeries, dataSeriesType, pointStyle } from "../../../eVuMaxObjects/Chart/DataSeries";
+import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
+import { forEach } from "typescript-collections/dist/lib/arrays";
+import { arrays } from "typescript-collections";
+import { Axis, axisPosition } from "../../../eVuMaxObjects/Chart/Axis";
 
 
 
@@ -11,7 +16,10 @@ let _gMod = new GlobalMod();
 
 //props: PlotID, function-ShowPlotListAgain
 export default function CustomDrillingSummary({ ...props }: any) {
-  let objChart: Chart = new Chart(this, "chart");
+  let objChart: Chart = new Chart(props.parentRef, "chart");
+  let objSummaryAxisList: any = [];
+
+  // const [wellName, setWellName] = useState("");
   useEffect(() => {
     loadSummary();
   }, []);
@@ -56,6 +64,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
           if (res.data.RequestSuccessfull == true) {
             const objData = JSON.parse(res.data.Response);
+
+
             let warnings: string = res.data.Warnings;
             warnings = "Test Warning";
 
@@ -127,7 +137,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objChart.rightAxis().ShowLabels = false;
 
       objChart.MarginLeft = 10;
-      objChart.MarginBottom = 0;
+      objChart.MarginBottom = 10;
       objChart.MarginTop = 0;
       objChart.MarginRight = 10;
 
@@ -138,80 +148,369 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
     }
   }
-  const generateReport = (objData: any) => {
+
+  const getOrdersAxisListByPosition = (paramAxisPosition: number) => {
+    debugger;
+    let arrAxis: any = [];
     try {
-      initializeChart();
-      //Generate Plot using state objGDSummary object
+      let list = [];
+      for (let index = 0; index < objSummaryAxisList.length; index++) {
+        const objAxis = objSummaryAxisList[index];
 
-      if (objData.Axis != null || objData.Axis != undefined) {
-        let axisList = Object.values(objData.Axis);
-        for (let index = 0; index < axisList.length; index++) {
-          const objSummaryAxis: any = axisList[index];
+        if (objAxis.AxisPosition == paramAxisPosition) {
+          list.push(objAxis);
+        }
 
-          //Create Axis 
-          //// 0-left, 1-bottom, 2-right, 3-top
-          if (objSummaryAxis.AxisPosition == 1) {
-            objChart.bottomAxis().AutoScale = objSummaryAxis.Automatic;;
-            objChart.bottomAxis().IsDateTime = false;
-            objChart.bottomAxis().bandScale = false; //wip
-            objChart.bottomAxis().Title = objSummaryAxis.AxisTitle;
-            objChart.bottomAxis().ShowLabels = true;
-            objChart.bottomAxis().ShowTitle = false;
-            objChart.bottomAxis().EndPos = objSummaryAxis.EndPosition;
-            objChart.bottomAxis().StartPos = objSummaryAxis.StartPosition;
-            objChart.bottomAxis().GridVisible = objSummaryAxis.ShowGrid;
-            objChart.bottomAxis().LabelFont = objSummaryAxis.FontName;
-            objChart.bottomAxis().LabelFontBold = objSummaryAxis.FontBold;
-            objChart.bottomAxis().LabelFontColor = objSummaryAxis.FontColor;
-            objChart.bottomAxis().LabelFontSize = objSummaryAxis.FontSize;
-            objChart.bottomAxis().LabelFontItalic = objSummaryAxis.FontItalic;
-            objChart.bottomAxis().Min = objSummaryAxis.MinValue;
-            objChart.bottomAxis().Max = objSummaryAxis.MaxValue;
+        // if (list.length > 0) {
+        //   arrAxis = list.sort((a, b) => (a.DisplayOrder < b.DisplayOrder) ? -1 : 1);
+        // }
+
+      }
+      if (list.length > 0) {
+        arrAxis = list.sort((a, b) => (a.DisplayOrder < b.DisplayOrder) ? -1 : 1);
+      }
+
+      return arrAxis;
+
+    } catch (error) {
+      return arrAxis;
+    }
+  }
 
 
-            if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
-              objChart.bottomAxis().LabelAngel = 0;
-            } else {
-              objChart.bottomAxis().LabelAngel = 90;
-            }
+  const setAxisPerColumnAndRow = (axisList: any): number => {
+    try {
+      let totalRighAxis: number = 0;
+      let totalLeftAxis: number = 0;
+      let totalTopAxis: number = 0;
+      let totalBottomAxis: number = 0;
+      debugger;
+      //Set Axis Per Column
+      for (let index = 0; index < axisList.length; index++) {
 
-            objChart.bottomAxis().ShowSelector = false;
-            objChart.bottomAxis().Visible = true;
-            objChart.bottomAxis().Inverted = objSummaryAxis.Inverted;
-
+        if (axisList[index].Orientation == 0) { //// 0-Horizontal, 1-Vertical
+          if (axisList[index].AxisPosition == 0) { //Left
+            totalLeftAxis += 1;
           }
-          if (objSummaryAxis.AxisPosition == 0) { //Left Axis
-            objChart.leftAxis().AutoScale = objSummaryAxis.Automatic;;
-            objChart.leftAxis().IsDateTime = false;
-            objChart.leftAxis().bandScale = false; //wip
-            objChart.leftAxis().Title = objSummaryAxis.AxisTitle;
-            objChart.leftAxis().ShowLabels = true;
-            objChart.leftAxis().ShowTitle = false;
-            objChart.leftAxis().EndPos = objSummaryAxis.EndPosition;
-            objChart.leftAxis().StartPos = objSummaryAxis.StartPosition;
-            objChart.leftAxis().GridVisible = objSummaryAxis.ShowGrid;
-            objChart.leftAxis().LabelFont = objSummaryAxis.FontName;
-            objChart.leftAxis().LabelFontBold = objSummaryAxis.FontBold;
-            objChart.leftAxis().LabelFontColor = objSummaryAxis.FontColor;
-            objChart.leftAxis().LabelFontSize = objSummaryAxis.FontSize;
-            objChart.leftAxis().LabelFontItalic = objSummaryAxis.FontItalic;
-            objChart.leftAxis().Min = objSummaryAxis.MinValue;
-            objChart.leftAxis().Max = objSummaryAxis.MaxValue;
 
+          if (axisList[index].AxisPosition == 2) { //Right
+            totalRighAxis += 1;
+          }
 
-            if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
-              objChart.leftAxis().LabelAngel = 0;
-            } else {
-              objChart.leftAxis().LabelAngel = 90;
-            }
+          if (axisList[index].AxisPosition == 1) { //Bottom
+            totalBottomAxis += 1;
+          }
 
-            objChart.leftAxis().ShowSelector = false;
-            objChart.leftAxis().Visible = true;
-            objChart.leftAxis().Inverted = objSummaryAxis.Inverted;
+          if (axisList[index].AxisPosition == 3) { //Top
+            totalTopAxis += 1;
           }
 
         }
 
+      }
+
+      //Set Axis Per Column
+      for (let index = 0; index < axisList.length; index++) {
+
+        if (axisList[index].Orientation == 1) { //// 0-Horizontal, 1-Vertical
+          if (axisList[index].AxisPosition == 1) { //Bottom
+            totalBottomAxis += 1;
+          }
+
+          if (axisList[index].AxisPosition == 3) { //Top
+            totalTopAxis += 1;
+          }
+
+          if (axisList[index].AxisPosition == 0) { //Left
+            totalLeftAxis += 1;
+          }
+
+          if (axisList[index].AxisPosition == 2) { //Right
+            totalRighAxis += 1;
+          }
+
+        }
+      }
+
+
+
+
+      if (totalRighAxis >= totalLeftAxis) {
+        objChart.axisPerColumn = totalRighAxis;
+      } else {
+        objChart.axisPerColumn = totalLeftAxis;
+      }
+
+
+      if (totalBottomAxis >= totalTopAxis) {
+        objChart.axisPerRow = totalBottomAxis
+      } else {
+        objChart.axisPerRow = totalTopAxis;
+      }
+
+      console.log("AxisPerCol " + objChart.axisPerColumn + "--AxisPerRow- " + objChart.axisPerRow);
+
+
+
+
+    } catch (error) {
+      return 1;
+    }
+  }
+
+  const generateReport = (objData: any) => {
+    try {
+      initializeChart();
+      //Generate Plot using state objGDSummary object
+      console.log("objData", objData);
+      if (objData.Axis != null || objData.Axis != undefined) {
+        objSummaryAxisList = Object.values(objData.Axis);
+        setAxisPerColumnAndRow(objSummaryAxisList);
+
+        let axisList = Object.values(objData.Axis);
+        axisList = getOrdersAxisListByPosition(0);//Left
+
+        for (let index = 0; index < axisList.length; index++) {
+
+          let objSummaryAxis: any = axisList[index];
+
+          //Create Custom Left Axis 
+          let objAxis = new Axis();
+
+          //objAxis.CustomPosition = true;
+          objAxis.DisplayOrder = index;
+          objAxis.Id = objSummaryAxis.ColumnID;
+          objAxis.AutoScale = true; // as in toolface objSummaryAxis.Automatic;
+          objAxis.Position = axisPosition.left;
+          objAxis.IsDateTime = false;
+          objAxis.bandScale = false; //as in Toolface
+          objAxis.Title = objSummaryAxis.AxisTitle;
+          objAxis.ShowLabels = true;
+          objAxis.ShowTitle = false;
+          objAxis.EndPos = objSummaryAxis.EndPosition;
+          objAxis.StartPos = objSummaryAxis.StartPosition;
+          objAxis.GridVisible = objSummaryAxis.ShowGrid;
+          objAxis.LabelFont = objSummaryAxis.FontName;
+          objAxis.LabelFontBold = objSummaryAxis.FontBold;
+          objAxis.LabelFontColor = objSummaryAxis.FontColor;
+          objAxis.LabelFontSize = objSummaryAxis.FontSize;
+          objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+          objAxis.Min = objSummaryAxis.MinValue;
+          objAxis.Max = objSummaryAxis.MaxValue;
+
+          console.log("left startPos", objAxis.StartPos);
+          console.log("left endPos", objAxis.EndPos);
+
+
+
+          if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
+            objAxis.LabelAngel = 0;
+          } else {
+            objAxis.LabelAngel = 90;
+          }
+          objAxis.ShowSelector = false;
+          objAxis.Visible = true;
+          objAxis.Inverted = objSummaryAxis.Inverted;
+          objChart.Axes.set(objAxis.Id, objAxis);
+          //*************************************************** */
+        }
+
+        //// 0-left, 1-bottom, 2-right, 3-top
+        axisList = getOrdersAxisListByPosition(2);//Right
+        for (let index = 0; index < axisList.length; index++) {
+
+          let objSummaryAxis: any = axisList[index];
+
+          //Create Custom Left Axis 
+          let objAxis = new Axis();
+
+          objAxis.CustomPosition = true;
+          objAxis.Id = objSummaryAxis.ColumnID;
+          objAxis.Position = axisPosition.right;
+          objAxis.AutoScale = objSummaryAxis.Automatic;
+          objAxis.IsDateTime = false;
+          objAxis.bandScale = false;
+          objAxis.Title = objSummaryAxis.AxisTitle;
+          objAxis.ShowLabels = true;
+          objAxis.ShowTitle = false;
+          objAxis.EndPos = objSummaryAxis.EndPosition;
+          objAxis.StartPos = objSummaryAxis.StartPosition;
+          objAxis.GridVisible = objSummaryAxis.ShowGrid;
+          objAxis.LabelFont = objSummaryAxis.FontName;
+          objAxis.LabelFontBold = objSummaryAxis.FontBold;
+          objAxis.LabelFontColor = objSummaryAxis.FontColor;
+          objAxis.LabelFontSize = objSummaryAxis.FontSize;
+          objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+          objAxis.Min = objSummaryAxis.MinValue;
+          objAxis.Max = objSummaryAxis.MaxValue;
+
+
+          if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
+            objAxis.LabelAngel = 0;
+          } else {
+            objAxis.LabelAngel = 90;
+          }
+          objAxis.ShowSelector = false;
+          objAxis.Visible = true;
+          objAxis.Inverted = objSummaryAxis.Inverted;
+          objChart.Axes.set(objAxis.Id, objAxis);
+          //*************************************************** */
+
+          //// 0-left, 1-bottom, 2-right, 3-top
+
+
+
+        }
+
+        //// 0-left, 1-bottom, 2-right, 3-top
+        axisList = getOrdersAxisListByPosition(1);//bottom
+        for (let index = 0; index < axisList.length; index++) {
+
+          let objSummaryAxis: any = axisList[index];
+
+          //Create Custom Bottom Axis 
+          let objAxis = new Axis();
+
+          objAxis.CustomPosition = true;
+          objAxis.Id = objSummaryAxis.ColumnID;
+          objAxis.Position = axisPosition.bottom;
+          objAxis.AutoScale = objSummaryAxis.Automatic;
+          objAxis.IsDateTime = false;
+          objAxis.bandScale = false;
+          objAxis.Title = objSummaryAxis.AxisTitle;
+          objAxis.ShowLabels = true;
+          objAxis.ShowTitle = false;
+          objAxis.EndPos = objSummaryAxis.EndPosition;
+          objAxis.StartPos = objSummaryAxis.StartPosition;
+          objAxis.GridVisible = objSummaryAxis.ShowGrid;
+          objAxis.LabelFont = objSummaryAxis.FontName;
+          objAxis.LabelFontBold = objSummaryAxis.FontBold;
+          objAxis.LabelFontColor = objSummaryAxis.FontColor;
+          objAxis.LabelFontSize = objSummaryAxis.FontSize;
+          objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+          objAxis.Min = objSummaryAxis.MinValue;
+          objAxis.Max = objSummaryAxis.MaxValue;
+
+
+          if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
+            objAxis.LabelAngel = 0;
+          } else {
+            objAxis.LabelAngel = 90;
+          }
+          objAxis.ShowSelector = false;
+          objAxis.Visible = true;
+          objAxis.Inverted = objSummaryAxis.Inverted;
+          objChart.Axes.set(objAxis.Id, objAxis);
+          //*************************************************** */
+
+        }
+
+
+        //// 0-left, 1-bottom, 2-right, 3-top
+        axisList = getOrdersAxisListByPosition(3);//Top
+        for (let index = 0; index < axisList.length; index++) {
+
+          let objSummaryAxis: any = axisList[index];
+
+          //Create Custom Bottom Axis 
+          let objAxis = new Axis();
+
+          objAxis.CustomPosition = true;
+          objAxis.Id = objSummaryAxis.ColumnID;
+          objAxis.Position = axisPosition.top;
+          objAxis.AutoScale = objSummaryAxis.Automatic;
+          objAxis.IsDateTime = false;
+          objAxis.bandScale = false;
+          objAxis.Title = objSummaryAxis.AxisTitle;
+          objAxis.ShowLabels = true;
+          objAxis.ShowTitle = false;
+          // objAxis.EndPos = objSummaryAxis.EndPosition;
+          // objAxis.StartPos = objSummaryAxis.StartPosition;
+          objAxis.GridVisible = objSummaryAxis.ShowGrid;
+          objAxis.LabelFont = objSummaryAxis.FontName;
+          objAxis.LabelFontBold = objSummaryAxis.FontBold;
+          objAxis.LabelFontColor = objSummaryAxis.FontColor;
+          objAxis.LabelFontSize = objSummaryAxis.FontSize;
+          objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+          objAxis.Min = objSummaryAxis.MinValue;
+          objAxis.Max = objSummaryAxis.MaxValue;
+          if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
+            objAxis.LabelAngel = 0;
+          } else {
+            objAxis.LabelAngel = 90;
+          }
+          objAxis.ShowSelector = false;
+          objAxis.Visible = true;
+          objAxis.Inverted = objSummaryAxis.Inverted;
+          objChart.Axes.set(objAxis.Id, objAxis);
+          //*************************************************** */
+        }
+
+
+        //Load Series
+        let SeriesList = Object.values(objData.dataSeries);
+
+        for (let index = 0; index < SeriesList.length; index++) {
+          const objDataSeries: any = SeriesList[index];
+          let objSeries = new DataSeries();
+          objSeries.Id = objDataSeries.SeriesID;
+          objSeries.Name = objDataSeries.SeriesName;
+          objSeries.XAxisId = objDataSeries.XColumnID;
+          objSeries.YAxisId = objDataSeries.YColumnID;
+          objSeries.PointSize = objDataSeries.PointWidth;
+          let SeriesType: dataSeriesType = dataSeriesType.Line;
+          switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar
+            case 0:
+              SeriesType = dataSeriesType.Line;
+              break;
+            case 1:
+              SeriesType = dataSeriesType.Point;
+              break;
+            case 2:
+              SeriesType = dataSeriesType.Area;
+              break;
+            case 3:
+              SeriesType = dataSeriesType.Bar;
+              break;
+            case 4:
+              SeriesType = dataSeriesType.Pie;
+              break;
+            case 5:
+              SeriesType = dataSeriesType.Bar;
+              break;
+
+            default:
+              break;
+          }
+          objSeries.Type = SeriesType;
+          objSeries.PointStyle = objDataSeries.PointerStyle;
+          objSeries.Title = objDataSeries.SeriesName;
+          objSeries.Color = objDataSeries.LineColor;
+          objSeries.ShowInLegend = true;
+
+
+          //Populate the data series with this data
+          objSeries.Data.length = 0;
+
+          if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
+
+            for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
+              let objVal: ChartData = new ChartData();
+              objVal.x = objDataSeries.xDataBuffer[i];
+              objVal.y = objDataSeries.yDataBuffer[i];
+              objSeries.Data.push(objVal);
+            }
+
+            if (objDataSeries.Visible) {
+              objChart.DataSeries.set(objSeries.Id, objSeries);
+            }
+
+          }
+        }
+
+
+        console.log("ChartDataSeries", objChart.DataSeries);
+        console.log("ChartAxes", objChart.Axes);
         objChart.initialize();
         objChart.reDraw();
 
@@ -326,7 +625,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         style={{
           width: "100%",
           height: "calc(70vh)",
-          backgroundColor: "red",
+          backgroundColor: "transparent",
           // float: "right",
           marginLeft: "10px",
         }}
