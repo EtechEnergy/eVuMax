@@ -36,7 +36,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public int PointerStyle = 0;
         public int PointHeight = 3;
         public int PointWidth = 3;
-        public Color PointColor = Color.Black;
+        public string PointColor = ColorTranslator.ToHtml(Color.Black);
 
         public bool ColorPointsAsColumn = false;
 
@@ -54,13 +54,13 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public int grpGroupBy = 0; // '0-Rig States, 1-DateTime,2-Days,3-Week,4-Month,5-Depth,6-Others
         public string grpGroupByExpression = "";
         public string grpFilter = "";
-        public Color grpColor;
+        public string grpColor = ColorTranslator.ToHtml(Color.Transparent);
 
-        public Color Color1;
-        public Color Color2;
-        public Color Color3;
-        public Color Color4;
-        public Color Color5;
+        public string Color1 = ColorTranslator.ToHtml(Color.Transparent);
+        public string Color2 = ColorTranslator.ToHtml(Color.Transparent);
+        public string Color3 = ColorTranslator.ToHtml(Color.Transparent);
+        public string Color4 = ColorTranslator.ToHtml(Color.Transparent);
+        public string Color5 = ColorTranslator.ToHtml(Color.Transparent);
 
         public int MainGroupOn = 0; // '0 - Built in group types, 1 - User Defined groups
         public int SplitType = 0; // '0 - Variable Range, 1 - Fixed Ranges

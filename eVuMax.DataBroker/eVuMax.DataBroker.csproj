@@ -68,8 +68,9 @@
     <Reference Include="VuMaxDR.Data">
       <HintPath>..\lib\VuMaxDR.Data.dll</HintPath>
     </Reference>
-    <Reference Include="VuMaxDR.Data.Objects">
-      <HintPath>..\lib\VuMaxDR.Data.Objects.dll</HintPath>
+    <Reference Include="VuMaxDR.Data.Objects, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Etech-Nis\Desktop\VuMaxDR.Data.Objects\VuMaxDR.Data.Objects\bin\x86\Debug\VuMaxDR.Data.Objects.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

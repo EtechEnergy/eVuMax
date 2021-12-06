@@ -81,6 +81,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             this.SummaryPlotID = paramPlotID;
             this.objRequest = paramRequest;
             this.objDataSelection.objRequest = paramRequest;
+            objMnemonicMappingMgr.loadMappings(ref objRequest.objDataService);
 
 
         }
@@ -2105,7 +2106,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
 
                 //gdSummary.loadSummaryObject(ref paramObjSummary);
-
+                paramObjSummary.objMnemonicMappingMgr.loadMappings(ref paramObjSummary.objRequest.objDataService);
                 paramObjSummary.objDataSelection.WellID = paramObjSummary.wellID;
                 paramObjSummary.objDataSelection.getRange2(ref paramObjSummary.fromDate, ref paramObjSummary.toDate, ref paramObjSummary.fromDepth, ref paramObjSummary.toDepth, ref paramObjSummary.ChartTitle, paramObjSummary);
                 paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
@@ -2131,6 +2132,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                 paramObjSummary.lastError = "";
                 paramObjSummary.objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref paramObjSummary.objRequest.objDataService, paramObjSummary.wellID);
+                
                 objResponse.Category = paramObjSummary.objWell.name;
 
                 //Get the primary time log 
@@ -2551,7 +2553,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objItem.PointerStyle = Convert.ToInt32(DataService.checkNull(objRow["POINT_STYLE"], 0));
                     objItem.PointHeight = Convert.ToInt32(DataService.checkNull(objRow["POINT_HEIGHT"], 0));
                     objItem.PointWidth = Convert.ToInt32(DataService.checkNull(objRow["POINT_WIDTH"], 0));
-                    objItem.PointColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["POINT_COLOR"], 0)));
+                    objItem.PointColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["POINT_COLOR"], 0))));
                     objItem.ColorPointsAsColumn = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["COLOR_AS_COLUMN"], 0)) == 1, true, false);
                     objItem.Visible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["VISIBLE"], 0)) == 1, true, false);
                     objItem.IgnoreNegative = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0)) == 1, true, false);
@@ -2565,13 +2567,13 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objItem.grpGroupBy = Convert.ToInt32(DataService.checkNull(objRow["GRP_GROUP"], 0));
                     objItem.grpGroupByExpression = (string)DataService.checkNull(objRow["GRP_GROUP_EXP"], "");
                     objItem.grpFilter = (string)DataService.checkNull(objRow["GRP_FILTER"], "");
-                    objItem.grpColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["GRP_COLOR"], 0)));
+                    objItem.grpColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["GRP_COLOR"], 0))));
 
-                    objItem.Color1 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], 0)));
-                    objItem.Color2 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], 0)));
-                    objItem.Color3 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], 0)));
-                    objItem.Color4 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], 0)));
-                    objItem.Color5 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR5"], 0)));
+                    objItem.Color1 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], 0))));
+                    objItem.Color2 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], 0))));
+                    objItem.Color3 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], 0))));
+                    objItem.Color4 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], 0))));
+                    objItem.Color5 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR5"], 0))));
 
                     objItem.MainGroupOn = Convert.ToInt32(DataService.checkNull(objRow["MAIN_GROUP_ON"], 0));
                     objItem.SplitType = Convert.ToInt32(DataService.checkNull(objRow["SPLIT_TYPE"], 0));

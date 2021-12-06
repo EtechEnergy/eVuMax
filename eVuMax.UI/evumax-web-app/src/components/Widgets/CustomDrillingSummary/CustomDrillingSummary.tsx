@@ -18,6 +18,7 @@ let _gMod = new GlobalMod();
 export default function CustomDrillingSummary({ ...props }: any) {
   let objChart: Chart = new Chart(props.parentRef, "chart");
   let objSummaryAxisList: any = [];
+  let WellName: string = "";
 
   // const [wellName, setWellName] = useState("");
   useEffect(() => {
@@ -79,6 +80,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               props.updateWarnings(warningList);
 
             }
+            WellName = res.data.Category;
             generateReport(objData);
             Util.StatusSuccess("Data successfully retrived");
             Util.StatusReady();
@@ -114,6 +116,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objChart = new Chart(props.parentRef, "chart");
       objChart.ContainerId = "chart";
+
+      this.objChart.DataSeries.clear();
+      this.objChart.Axes.clear();
+      this.objChart.createDefaultAxes();
+      this.objChart.updateChart();
 
       objChart.leftAxis().AutoScale = true;
 
@@ -260,16 +267,21 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
   const generateReport = (objData: any) => {
     try {
+
       initializeChart();
+
       //Generate Plot using state objGDSummary object
       console.log("objData", objData);
       if (objData.Axis != null || objData.Axis != undefined) {
         objSummaryAxisList = Object.values(objData.Axis);
         setAxisPerColumnAndRow(objSummaryAxisList);
 
+        objChart.Axes.clear();
+        objChart.DataSeries.clear();
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
 
+       
         for (let index = 0; index < axisList.length; index++) {
 
           let objSummaryAxis: any = axisList[index];
@@ -298,8 +310,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
 
-          console.log("left startPos", objAxis.StartPos);
-          console.log("left endPos", objAxis.EndPos);
+
 
 
 
@@ -423,9 +434,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.bandScale = false;
           objAxis.Title = objSummaryAxis.AxisTitle;
           objAxis.ShowLabels = true;
-          objAxis.ShowTitle = false;
-          // objAxis.EndPos = objSummaryAxis.EndPosition;
-          // objAxis.StartPos = objSummaryAxis.StartPosition;
+          objAxis.ShowTitle = true;
+          objAxis.EndPos = objSummaryAxis.EndPosition;
+          objAxis.StartPos = objSummaryAxis.StartPosition;
           objAxis.GridVisible = objSummaryAxis.ShowGrid;
           objAxis.LabelFont = objSummaryAxis.FontName;
           objAxis.LabelFontBold = objSummaryAxis.FontBold;
@@ -459,15 +470,19 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objSeries.YAxisId = objDataSeries.YColumnID;
           objSeries.PointSize = objDataSeries.PointWidth;
           let SeriesType: dataSeriesType = dataSeriesType.Line;
+
+          objSeries.Color = objDataSeries.LineColor;//Dont change position of this line
           switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar
             case 0:
               SeriesType = dataSeriesType.Line;
               break;
             case 1:
               SeriesType = dataSeriesType.Point;
+              objSeries.Color = objDataSeries.PointColor;
               break;
             case 2:
               SeriesType = dataSeriesType.Area;
+              objSeries.Color =  objDataSeries.PointColor;
               break;
             case 3:
               SeriesType = dataSeriesType.Bar;
@@ -484,8 +499,17 @@ export default function CustomDrillingSummary({ ...props }: any) {
           }
           objSeries.Type = SeriesType;
           objSeries.PointStyle = objDataSeries.PointerStyle;
-          objSeries.Title = objDataSeries.SeriesName;
-          objSeries.Color = objDataSeries.LineColor;
+          objSeries.Title = WellName + "-" + objDataSeries.SeriesName;
+          
+          
+          if( SeriesType == dataSeriesType.Area){
+            objSeries.Color =  objDataSeries.PointColor;
+          }
+          else{
+            objSeries.Color = objDataSeries.LineColor;
+          }
+          
+          
           objSeries.ShowInLegend = true;
 
 
