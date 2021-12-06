@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eVuMax.DataBroker.GenericDrillingSummary
 {
-    public class gdsDataSeries
+    public class gdsDataSeries:IComparable
     {
         public enum gdsType
         {
@@ -28,7 +28,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
         public int LineStyle = 0;
         public double LineWidth = 0;
-        public Color LineColor = Color.Black;
+        //public Color LineColor = Color.Black;
+        public String LineColor = "Black";
         public bool StepLine = false;
         public bool ShowPoints = false;
 
@@ -81,31 +82,29 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public int DisplayOrder = 0;
 
         #region "Runtime Members"
-        [NonSerialized()]
+        
         public bool RefreshRequired = false;
-        [NonSerialized()]
+        
         public double[] xDataBuffer;
-        [NonSerialized()]
+        
         public double[] yDataBuffer;
-        [NonSerialized()]
+        
         public Color[] colorBuffer;
-        [NonSerialized()]
+        
         public string[] labelBuffer;
-        //[NonSerialized()]
-        //public Steema.TeeChart.Styles.Series objChartSeries;
-        [NonSerialized()]
+       
         public string ObjectID = ""; // 'Runtime object identifier
-        [NonSerialized()]
+       
         public bool hasColorData = false;
-        [NonSerialized()]
+       
         public string __WellID = "";
-        [NonSerialized()]
+       
         public bool isOffset = false;
-        [NonSerialized()]
+       
         public double[] roadmapDepth;
-        [NonSerialized()]
+       
         public double[] roadmapMin;
-        [NonSerialized()]
+       
         public double[] roadmapMax;
         #endregion
         public gdsDataSeries getCopy()
@@ -189,6 +188,33 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
 
 
+        public int CompareTo(object obj)
+        {
+            try
+            {
+                gdsDataSeries objDataSeries = (gdsDataSeries)obj;
+                
+
+                if (this.DisplayOrder < objDataSeries.DisplayOrder)
+                    return -1;
+
+                if (this.DisplayOrder == objDataSeries.DisplayOrder)
+                    return 0;
+
+                if (this.DisplayOrder > objDataSeries.DisplayOrder)
+                {
+                    return 1;
+                }
+
+                return -2;
+
+            }
+            catch (Exception ex)
+            {
+                //Error
+                return -2;
+            }
+        }
     }
 }
 //}

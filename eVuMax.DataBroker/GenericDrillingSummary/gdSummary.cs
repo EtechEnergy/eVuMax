@@ -42,10 +42,13 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         private Dictionary<string, gdsDataSeries> localSeries = new Dictionary<string, gdsDataSeries>();
 
         //Nishant
+        public Dictionary<string, FormationTopPositionInfo> allFormationTopsInfo = new Dictionary<string, FormationTopPositionInfo>();
+
         VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
+        //string UserName = "";
         int dataStatus = 1;
         Broker.BrokerRequest objRequest = new Broker.BrokerRequest();
-        string wellID = "";
+        public string wellID = "";
         string lastError = "";
         MnemonicMappingMgr objMnemonicMappingMgr = new MnemonicMappingMgr();
 
@@ -72,24 +75,26 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public Dictionary<int, Color> IntervalColors = new Dictionary<int, Color>();
         public string ChartTitle = "";
 
-        public gdSummary()
+        public gdSummary(Broker.BrokerRequest paramRequest, string paramWellID, string paramPlotID)
         {
-            this.objDataSelection.loadDataSelection(SummaryPlotID);
-        }
-
-        public gdSummary(string paramWellID, ref Broker.BrokerRequest paramRequest)
-        {
-            this.objRequest = paramRequest;
             this.wellID = paramWellID;
-            this.objDataSelection.loadDataSelection(SummaryPlotID);
+            this.SummaryPlotID = paramPlotID;
+            this.objRequest = paramRequest;
+            this.objDataSelection.objRequest = paramRequest;
+
+
         }
 
 
-
-        //public static T Iif<T>(bool cond, T left, T right)
+        //public gdSummary(string paramWellID, ref Broker.BrokerRequest paramRequest)
         //{
-        //    return cond ? left : right;
+        //    this.objRequest = paramRequest;
+        //    this.wellID = paramWellID;
+        //    this.objDataSelection.loadDataSelection(SummaryPlotID);
+        //    this.objRequest = paramRequest;
         //}
+
+
 
 
 
@@ -381,15 +386,15 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                 if (objData.Rows.Count > 0)
                 {
-                    colorColStart = (double)DataService.checkNull(objData.Rows[0]["MIN_VALUE"], 0);
-                    colorColEnd = (double)DataService.checkNull(objData.Rows[0]["MAX_VALUE"], 0);
+                    colorColStart = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MIN_VALUE"], 0));
+                    colorColEnd = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MAX_VALUE"], 0));
                 }
 
 
                 IntervalList.Clear();
 
                 double startValue = colorColStart;
-                double valueInterval = (colorColEnd - colorColStart) / (double)Intervals;
+                double valueInterval = (colorColEnd - colorColStart) / Convert.ToDouble(Intervals);
 
                 for (int i = 1; i <= Intervals; i++)
                 {
@@ -584,12 +589,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                         for (int i = 0; i <= objXData.Rows.Count - 1; i++)
                         {
-                            xData[i] = (double)DataService.checkNull(objXData.Rows[i][XColumn], 0);
-                            yData[i] = (double)DataService.checkNull(objYData.Rows[i][YColumn], 0);
+                            xData[i] = Convert.ToDouble(DataService.checkNull(objXData.Rows[i][XColumn], 0));
+                            yData[i] = Convert.ToDouble(DataService.checkNull(objYData.Rows[i][YColumn], 0));
 
                             if (ShowColorAxis)
                             {
-                                colorValue = (double)DataService.checkNull(objColorData.Rows[i][ColorMnemonic], 0);
+                                colorValue = Convert.ToDouble(DataService.checkNull(objColorData.Rows[i][ColorMnemonic], 0));
                                 colorData[i] = getColor(colorValue);
                             }
                         }
@@ -705,12 +710,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                         for (int i = 0; i <= objXData.Rows.Count - 1; i++)
                         {
-                            xData[i] = (double)DataService.checkNull(objXData.Rows[i][XColumn], 0);
-                            yData[i] = (double)DataService.checkNull(objYData.Rows[i][YColumn], 0);
+                            xData[i] = Convert.ToDouble(DataService.checkNull(objXData.Rows[i][XColumn], 0));
+                            yData[i] = Convert.ToDouble(DataService.checkNull(objYData.Rows[i][YColumn], 0));
 
                             if (ShowColorAxis)
                             {
-                                colorValue = (double)DataService.checkNull(objColorData.Rows[i][ColorMnemonic], 0);
+                                colorValue = Convert.ToDouble(DataService.checkNull(objColorData.Rows[i][ColorMnemonic], 0));
                                 colorData[i] = getColor(colorValue);
                             }
                         }
@@ -790,6 +795,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 objSeries.yDataBuffer = yData;
                 objSeries.colorBuffer = colorData;
                 objSeries.RefreshRequired = true;
+
+                dataSeries[objSeries.SeriesID] = objSeries;// Copy Series with Data to original DataSeries
+
             }
             // Ticket 1424 (Comment)
             // dataStatus = 0
@@ -925,7 +933,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     DataTable objXData = DownSample.downSampleByDepthEx(objData, BaseDepthMnemonic, XColumn, objSeries.groupFunction, NoOfPoints);
                     DataTable objYData = DownSample.downSampleByDepthEx(objData, BaseDepthMnemonic, YColumn, objSeries.groupFunction, NoOfPoints);
-                    var objColorData = default(DataTable);
+                    DataTable objColorData = new DataTable();
                     if (ShowColorAxis)
                     {
                         objColorData = DownSample.downSampleByDepthEx(objData, BaseDepthMnemonic, ColorMnemonic, objSeries.groupFunction, NoOfPoints);
@@ -937,13 +945,18 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     int rowIndex = 0;
                     double colorValue = 0d;
-                    for (int i = 0, loopTo = objXData.Rows.Count - 1; i <= loopTo; i++)
+                    //for (int i = 0, loopTo = objXData.Rows.Count - 1; i <= loopTo; i++)
+                    for (int i = 0, loopTo = objXData.Rows.Count - 1; i < loopTo; i++)
                     {
-                        xData[i] = (double)DataService.checkNull(objXData.Rows[i][XColumn], 0);
-                        yData[i] = (double)DataService.checkNull(objYData.Rows[i][YColumn], 0);
+                        if (i == 1748)
+                        {
+                            bool halt = true;
+                        }
+                        xData[i] = Convert.ToDouble(DataService.checkNull(objXData.Rows[i][XColumn], 0));
+                        yData[i] = Convert.ToDouble(DataService.checkNull(objYData.Rows[i][YColumn], 0));
                         if (ShowColorAxis)
                         {
-                            colorValue = (double)DataService.checkNull(objColorData.Rows[i][ColorMnemonic], 0);
+                            colorValue = Convert.ToDouble(DataService.checkNull(objColorData.Rows[i][ColorMnemonic], 0));
                             colorData[i] = getColor(colorValue);
                         }
                     }
@@ -1011,11 +1024,11 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     double colorValue = 0;
                     for (int i = 0, loopTo = objXData.Rows.Count - 1; i <= loopTo; i++)
                     {
-                        xData[i] = (double)DataService.checkNull(objXData.Rows[i][XColumn], 0);
-                        yData[i] = (double)DataService.checkNull(objYData.Rows[i][YColumn], 0);
+                        xData[i] = Convert.ToDouble(DataService.checkNull(objXData.Rows[i][XColumn], 0));
+                        yData[i] = Convert.ToDouble(DataService.checkNull(objYData.Rows[i][YColumn], 0));
                         if (ShowColorAxis)
                         {
-                            colorValue = (double)DataService.checkNull(objColorData.Rows[i][ColorMnemonic], 0);
+                            colorValue = Convert.ToDouble(DataService.checkNull(objColorData.Rows[i][ColorMnemonic], 0));
                             colorData[i] = getColor(colorValue);
                         }
                     }
@@ -1135,11 +1148,22 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
 
 
-                        for (int i = 0, loopTo = arrRoadMap.Length - 1; i <= loopTo; i++)
+                        for (int i = 0, loopTo = arrRoadMap.Length - 1; i < loopTo; i++)
                         {
-                            objSeries.roadmapDepth[i] = arrRoadMap[i].depth;
-                            objSeries.roadmapMin[i] = arrRoadMap[i].minValue;
-                            objSeries.roadmapMax[i] = arrRoadMap[i].maxValue;
+                            //objSeries.roadmapDepth[i] = arrRoadMap[i].depth;
+                            //objSeries.roadmapMin[i] = arrRoadMap[i].minValue;
+                            //objSeries.roadmapMax[i] = arrRoadMap[i].maxValue;
+
+                            roadmapDepth[i] = arrRoadMap[i].depth;
+                            roadmapMin[i] = arrRoadMap[i].minValue;
+                            roadmapMax[i] = arrRoadMap[i].maxValue;
+
+                            objSeries.roadmapDepth = roadmapDepth;
+                            objSeries.roadmapMin= roadmapMin;
+                            objSeries.roadmapMax = roadmapMax;
+
+
+
                         }
                     }
                 }
@@ -1150,9 +1174,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             objSeries.colorBuffer = colorData;
             objSeries.RefreshRequired = true;
 
-            // 'prath Ticket No. 1424 (make comment)
-            // dataStatus = 0
-            // '******************
+            dataSeries[objSeries.SeriesID] = objSeries;// Copy Series with Data to original DataSeries
+
 
         }
 
@@ -1358,8 +1381,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             yData = new double[50];
                             for (int i = 0; i <= 49; i++)
                             {
-                                xData[i] = (double)DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0);
-                                yData[i] = (double)DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0);
+                                xData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0));
+                                yData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0));
                             }
                         }
                         else
@@ -1368,8 +1391,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             yData = new double[objData.Rows.Count];
                             for (int i = 0, loopTo = objData.Rows.Count - 1; i <= loopTo; i++)
                             {
-                                xData[i] = (double)DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0);
-                                yData[i] = (double)DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0);
+                                xData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0));
+                                yData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0));
                             }
                         }
                     }
@@ -1381,8 +1404,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         yData = new double[objData.Rows.Count];
                         for (int i = 0, loopTo1 = objData.Rows.Count - 1; i <= loopTo1; i++)
                         {
-                            xData[i] = (double)DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0);
-                            yData[i] = (double)DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0);
+                            xData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0));
+                            yData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0));
                         }
                     }
                 }
@@ -1396,8 +1419,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 objSeries.yDataBuffer = yData;
                 objSeries.colorBuffer = null;
                 objSeries.RefreshRequired = true;
-                // 'Ticket 1424  (commnent)
-                // dataStatus = 0''***********
+                dataSeries[objSeries.SeriesID] = objSeries;// Copy Series with Data to original DataSeries
             }
             catch (Exception ex)
             {
@@ -1407,7 +1429,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         }
 
 
-        private  void generateTimeLogDataForGroupSummaries(string paramSeriesID)
+        private void generateTimeLogDataForGroupSummaries(string paramSeriesID)
         {
             try
             {
@@ -1599,8 +1621,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             yData = new double[50];
                             for (int i = 0; i <= 49; i++)
                             {
-                                xData[i] = (double)DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0);
-                                yData[i] = (double)DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0);
+                                xData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0));
+                                yData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0));
                             }
                         }
                         else
@@ -1609,8 +1631,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             yData = new double[objData.Rows.Count];
                             for (int i = 0, loopTo = objData.Rows.Count - 1; i <= loopTo; i++)
                             {
-                                xData[i] = (double)DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0);
-                                yData[i] = (double)DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0);
+                                xData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0));
+                                yData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0));
                             }
                         }
                     }
@@ -1622,8 +1644,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         yData = new double[objData.Rows.Count];
                         for (int i = 0, loopTo1 = objData.Rows.Count - 1; i <= loopTo1; i++)
                         {
-                            xData[i] = (double)DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0);
-                            yData[i] = (double)DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0);
+                            xData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["XCOLUMN"], 0));
+                            yData[i] = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["YCOLUMN"], 0));
                         }
                     }
                 }
@@ -1637,6 +1659,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 objSeries.yDataBuffer = yData;
                 objSeries.colorBuffer = null;
                 objSeries.RefreshRequired = true;
+                dataSeries[objSeries.SeriesID] = objSeries;// Copy Series with Data to original DataSeries
             }
             // dataStatus = 0
 
@@ -1649,7 +1672,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
         }
 
-        private  void generateTimeLogDataForGroupSummariesSplit(string paramSeriesID)
+        private void generateTimeLogDataForGroupSummariesSplit(string paramSeriesID)
         {
             try
             {
@@ -1693,7 +1716,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 {
                     // 'Variable Ranges ...
 
-                    for (int i = (int)objSeries.variableRangeFrom, loopTo = (int)objSeries.variableRangeTo; objSeries.variableRangeIncrement >= 0 ? i <= loopTo : i >= loopTo; i += (int)objSeries.variableRangeIncrement)
+                    for (int i = Convert.ToInt32(objSeries.variableRangeFrom), loopTo = Convert.ToInt32(objSeries.variableRangeTo); objSeries.variableRangeIncrement >= 0 ? i <= loopTo : i >= loopTo; i += Convert.ToInt32(objSeries.variableRangeIncrement))
                     {
                         var objRange = new splitRange();
                         objRange.fromValue = i;
@@ -1755,7 +1778,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         double lnValue = Util.ValEx(objRequest.objDataService.getValueFromDatabase(strSQL));
 
                         // 'Add this value to the list ...
-                        
+
 
                         xDataList.Add(xDataList.Count + 1);
                         yDataList.Add(lnValue);
@@ -1907,32 +1930,32 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         switch (objSeries.grpFunctionType)
                         {
                             case 0: // 'Sum
-                            
-                                    tXColumn = " SUM([" + grpColumn + "]) AS XCOLUMN ";
-                                    break;
-                               
+
+                                tXColumn = " SUM([" + grpColumn + "]) AS XCOLUMN ";
+                                break;
+
 
                             case 1: // 'Max
-                              
-                                    tXColumn = " MAX([" + grpColumn + "]) AS XCOLUMN ";
-                                    break;
-                              
+
+                                tXColumn = " MAX([" + grpColumn + "]) AS XCOLUMN ";
+                                break;
+
 
                             case 2: // 'Min
-                                
-                                    tXColumn = " MIN([" + grpColumn + "]) AS XCOLUMN ";
-                                    break;
-                                
+
+                                tXColumn = " MIN([" + grpColumn + "]) AS XCOLUMN ";
+                                break;
+
 
                             case 3: // 'Avg
-                                
-                                    tXColumn = " AVG([" + grpColumn + "]) AS XCOLUMN ";
-                                    break;
-                                
+
+                                tXColumn = " AVG([" + grpColumn + "]) AS XCOLUMN ";
+                                break;
+
                         }
 
                         strSQL = "SELECT " + tXColumn + " FROM " + dataTableName + " WHERE [" + splitMnemonic + "]>=" + minValue.ToString() + " AND [" + splitMnemonic + "]<=" + maxValue.ToString() + " AND DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ";
-                        
+
                         if (!string.IsNullOrEmpty(strFilterCondition.Trim()))
                         {
                             strFilterCondition = wellSection.getFilterConditionWithCustomFields(ref objRequest.objDataService, strFilterCondition, fromDepth, toDepth, wellID);
@@ -1986,10 +2009,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 objSeries.labelBuffer = labelData;
                 objSeries.colorBuffer = null;
                 objSeries.RefreshRequired = true;
+                dataSeries[objSeries.SeriesID] = objSeries;// Copy Series with Data to original DataSeries
             }
-            // 'Ticket 1424 (Comment line)
-            // dataStatus = 0
-            // '******
+
 
             catch (Exception ex)
             {
@@ -2030,8 +2052,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     int rowIndex = 0;
                     foreach (DataRow objRow in objTable.Rows)
                     {
-                        xData[rowIndex] = (double)DataService.checkNull(objRow[XColumn], 0);
-                        yData[rowIndex] = (double)DataService.checkNull(objRow[YColumn], 0);
+                        xData[rowIndex] = Convert.ToDouble(DataService.checkNull(objRow[XColumn], 0));
+                        yData[rowIndex] = Convert.ToDouble(DataService.checkNull(objRow[YColumn], 0));
                         rowIndex += 1;
                     }
                 }
@@ -2044,28 +2066,61 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 objSeries.xDataBuffer = xData;
                 objSeries.yDataBuffer = yData;
                 objSeries.RefreshRequired = true;
+                dataSeries[objSeries.SeriesID] = objSeries;// Copy Series with Data to original DataSeries
             }
             catch (Exception ex)
             {
             }
         }
-        public Broker.BrokerResponse loadSummaryData(string wellID, string paramPlotID, ref Broker.BrokerRequest paramRequest)
+
+
+        private void loadFormationTops()
+        {
+            try
+            {
+                Dictionary<string, FormationTop> topsListEx = FormationTop.getList(ref objRequest.objDataService, wellID);
+                foreach (FormationTop objTop in topsListEx.Values)
+                {
+                    var objPositionInfo = new FormationTopPositionInfo();
+                    objPositionInfo.TopID = objTop.TopID;
+                    objPositionInfo.TopName = objTop.TopName;
+                    objPositionInfo.BottomPosition = objTop.Depth;
+                    objPositionInfo.TopColor = Color.FromArgb(Convert.ToInt32(objTop.Color));
+                    objPositionInfo.Depth = objTop.Depth;
+                    allFormationTopsInfo.Add(objTop.TopID, objPositionInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        //New Code 
+        public static Broker.BrokerResponse loadSummaryData(ref gdSummary paramObjSummary)
         {
             try
             {
                 //Pending
                 //RemoveUnUsedSeries and other functions, need to consult Nitin for that...
 
-                gdSummary objLocalSummary = new gdSummary();
-                objLocalSummary = loadSummaryObject(paramPlotID, ref paramRequest);
-                Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
-                this.wellID = wellID;
+
+                //gdSummary.loadSummaryObject(ref paramObjSummary);
+
+                paramObjSummary.objDataSelection.WellID = paramObjSummary.wellID;
+                paramObjSummary.objDataSelection.getRange2(ref paramObjSummary.fromDate, ref paramObjSummary.toDate, ref paramObjSummary.fromDepth, ref paramObjSummary.toDepth, ref paramObjSummary.ChartTitle, paramObjSummary);
+                paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+                gdSummary objLocalSummary = new gdSummary(paramObjSummary.objRequest, paramObjSummary.wellID, paramObjSummary.SummaryPlotID);
+
+                objLocalSummary = gdSummary.loadSummaryObject(ref objLocalSummary);
+
+                Broker.BrokerResponse objResponse = paramObjSummary.objRequest.createResponseObject();
+
 
                 //Check if time log exist, else return empty JSON
-                if (!VuMaxDR.Data.Objects.Well.isTimeLogExist(ref paramRequest.objDataService, wellID))
+                if (!VuMaxDR.Data.Objects.Well.isTimeLogExist(ref paramObjSummary.objRequest.objDataService, paramObjSummary.wellID))
                 {
 
-                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    Broker.BrokerResponse objBadResponse = paramObjSummary.objRequest.createResponseObject();
                     objBadResponse.RequestSuccessfull = false;
                     objBadResponse.Response = "{}";
                     objBadResponse.Errors = "No time logs found in this well ";
@@ -2074,12 +2129,175 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 }
 
 
-                string LastError = "";
-                objWell = VuMaxDR.Data.Objects.Well.loadObject(ref paramRequest.objDataService, wellID, ref LastError);
+                paramObjSummary.lastError = "";
+                paramObjSummary.objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref paramObjSummary.objRequest.objDataService, paramObjSummary.wellID);
+                objResponse.Category = paramObjSummary.objWell.name;
+
+                //Get the primary time log 
+                paramObjSummary.objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref paramObjSummary.objRequest.objDataService, paramObjSummary.wellID);
+
+
+                ////Initialize Data Selection by default last 24 hours and create default series...
+                paramObjSummary.objDataSelection.loadInitialData(paramObjSummary);
+                //Based on the data sources... copy series to the local list
+
+                //## Time Log *****************************************************
+                foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+                {
+                    if (objSeries.DataSource == 0)
+                    {
+                        gdsDataSeries objNewSeries = objSeries.getCopy();
+                        objNewSeries.SeriesID = objSeries.SeriesID;// Guid.NewGuid().ToString();
+                        objNewSeries.isOffset = false;
+                        objNewSeries.ObjectID = paramObjSummary.objTimeLog.WellboreID + "~" + paramObjSummary.objTimeLog.ObjectID;
+                        paramObjSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
+                    }
+                }
+
+                //''## Trajectory *****************************************************
+
+                foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+
+                {
+                    if (objSeries.DataSource == 1)
+                    {
+                        DataSelection objDataSelection = new DataSelection(paramObjSummary.wellID, paramObjSummary.objRequest);
+                        objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+
+                        //foreach (string strKey in objLocalSummary.objDataSelection.trajList.Keys)
+                        foreach (string strKey in objDataSelection.trajList.Keys)
+                        {
+                            string WellboreID = strKey.Split('~')[0];
+                            string TrajID = strKey.Split('~')[1];
+                            Trajectory objTrajectory = paramObjSummary.objWell.wellbores[WellboreID].trajectories[TrajID];
+                            gdsDataSeries objNewSeries = objSeries.getCopy();
+                            objNewSeries.SeriesID = objSeries.SeriesID;// Guid.NewGuid().ToString();
+                            objNewSeries.SeriesName = objNewSeries.SeriesName + " (" + objTrajectory.name + ")";
+                            objNewSeries.ObjectID = strKey;
+                            paramObjSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
+                        }
+                    }
+                }
+
+
+                paramObjSummary.generateColorData();
+                if (paramObjSummary.ShowTops)
+                {
+                    paramObjSummary.loadFormationTops();
+                }
+
+                gdsDataSeries[] arrSeries = objLocalSummary.dataSeries.Values.ToArray();
+
+                Array.Sort(arrSeries);
+
+                //for (int i = 0; i < arrSeries.Length - 1; i++)
+                for (int i = 0; i < arrSeries.Length; i++)
+                {
+                    gdsDataSeries objSeries = new gdsDataSeries();
+                    objSeries = arrSeries[i];
+
+                    if (objSeries.DataSource == 0)
+                    {
+                        //Normal Summary Data...
+                        if (objSeries.Type == gdsDataSeries.gdsType.Normal)
+                        {
+                            if (objSeries.isOffset)
+                            {
+                                paramObjSummary.generateOffsetTimeLogData(objSeries.SeriesID);//dataSeries Copied with data
+                            }
+                            else
+                            {
+                                paramObjSummary.generateTimeLogData(objSeries.SeriesID);//dataSeries copied to parent with data
+                            }
+                        }
+
+
+                        // ''Group Summary Data ...
+                        if (objSeries.Type == gdsDataSeries.gdsType.GroupSummary)
+                        {
+                            if (objSeries.isOffset)
+                            {
+                                //Implementation Pending ...
+                                //Need to check this
+                                //generateOffsetTimeLogData(objSeries.SeriesID)
+
+                                paramObjSummary.generateTimeLogDataForGroupSummariesOffsetWell(objSeries.SeriesID); //Dataseries copied with data
+                            }
+                            else
+                            {
+
+                                if (objSeries.MainGroupOn == 0)
+                                {
+                                    paramObjSummary.generateTimeLogDataForGroupSummaries(objSeries.SeriesID);// dataSerie copied with data
+                                }
+
+                                if (objSeries.MainGroupOn == 1)
+                                {
+                                    paramObjSummary.generateTimeLogDataForGroupSummariesSplit(objSeries.SeriesID);//Dataseried copied with data
+                                }
+
+                            }
+                        }
+                    }
+
+                    if (objSeries.DataSource == 1)
+                    {
+                        paramObjSummary.generateTrajData(objSeries.SeriesID);//dataSeries copied with data
+                    }
+                }
+                objResponse.Response = JsonConvert.SerializeObject(paramObjSummary);
+                return objResponse;
+            }
+            catch (Exception ex)
+            {
+
+                Broker.BrokerResponse objBadResponse = paramObjSummary.objRequest.createResponseObject();
+                objBadResponse.RequestSuccessfull = false;
+                objBadResponse.Errors = "Error in LoadSummaryData " + ex.Message + ex.StackTrace;
+                return objBadResponse;
+            }
+        }
+
+        //************
+
+
+        //public Broker.BrokerResponse loadSummaryData(string wellID, string paramPlotID, ref Broker.BrokerRequest paramRequest)
+        public Broker.BrokerResponse loadSummaryData()
+        {
+            try
+            {
+                //Pending
+                //RemoveUnUsedSeries and other functions, need to consult Nitin for that...
+
+                objDataSelection.WellID = wellID;
+                objDataSelection.getRange2(ref fromDate, ref toDate, ref fromDepth, ref toDepth, ref ChartTitle, this);
+                this.objDataSelection.loadDataSelection(this.SummaryPlotID);
+                gdSummary objLocalSummary = new gdSummary(this.objRequest, wellID, this.SummaryPlotID);
+
+                objLocalSummary = gdSummary.loadSummaryObject(ref objLocalSummary);
+
+                Broker.BrokerResponse objResponse = this.objRequest.createResponseObject();
+
+
+                //Check if time log exist, else return empty JSON
+                if (!VuMaxDR.Data.Objects.Well.isTimeLogExist(ref this.objRequest.objDataService, wellID))
+                {
+
+                    Broker.BrokerResponse objBadResponse = this.objRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Response = "{}";
+                    objBadResponse.Errors = "No time logs found in this well ";
+                    return objBadResponse;
+
+                }
+
+
+                lastError = "";
+                objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref this.objRequest.objDataService, wellID);
 
 
                 //Get the primary time log 
-                objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref paramRequest.objDataService, wellID);
+                objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref this.objRequest.objDataService, wellID);
 
 
                 //load User Dataselector Setings from evumaxUserSettings
@@ -2094,7 +2312,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     if (objSeries.DataSource == 0)
                     {
                         gdsDataSeries objNewSeries = objSeries.getCopy();
-                        objNewSeries.SeriesID = Guid.NewGuid().ToString();
+                        objNewSeries.SeriesID = objSeries.SeriesID;// Guid.NewGuid().ToString();
                         objNewSeries.isOffset = false;
                         objNewSeries.ObjectID = objTimeLog.WellboreID + "~" + objTimeLog.ObjectID;
                         localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
@@ -2104,11 +2322,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 //''## Trajectory *****************************************************
 
                 foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+
                 {
                     if (objSeries.DataSource == 1)
                     {
-                        DataSelection objDataSelection = new DataSelection(wellID, paramRequest);
-                        objDataSelection.loadDataSelection(paramPlotID);
+                        DataSelection objDataSelection = new DataSelection(wellID, this.objRequest);
+                        objDataSelection.loadDataSelection(this.SummaryPlotID);
 
                         //foreach (string strKey in objLocalSummary.objDataSelection.trajList.Keys)
                         foreach (string strKey in objDataSelection.trajList.Keys)
@@ -2117,7 +2336,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             string TrajID = strKey.Split('~')[1];
                             Trajectory objTrajectory = objWell.wellbores[WellboreID].trajectories[TrajID];
                             gdsDataSeries objNewSeries = objSeries.getCopy();
-                            objNewSeries.SeriesID = Guid.NewGuid().ToString();
+                            objNewSeries.SeriesID = objSeries.SeriesID;// Guid.NewGuid().ToString();
                             objNewSeries.SeriesName = objNewSeries.SeriesName + " (" + objTrajectory.name + ")";
                             objNewSeries.ObjectID = strKey;
                             localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
@@ -2128,9 +2347,11 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
 
                 gdsDataSeries[] arrSeries = objLocalSummary.dataSeries.Values.ToArray();
+
                 Array.Sort(arrSeries);
 
-                for (int i = 0; i < arrSeries.Length - 1; i++)
+                //for (int i = 0; i < arrSeries.Length - 1; i++)
+                for (int i = 0; i < arrSeries.Length; i++)
                 {
                     gdsDataSeries objSeries = new gdsDataSeries();
                     objSeries = arrSeries[i];
@@ -2184,27 +2405,98 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         generateTrajData(objSeries.SeriesID);
                     }
                 }
-                objResponse.Response = JsonConvert.SerializeObject(localSeries);
+                objResponse.Response = JsonConvert.SerializeObject(this);
                 return objResponse;
             }
             catch (Exception ex)
             {
 
-                Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                Broker.BrokerResponse objBadResponse = this.objRequest.createResponseObject();
                 objBadResponse.RequestSuccessfull = false;
-                objBadResponse.Errors = "Error in LoadgdSummaryList " + ex.Message + ex.StackTrace;
+                objBadResponse.Errors = "Error in LoadSummaryData " + ex.Message + ex.StackTrace;
                 return objBadResponse;
             }
         }
 
-        public static gdSummary loadSummaryObject(string paramPlotID,ref Broker.BrokerRequest paramRequest)
+        private void populateIntervalColors()
         {
             try
             {
-                Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
-                gdSummary objSummary = new gdSummary();
+                IntervalColors.Add(1, Color.Blue);
+                IntervalColors.Add(2, Color.FromArgb(4, 186, 255));
+                IntervalColors.Add(3, Color.FromArgb(4, 255, 255));
+                IntervalColors.Add(4, Color.FromArgb(12, 248, 153));
+                IntervalColors.Add(5, Color.FromArgb(141, 233, 3));
+                IntervalColors.Add(6, Color.FromArgb(121, 185, 51));
+                IntervalColors.Add(7, Color.FromArgb(188, 185, 48));
+                IntervalColors.Add(8, Color.FromArgb(255, 128, 0));
+                IntervalColors.Add(9, Color.FromArgb(211, 95, 24));
+                IntervalColors.Add(10, Color.FromArgb(255, 0, 0));
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
-                DataTable objData = paramRequest.objDataService.getTable("SELECT * FROM VMX_GDS_TEMPLATES WHERE TEMPLATE_ID='" + paramPlotID + "'");
+
+        public bool hasTimeData()
+        {
+            try
+            {
+                foreach (gdsDataSeries objSeries in dataSeries.Values)
+                {
+                    if (objSeries.DataSource == 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        public bool hasTrajectoryData()
+        {
+            try
+            {
+                foreach (gdsDataSeries objSeries in dataSeries.Values)
+                {
+                    if (objSeries.DataSource == 1)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public static gdSummary loadSummaryObject(ref gdSummary objSummary)
+        {
+            try
+            {
+                objSummary.objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref objSummary.objRequest.objDataService, objSummary.wellID);
+                objSummary.IntervalColors.Add(1, Color.Blue);
+                objSummary.IntervalColors.Add(2, Color.FromArgb(4, 186, 255));
+                objSummary.IntervalColors.Add(3, Color.FromArgb(4, 255, 255));
+                objSummary.IntervalColors.Add(4, Color.FromArgb(12, 248, 153));
+                objSummary.IntervalColors.Add(5, Color.FromArgb(141, 233, 3));
+                objSummary.IntervalColors.Add(6, Color.FromArgb(121, 185, 51));
+                objSummary.IntervalColors.Add(7, Color.FromArgb(188, 185, 48));
+                objSummary.IntervalColors.Add(8, Color.FromArgb(255, 128, 0));
+                objSummary.IntervalColors.Add(9, Color.FromArgb(211, 95, 24));
+                objSummary.IntervalColors.Add(10, Color.FromArgb(255, 0, 0));
+
+                DataTable objData = objSummary.objRequest.objDataService.getTable("SELECT * FROM VMX_GDS_TEMPLATES WHERE TEMPLATE_ID='" + objSummary.SummaryPlotID + "'");
 
                 if (objData.Rows.Count > 0)
                 {
@@ -2212,14 +2504,14 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objSummary.SummaryPlotName = (string)DataService.checkNull(objData.Rows[0]["TEMPLATE_NAME"], "");
                     objSummary.ShowColorAxis = DataService.checkNumericNull(objData.Rows[0]["SHOW_COLOR_AXIS"]) == 0 ? true : false;
                     objSummary.ColorAxisMnemonic = (string)DataService.checkNull(objData.Rows[0]["COLOR_AXIS_MNEMONIC"], "");
-                    objSummary.PlotOrientation = (int)DataService.checkNull(objData.Rows[0]["ORIENTATION"], 0);
-                    objSummary.MultiWell = Global.Iif((int)DataService.checkNull(objData.Rows[0]["MULTI_WELL"], 0) == 1, true, false);
-                    objSummary.ShowTops = Global.Iif((int)DataService.checkNull(objData.Rows[0]["SHOW_TOPS"], 0) == 1, true, false);
+                    objSummary.PlotOrientation = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["ORIENTATION"], 0));
+                    objSummary.MultiWell = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MULTI_WELL"], 0)) == 1, true, false);
+                    objSummary.ShowTops = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SHOW_TOPS"], 0)) == 1, true, false);
 
                     try
                     {
-                        objSummary.Type = (int)DataService.checkNull(objData.Rows[0]["TYPE"], 0);
-                        objSummary.Factor = (int)DataService.checkNull(objData.Rows[0]["FACTOR"], 10);
+                        objSummary.Type = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["TYPE"], 0));
+                        objSummary.Factor = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["FACTOR"], 10));
                     }
                     catch (Exception ex)
                     {
@@ -2227,16 +2519,16 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     try
                     {
-                        objSummary.MultiPageOutput = Global.Iif((int)DataService.checkNull(objData.Rows[0]["MULTIPAGE_OUTPUT"], 0) == 1, true, false);
-                        objSummary.FtPerInch = (double)DataService.checkNull(objData.Rows[0]["FT_PER_INCH"], 0);
-                        objSummary.IndexColumn = (int)DataService.checkNull(objData.Rows[0]["INDEX_COLUMN"], 0);
+                        objSummary.MultiPageOutput = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MULTIPAGE_OUTPUT"], 0)) == 1, true, false);
+                        objSummary.FtPerInch = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["FT_PER_INCH"], 0));
+                        objSummary.IndexColumn = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["INDEX_COLUMN"], 0));
                     }
                     catch (Exception ex)
                     {
                     }
                 }
 
-                objData = paramRequest.objDataService.getTable("SELECT * FROM VMX_GDS_DATA WHERE TEMPLATE_ID='" + paramPlotID + "'");
+                objData = objSummary.objRequest.objDataService.getTable("SELECT * FROM VMX_GDS_DATA WHERE TEMPLATE_ID='" + objSummary.SummaryPlotID + "'");
 
                 foreach (DataRow objRow in objData.Rows)
                 {
@@ -2244,45 +2536,45 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                     objItem.SeriesID = (string)DataService.checkNull(objRow["SERIES_ID"], "");
                     objItem.SeriesName = (string)DataService.checkNull(objRow["SERIES_NAME"], "");
-                    objItem.DataSource = (int)DataService.checkNull(objRow["DATA_SOURCE"], 0);
+                    objItem.DataSource = Convert.ToInt32(DataService.checkNull(objRow["DATA_SOURCE"], 0));
                     objItem.XColumnID = (string)DataService.checkNull(objRow["XCOLUMN_ID"], "");
                     objItem.XColumnName = (string)DataService.checkNull(objRow["XCOLUMN_NAME"], "");
                     objItem.YColumnID = (string)DataService.checkNull(objRow["YCOLUMN_ID"], "");
                     objItem.YColumnName = (string)DataService.checkNull(objRow["YCOLUMN_NAME"], "");
                     objItem.DataFilter = (string)DataService.checkNull(objRow["DATA_FILTER"], "");
-                    objItem.SeriesType = (int)DataService.checkNull(objRow["SERIES_TYPE"], 0);
-                    objItem.LineStyle = (int)DataService.checkNull(objRow["LINE_STYLE"], 0);
-                    objItem.LineWidth = (double)DataService.checkNull(objRow["LINE_WIDTH"], 0);
-                    objItem.LineColor = Color.FromArgb((int)DataService.checkNull(objRow["LINE_COLOR"], 0));
-                    objItem.StepLine = Global.Iif((int)DataService.checkNull(objRow["STEP_LINE"], 0) == 1, true, false);
-                    objItem.ShowPoints = Global.Iif((int)DataService.checkNull(objRow["SHOW_POINTS"], 0) == 1, true, false);
-                    objItem.PointerStyle = (int)DataService.checkNull(objRow["POINT_STYLE"], 0);
-                    objItem.PointHeight = (int)DataService.checkNull(objRow["POINT_HEIGHT"], 0);
-                    objItem.PointWidth = (int)DataService.checkNull(objRow["POINT_WIDTH"], 0);
-                    objItem.PointColor = Color.FromArgb((int)DataService.checkNull(objRow["POINT_COLOR"], 0));
-                    objItem.ColorPointsAsColumn = Global.Iif((int)DataService.checkNull(objRow["COLOR_AS_COLUMN"], 0) == 1, true, false);
-                    objItem.Visible = Global.Iif((int)DataService.checkNull(objRow["VISIBLE"], 0) == 1, true, false);
-                    objItem.IgnoreNegative = Global.Iif((int)DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0) == 1, true, false);
-                    objItem.groupFunction = (int)DataService.checkNull(objRow["GROUP_FUNCTION"], 0);
+                    objItem.SeriesType = Convert.ToInt32(DataService.checkNull(objRow["SERIES_TYPE"], 0));
+                    objItem.LineStyle = Convert.ToInt32(DataService.checkNull(objRow["LINE_STYLE"], 0));
+                    objItem.LineWidth = Convert.ToDouble(DataService.checkNull(objRow["LINE_WIDTH"], 0));
+                    objItem.LineColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], Color.Black.ToArgb()))));// Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], 0)));
+                    objItem.StepLine = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["STEP_LINE"], 0)) == 1, true, false);
+                    objItem.ShowPoints = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_POINTS"], 0)) == 1, true, false);
+                    objItem.PointerStyle = Convert.ToInt32(DataService.checkNull(objRow["POINT_STYLE"], 0));
+                    objItem.PointHeight = Convert.ToInt32(DataService.checkNull(objRow["POINT_HEIGHT"], 0));
+                    objItem.PointWidth = Convert.ToInt32(DataService.checkNull(objRow["POINT_WIDTH"], 0));
+                    objItem.PointColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["POINT_COLOR"], 0)));
+                    objItem.ColorPointsAsColumn = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["COLOR_AS_COLUMN"], 0)) == 1, true, false);
+                    objItem.Visible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["VISIBLE"], 0)) == 1, true, false);
+                    objItem.IgnoreNegative = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0)) == 1, true, false);
+                    objItem.groupFunction = Convert.ToInt32(DataService.checkNull(objRow["GROUP_FUNCTION"], 0));
 
-                    objItem.Type = (gdsDataSeries.gdsType)DataService.checkNull(objRow["DATA_TYPE"], 0);
+                    objItem.Type = (gdsDataSeries.gdsType)Convert.ToInt32(DataService.checkNull(objRow["DATA_TYPE"], 0));
 
-                    objItem.grpExpressionType = (int)DataService.checkNull(objRow["GRP_EXP_TYPE"], 0);
+                    objItem.grpExpressionType = Convert.ToInt32(DataService.checkNull(objRow["GRP_EXP_TYPE"], 0));
                     objItem.grpExpression = (string)DataService.checkNull(objRow["GRP_EXP"], "");
-                    objItem.grpFunctionType = (int)DataService.checkNull(objRow["GRP_FUNC_TYPE"], 0);
-                    objItem.grpGroupBy = (int)DataService.checkNull(objRow["GRP_GROUP"], 0);
+                    objItem.grpFunctionType = Convert.ToInt32(DataService.checkNull(objRow["GRP_FUNC_TYPE"], 0));
+                    objItem.grpGroupBy = Convert.ToInt32(DataService.checkNull(objRow["GRP_GROUP"], 0));
                     objItem.grpGroupByExpression = (string)DataService.checkNull(objRow["GRP_GROUP_EXP"], "");
                     objItem.grpFilter = (string)DataService.checkNull(objRow["GRP_FILTER"], "");
-                    objItem.grpColor = Color.FromArgb((int)DataService.checkNull(objRow["GRP_COLOR"], 0));
+                    objItem.grpColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["GRP_COLOR"], 0)));
 
-                    objItem.Color1 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR1"], 0));
-                    objItem.Color2 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR2"], 0));
-                    objItem.Color3 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR3"], 0));
-                    objItem.Color4 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR4"], 0));
-                    objItem.Color5 = Color.FromArgb((int)DataService.checkNull(objRow["COLOR5"], 0));
+                    objItem.Color1 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], 0)));
+                    objItem.Color2 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], 0)));
+                    objItem.Color3 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], 0)));
+                    objItem.Color4 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], 0)));
+                    objItem.Color5 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR5"], 0)));
 
-                    objItem.MainGroupOn = (int)DataService.checkNull(objRow["MAIN_GROUP_ON"], 0);
-                    objItem.SplitType = (int)DataService.checkNull(objRow["SPLIT_TYPE"], 0);
+                    objItem.MainGroupOn = Convert.ToInt32(DataService.checkNull(objRow["MAIN_GROUP_ON"], 0));
+                    objItem.SplitType = Convert.ToInt32(DataService.checkNull(objRow["SPLIT_TYPE"], 0));
 
 
                     objItem.FixedRangeList.Clear();
@@ -2304,22 +2596,22 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         }
                     }
 
-                    objItem.variableRangeFrom = (double)DataService.checkNull(objRow["FROM_RANGE"], 0);
-                    objItem.variableRangeTo = (double)DataService.checkNull(objRow["TO_RANGE"], 0);
-                    objItem.variableRangeIncrement = (double)DataService.checkNull(objRow["RANGE_INCREMENT"], 0);
-                    objItem.splitMnemonic = (string)DataService.checkNull(objRow["SPLIT_MNEMONIC"], 0);
-                    objItem.ShowMarks = Global.Iif((int)DataService.checkNull(objRow["SHOW_MARKS"], 0) == 1, true, false);
+                    objItem.variableRangeFrom = Convert.ToDouble(DataService.checkNull(objRow["FROM_RANGE"], 0));
+                    objItem.variableRangeTo = Convert.ToDouble(DataService.checkNull(objRow["TO_RANGE"], 0));
+                    objItem.variableRangeIncrement = Convert.ToDouble(DataService.checkNull(objRow["RANGE_INCREMENT"], 0));
+                    objItem.splitMnemonic = (string)DataService.checkNull(objRow["SPLIT_MNEMONIC"], "");
+                    objItem.ShowMarks = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_MARKS"], 0)) == 1, true, false);
 
-                    objItem.StackedBars = Global.Iif((int)DataService.checkNull(objRow["STACKED_BARS"], 0) == 1, true, false);
+                    objItem.StackedBars = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["STACKED_BARS"], 0)) == 1, true, false);
 
-                    objItem.ShowRoadMap = Global.Iif((int)DataService.checkNull(objRow["SHOW_ROADMAP"], 0) == 1, true, false);
-                    objItem.RoadMapColor = Color.FromArgb((int)DataService.checkNull(objRow["ROADMAP_COLOR"], 0));
+                    objItem.ShowRoadMap = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_ROADMAP"], 0)) == 1, true, false);
+                    objItem.RoadMapColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_COLOR"], 0)));
 
-                    objItem.RoadMapTransparency = (int)DataService.checkNull(objRow["ROADMAP_TRANS"], 0);
+                    objItem.RoadMapTransparency = Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_TRANS"], 0));
 
                     try
                     {
-                        objItem.DisplayOrder = (int)DataService.checkNull(objRow["DISPLAY_ORDER"], 0);
+                        objItem.DisplayOrder = Convert.ToInt32(DataService.checkNull(objRow["DISPLAY_ORDER"], 0));
                     }
                     catch (Exception ex)
                     {
@@ -2327,7 +2619,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objSummary.dataSeries.Add(objItem.SeriesID, objItem.getCopy());
                 }
 
-                objData = paramRequest.objDataService.getTable("SELECT * FROM VMX_GDS_AXIS WHERE TEMPLATE_ID='" + paramPlotID + "'");
+                objData = objSummary.objRequest.objDataService.getTable("SELECT * FROM VMX_GDS_AXIS WHERE TEMPLATE_ID='" + objSummary.SummaryPlotID + "'");
 
                 foreach (DataRow objRow in objData.Rows)
                 {
@@ -2336,22 +2628,23 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objAxis.AxisID = (string)DataService.checkNull(objRow["AXIS_ID"], "");
                     objAxis.AxisTitle = (string)DataService.checkNull(objRow["AXIS_TITLE"], "");
                     objAxis.ColumnID = (string)DataService.checkNull(objRow["COLUMN_ID"], "");
-                    objAxis.AxisPosition = (int)DataService.checkNull(objRow["AXIS_POSITION"], 0);
-                    objAxis.Inverted = Global.Iif((int)DataService.checkNull(objRow["INVERTED"], 0) == 1, true, false);
-                    objAxis.DisplayOrder = (int)DataService.checkNull(objRow["DISPLAY_ORDER"], 0);
-                    objAxis.Automatic = Global.Iif((int)DataService.checkNull(objRow["AUTOMATIC"], 0) == 1, true, false);
-                    objAxis.MinValue = (double)DataService.checkNull(objRow["MIN_VALUE"], 0);
-                    objAxis.MaxValue = (double)DataService.checkNull(objRow["MAX_VALUE"], 0);
-                    objAxis.Orientation = (int)DataService.checkNull(objRow["ORIENTATION"], 0);
-                    objAxis.StartPosition = (double)DataService.checkNull(objRow["START_POSITION"], 0);
-                    objAxis.EndPosition = (double)DataService.checkNull(objRow["END_POSITION"], 0);
-                    objAxis.RelativePosition = (int)DataService.checkNull(objRow["RELATIVE_POSITION"], 0);
-                    objAxis.ShowGrid = Global.Iif((int)DataService.checkNull(objRow["SHOW_GRID"], 0) == 1, true, false);
-                    objAxis.FontName = (string)DataService.checkNull(objRow["FONT_NAME"], "");
-                    objAxis.FontSize = (int)DataService.checkNull(objRow["FONT_SIZE"], 0);
-                    objAxis.FontColor = Color.FromArgb((int)DataService.checkNull(objRow["FONT_COLOR"], 0));
-                    objAxis.FontBold = Global.Iif((int)DataService.checkNull(objRow["FONT_BOLD"], 0) == 1, true, false);
-                    objAxis.FontItalic = Global.Iif((int)DataService.checkNull(objRow["FONT_ITALIC"], 0) == 1, true, false);
+                    objAxis.AxisPosition = Convert.ToInt32(DataService.checkNull(objRow["AXIS_POSITION"], 0));
+                    objAxis.Inverted = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["INVERTED"], 0)) == 1, true, false);
+                    objAxis.DisplayOrder = Convert.ToInt32(DataService.checkNull(objRow["DISPLAY_ORDER"], 0));
+                    objAxis.Automatic = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["AUTOMATIC"], 0)) == 1, true, false);
+                    objAxis.MinValue = Convert.ToDouble(DataService.checkNull(objRow["MIN_VALUE"], 0));
+                    objAxis.MaxValue = Convert.ToDouble(DataService.checkNull(objRow["MAX_VALUE"], 0));
+                    objAxis.Orientation = Convert.ToInt32(DataService.checkNull(objRow["ORIENTATION"], 0));
+                    objAxis.StartPosition = Convert.ToDouble(DataService.checkNull(objRow["START_POSITION"], 0));
+                    objAxis.EndPosition = Convert.ToDouble(DataService.checkNull(objRow["END_POSITION"], 0));
+                    objAxis.RelativePosition = Convert.ToInt32(DataService.checkNull(objRow["RELATIVE_POSITION"], 0));
+                    objAxis.ShowGrid = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_GRID"], 0)) == 1, true, false);
+                    objAxis.FontName = (string)DataService.checkNull(objRow["FONT_NAME"], "Arial");
+                    objAxis.FontSize = Convert.ToInt32(DataService.checkNull(objRow["FONT_SIZE"], 10));
+                    //objAxis.FontColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["FONT_COLOR"], "Black")));
+                    objAxis.FontColor =  ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["FONT_COLOR"], Color.Black.ToArgb()))));
+                    objAxis.FontBold = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["FONT_BOLD"], 0)) == 1, true, false);
+                    objAxis.FontItalic = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["FONT_ITALIC"], 0)) == 1, true, false);
 
                     objSummary.Axis.Add(objAxis.AxisID, objAxis.getCopy());
                 }
@@ -2365,7 +2658,62 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             }
         }
 
-    }
+
+        public Trajectory getActualTrajectory()
+        {
+            try
+            {
+                Trajectory objActualTrajectory = new Trajectory();
+                bool noTrajectoriesFound = true;
+
+                // 'Start with Flag
+                foreach (Wellbore objWellbore in objWell.wellbores.Values)
+                {
+                    foreach (Trajectory objTrajectory in objWellbore.trajectories.Values)
+                    {
+                        noTrajectoriesFound = false;
+                        if (objTrajectory.IsPrimaryActive)
+                        {
+                            objActualTrajectory = objTrajectory;
+                            goto Step1;
+                        }
+                    }
+                }
+
+                if (noTrajectoriesFound)
+                {
+                    return default;
+                }
+
+            Step1:
+
+                if (objActualTrajectory is null)
+                {
+
+                    // 'Return any trajectory
+
+
+                    foreach (Wellbore objWellbore in objWell.wellbores.Values)
+                    {
+                        foreach (Trajectory objTrajectory in objWellbore.trajectories.Values)
+                        {
+                            noTrajectoriesFound = false;
+                            objActualTrajectory = objTrajectory;
+                            return objActualTrajectory;
+                        }
+                    }
+                }
+
+                return objActualTrajectory;
+            }
+            catch (Exception ex)
+            {
+                return default;
+            }
+        }
+
+
+    }//Class
 
     public class IntervalInfo
     {

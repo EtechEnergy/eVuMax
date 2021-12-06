@@ -102,6 +102,7 @@
     <Compile Include="DownloadManager\WitsmlServer.cs" />
     <Compile Include="DownloadManager\witsmlServerLog.cs" />
     <Compile Include="GenericDrillingSummary\DataSelection.cs" />
+    <Compile Include="GenericDrillingSummary\FormationTopPositionInfo.cs" />
     <Compile Include="GenericDrillingSummary\gdsAxis.cs" />
     <Compile Include="GenericDrillingSummary\gdsDataSeries.cs" />
     <Compile Include="GenericDrillingSummary\gdSummary.cs" />
