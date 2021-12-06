@@ -117,7 +117,7 @@ export class DrillingSummary extends Component {
   //==============
 
   async componentDidMount() {
-
+    alert("aa");
     //this.objLogger.SendLog("Component did Mount")
     this.initilizeCharts();
 

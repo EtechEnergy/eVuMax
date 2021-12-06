@@ -732,10 +732,14 @@ class ToolfaceSummary extends Component {
 
   onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
     try {
+      debugger;
+      d3.selectAll(".formationTop-" + this.objChart.Id).remove();
+      d3.selectAll(".formationTopText-" + this.objChart.Id).remove();
+      debugger;
       let tripOutlineData = [];
       let tripOutArr = [];
 
-      if (this.objToolfaceData.formationTops.length > 0) {
+      if (this.objToolfaceData.formationTops.length > 0 && this.state.ShowFormationTops == true) {
 
         for (let index = 0; index < this.objToolfaceData.formationTops.length; index++) {
           const depth = this.objToolfaceData.formationTops[index].Depth;
@@ -758,6 +762,7 @@ class ToolfaceSummary extends Component {
 
 
           this.objChart.SVGRef.append("g")
+            .attr("class", "formationTopText-" + this.objChart.Id)
             .attr(
               "transform",
               "translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(-90)"
