@@ -376,7 +376,7 @@ export class Chart {
 
   createAxes = () => {
     try {
-
+      
       for (let key of this.Axes.keys()) {
         let objAxis: Axis = this.Axes.get(key);
         //

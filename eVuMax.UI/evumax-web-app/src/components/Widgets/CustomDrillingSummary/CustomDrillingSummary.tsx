@@ -22,6 +22,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
   // const [wellName, setWellName] = useState("");
   useEffect(() => {
+    
     loadSummary();
   }, []);
 
@@ -65,6 +66,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
           if (res.data.RequestSuccessfull == true) {
             const objData = JSON.parse(res.data.Response);
+            debugger;
+
 
 
             let warnings: string = res.data.Warnings;
@@ -143,10 +146,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objChart.rightAxis().Visible = false;
       objChart.rightAxis().ShowLabels = false;
 
-      objChart.MarginLeft = 150;
+      objChart.MarginLeft = 10;
       objChart.MarginBottom = 10;
       objChart.MarginTop = 0;
-      objChart.MarginRight = 10;
+      objChart.MarginRight = 100;
 
       objChart.initialize();
       objChart.reDraw();
@@ -157,7 +160,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   }
 
   const getOrdersAxisListByPosition = (paramAxisPosition: number) => {
-    debugger;
+    
     let arrAxis: any = [];
     try {
       let list = [];
@@ -191,7 +194,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       let totalLeftAxis: number = 0;
       let totalTopAxis: number = 0;
       let totalBottomAxis: number = 0;
-      debugger;
+      
       //Set Axis Per Column
       for (let index = 0; index < axisList.length; index++) {
 
@@ -279,10 +282,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
         objChart.Axes.clear();
         objChart.DataSeries.clear();
 
-        objChart.MarginLeft = 150;
+        objChart.MarginLeft = 10;
         objChart.MarginBottom = 10;
         objChart.MarginTop = 0;
-        objChart.MarginRight = 50;
+        objChart.MarginRight = 100;
 
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
@@ -316,7 +319,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
-
 
 
           if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
@@ -465,6 +467,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         //Load Series
         let SeriesList = Object.values(objData.dataSeries);
+        
+        debugger ;
+        
+        
+        
+        
 
         for (let index = 0; index < SeriesList.length; index++) {
           const objDataSeries: any = SeriesList[index];
@@ -475,7 +483,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objSeries.YAxisId = objDataSeries.YColumnID;
           objSeries.PointSize = objDataSeries.PointWidth;
           let SeriesType: dataSeriesType = dataSeriesType.Line;
-
+          //////alert(objDataSeries.SeriesType);
           objSeries.Color = objDataSeries.LineColor;//Dont change position of this line
           switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar
             case 0:
@@ -483,7 +491,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
               break;
             case 1:
               SeriesType = dataSeriesType.Point;
-              objSeries.Color = objDataSeries.PointColor;
+              objSeries.Color =   objDataSeries.PointColor;
+              
               break;
             case 2:
               SeriesType = dataSeriesType.Area;
@@ -507,7 +516,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objSeries.Title = WellName + "-" + objDataSeries.SeriesName;
           
           
-          if( SeriesType == dataSeriesType.Area){
+          if( SeriesType == dataSeriesType.Area ||  SeriesType == dataSeriesType.Point){
             objSeries.Color =  objDataSeries.PointColor;
           }
           else{

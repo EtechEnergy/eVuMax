@@ -453,6 +453,7 @@ export class Axis {
   //Determines the axis tick length
   //prath
   formatAxis = () => {
+    
     let maxLabel = "";
 
 
@@ -558,7 +559,8 @@ export class Axis {
 
       let titleX = 0;
       let titleY = 0;
-
+      
+      
       if (this.LabelAngel == 0) {
         if (this.ShowLabels) {
           titleX = this.IRelativePos - textWidth - titleHeight;
@@ -567,7 +569,9 @@ export class Axis {
         }
       } else {
         if (this.ShowLabels) {
-          titleX = this.IRelativePos - textHeight - titleWidth; 
+          //Change by prath 07-Dec-2021 (custom chart)
+          //titleX = this.IRelativePos - textHeight - titleWidth; 
+          titleX = this.IRelativePos - textHeight - titleHeight; 
         } else {
           titleX = this.IRelativePos - titleWidth;
         }
@@ -589,10 +593,13 @@ export class Axis {
         .attr("fill", "white")
         .attr("font-weight", this.LabelFontBold == true ? "bold" : "normal")
         .attr("font-style", this.TitleFontItalic == true ? "italic" : "normal")
-        .select("text")
+         .select("text")
         .attr("transform", "rotate(-90)")
         .text(this.Title);
 
+        //alert(this.Title + " - " + titleX);
+
+        
       if (!this.ShowTitle) {
         this.ChartRef.SVGRef.select("#title_" + this.Id).attr(
           "fill",
@@ -1004,7 +1011,7 @@ export class Axis {
     //set the x & y position to start the axis drawing
     let x = 0;
     let y = 0;
-
+    
     if (
       this.Position == axisPosition.left ||
       this.Position == axisPosition.right
@@ -1090,7 +1097,7 @@ export class Axis {
         if (this.__selectorStartPos == 0 && this.__selectorEndPos == 0) {
           //calculate difference of range
           let diff = this.Max - this.Min;
-          debugger;
+          
           if (diff > 0) {
             //For Not a date axes
             let addDiff = (diff * 10) / 100;
@@ -1214,50 +1221,51 @@ export class Axis {
       } catch (error) { }
     }
 
-    if (this.Position == axisPosition.left) {
-      let titleX = 0;
-      let titleY = 0;
+    // Commented duplicate code prath on 12-Dec-2021 Prath  (Need to verify - Nitin)
+    // if (this.Position == axisPosition.left) {
+    //   let titleX = 0;
+    //   let titleY = 0;
 
-      if (this.LabelAngel == 0) {
-        if (this.ShowLabels) {
-          titleX = this.IRelativePos - textWidth - titleHeight;
-        } else {
-          titleX = this.IRelativePos - titleHeight;
-        }
-      } else {
-        if (this.ShowLabels) {
-          titleX = this.IRelativePos - textHeight - titleWidth;
-        } else {
-          titleX = this.IRelativePos - titleWidth;
-        }
-      }
+    //   if (this.LabelAngel == 0) {
+    //     if (this.ShowLabels) {
+    //       titleX = this.IRelativePos - textWidth - titleHeight;
+    //     } else {
+    //       titleX = this.IRelativePos - titleHeight;
+    //     }
+    //   } else {
+    //     if (this.ShowLabels) {
+    //       titleX = this.IRelativePos - textHeight - titleWidth;
+    //     } else {
+    //       titleX = this.IRelativePos - titleWidth;
+    //     }
+    //   }
 
-      titleY = this.StartPos + (this.EndPos - this.StartPos) / 2;
+    //   titleY = this.StartPos + (this.EndPos - this.StartPos) / 2;
 
-      let title = $("#title_" + this.Id)[0];
+    //   let title = $("#title_" + this.Id)[0];
 
-      if (title == undefined) {
-        this.ChartRef.SVGRef.append("g").attr("id", "title_" + this.Id);
-        this.ChartRef.SVGRef.select("#title_" + this.Id).append("text");
-      }
+    //   if (title == undefined) {
+    //     this.ChartRef.SVGRef.append("g").attr("id", "title_" + this.Id);
+    //     this.ChartRef.SVGRef.select("#title_" + this.Id).append("text");
+    //   }
 
-      this.ChartRef.SVGRef.select("#title_" + this.Id)
+    //   this.ChartRef.SVGRef.select("#title_" + this.Id)
 
-        .attr("transform", "translate(" + titleX + "," + titleY + ")")
-        .attr("text-anchor", "middle")
-        .attr("fill", "white")
-        .select("text")
-        .attr("transform", "rotate(-90)")
-        .text(this.Title);
+    //     .attr("transform", "translate(" + titleX + "," + titleY + ")")
+    //     .attr("text-anchor", "middle")
+    //     .attr("fill", "white")
+    //     .select("text")
+    //     .attr("transform", "rotate(-90)")
+    //     .text(this.Title);
 
-      if (!this.ShowTitle) {
-        this.ChartRef.SVGRef.select("#title_" + this.Id).attr(
-          "fill",
-          "transparent"
-        );
-        this.ChartRef.SVGRef.select("#title_" + this.Id).remove();
-      }
-    }
+    //   if (!this.ShowTitle) {
+    //     this.ChartRef.SVGRef.select("#title_" + this.Id).attr(
+    //       "fill",
+    //       "transparent"
+    //     );
+    //     this.ChartRef.SVGRef.select("#title_" + this.Id).remove();
+    //   }
+    // }
   }
   //
 

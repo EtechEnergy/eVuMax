@@ -1575,18 +1575,7 @@ export class ROPSummaryPlot extends Component {
 
           <div className="col-lg-9">
             <div style={{ width: "100%" }}>
-              {/* <div className="float-left">
-              <label className="float-left text-danger mr-2">
-                Main Well Trip outs :
-              </label>
-              {this.tripOutsString}
-            </div>
-            <div className="float-left">
-              <label className="float-left text-info ml-5 mr-2">
-                Offset Well Trip outs :
-              </label>
-              {this.tripOutsOffsetString}
-            </div> */}
+           
 
 
               <div className="container">
@@ -1609,11 +1598,13 @@ export class ROPSummaryPlot extends Component {
                     </div>
                   </div>
                 </div>
+                
               </div>
 
-
-              {/* <DataSelector {...this} /> */}
+  
               <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+              
+            
 
               <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
             </div>
