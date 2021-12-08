@@ -357,7 +357,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.LabelFont = objSummaryAxis.FontName;
           objAxis.LabelFontBold = objSummaryAxis.FontBold;
           objAxis.LabelFontColor = objSummaryAxis.FontColor;
-          objAxis.LabelFontSize = objSummaryAxis.FontSize;
+          objAxis.LabelFontSize = objSummaryAxis.FontSize ==0?10 :  objSummaryAxis.FontSize ;
           objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
