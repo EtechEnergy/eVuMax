@@ -215,6 +215,8 @@ export default class ActiveWell extends React.Component {
           );
         }
 
+     
+
 
       });
     }
@@ -256,6 +258,7 @@ export default class ActiveWell extends React.Component {
           // }
 
           // let userFav:any = JSON.parse(res.data.Response);
+          
           let widgetList = utilFunc.getWidgetList();
           let favList: any[] = [];
           for (let i = 0; i < userFav.length; i++) {
@@ -724,8 +727,9 @@ export default class ActiveWell extends React.Component {
         history.push("ToolfaceSummary/" + this.state.currentWellID);
       }
 
-      if (this.state.OpenInterfaceID === "Broomstick") {
-        history.push("Broomstick/" + this.state.currentWellID);
+      //prath
+      if (this.state.OpenInterfaceID === "customDrillingSummary") {
+        history.push("customDrillingSummary/" + this.state.currentWellID);
       }
     } catch (error) { }
   };

@@ -85,6 +85,7 @@ export class BarSeries {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
         keys.push(objSeries.Id);
         colors.push(objSeries.Color);
+        debugger;
 
         if (objSeries.Type == dataSeriesType.Bar) {
           if (!findBarSeries) {

@@ -319,6 +319,9 @@ export class Axis {
   createAxis = (pChartRef: Chart.Chart) => {
     try {
       //assign the reference
+       
+     this.Id= this.Id.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
+     
       this.ChartRef = pChartRef;
 
       if (this.IsDateTime) {
@@ -419,7 +422,7 @@ export class Axis {
         x = this.StartPos;
         y = this.IRelativePos;
       }
-
+      
       this.ChartRef.SVGRef.append("g")
         .attr("transform", "translate(" + x + "," + y + ")")
         .attr("id", this.Id)
@@ -1272,6 +1275,7 @@ export class Axis {
 
   updateAxis = () => {
     try {
+      
       if (!this.__selectorEventsAttached) {
         let selectorElement = $("#" + this.ChartRef.Id + "__selector_rect");
 
@@ -1390,6 +1394,7 @@ export class Axis {
           ////added by prath for inverted axis
 
           if (!this.Inverted) {
+            debugger;
             this.ScaleRef.domain([objAxisRange.Max, objAxisRange.Min]);
           } else {
             this.ScaleRef.domain([objAxisRange.Min, objAxisRange.Max]);

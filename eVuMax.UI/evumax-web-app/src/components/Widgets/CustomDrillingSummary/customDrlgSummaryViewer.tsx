@@ -10,6 +10,8 @@ import axios from "axios";
 import GlobalMod from "../../../objects/global";
 import { Util } from "../../../Models/eVuMax";
 import NotifyMe from 'react-notification-timeline';
+import DataSelector from "../../Common/DataSelector";
+import DataSelector_ from "../../Common/DataSelector_";
 let _gMod = new GlobalMod();
 
 export default class customDrlgSummaryViewer extends Component {
@@ -28,6 +30,8 @@ export default class customDrlgSummaryViewer extends Component {
     currentPlotID: "",
     runReport: false,
     warningMsg: [],
+    isRealTime: false as boolean,
+    objDataSelector: new DataSelector_(),
 
 
   };
@@ -187,6 +191,37 @@ export default class customDrlgSummaryViewer extends Component {
     }
   }
 
+
+
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+
+    //alert("TripConnection Summary --> SelectionChanged");
+    
+    let realtimeStatus: boolean = paramRefreshHrs;
+
+    await this.setState({
+      objDataSelector: paramDataSelector,
+      isRealTime: realtimeStatus
+    });
+
+    // this.selectionType = paramDataSelector.selectedval;
+    // this.fromDate = paramDataSelector.fromDate;
+    // this.toDate = paramDataSelector.toDate;
+    // this.fromDepth = paramDataSelector.fromDepth;
+    // this.toDepth = paramDataSelector.toDepth;
+    // this.refreshHrs = paramDataSelector.refreshHrs;
+
+    // if (this.state.isRealTime) {
+    //   this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
+    // } else {
+    //   this.AxiosSource.cancel();
+    //   await clearInterval(this.intervalID);
+    //   this.intervalID = null;
+    //   this.loadConnections();
+    // }
+
+  }
+
   render() {
     return (
       <div>
@@ -267,6 +302,7 @@ export default class customDrlgSummaryViewer extends Component {
 
             <div className="">
               {this.state.runReport && (
+                <>
                 <CustomDrillingSummary
                   PlotID={this.state.currentPlotID}
                   showListPanel={this.showListPanel}
@@ -275,6 +311,8 @@ export default class customDrlgSummaryViewer extends Component {
                   updateWarnings={this.updateWarnings}
                   parentRef={this}
                 ></CustomDrillingSummary>
+                <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
+                </>
               )}
             </div>
           </div>

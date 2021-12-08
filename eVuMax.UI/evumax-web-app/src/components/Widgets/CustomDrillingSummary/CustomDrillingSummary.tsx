@@ -300,7 +300,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           //alert(objSummaryAxis.AxisTitle);
           //objAxis.CustomPosition = true;
           objAxis.DisplayOrder = index;
-          objAxis.Id = objSummaryAxis.ColumnID;
+          objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
           objAxis.AutoScale = true; // as in toolface objSummaryAxis.Automatic;
           objAxis.Position = axisPosition.left;
           objAxis.IsDateTime = false;
@@ -343,7 +343,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           let objAxis = new Axis();
 
           objAxis.CustomPosition = true;
-          objAxis.Id = objSummaryAxis.ColumnID;
+          objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');;
           objAxis.Position = axisPosition.right;
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.IsDateTime = false;
@@ -390,7 +390,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           let objAxis = new Axis();
 
           objAxis.CustomPosition = true;
-          objAxis.Id = objSummaryAxis.ColumnID;
+          objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
           objAxis.Position = axisPosition.bottom;
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.IsDateTime = false;
@@ -434,11 +434,17 @@ export default function CustomDrillingSummary({ ...props }: any) {
           let objAxis = new Axis();
 
           objAxis.CustomPosition = true;
-          objAxis.Id = objSummaryAxis.ColumnID;
+          objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
           objAxis.Position = axisPosition.top;
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.IsDateTime = false;
-          objAxis.bandScale = false;
+          
+          if(objSummaryAxis.Id == "DiffPressure"){
+            objAxis.bandScale = true; //false; need to check 
+          }else{
+            objAxis.bandScale = false;// need to check if series has Bar then True
+          }
+          
           objAxis.Title = objSummaryAxis.AxisTitle;
           objAxis.ShowLabels = true;
           objAxis.ShowTitle = true;
@@ -476,11 +482,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         for (let index = 0; index < SeriesList.length; index++) {
           const objDataSeries: any = SeriesList[index];
+          debugger;
           let objSeries = new DataSeries();
-          objSeries.Id = objDataSeries.SeriesID;
+          objSeries.Id =  objDataSeries.SeriesID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');// objDataSeries.SeriesID;
           objSeries.Name = objDataSeries.SeriesName;
-          objSeries.XAxisId = objDataSeries.XColumnID;
-          objSeries.YAxisId = objDataSeries.YColumnID;
+          objSeries.XAxisId = objDataSeries.XColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');;
+          objSeries.YAxisId = objDataSeries.YColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');;
           objSeries.PointSize = objDataSeries.PointWidth;
           let SeriesType: dataSeriesType = dataSeriesType.Line;
           //////alert(objDataSeries.SeriesType);
@@ -506,12 +513,16 @@ export default function CustomDrillingSummary({ ...props }: any) {
               break;
             case 5:
               SeriesType = dataSeriesType.Bar;
+              objSeries.Stacked=false;    
+              objSeries.Color=objDataSeries.grpColor;
+              
               break;
 
             default:
               break;
           }
           objSeries.Type = SeriesType;
+          
           objSeries.PointStyle = objDataSeries.PointerStyle;
           objSeries.Title = WellName + "-" + objDataSeries.SeriesName;
           
@@ -519,9 +530,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
           if( SeriesType == dataSeriesType.Area ||  SeriesType == dataSeriesType.Point){
             objSeries.Color =  objDataSeries.PointColor;
           }
-          else{
+          else if(SeriesType == dataSeriesType.Line){
             objSeries.Color = objDataSeries.LineColor;
           }
+
+
+          
           
           
           objSeries.ShowInLegend = true;
@@ -529,13 +543,17 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
           //Populate the data series with this data
           objSeries.Data.length = 0;
-
+          debugger;
           if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
 
             for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
               let objVal: ChartData = new ChartData();
               objVal.x = objDataSeries.xDataBuffer[i];
               objVal.y = objDataSeries.yDataBuffer[i];
+              // if( SeriesType == dataSeriesType.Bar ){
+              //   objVal.color =  objDataSeries.grpColor;
+              // }
+              
               objSeries.Data.push(objVal);
             }
 
@@ -550,6 +568,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         console.log("ChartDataSeries", objChart.DataSeries);
         console.log("ChartAxes", objChart.Axes);
         objChart.initialize();
+        debugger;
         objChart.reDraw();
 
       }

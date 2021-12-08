@@ -1993,9 +1993,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     labelData = new string[xDataList.Count];
                     for (int i = 1, loopTo1 = xDataList.Count; i <= loopTo1; i++)
                     {
-                        xData[i - 1] = Convert.ToDouble(xDataList[i]);
-                        yData[i - 1] = Convert.ToDouble(yDataList[i]);
-                        labelData[i - 1] = Convert.ToString(labelList[i]);
+                        xData[i - 1] = Convert.ToDouble(xDataList[i-1]); //Old was xDataList[i] 
+                        yData[i - 1] = Convert.ToDouble(yDataList[i-1]);
+                        labelData[i - 1] = Convert.ToString(labelList[i-1]);
                     }
                 }
                 else

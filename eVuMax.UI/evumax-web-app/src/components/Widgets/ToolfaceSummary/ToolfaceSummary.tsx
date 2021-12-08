@@ -732,10 +732,10 @@ class ToolfaceSummary extends Component {
 
   onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
     try {
-      debugger;
+      
       d3.selectAll(".formationTop-" + this.objChart.Id).remove();
       d3.selectAll(".formationTopText-" + this.objChart.Id).remove();
-      debugger;
+      
       let tripOutlineData = [];
       let tripOutArr = [];
 

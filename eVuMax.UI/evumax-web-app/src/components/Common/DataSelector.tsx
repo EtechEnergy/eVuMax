@@ -459,9 +459,9 @@ class DataSelector extends Component<IProps> {
                   backgroundColor: "transparent",
                 }}
               > */}
-              {/* <div className="container">
+              <div className="container">
               <div className="row">
-                <div className="col-lg-12 col-md-12 col-sd-12 col-xs-12"> */}
+                <div className="col-lg-12 col-md-12 col-sd-12 col-xs-12">
               <div
                 id="chart"
                 style={{
@@ -486,8 +486,8 @@ class DataSelector extends Component<IProps> {
                   // padding: "10px",
                 }}
               ></div>
-  {/* </div>
-  </div></div> */}
+  </div>
+  </div></div>
 
 
 </div>

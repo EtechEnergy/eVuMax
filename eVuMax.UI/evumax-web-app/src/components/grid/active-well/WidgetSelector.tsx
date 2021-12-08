@@ -94,7 +94,7 @@ export default class WidgetSelector extends React.Component<IProps> {
 
 
           if (userFav != undefined || userFav != "") {
-
+            
             for (let index = 0; index < WidgetList.length; index++) {
 
               const element = WidgetList[index];

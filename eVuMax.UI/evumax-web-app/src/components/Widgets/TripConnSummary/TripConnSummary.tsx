@@ -498,7 +498,7 @@ class TripConnSummary extends Component {
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
     //alert("TripConnection Summary --> SelectionChanged");
-    debugger;
+    
     let realtimeStatus: boolean = paramRefreshHrs;
 
     await this.setState({
