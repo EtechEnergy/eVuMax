@@ -1,4 +1,5 @@
 ﻿using eVuMax.DataBroker.Broker;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,7 +131,22 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             objSummary.objDataSelection.ToDepth = toDepth;
                             break;
                     }
-                  
+
+
+
+                    //Save UserSettings to DB
+                    UserSettings.UserSettingsMgr objSettingsMgr = new UserSettings.UserSettingsMgr(paramRequest.objDataService);
+                    //UserSettings.UserSettings objSettings = objSettingsMgr.loadUserSettings(UserID, plotID, wellID);
+                    UserSettings.UserSettings objSettings = new UserSettings.UserSettings();
+                    
+                    objSettings.UserId = UserID;
+                    objSettings.settingData = JsonConvert.SerializeObject(objSummary.objDataSelection);
+                    objSettings.WellId = wellID;
+                    objSettings.SettingsId = plotID;
+
+                    objSettingsMgr.saveUserSettings(objSettings);
+
+                    
 
                     objResponse = gdSummary.loadSummaryData(ref objSummary);
                     return objResponse;
