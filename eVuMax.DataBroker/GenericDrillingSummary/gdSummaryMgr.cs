@@ -50,6 +50,42 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     string UserID = "";
                     string plotID = "";
 
+
+
+                    string selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
+                    double fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
+                    double toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
+                    string SideTrackKey = "-999";
+
+
+                    DateTime fromDate = DateTime.Now;
+                    DateTime toDate = DateTime.Now;
+
+                    try
+                    {
+                        fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
+                        toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
+
+
+                        //Convert date to UTC
+                        fromDate = fromDate.ToUniversalTime();
+                        toDate = toDate.ToUniversalTime();
+                    }
+                    catch (Exception)
+                    {
+
+
+                    }
+
+                    bool isRealTime = false;
+                    int refreshHrs = 24;
+                    isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
+                    refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
+
+                    if (isRealTime)
+                    {
+                        selectionType = "2";
+                    }
                     try
                     {
                         wellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("wellID")).FirstOrDefault().ParamValue;
@@ -68,7 +104,34 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     paramRequest.objDataService.UserName = UserID;
                     gdSummary objSummary = new gdSummary(paramRequest,wellID,plotID);
                     gdSummary.loadSummaryObject(ref objSummary);
-                    
+
+                    //update DataSelector with Client values
+                    ////React Side selectedval: string = "-1";//"-1 Default, 0= DateRange and 1 = Depth Range"
+                    ///
+                    objSummary.objDataSelection.sideTrackKey = SideTrackKey;
+                    switch (selectionType)
+                    {
+                        case "-1":
+                            objSummary.objDataSelection.selectionType = DataSelection.sPlotSelectionType.ByHours;
+                            objSummary.objDataSelection.LastHours = refreshHrs;
+                            break;
+                        case "2":
+                            objSummary.objDataSelection.selectionType = DataSelection.sPlotSelectionType.ByHours;
+                            objSummary.objDataSelection.LastHours = refreshHrs;
+                            break;
+                        case "0":
+                            objSummary.objDataSelection.selectionType = DataSelection.sPlotSelectionType.DateRange;
+                            objSummary.objDataSelection.FromDate = fromDate;
+                            objSummary.objDataSelection.ToDate= toDate;
+                            break;
+                        case "1":
+                            objSummary.objDataSelection.selectionType = DataSelection.sPlotSelectionType.DepthRange;
+                            objSummary.objDataSelection.FromDepth = fromDepth;
+                            objSummary.objDataSelection.ToDepth = toDepth;
+                            break;
+                    }
+                  
+
                     objResponse = gdSummary.loadSummaryData(ref objSummary);
                     return objResponse;
                 }

@@ -12,6 +12,7 @@ import { Util } from "../../../Models/eVuMax";
 import NotifyMe from 'react-notification-timeline';
 import DataSelector from "../../Common/DataSelector";
 import DataSelector_ from "../../Common/DataSelector_";
+import CustomDrlgSummaryDataSelector from "../CustomDrillingSummary/CustomDrlgSummaryDataSelector";
 let _gMod = new GlobalMod();
 
 export default class customDrlgSummaryViewer extends Component {
@@ -40,7 +41,7 @@ export default class customDrlgSummaryViewer extends Component {
     try {
 
       this.loadSummaryList();
-
+      console.log(this.state.objDataSelector)
 
     } catch (error) {
 
@@ -192,17 +193,20 @@ export default class customDrlgSummaryViewer extends Component {
   }
 
 
-
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
-
-    //alert("TripConnection Summary --> SelectionChanged");
-    
+    debugger;
     let realtimeStatus: boolean = paramRefreshHrs;
-
     await this.setState({
       objDataSelector: paramDataSelector,
-      isRealTime: realtimeStatus
+      isRealTime: realtimeStatus,
+      runReport:false
     });
+    
+    await this.setState({
+       runReport:true
+
+    });
+
 
     // this.selectionType = paramDataSelector.selectedval;
     // this.fromDate = paramDataSelector.fromDate;
@@ -310,8 +314,11 @@ export default class customDrlgSummaryViewer extends Component {
                   PlotName={this.state.currentRow.TEMPLATE_NAME}
                   updateWarnings={this.updateWarnings}
                   parentRef={this}
+                  objDataSelector={this.state.objDataSelector}
                 ></CustomDrillingSummary>
                 <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
+                {/* <CustomDrlgSummaryDataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></CustomDrlgSummaryDataSelector>  */}
+                
                 </>
               )}
             </div>

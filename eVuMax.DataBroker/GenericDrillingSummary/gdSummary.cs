@@ -2109,7 +2109,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 paramObjSummary.objMnemonicMappingMgr.loadMappings(ref paramObjSummary.objRequest.objDataService);
                 paramObjSummary.objDataSelection.WellID = paramObjSummary.wellID;
                 paramObjSummary.objDataSelection.getRange2(ref paramObjSummary.fromDate, ref paramObjSummary.toDate, ref paramObjSummary.fromDepth, ref paramObjSummary.toDepth, ref paramObjSummary.ChartTitle, paramObjSummary);
-                paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+               //Below is commented cos User will change the data from DataSelector (Client Side)
+               //Save is pending in UserSettings
+                // paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
                 gdSummary objLocalSummary = new gdSummary(paramObjSummary.objRequest, paramObjSummary.wellID, paramObjSummary.SummaryPlotID);
 
                 objLocalSummary = gdSummary.loadSummaryObject(ref objLocalSummary);
