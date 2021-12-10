@@ -93,7 +93,7 @@ export default class customDrlgSummaryViewer extends Component {
         .then((res) => {
 
           const objData = JSON.parse(res.data.Response);
-        
+
           if (objData != null || objData != "") {
             let _data = Object.values(objData);
             this.wellName = res.data.Category;
@@ -193,17 +193,17 @@ export default class customDrlgSummaryViewer extends Component {
   }
 
 
-  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
-    
+  selectionChanged_ = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+ 
     let realtimeStatus: boolean = paramRefreshHrs;
     await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus,
-      runReport:false
+      runReport: false
     });
-    
+
     await this.setState({
-       runReport:true
+      runReport: true
 
     });
 
@@ -307,18 +307,22 @@ export default class customDrlgSummaryViewer extends Component {
             <div className="">
               {this.state.runReport && (
                 <>
-                <CustomDrillingSummary
-                  PlotID={this.state.currentPlotID}
-                  showListPanel={this.showListPanel}
-                  WellID={this.WellID}
-                  PlotName={this.state.currentRow.TEMPLATE_NAME}
-                  updateWarnings={this.updateWarnings}
-                  parentRef={this}
-                  objDataSelector={this.state.objDataSelector}
-                ></CustomDrillingSummary>
-                <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
-                {/* <CustomDrlgSummaryDataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></CustomDrlgSummaryDataSelector>  */}
-                
+                  <CustomDrillingSummary
+                    PlotID={this.state.currentPlotID}
+                    showListPanel={this.showListPanel}
+                    WellID={this.WellID}
+                    PlotName={this.state.currentRow.TEMPLATE_NAME}
+                    updateWarnings={this.updateWarnings}
+                    parentRef={this}
+                    objDataSelector={this.state.objDataSelector}
+                  ></CustomDrillingSummary>
+
+                  {/* <div className="Data">
+                    <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
+                  </div> */}
+
+                  {/* <CustomDrlgSummaryDataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></CustomDrlgSummaryDataSelector>  */}
+
                 </>
               )}
             </div>

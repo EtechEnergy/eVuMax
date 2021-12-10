@@ -1,39 +1,51 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
 import * as d3 from "d3";
 import $ from "jquery";
 import { Chart, lineStyle, curveStyle } from "../../eVuMaxObjects/Chart/Chart";
 import { ChartData } from "../../eVuMaxObjects/Chart/ChartData";
-
+import {
+  Axis,
+  axisLabelStyle,
+  axisPosition,
+} from "../../eVuMaxObjects/Chart/Axis";
 import {
   DataSeries,
   dataSeriesType,
 } from "../../eVuMaxObjects/Chart/DataSeries";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "@progress/kendo-react-intl";
-import { ComboBox } from "@progress/kendo-react-dropdowns";
+import { ComboBox, DropDownList } from "@progress/kendo-react-dropdowns";
 import "react-router-dom";
-
+import ProcessLoader from "../loader/loader";
 import BrokerRequest from "../../broker/BrokerRequest";
 import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
 import "./DataSelector.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIndent, faChartArea, faClock, fas, faTrash, faWrench, faCog, faCogs } from "@fortawesome/free-solid-svg-icons";
+import { faIndent, faChartArea, faClock, fas } from "@fortawesome/free-solid-svg-icons";
 
-import { DateTimePicker, Dialog, Label, Popup } from "@progress/kendo-react-all";
-import { RadioButton, NumericTextBox, Checkbox } from "@progress/kendo-react-inputs";
+import { DateTimePicker, Label } from "@progress/kendo-react-all";
+import { RadioButton, NumericTextBox } from "@progress/kendo-react-inputs";
 
 import GlobalMod from "../../objects/global";
 import { Util } from "../../Models/eVuMax";
 import DataSelector_ from "./DataSelector_";
 import * as utilFunc from '../../utilFunctions/utilFunctions';
-import { confirmAlert } from "react-confirm-alert";
-import DataSelectorInfo from "./DataSelectorInfo";
 
 let _gMod = new GlobalMod();
 
 interface IProps { }
+
+//change prath 99999999999
+// interface IState {
+//   selectedval?: string;
+
+//   fromDate?: Date;
+//   toDate?: Date;
+//   fromDepth?: number;
+//   toDepth?: number;
+// }
 
 
 interface IProps {
@@ -45,11 +57,35 @@ interface IProps {
 
 
 class DataSelector extends Component<IProps> {
+  //Changed by prath on 30-08-2021
+  // constructor(parentRef, props: any) {
+  //   super(props);
+  //   this.__parentRef = parentRef;
+  //   this.WellId = parentRef.WellId;
+  //   this.state = { selectedval: "0" };
+  // }
 
-  anchor: any = React.createRef();
-  onClick = () => {
-    this.setState({ show: !this.state.show });
-  }
+
+  //prath 14-09-2021
+
+  // constructor(props: any) {
+  //   super(props);
+  //   this.__parentRef = props;
+  //   this.WellId = props.wellID;
+  //   this.state = {
+  //     selectedval: "-1",
+  //     refreshHrs: 24,
+  //     objDataSelector: props.objDataSelector,
+  //   };
+  // }
+  // //=========================
+  // state = {
+  //   objDataSelector: new DataSelector_(),
+  //   selectedval: "-1",
+  //   refreshHrs: 24,
+  // }
+
+
   constructor(props: any) {
     super(props);
     this.__parentRef = props;
@@ -58,14 +94,10 @@ class DataSelector extends Component<IProps> {
 
   }
   state = {
-    selectedTab: 0,
     selectedval: "-1",
     objDataSelector: this.props.objDataSelector,
     Warning: "",
-    showWarning: false,
-    show: false,
-    showSettings: false,
-    selectedSettingsTab: 0,
+    showWarning: false
   };
   //=========================
 
@@ -82,10 +114,9 @@ class DataSelector extends Component<IProps> {
   //Initialize chart after component was mounted
   componentDidMount() {
     try {
+
       //Prepare chart object
       //initialize chart
-      // alert("DataSelector didmount");
-
       this.objChart = new Chart(this, "SelectorChart");
       this.objChart.ContainerId = "selector_chart";
       this.objChart.isZoomByRect = false; //No need to zoom
@@ -166,77 +197,6 @@ class DataSelector extends Component<IProps> {
     } catch (error) { }
   }
 
-
-  //Nishant
-  refreshChart() {
-    try {
-
-      //Prepare chart object
-      //initialize chart
-      this.objChart = new Chart(this, "SelectorChart");
-      this.objChart.ContainerId = "selector_chart";
-      this.objChart.isZoomByRect = false; //No need to zoom
-
-      this.objChart.leftAxis().AutoScale = true;
-      this.objChart.leftAxis().setInitialRange();
-      this.objChart.leftAxis().Inverted = true;
-      this.objChart.leftAxis().ShowLabels = false;
-      this.objChart.leftAxis().ShowTitle = false;
-      this.objChart.leftAxis().Title = "MD";
-      this.objChart.leftAxis().Visible = true;
-      this.objChart.leftAxis().isAllowScrolling = false;
-      this.objChart.leftAxis().PaddingMin = 0;
-      this.objChart.leftAxis().PaddingMax = 0;
-
-      this.objChart.bottomAxis().AutoScale = true;
-      this.objChart.bottomAxis().IsDateTime = true;
-      this.objChart.bottomAxis().setInitialRange();
-      this.objChart.bottomAxis().Title = "Date Time";
-      this.objChart.bottomAxis().ShowLabels = false;
-      this.objChart.bottomAxis().ShowTitle = false;
-      this.objChart.bottomAxis().LabelAngel = 90;
-      this.objChart.bottomAxis().ShowSelector = true;
-      this.objChart.bottomAxis().Visible = true;
-      this.objChart.bottomAxis().isAllowScrolling = false;
-      this.objChart.bottomAxis().PaddingMin = 0;
-      this.objChart.bottomAxis().PaddingMax = 0;
-
-      this.objChart.rightAxis().Visible = false;
-      this.objChart.rightAxis().isAllowScrolling = false;
-      this.objChart.rightAxis().ShowLabels = false;
-      this.objChart.CrossHairRequire = false;
-
-      this.objChart.MarginLeft = 0;
-      this.objChart.MarginBottom = 0;
-      this.objChart.MarginTop = 0;
-      this.objChart.MarginRight = 0;
-
-      this.objLine = new DataSeries();
-      this.objLine.Id = "s" + this.getRandomNumber(100000, 999999).toString();
-      this.objLine.Name = "Depth";
-      this.objLine.XAxisId = this.objChart.bottomAxis().Id;
-      this.objLine.YAxisId = this.objChart.leftAxis().Id;
-      this.objLine.Type = dataSeriesType.Line;
-      this.objLine.Title = "Measured Depth";
-      this.objLine.Color = "#1762ad";
-      this.objLine.LineStyle = lineStyle.solid;
-      this.objLine.LineWidth = 2;
-      this.objLine.ColorEach = true;
-      this.objLine.CurveStyle = curveStyle.smooth;
-
-      this.objChart.DataSeries.set(this.objLine.Id, this.objLine);
-
-      this.objChart.initialize();
-
-
-      this.objChart.reDraw();
-
-    } catch (error) {
-
-    }
-  }
-
-
   reRenderChart = () => {
     try {
       //alert("rerender");
@@ -255,7 +215,7 @@ class DataSelector extends Component<IProps> {
   //   pApplyRefreshHrs?: boolean
   // ) => {
   //   try {
-  
+  //     debugger;
   //     this.setState({
   //       selectedval: ptype,
   //       fromDate: pfromdate,
@@ -285,17 +245,20 @@ class DataSelector extends Component<IProps> {
       objDataSelector.fromDepth = pfromdepth;
       objDataSelector.toDepth = ptodepth;
       objDataSelector.refreshHrs = this.state.objDataSelector.refreshHrs;
+      objDataSelector.fromDateS = new Date(pfromdate);
+      objDataSelector.toDateS = new Date(ptodate);
 
 
       await this.setState({ objDataSelector: objDataSelector })
 
-      //Change by prath on 24-Nov-2021
       //this.objChart.setSelectorDateRange(this.state.objDataSelector.fromDate, this.state.objDataSelector.toDate);
       // if (pApplyRefreshHrs == true) {
       //   this.props.selectionChanged(this.state.objDataSelector, true);
       // } else {
+      //   this.props.selectionChanged(this.state.objDataSelector, false);
+      // }
+
       this.props.selectionChanged(this.state.objDataSelector, false);
-      //}
     } catch (error) { }
   };
 
@@ -303,8 +266,7 @@ class DataSelector extends Component<IProps> {
     try {
       //Update the chart
 
-      //Nishant 29-10-2021
-      //this.objChart.updateChart();
+      this.objChart.updateChart();
     } catch (error) { }
   }
 
@@ -395,348 +357,303 @@ class DataSelector extends Component<IProps> {
     });
 
   };
-
-  handleTabSelect = (e: any) => {
-    if (this.objLine.Data.length <= 0) {
-      confirmAlert({
-        //title: 'eVuMax',
-        message: 'No Data Available',
-        childrenElement: () => <div />,
-        buttons: [
-          {
-            label: 'Ok',
-            onClick: () => {
-              return;
-            }
-          },
-          // {
-          //     label: 'No',
-          //     onClick: () => null
-          // }
-        ]
-      });
-      return;
-    }
-
-    if (e.selected == 1) {
-
-      this.setState({ showSettings: true });
-      return;
-    }
-    this.setState({ selectedTab: e.selected });
-  };
-  handleTabSelectSettings = (e: any) => {
-
-
-    this.setState({ selectedSettingsTab: e.selected });
-  };
   render() {
 
     return (
-      <>
-      {/* <React.Fragment> */}
+      <React.Fragment>
 
-        {/* <div style={{ height: "100px", display: "flex" }}> */}
-        <div className="row" style={{ height: "100px" }}>
-          
-          <TabStrip
-            selected={this.state.selectedTab}
-            onSelect={this.handleTabSelect}
-            keepTabsMounted={true}
-            tabPosition="left"
+        <div style={{ height: "90px", display: "flex" }}>
 
-
-          // style={{width: 150, overflow: 'auto'}}
+          <div
+            style={{
+              height: "100%",
+              width: "50px",
+              display: "inline-block",
+            }}
           >
-            {/* <TabStripTab  title={<FontAwesomeIcon icon={faChartArea} style={{width:"10px",height:"10px"}} />}> */}
-            <TabStripTab title={<FontAwesomeIcon icon={faChartArea} style={{ width: "20px", height: "20px" }} />}>
-            <div className="row mb-3">
-                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-              {/* <div
-                style={{
-                  height: "calc(100vh - 400px)",
-                  width: "calc(100vw - 220px)",
-                  backgroundColor: "transparent",
-                }}
-              > */}
-              <div className="container">
-              <div className="row">
-                <div className="col-lg-12 col-md-12 col-sd-12 col-xs-12">
-              <div
-                id="chart"
-                style={{
-                  height: "90px",
-                  //width: "calc(100% - 90px)",
-                  //width: "calc(100vw - 220px)",
-                  width: "80vw",
-                  
-                  display: "inline-block",
-                  float: "right",
-                }}
-              >
-              </div>
-            
-              <div
-                id="selector_chart"
-                style={{
-                  //height: "100%",
-                  height: "90px",
-                  flex: 1,
-                  //width: "70%",
-                  // padding: "10px",
-                }}
-              ></div>
-  </div>
-  </div></div>
 
-
-</div>
-</div>
-              
-            </TabStripTab>
-
-            <TabStripTab title={<FontAwesomeIcon icon={faCogs} style={{ width: "20px", height: "20px" }} />}>
-            </TabStripTab>
-
-
-
-          </TabStrip>
-
-      
-
-        
-
-        {/* {this.state.showWarning && <div id="warning" style={{ paddingBottom: "15px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} > {this.state.Warning} </label> </div>} */}
-
-
-        {this.state.showSettings && <Dialog
-          title={"Dataselector Settings"}
-          height="300px"
-          width="900px"
-          onClose={(e: any) => {
-            this.setState({
-              showSettings: !this.state.showSettings
-            });
-          }}
-        >
-          <div>
-            <TabStrip
-              selected={this.state.selectedSettingsTab}
-              onSelect={this.handleTabSelectSettings}
-              keepTabsMounted={true}
-              tabPosition="left"
+            <div
+              id="tab1"
+              className="selected"
+              onClick={() => {
+                this.tabSelectionChanged(0);
+              }}
             >
-              <TabStripTab title={<FontAwesomeIcon icon={faIndent} style={{ width: "20px", height: "20px" }} />}>
-
-                <div className="row">
-                  <div className="col-lg-12">
-                    <RadioButton
-                      name="selectionby"
-                      value="0"
-                      checked={this.state.objDataSelector.selectedval === "0"}
-                      label="Select Data By DateTime"
-
-                      onChange={(e) => this.handleChange(e, "selectedval")}
-                    />
-
-                    <RadioButton
-                      name="selectionby"
-                      value="1"
-                      checked={this.state.objDataSelector.selectedval === "1"}
-                      label="Select Data By Depth"
-
-                      onChange={(e) => this.handleChange(e, "selectedval")}
-                    />
-
-                    <RadioButton
-                      name="selectionby"
-                      value="2"
-                      checked={this.state.objDataSelector.selectedval === "2"}
-                      label="Select Data Last Hrs"
-
-                      onChange={(e) => this.handleChange(e, "selectedval")}
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
-                          , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth);
-                        this.setState({
-                          showSettings: false
-                        });
-
-                      }
-                      }
-                      className="btn-custom btn-custom-primary ml-5 mr-1"
-                    >
-                      Apply
-                    </button>
-                  </div>
-
-                </div>
-
-                <div className="row mt-2">
-                  <div className="col-lg-12">
-                    {this.state.objDataSelector.selectedval == "0" ? (
-                      <label className="mr-4">From Date </label>
-                    ) : (
-                      ""
-                    )}
-
-                    {this.state.objDataSelector.selectedval == "0" ? (
-                      <DateTimePicker
-                        name="txtFromDate"
-                        value={new Date(this.state.objDataSelector.fromDate)}
-                        format="MM/dd/yyyy HH:mm:ss"
-                        formatPlaceholder={{
-                          year: "yyyy",
-                          month: "MM",
-                          day: "dd",
-                          hour: "HH",
-                          minute: "mm",
-                          second: "ss",
-                        }}
-
-                        onChange={(e) => this.handleChange(e, "fromDate")}
-                      />
-                    ) : (
-                      ""
-                    )}
-
-                    {this.state.objDataSelector.selectedval == "0" ? (
-                      <label className="mr-4 ml-4">To Date </label>
-                    ) : (
-                      ""
-                    )}
-
-                    {this.state.objDataSelector.selectedval == "0" ? (
-                      <DateTimePicker
-                        name="txtToDate"
-                        value={new Date(this.state.objDataSelector.toDate)}
-                        format="MM/dd/yyyy HH:mm:ss"
-                        formatPlaceholder={{
-                          year: "yyyy",
-                          month: "MM",
-                          day: "dd",
-                          hour: "HH",
-                          minute: "mm",
-                          second: "ss",
-                        }}
-                        onChange={(e) => this.handleChange(e, "toDate")}
-                      />
-                    ) : (
-                      ""
-                    )}
-
-                    {this.state.objDataSelector.selectedval == "1" ? (
-                      <label className="mr-2">From Depth </label>
-                    ) : (
-                      ""
-                    )}
-
-                    {this.state.objDataSelector.selectedval == "1" ? (
-                      <NumericTextBox
-                        name="txtFromDepth"
-                        value={this.state.objDataSelector.fromDepth}
-                        format="n2"
-                        width="100px"
-                        onChange={(e) => this.handleChange(e, "fromDepth")}
-                      />
-                    ) : (
-                      ""
-                    )}
-
-                    {this.state.objDataSelector.selectedval == "1" ? (
-                      <label className="mr-2 ml-4">To Depth </label>
-                    ) : (
-                      ""
-                    )}
-
-                    {this.state.objDataSelector.selectedval == "1" ? (
-                      <NumericTextBox
-                        name="txtToDepth"
-                        value={this.state.objDataSelector.toDepth}
-                        format="n2"
-                        width="100px"
-                        onChange={(e) => this.handleChange(e, "toDepth")}
-                      />
-                    ) : (
-                      ""
-                    )}
-
-
-                    {this.state.objDataSelector.selectedval == "2" ? (<Label className="mr-3" >Last</Label>) : ("")}
-                    {this.state.objDataSelector.selectedval == "2" ? (<ComboBox style={{ width: "100px" }} data={[1, 3, 12, 24, 48]} allowCustom={true}
-                      value={this.state.objDataSelector.refreshHrs}
-                      onChange={(e) => this.handleChange(e, "refreshHrs")} />) : ("")}
-                    {this.state.objDataSelector.selectedval == "2" ? (<Label className="mr-3 ml-3" >Hrs</Label>) : ("")}
-
-
-                  </div>
-                  {/* <div className="row mt-3">
-                    <div className="col">
-                      <Checkbox
-                        id={"chkMatchDepthFormationTops"}
-                        className="col-lg-4 col-xl-3 col-md-4 col-sm-4"
-                        value={this.state.objDataSelector.matchDepthByTops}
-                        onChange={(e) => this.handleChange(e, "matchDepthByTops")}
-                        label="Match Depth By Formation Tops"
-                      />
-                    </div>
-                  </div> */}
-
-                </div>
-
-
-
-
-              </TabStripTab>
-
-              {/* <TabStripTab title={<FontAwesomeIcon icon={faClock} style={{ width: "20px", height: "20px" }} />}>
-              
-                <Label>Real Time Refresh Rate</Label>
-                <br />
-                <Label className="mr-3" >Last</Label>
-                <ComboBox style={{ width: "100px" }} data={[1, 3, 12, 24, 48]} allowCustom={true}
-                  value={this.state.objDataSelector.refreshHrs}
-              
-                  onChange={(e) => this.handleChange(e, "refreshHrs")}
-
+              <div className="icon">
+                <FontAwesomeIcon
+                  className="icon-image"
+                  icon={faChartArea}
+                  size={"lg"}
                 />
-                <Label className="mr-3 ml-3" >Hrs</Label>
+              </div>
+            </div>
+
+            <div
+              id="tab2"
+              className="non-selected"
+              onClick={() => {
+                this.tabSelectionChanged(1);
+              }}
+            >
+              <div className="icon">
+                <FontAwesomeIcon
+                  className="icon-image"
+                  icon={faIndent}
+                  size={"lg"}
+                />
+              </div>
+            </div>
+
+
+            <div
+              id="tab3"
+              className="non-selected"
+              onClick={() => {
+                this.tabSelectionChanged(2);
+              }}
+            >
+              <div className="icon">
+                <FontAwesomeIcon
+                  className="icon-image"
+                  icon={faClock}
+                  size={"lg"}
+                />
+              </div>
+
+
+            </div>
+
+            {/* <div id="loader" style={{ display: "none" }}>
+              <ProcessLoader />
+            </div> */}
+          </div>
+
+          <div
+            id="chart"
+            style={{
+              height: "90px",
+              width: "calc(100% - 50px)",
+              display: "inline-block",
+              float: "right",
+            }}
+          >
+            <div
+              id="selector_chart"
+              style={{
+                //height: "100%",
+                height: "90px",
+                flex: 1,
+                //width: "98%",
+                padding: "10px",
+              }}
+            ></div>
+          </div>
+
+          <div
+            id="manual"
+            style={{
+              height: "100%",
+              width: "calc(100% - 50px)",
+              display: "none",
+              float: "right",
+            }}
+          >
+            <div className="row">
+              <div className="col">
+                <RadioButton
+                  name="selectionby"
+                  value="0"
+                  checked={this.state.objDataSelector.selectedval === "0"}
+                  label="Select Data By DateTime"
+                  // onChange={() => {
+                  //   this.setSelectedVal("0");
+                  // }}
+                  onChange={(e) => this.handleChange(e, "selectedval")}
+                />
+
+                <RadioButton
+                  name="selectionby"
+                  value="1"
+                  checked={this.state.objDataSelector.selectedval === "1"}
+                  label="Select Data By Depth"
+                  // onChange={() => {
+                  //   this.setSelectedVal("1");
+                  // }}
+                  onChange={(e) => this.handleChange(e, "selectedval")}
+                />
+              </div>
+            </div>
+
+            <div className="row mt-2">
+              <div className="col">
+                {this.state.objDataSelector.selectedval == "0" ? (
+                  <label className="mr-4">From Date </label>
+                ) : (
+                  ""
+                )}
+
+                {this.state.objDataSelector.selectedval == "0" ? (
+                  <DateTimePicker
+                    name="txtFromDate"
+                    value={new Date(this.state.objDataSelector.fromDate)}
+                    format="MM/dd/yyyy HH:mm:ss"
+                    formatPlaceholder={{
+                      year: "yyyy",
+                      month: "MM",
+                      day: "dd",
+                      hour: "HH",
+                      minute: "mm",
+                      second: "ss",
+                    }}
+                    // onChange={(e) => {
+                    //   this.setState({ fromDate: e.value });
+                    // }}
+                    onChange={(e) => this.handleChange(e, "fromDate")}
+                  />
+                ) : (
+                  ""
+                )}
+
+                {this.state.objDataSelector.selectedval == "0" ? (
+                  <label className="mr-4 ml-4">To Date </label>
+                ) : (
+                  ""
+                )}
+
+                {this.state.objDataSelector.selectedval == "0" ? (
+                  <DateTimePicker
+                    name="txtToDate"
+                    value={new Date(this.state.objDataSelector.toDate)}
+                    format="MM/dd/yyyy HH:mm:ss"
+                    formatPlaceholder={{
+                      year: "yyyy",
+                      month: "MM",
+                      day: "dd",
+                      hour: "HH",
+                      minute: "mm",
+                      second: "ss",
+                    }}
+                    // onChange={(e) => {
+                    //   this.setState({ toDate: e.value });
+                    // }}
+                    onChange={(e) => this.handleChange(e, "toDate")}
+                  />
+                ) : (
+                  ""
+                )}
+
+                {this.state.objDataSelector.selectedval == "1" ? (
+                  <label className="mr-4">From Depth </label>
+                ) : (
+                  ""
+                )}
+
+                {this.state.objDataSelector.selectedval == "1" ? (
+                  <NumericTextBox
+                    name="txtFromDepth"
+                    value={this.state.objDataSelector.fromDepth}
+                    format="n2"
+                    // onChange={(e) => this.setState({ fromDepth: e.value })}
+                    onChange={(e) => this.handleChange(e, "fromDepth")}
+                  />
+                ) : (
+                  ""
+                )}
+
+                {this.state.objDataSelector.selectedval == "1" ? (
+                  <label className="mr-4 ml-4">To Depth </label>
+                ) : (
+                  ""
+                )}
+
+                {this.state.objDataSelector.selectedval == "1" ? (
+                  <NumericTextBox
+                    name="txtToDepth"
+                    value={this.state.objDataSelector.toDepth}
+                    format="n2"
+                    // onChange={(e) => this.setState({ toDepth: e.value })}
+                    onChange={(e) => this.handleChange(e, "toDepth")}
+                  />
+                ) : (
+                  ""
+                )}
+
                 <button
                   type="button"
-              
                   onClick={() => {
-              
                     this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
-                      , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth, true);
-                    this.setState({
-                      showSettings: false
-                    });
+                      , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth);
                   }}
+                  // onClick={() => {
+                  //   //call the parent to indicate the change
+                  //   this.objChart.setSelectorDateRange(this.state.fromDate,this.state.toDate);
+                  //   this.__parentRef.selectionChanged(
+                  //     this.state.selectedval,
+                  //     this.state.fromDate,
+                  //     this.state.toDate,
+                  //     this.state.fromDepth,
+                  //     this.state.toDepth
+                  //   );
+
+                  // }}
                   className="btn-custom btn-custom-primary ml-5 mr-1"
                 >
                   Apply
                 </button>
-
-                
-              </TabStripTab> */}
-            </TabStrip>
-            
+              </div>
+            </div>
           </div>
 
-        </Dialog>}
+
+
+          <div
+            id="refreshHrs"
+            style={{
+              height: "100%",
+              width: "calc(100% - 50px)",
+              display: "none",
+              float: "right",
+            }}
+          >
+            <Label>Real Time Refresh Rate</Label>
+            <br />
+            <Label className="mr-3" >Last</Label>
+            <ComboBox style={{ width: "100px" }} data={[1, 3, 12, 24, 48]} allowCustom={true}
+              value={this.state.objDataSelector.refreshHrs}
+              // onChange={(e) => {
+              //   this.setState({ refreshHrs: e.value })
+              // }}
+              onChange={(e) => this.handleChange(e, "refreshHrs")}
+
+            />
+            <Label className="mr-3 ml-3" >Hrs</Label>
+            <button
+              type="button"
+              // onClick={() => {
+              //   this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
+              //     , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth, true);
+              // }}
+              onClick={() => {
+                //realtime 
+                this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
+                  , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth, true);
+              }}
+              className="btn-custom btn-custom-primary ml-5 mr-1"
+            >
+              Apply
+            </button>
+
+          </div>
+
         </div>
-      {/* </React.Fragment > */}
-      </>
+
+        {this.state.showWarning && <div id="warning" style={{ paddingBottom: "15px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} > {this.state.Warning} </label> </div>}
+      </React.Fragment >
     );
   }
 
   setData = (paramData: any) => {
     try {
-
       //Populate the data series with this data
       this.objLine.Data.slice(0, this.objLine.Data.length);
       if (paramData.length == 0 || paramData.length == undefined || paramData.length == null) {
@@ -746,14 +663,19 @@ class DataSelector extends Component<IProps> {
         });
 
         // if (this.state.Warnings.trim() != "") {
-        //$("#warning").css("backgroundColor", "#ffb74d");
-
+        $("#warning").css("backgroundColor", "#ffb74d");
+        // $("#lblWarning").text("No data available for dataselector");
+        // }
+        // else {
+        //   $("#warning").css("backgroundColor", "transparent");
+        //   $("#lblWarning").text("");
+        // }
       } else {
         this.setState({
           Warning: "",
           showWarning: false
         });
-        //$("#warning").css("backgroundColor", "transparent");
+        $("#warning").css("backgroundColor", "transparent");
         //$("#lblWarning").text("");
       }
 

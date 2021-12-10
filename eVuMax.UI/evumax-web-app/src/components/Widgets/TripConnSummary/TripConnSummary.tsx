@@ -968,8 +968,9 @@ class TripConnSummary extends Component {
             ></div>
 
 
-
+<div className="Data">
             <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+            </div>
           </TabStripTab>
           <TabStripTab title="Numeric Summary">
             <div style={{ marginTop: "10px" }}>

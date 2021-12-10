@@ -2979,8 +2979,9 @@ class ToolfaceSummary extends Component {
 
             <div style={{ padding: "20px" }}>
 
-
+                <div className="Data">
               <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+              </div>
               <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
 
             </div>

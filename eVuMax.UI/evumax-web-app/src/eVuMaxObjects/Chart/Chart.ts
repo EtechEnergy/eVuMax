@@ -514,7 +514,7 @@ export class Chart {
         //   
         // }
         let objAxis: Axis = this.Axes.get(key);
-        console.log(objAxis.Id);
+        //console.log(objAxis.Id);
         
 
         objAxis.updateAxis();

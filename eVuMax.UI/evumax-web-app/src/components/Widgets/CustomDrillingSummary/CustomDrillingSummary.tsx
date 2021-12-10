@@ -9,6 +9,9 @@ import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 
 import { Axis, axisPosition } from "../../../eVuMaxObjects/Chart/Axis";
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
+import { debug } from "console";
+import DataSelector from "../../Common/DataSelector";
+import DataSelector_ from "../../Common/DataSelector_";
 
 
 
@@ -17,9 +20,9 @@ let _gMod = new GlobalMod();
 
 export default function CustomDrillingSummary({ ...props }: any) {
 
-  console.log(props);
+
   
-  let objChart: Chart = new Chart(props.parentRef, "chart");
+  let objChart: Chart = new Chart(props.parentRef, "SummaryChart");
   
   let objSummaryAxisList: any = [];
   let WellName: string = "";
@@ -101,11 +104,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
           if (res.data.RequestSuccessfull == true) {
             const objData = JSON.parse(res.data.Response);
             
+            //console.log(objData);
 
 
 
             let warnings: string = res.data.Warnings;
-            warnings = "Test Warning";
+            // warnings = "Test Warning";
 
             if (warnings.trim() != "") {
               let warningList = [];
@@ -151,9 +155,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
   const initializeChart = () => {
     try {
 
-      objChart = new Chart(props.parentRef, "chart");
-      objChart.ContainerId = "chart";
-
+      objChart = new Chart(props.parentRef, "chart1");
+      objChart.ContainerId = "SummaryChart";
+      
       this.objChart.DataSeries.clear();
       this.objChart.Axes.clear();
       this.objChart.createDefaultAxes();
@@ -293,7 +297,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         objChart.axisPerRow = totalTopAxis;
       }
 
-      console.log("AxisPerCol " + objChart.axisPerColumn + "--AxisPerRow- " + objChart.axisPerRow);
+    
 
 
 
@@ -309,7 +313,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       initializeChart();
 
       //Generate Plot using state objGDSummary object
-      console.log("objData", objData);
+     // console.log("objData", objData);
       if (objData.Axis != null || objData.Axis != undefined) {
         objSummaryAxisList = Object.values(objData.Axis);
         setAxisPerColumnAndRow(objSummaryAxisList);
@@ -732,6 +736,25 @@ export default function CustomDrillingSummary({ ...props }: any) {
      }
   };
 
+
+  const onselectionchange = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+  
+    let realtimeStatus: boolean = paramRefreshHrs;
+    props.objDataSelector = paramDataSelector;
+    loadSummary();
+    // await this.setState({
+    //   objDataSelector: paramDataSelector,
+    //   isRealTime: realtimeStatus,
+    //   runReport: false
+    // });
+
+    // await this.setState({
+    //   runReport: true
+
+    // });
+  }
+
+
   return (
     <div>
       <div className="" style={{ display: "inline-flex", justifyContent: "space-between", width: "92vw", }}>
@@ -744,7 +767,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       </div>
 
       <div
-        id="chart"
+        id="SummaryChart"
         style={{
           width: "100%",
           height: "calc(60vh)",
@@ -754,7 +777,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         }}
       ></div>
       <div
-        id="chart_legend"
+        id="SummaryChart_legend"
         style={{
           textAlign: "center",
           height: "40px",
@@ -763,6 +786,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
           display: "inline-block",
         }}
       />
+      <div className="Data">
+                    <DataSelector objDataSelector={props.objDataSelector} wellID={props.WellID} selectionChanged={onselectionchange} ></DataSelector>
+                  </div>
     </div>
   );
 
