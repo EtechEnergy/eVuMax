@@ -19,7 +19,7 @@ import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
 import "./DataSelector.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIndent, faChartArea,faCogs } from "@fortawesome/free-solid-svg-icons";
+import { faIndent, faChartArea, faClock, fas, faTrash, faWrench, faCog, faCogs } from "@fortawesome/free-solid-svg-icons";
 
 import { DateTimePicker, Dialog, Label, Popup } from "@progress/kendo-react-all";
 import { RadioButton, NumericTextBox, Checkbox } from "@progress/kendo-react-inputs";
@@ -255,7 +255,7 @@ class DataSelector extends Component<IProps> {
   //   pApplyRefreshHrs?: boolean
   // ) => {
   //   try {
-  //     debugger;
+  
   //     this.setState({
   //       selectedval: ptype,
   //       fromDate: pfromdate,
@@ -275,22 +275,16 @@ class DataSelector extends Component<IProps> {
   // };
 
   selectorChanged = async (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pApplyRefreshHrs?: boolean) => {
-    
     try {
 
 
       let objDataSelector: DataSelector_ = new DataSelector_();
       objDataSelector.selectedval = ptype;
-     
-      objDataSelector.fromDate = pfromdate;
-      objDataSelector.toDate = ptodate;
-
+      objDataSelector.fromDate = new Date(pfromdate);
+      objDataSelector.toDate = new Date(ptodate);
       objDataSelector.fromDepth = pfromdepth;
       objDataSelector.toDepth = ptodepth;
       objDataSelector.refreshHrs = this.state.objDataSelector.refreshHrs;
-
-      objDataSelector.fromDateS = new Date(pfromdate);
-      objDataSelector.toDateS = new Date(ptodate);
 
 
       await this.setState({ objDataSelector: objDataSelector })
@@ -858,8 +852,8 @@ class DataSelector extends Component<IProps> {
         //We already extracted extents, no need to repeat
 
         this.objChart.setSelectorDateRange(
-          new Date(this.state.objDataSelector.fromDate),
-          new Date(this.state.objDataSelector.toDate)
+          this.state.objDataSelector.fromDate,
+          this.state.objDataSelector.toDate
         );
         return;
       }

@@ -93,7 +93,7 @@ export default class customDrlgSummaryViewer extends Component {
         .then((res) => {
 
           const objData = JSON.parse(res.data.Response);
-          console.log("objData", objData);
+        
           if (objData != null || objData != "") {
             let _data = Object.values(objData);
             this.wellName = res.data.Category;
@@ -194,7 +194,7 @@ export default class customDrlgSummaryViewer extends Component {
 
 
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
-    debugger;
+    
     let realtimeStatus: boolean = paramRefreshHrs;
     await this.setState({
       objDataSelector: paramDataSelector,

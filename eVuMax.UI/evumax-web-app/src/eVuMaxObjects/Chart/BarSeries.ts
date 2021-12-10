@@ -60,7 +60,7 @@ export class BarSeries {
   redrawNumeric = () => {
     try {
       //Remove existing data
-      debugger;
+      
       let xValues = new Array<number>();
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
@@ -85,7 +85,7 @@ export class BarSeries {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
         keys.push(objSeries.Id);
         colors.push(objSeries.Color);
-        debugger;
+        
 
         if (objSeries.Type == dataSeriesType.Bar) {
           if (!findBarSeries) {
@@ -118,7 +118,7 @@ export class BarSeries {
           for (let d = 0; d < objSeries.Data.length; d++) {
             let objData: ChartData = objSeries.Data[d];
 
-            debugger;
+            
             let i = data.findIndex((value) => value.X == objData.x);
             if (i == -1) {
               if (objData.y !=0){

@@ -49,7 +49,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objParameter = new BrokerParameter("PlotID", props.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("UserID", "NIS-PC\\ETECH-NIS");
+      //objParameter = new BrokerParameter("UserID", "NIS-PC\\ETECH-NIS");
+      
+      objParameter = new BrokerParameter("UserID",_gMod._userId);
+      
       objBrokerRequest.Parameters.push(objParameter);
 
       //props.objDataSelector
@@ -520,6 +523,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objSeries.Name = objDataSeries.SeriesName;
           objSeries.XAxisId = objDataSeries.XColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
           objSeries.YAxisId = objDataSeries.YColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
+          
           objSeries.PointSize = objDataSeries.PointWidth;
           let SeriesType: dataSeriesType = dataSeriesType.Line;
           //////alert(objDataSeries.SeriesType);
@@ -539,7 +543,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               break;
             case 3:
               SeriesType = dataSeriesType.Bar;
-              alert("bar ?");
+              
               break;
             case 4:
               SeriesType = dataSeriesType.Pie;
@@ -743,7 +747,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         id="chart"
         style={{
           width: "100%",
-          height: "calc(70vh)",
+          height: "calc(60vh)",
           backgroundColor: "transparent",
           // float: "right",
           marginLeft: "10px",
