@@ -126,7 +126,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
             Util.StatusSuccess("Data successfully retrived");
             Util.StatusReady();
           } else {
-            alert(res.data.Errors);
+           // alert(res.data.Errors);
           }
         })
         .catch((error) => {
@@ -732,7 +732,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
     } catch (error) {
-      alert(error);
+      //alert(error);
      }
   };
 
