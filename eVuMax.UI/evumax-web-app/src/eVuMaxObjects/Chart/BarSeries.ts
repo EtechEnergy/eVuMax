@@ -60,7 +60,7 @@ export class BarSeries {
   redrawNumeric = () => {
     try {
       //Remove existing data
-
+      debugger;
       let xValues = new Array<number>();
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
@@ -108,7 +108,7 @@ export class BarSeries {
             this.objVerticalAxis.isAllowScrolling = false;
 
             let axisDomainValues: string[] = this.objHorizontalAxisScaleRef.domain();
-            let axisDomainValues_x1: string[] = this.objHorizontalAxisScaleRef_x1.domain(); //.domain(keys).rangeRound([0, x0.bandwidth()]); //Pending
+            let axisDomainValues_x1: string[] = this.objHorizontalAxisScaleRef_x1.domain(); 
             this.objHorizontalAxisScaleRef_x1
               .domain(keys)
               .range([0, this.objHorizontalAxisScaleRef.bandwidth()]);
@@ -118,15 +118,16 @@ export class BarSeries {
           for (let d = 0; d < objSeries.Data.length; d++) {
             let objData: ChartData = objSeries.Data[d];
 
-
+            debugger;
             let i = data.findIndex((value) => value.X == objData.x);
             if (i == -1) {
-              xValues.push(objData.x);
-
-              let rec = {};
-              rec["X"] = objData.x;
-              rec[objSeries.Id] = objData.y;
-              data.push(rec);
+              if (objData.y !=0){
+                xValues.push(objData.x);
+                let rec = {};
+                rec["X"] = objData.x;
+                rec[objSeries.Id] = objData.y;
+                data.push(rec);
+              }
             } else {
               if (i > -1) {
                 data[i][objSeries.Id] = objData.y;
@@ -234,14 +235,17 @@ export class BarSeries {
           .style("fill", function (d) {
             return z(d.key);
           })
-          .style("font-size", "1.25em")
+          .style("font-size", "1.0em")
           //make sure one just decimal place is displayed
           .text(function (d) {
             return Number.parseFloat(d.value).toFixed(2);
           });
         //=================================
       }
-    } catch (error) { }
+    } catch (error) { 
+//alert(error);
+
+    }
   };
 
   redrawDateTime = () => {

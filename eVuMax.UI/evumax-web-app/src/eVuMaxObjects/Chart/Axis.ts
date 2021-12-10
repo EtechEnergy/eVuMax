@@ -1177,12 +1177,24 @@ export class Axis {
             if (this.Labels.length > 0) {
               //Multi line labels for (bar Chart)
               if (this.bandScale) {
+                
                 for (let index = 0; index < this.Labels.length; index++) {
+
+                  //Changes done as on 09-Dec-2021 PRATH (Custom drilling summary for Bar Chart)
+                  // const labelText = this.Labels[index].split("~")[0];
+                  // if (labelText == currentText) {
+                  //   currentText = this.Labels[index];
+                  // }
+
                   const labelText = this.Labels[index].split("~")[0];
-                  if (labelText == currentText) {
-                    //
+                  if (i == index) {
                     currentText = this.Labels[index];
+                    textElement.html(currentText);
                   }
+                  
+                  //==============
+
+               
                 }
               } else {
                 //Multi line labels 19-08-2021 for (number axes) - prath
@@ -1299,6 +1311,7 @@ export class Axis {
 
       if (this.bandScale) {
         //loop through
+        
         let uniqueValues: Map<string, string> = new Map();
         let uniqueDateValues: Map<Date, Date> = new Map();
 
@@ -1351,7 +1364,7 @@ export class Axis {
             }
           }
         }
-
+        
         //Determine how many axis labels can be plotted on the axis
         let maxBars = this.__axisSize / 5;
 
@@ -1394,7 +1407,7 @@ export class Axis {
           ////added by prath for inverted axis
 
           if (!this.Inverted) {
-            debugger;
+            
             this.ScaleRef.domain([objAxisRange.Max, objAxisRange.Min]);
           } else {
             this.ScaleRef.domain([objAxisRange.Min, objAxisRange.Max]);

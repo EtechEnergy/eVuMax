@@ -18,7 +18,7 @@ let _gMod = new GlobalMod();
 export default function CustomDrillingSummary({ ...props }: any) {
 
   console.log(props);
-  debugger;
+  
   let objChart: Chart = new Chart(props.parentRef, "chart");
   
   let objSummaryAxisList: any = [];
@@ -32,11 +32,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
   //Step-1
   const loadSummary = () => {
     try {
-      alert("load");
+      
       //Axios call API Function with PlotID
 
       let objBrokerRequest = new BrokerRequest();
-      debugger;
+      
 
       objBrokerRequest.Module = "GenericDrillingSummary.Manager";
       objBrokerRequest.Broker = "GenericDrillingSummary";
@@ -97,7 +97,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
           if (res.data.RequestSuccessfull == true) {
             const objData = JSON.parse(res.data.Response);
-            debugger;
+            
 
 
 
@@ -183,6 +183,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objChart.MarginRight = 100;
 
       objChart.initialize();
+      
       objChart.reDraw();
 
     } catch (error) {
@@ -425,7 +426,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.Position = axisPosition.bottom;
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.IsDateTime = false;
-          objAxis.bandScale = false;
+          objAxis.bandScale = true;
           objAxis.Title = objSummaryAxis.AxisTitle;
           objAxis.ShowLabels = true;
           objAxis.ShowTitle = true;
@@ -505,7 +506,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         //Load Series
         let SeriesList = Object.values(objData.dataSeries);
 
-        debugger;
+        
 
 
 
@@ -513,7 +514,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         for (let index = 0; index < SeriesList.length; index++) {
           const objDataSeries: any = SeriesList[index];
-          debugger;
+          
           let objSeries = new DataSeries();
           objSeries.Id = objDataSeries.SeriesID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');// objDataSeries.SeriesID;
           objSeries.Name = objDataSeries.SeriesName;
@@ -538,6 +539,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               break;
             case 3:
               SeriesType = dataSeriesType.Bar;
+              alert("bar ?");
               break;
             case 4:
               SeriesType = dataSeriesType.Pie;
@@ -546,7 +548,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               SeriesType = dataSeriesType.Bar;
               objSeries.Stacked = false;
               objSeries.Color = objDataSeries.grpColor;
-
+              objSeries.ShowLabelOnSeries = true; //Parth 05-10-2020
               break;
 
             default:
@@ -574,20 +576,49 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
           //Populate the data series with this data
           objSeries.Data.length = 0;
-          debugger;
+          
           if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
 
             for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
               let objVal: ChartData = new ChartData();
-              objVal.x = objDataSeries.xDataBuffer[i];
+
+              if( objSeries.Type==dataSeriesType.Bar){
+                objVal.x = i+1;
+                
+                let objBottomAxes= objChart.getAxisByID(objSeries.XAxisId);
+
+                objChart.Axes.get(objSeries.XAxisId).Labels.push(objDataSeries.labelBuffer[i]);
+                //objBottomAxes.Labels.push(objDataSeries.labelBuffer[i]);
+
+              }else{
+                objVal.x = objDataSeries.xDataBuffer[i];
+              }
+
+              
+            
               objVal.y = objDataSeries.yDataBuffer[i];
-              // if( SeriesType == dataSeriesType.Bar ){
-              //   objVal.color =  objDataSeries.grpColor;
-              // }
+
+            //   let label : string  ="";
+            //  if( objDataSeries.grpGroupBy==0){
+            //   label = objDataSeries.yDataBuffer(i) + "-group by 0";// objRigState.getRigStateName(objSeries.yDataBuffer(i))
+            //  }else{
+            //   label = objDataSeries.yDataBuffer(i).ToString();
+            //  }
+
+
+              // Dim label As String = ""
+
+              // If objSeries.grpGroupBy = 0 Then
+              //     label = objRigState.getRigStateName(objSeries.yDataBuffer(i))
+              // Else
+              //     label = objSeries.yDataBuffer(i).ToString
+              // End If
+        
 
               objSeries.Data.push(objVal);
+             
             }
-
+          
             if (objDataSeries.Visible) {
               objChart.DataSeries.set(objSeries.Id, objSeries);
             }
@@ -596,10 +627,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
         }
 
 
-        console.log("ChartDataSeries", objChart.DataSeries);
-        console.log("ChartAxes", objChart.Axes);
-        objChart.initialize();
-        debugger;
+              objChart.initialize();
+        
         objChart.reDraw();
 
       }
@@ -694,7 +723,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-    } catch (error) { }
+    } catch (error) {
+      alert(error);
+     }
   };
 
   return (
