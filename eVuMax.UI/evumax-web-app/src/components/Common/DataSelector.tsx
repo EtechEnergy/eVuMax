@@ -117,6 +117,8 @@ class DataSelector extends Component<IProps> {
 
       //Prepare chart object
       //initialize chart
+      
+
       this.objChart = new Chart(this, "SelectorChart");
       this.objChart.ContainerId = "selector_chart";
       this.objChart.isZoomByRect = false; //No need to zoom
@@ -290,8 +292,8 @@ class DataSelector extends Component<IProps> {
         $("#tab2").removeClass("selected");
         $("#tab2").addClass("non-selected");
 
-        $("#tab3").addClass("non-selected");
-        $("#tab3").removeClass("selected");
+        // $("#tab3").addClass("non-selected");
+        // $("#tab3").removeClass("selected");
 
         this.objChart.updateChart();
       }
@@ -309,8 +311,8 @@ class DataSelector extends Component<IProps> {
         $("#tab2").addClass("selected");
 
 
-        $("#tab3").addClass("non-selected");
-        $("#tab3").addClass("selected");
+        // $("#tab3").addClass("non-selected");
+        // $("#tab3").addClass("selected");
       }
 
       if (s == 2) {
@@ -319,8 +321,8 @@ class DataSelector extends Component<IProps> {
         $("#manual").hide();
         $("#refreshHrs").show();
 
-        $("#tab3").addClass("selected");
-        $("#tab3").removeClass("non-selected");
+        // $("#tab3").addClass("selected");
+        // $("#tab3").removeClass("non-selected");
 
         $("#tab2").addClass("non-selected");
         $("#tab2").removeClass("selected");
@@ -404,7 +406,7 @@ class DataSelector extends Component<IProps> {
               </div>
             </div>
 
-
+{/* 
             <div
               id="tab3"
               className="non-selected"
@@ -421,7 +423,7 @@ class DataSelector extends Component<IProps> {
               </div>
 
 
-            </div>
+            </div> */}
 
             {/* <div id="loader" style={{ display: "none" }}>
               <ProcessLoader />
@@ -481,6 +483,31 @@ class DataSelector extends Component<IProps> {
                   // }}
                   onChange={(e) => this.handleChange(e, "selectedval")}
                 />
+
+                <RadioButton
+                      name="selectionby"
+                      value="2"
+                      checked={this.state.objDataSelector.selectedval === "2"}
+                      label="Select Data Last Hrs"
+
+                      onChange={(e) => this.handleChange(e, "selectedval")}
+                    />
+
+<button
+                      type="button"
+                      onClick={() => {
+                        this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
+                          , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth);
+                        this.setState({
+                          showSettings: false
+                        });
+
+                      }
+                      }
+                      className="btn-custom btn-custom-primary ml-5 mr-1"
+                    >
+                      Apply
+                    </button>
               </div>
             </div>
 
@@ -578,7 +605,14 @@ class DataSelector extends Component<IProps> {
                   ""
                 )}
 
-                <button
+
+{this.state.objDataSelector.selectedval == "2" ? (<Label className="mr-3" >Last</Label>) : ("")}
+                    {this.state.objDataSelector.selectedval == "2" ? (<ComboBox style={{ width: "100px" }} data={[1, 3, 12, 24, 48]} allowCustom={true}
+                      value={this.state.objDataSelector.refreshHrs}
+                      onChange={(e) => this.handleChange(e, "refreshHrs")} />) : ("")}
+                    {this.state.objDataSelector.selectedval == "2" ? (<Label className="mr-3 ml-3" >Hrs</Label>) : ("")}
+
+                {/* <button
                   type="button"
                   onClick={() => {
                     this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
@@ -599,7 +633,7 @@ class DataSelector extends Component<IProps> {
                   className="btn-custom btn-custom-primary ml-5 mr-1"
                 >
                   Apply
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -627,7 +661,7 @@ class DataSelector extends Component<IProps> {
 
             />
             <Label className="mr-3 ml-3" >Hrs</Label>
-            <button
+            {/* <button
               type="button"
               // onClick={() => {
               //   this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
@@ -641,7 +675,7 @@ class DataSelector extends Component<IProps> {
               className="btn-custom btn-custom-primary ml-5 mr-1"
             >
               Apply
-            </button>
+            </button> */}
 
           </div>
 

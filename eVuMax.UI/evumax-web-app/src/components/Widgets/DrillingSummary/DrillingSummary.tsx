@@ -1849,7 +1849,7 @@ export class DrillingSummary extends Component {
                     style={{
 
                       //height: "calc(100vh - 700px)",
-                      height: "calc(30vh)",
+                      height: "calc(35vh)",
                       width: "calc(33vw)",
                       minWidth: "400px",
                       float: "left",

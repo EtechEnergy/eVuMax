@@ -12,6 +12,9 @@ import * as utilFunc from "../../../utilFunctions/utilFunctions";
 import { debug } from "console";
 import DataSelector from "../../Common/DataSelector";
 import DataSelector_ from "../../Common/DataSelector_";
+import DataSelectorInfo from "../../Common/DataSelectorInfo";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -26,6 +29,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   
   let objSummaryAxisList: any = [];
   let WellName: string = "";
+  let objData: any="";
 
   useEffect(() => {
 
@@ -40,6 +44,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       let objBrokerRequest = new BrokerRequest();
       
+      //alert(props.objDataSelector.selectedval);
 
       objBrokerRequest.Module = "GenericDrillingSummary.Manager";
       objBrokerRequest.Broker = "GenericDrillingSummary";
@@ -102,10 +107,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
         .then((res) => {
 
           if (res.data.RequestSuccessfull == true) {
-            const objData = JSON.parse(res.data.Response);
+            const objData_ = JSON.parse(res.data.Response);
             
-            //console.log(objData);
-
+           // console.log(objData);
 
 
             let warnings: string = res.data.Warnings;
@@ -122,7 +126,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
             }
             WellName = res.data.Category;
-            generateReport(objData);
+            objData = objData_;
+            //generateReport(objData);
+            generateReport();
             Util.StatusSuccess("Data successfully retrived");
             Util.StatusReady();
           } else {
@@ -184,10 +190,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objChart.rightAxis().Visible = false;
       objChart.rightAxis().ShowLabels = false;
 
-      objChart.MarginLeft = 10;
-      objChart.MarginBottom = 10;
-      objChart.MarginTop = 0;
-      objChart.MarginRight = 100;
+      // objChart.MarginLeft = 10;
+      // objChart.MarginBottom = 10;
+      // objChart.MarginTop = 0;
+      // objChart.MarginRight = 100;
 
       objChart.initialize();
       
@@ -307,7 +313,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
     }
   }
 
-  const generateReport = (objData: any) => {
+  const generateReport = () => {
     try {
 
       initializeChart();
@@ -324,11 +330,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
         objChart.MarginLeft = 10;
         objChart.MarginBottom = 10;
         objChart.MarginTop = 0;
-        objChart.MarginRight = 100;
+        objChart.MarginRight = 10;
 
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
-
+      
 
         for (let index = 0; index < axisList.length; index++) {
 
@@ -433,7 +439,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.Position = axisPosition.bottom;
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.IsDateTime = false;
-          objAxis.bandScale = true;
+          
+          
+          //objAxis.bandScale = true;
+          objAxis.bandScale = false;
           objAxis.Title = objSummaryAxis.AxisTitle;
           objAxis.ShowLabels = true;
           objAxis.ShowTitle = true;
@@ -585,6 +594,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           //Populate the data series with this data
           objSeries.Data.length = 0;
           
+          
           if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
 
             for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
@@ -594,34 +604,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
                 objVal.x = i+1;
                 
                 let objBottomAxes= objChart.getAxisByID(objSeries.XAxisId);
-
+                objBottomAxes.bandScale=true; 
                 objChart.Axes.get(objSeries.XAxisId).Labels.push(objDataSeries.labelBuffer[i]);
-                //objBottomAxes.Labels.push(objDataSeries.labelBuffer[i]);
-
               }else{
                 objVal.x = objDataSeries.xDataBuffer[i];
               }
-
-              
             
               objVal.y = objDataSeries.yDataBuffer[i];
-
-            //   let label : string  ="";
-            //  if( objDataSeries.grpGroupBy==0){
-            //   label = objDataSeries.yDataBuffer(i) + "-group by 0";// objRigState.getRigStateName(objSeries.yDataBuffer(i))
-            //  }else{
-            //   label = objDataSeries.yDataBuffer(i).ToString();
-            //  }
-
-
-              // Dim label As String = ""
-
-              // If objSeries.grpGroupBy = 0 Then
-              //     label = objRigState.getRigStateName(objSeries.yDataBuffer(i))
-              // Else
-              //     label = objSeries.yDataBuffer(i).ToString
-              // End If
-        
 
               objSeries.Data.push(objVal);
              
@@ -739,28 +728,30 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
   const onselectionchange = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
   
-    let realtimeStatus: boolean = paramRefreshHrs;
+    let realtimeStatus: boolean = false;// paramRefreshHrs;
     props.objDataSelector = paramDataSelector;
     loadSummary();
-    // await this.setState({
-    //   objDataSelector: paramDataSelector,
-    //   isRealTime: realtimeStatus,
-    //   runReport: false
-    // });
-
-    // await this.setState({
-    //   runReport: true
-
-    // });
   }
 
 
   return (
     <div>
+      
       <div className="" style={{ display: "inline-flex", justifyContent: "space-between", width: "92vw", }}>
         <div className="flex-item" >
           <label>{props.PlotName} </label>
         </div>
+
+
+        {/* <div className="flex-item">
+                <DataSelectorInfo objDataSelector={props.objDataSelector} isRealTime={false} />
+        </div> */}
+
+        <div>
+<label className=" ml-5 mr-1" onClick={() => { generateReport(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { generateReport() }} />
+              </div>
+
         <div className="flex-item">
           <Button onClick={props.showListPanel}>Close</Button>
         </div>
@@ -770,7 +761,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         id="SummaryChart"
         style={{
           width: "100%",
-          height: "calc(60vh)",
+          height: "calc(65vh)",
           backgroundColor: "transparent",
           // float: "right",
           marginLeft: "10px",

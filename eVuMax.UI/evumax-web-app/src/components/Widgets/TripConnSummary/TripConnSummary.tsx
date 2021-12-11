@@ -946,7 +946,7 @@ class TripConnSummary extends Component {
               className="row mt-5"
               id="tripConnections"
               style={{
-                height: "calc(100vh - 500px)",
+                height: "calc(100vh - 450px)",
                 width: "calc(100vw - 100px)",
                 backgroundColor: "transparent",
               }}

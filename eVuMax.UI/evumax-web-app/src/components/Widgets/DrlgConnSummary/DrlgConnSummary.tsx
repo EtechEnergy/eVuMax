@@ -976,7 +976,7 @@ class DrlgConnSummary extends Component {
                   id="drlgConnections"
                   style={{
                     marginTop: "50px",
-                    height: "calc(100vh - 480px)",
+                    height: "calc(100vh - 450px)",
                     width: "calc(100vw - 130px)",
                     backgroundColor: "transparent",
                   }}

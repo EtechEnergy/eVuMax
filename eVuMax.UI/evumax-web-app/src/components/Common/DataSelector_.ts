@@ -1,5 +1,5 @@
 export default class DataSelector_ {
-    selectedval: string = "-1";//"-1 Default, 0= DateRange and 1 = Depth Range"
+    selectedval: string = "2";//"-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
    
     fromDateS: Date = new Date();
     toDateS: Date = new Date();

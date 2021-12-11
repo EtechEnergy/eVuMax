@@ -17,7 +17,6 @@ export default class DataSelectorInfo extends Component<IProps>  {
 
     componentDidUpdate() {
         try {
-
             this.selectionType = this.props.objDataSelector.selectedval;
             this.dataSelectorPeriod = ""
             if (this.props.isRealTime) {
