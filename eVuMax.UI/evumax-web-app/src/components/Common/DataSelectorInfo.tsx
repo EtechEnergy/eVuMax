@@ -2,23 +2,28 @@ import React, { Component } from 'react'
 import DataSelector_ from "./DataSelector_";
 import moment from "moment";
 
-interface IProps { }
+//interface IProps { }
 interface IProps {
     objDataSelector: DataSelector_;
     isRealTime: boolean;
 }
 
 export default class DataSelectorInfo extends Component<IProps>  {
-    dataSelectorPeriod = "";
+    dataSelectorPeriod = "24 Hrs....";
     selectionType = "";
+    needForceReload = false;
     constructor(props: any) {
         super(props);
     }
 
+
     componentDidUpdate() {
         try {
+          //   alert("info update -"+this.props.objDataSelector.selectedval + " " + this.props.isRealTime);
             this.selectionType = this.props.objDataSelector.selectedval;
             this.dataSelectorPeriod = ""
+            this.needForceReload= this.props.objDataSelector.needForceReload;
+
             if (this.props.isRealTime) {
                 this.dataSelectorPeriod = "Last " + this.props.objDataSelector.refreshHrs.toString() + " Hrs.";
             }
@@ -43,14 +48,24 @@ export default class DataSelectorInfo extends Component<IProps>  {
                         break;
                 }
             }
+            if (this.needForceReload){
+                this.needForceReload=false;
+                this.forceUpdate();
+            }
         } catch (error) {
 
         }
     }
 
     render() {
+        //alert("render " +  this.dataSelectorPeriod );
+
         return (
-            <label className="dataSelectorPeriod" style={{ marginLeft: "30px" }}> Data Range:  {this.dataSelectorPeriod} </label>
+            <div>
+                {/* TESTING {this.dataSelectorPeriod} */}
+                <label className="dataSelectorPeriod" style={{ marginLeft: "30px" }}> Data Range:  {this.dataSelectorPeriod} </label>
+            </div>
+
         )
     }
 }

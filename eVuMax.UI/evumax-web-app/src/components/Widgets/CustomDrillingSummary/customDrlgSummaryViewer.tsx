@@ -13,6 +13,7 @@ import NotifyMe from 'react-notification-timeline';
 import DataSelector from "../../Common/DataSelector";
 import DataSelector_ from "../../Common/DataSelector_";
 import CustomDrlgSummaryDataSelector from "../CustomDrillingSummary/CustomDrlgSummaryDataSelector";
+import DataSelectorInfo from "../../Common/DataSelectorInfo";
 let _gMod = new GlobalMod();
 
 export default class customDrlgSummaryViewer extends Component {
@@ -192,7 +193,12 @@ export default class customDrlgSummaryViewer extends Component {
     }
   }
 
-
+updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
+  await this.setState({
+    objDataSelector: paramDataSelector,
+   
+  });
+}
   selectionChanged_ = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
  
     let realtimeStatus: boolean = paramRefreshHrs;
@@ -305,8 +311,10 @@ export default class customDrlgSummaryViewer extends Component {
           <div className="pane-content ml-5" id="rightPanel" >
 
             <div className="">
+              {/* <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={false} ></DataSelectorInfo> */}
               {this.state.runReport && (
                 <>
+                  
                   <CustomDrillingSummary
                     PlotID={this.state.currentPlotID}
                     showListPanel={this.showListPanel}
@@ -316,6 +324,7 @@ export default class customDrlgSummaryViewer extends Component {
                     parentRef={this}
                     objDataSelector={this.state.objDataSelector}
                   ></CustomDrillingSummary>
+
 
                   {/* <div className="Data">
                     <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
