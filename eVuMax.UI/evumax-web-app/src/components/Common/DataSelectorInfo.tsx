@@ -48,9 +48,12 @@ export default class DataSelectorInfo extends Component<IProps>  {
                         break;
                 }
             }
-            if (this.needForceReload){
+            //this.forceUpdate();
+            //alert(this.needForceReload);
+            if (this.props.objDataSelector.needForceReload){
                 this.needForceReload=false;
                 this.forceUpdate();
+                
             }
         } catch (error) {
 

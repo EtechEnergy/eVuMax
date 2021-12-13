@@ -1288,6 +1288,7 @@ export class Axis {
   updateAxis = () => {
     try {
       
+
       if (!this.__selectorEventsAttached) {
         let selectorElement = $("#" + this.ChartRef.Id + "__selector_rect");
 
