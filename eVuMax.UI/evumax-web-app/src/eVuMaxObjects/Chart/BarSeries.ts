@@ -63,6 +63,12 @@ export class BarSeries {
       
       let xValues = new Array<number>();
       for (let key of this.ChartRef.DataSeries.keys()) {
+        debugger;
+        // alert(key);
+        // if (key =="197-765-483-687-591"){
+         
+        //   continue;
+        // }
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
         if (objSeries.ShowLabelOnSeries) {
           this.ShowLabelOnSeries = true;
@@ -102,6 +108,8 @@ export class BarSeries {
 
             this.objVerticalAxisScaleRef = this.objVerticalAxis.ScaleRef;
             this.objVerticalAxisRef = this.objVerticalAxis.AxisRef;
+            debugger;  
+            //alert(this.objVerticalAxisRef);
 
             //Not allow to Scroll Axes
             this.objHorizontalAxis.isAllowScrolling = false;

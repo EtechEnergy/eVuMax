@@ -1394,7 +1394,7 @@ export class Axis {
 
       if (!this.IsDateTime && !this.bandScale) {
 
-
+        
         let objAxisRange: AxisRange = this.getAxisRange();
         this.MaxWidthLabel = objAxisRange.MaxWidthLabel; //prath 14-08-2021 (for Multiline label)
 

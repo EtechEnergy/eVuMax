@@ -2166,7 +2166,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     if (objSeries.DataSource == 1)
                     {
                         DataSelection objDataSelection = new DataSelection(paramObjSummary.wellID, paramObjSummary.objRequest);
-                        objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+                        //objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+                        objDataSelection.loadInitialData(paramObjSummary);
 
                         //foreach (string strKey in objLocalSummary.objDataSelection.trajList.Keys)
                         foreach (string strKey in objDataSelection.trajList.Keys)
