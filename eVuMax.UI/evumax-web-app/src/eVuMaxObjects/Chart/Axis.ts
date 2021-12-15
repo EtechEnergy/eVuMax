@@ -326,7 +326,7 @@ export class Axis {
      this.Id= this.Id.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
      
       this.ChartRef = pChartRef;
-      debugger;
+      
 
       if (this.IsDateTime) {
         //We will use initial scale
@@ -409,7 +409,7 @@ export class Axis {
 
       if (this.Position == axisPosition.right) {
         this.AxisRef = d3.axisRight(this.ScaleRef);
-        debugger;
+        
       }
 
       //we've created the axis, now time to append it to SVG ref

@@ -358,7 +358,7 @@ export class Chart {
         objRightAxis.ChartRef = this;
 
         this.Axes.set(this.Id + "-right", objRightAxis);
-        debugger;
+        
       }
 
       //23-10-2020 (ADDED) for TripSpeed1  PRATH
@@ -385,7 +385,7 @@ export class Chart {
       
       for (let key of this.Axes.keys()) {
         let objAxis: Axis = this.Axes.get(key);
-        debugger;
+        
         //
 
         if (objAxis.Visible) {
@@ -553,9 +553,6 @@ export class Chart {
       //First calculate widths of the axis
       //Ths width will be stored in the axis itself
       for (let objAxis of this.Axes.values()) {
-        debugger;
-        console.log(objAxis.Id);
-
         objAxis.calculateAxisWidth();
       }
 
@@ -1020,7 +1017,7 @@ export class Chart {
   calculateWidth = (pText: string, pFontName: string, pFontSize: string) => {
     try {
       //Check if height/width calculator is present in the document
-      debugger;
+      
       let element: any = $("#" + this.Id + "-calculator")[0];
 
       if (element == undefined || element == null) {

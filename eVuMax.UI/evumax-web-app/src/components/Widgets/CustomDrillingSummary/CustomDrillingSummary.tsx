@@ -318,7 +318,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
      // console.log("objData", objData);
       if (objData.Axis != null || objData.Axis != undefined) {
         objSummaryAxisList = Object.values(objData.Axis);
-        debugger;
+        
         
         setAxisPerColumnAndRow(objSummaryAxisList);
 
@@ -530,7 +530,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-        debugger;
+        
         for (let index = 0; index < SeriesList.length; index++) {
           // if (index==0){
           //   continue;
