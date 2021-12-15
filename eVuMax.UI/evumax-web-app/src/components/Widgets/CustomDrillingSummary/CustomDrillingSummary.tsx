@@ -23,7 +23,6 @@ let _gMod = new GlobalMod();
 
 export default function CustomDrillingSummary({ ...props }: any) {
 
-  //const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
   const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
 
   let objChart: Chart = new Chart(props.parentRef, "SummaryChart");
@@ -57,9 +56,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objParameter = new BrokerParameter("PlotID", props.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
-
-      //objParameter = new BrokerParameter("UserID", "NIS-PC\\ETECH-NIS");
-      
       objParameter = new BrokerParameter("UserID",_gMod._userId);
       
       objBrokerRequest.Parameters.push(objParameter);
@@ -260,7 +256,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
           if (axisList[index].AxisPosition == 3) { //Top
             totalTopAxis += 1;
           }
-
         }
 
       }
@@ -323,6 +318,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
      // console.log("objData", objData);
       if (objData.Axis != null || objData.Axis != undefined) {
         objSummaryAxisList = Object.values(objData.Axis);
+        debugger;
+        
         setAxisPerColumnAndRow(objSummaryAxisList);
 
         objChart.Axes.clear();
@@ -336,7 +333,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
       
-        debugger;
+        
         for (let index = 0; index < axisList.length; index++) {
 
           let objSummaryAxis: any = axisList[index];
@@ -533,7 +530,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-
+        debugger;
         for (let index = 0; index < SeriesList.length; index++) {
           // if (index==0){
           //   continue;
@@ -546,7 +543,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
           let objSeries = new DataSeries();
           objSeries.Id = objDataSeries.SeriesID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');// objDataSeries.SeriesID;
           objSeries.Name = objDataSeries.SeriesName;
-          debugger;
+          console.log(objSeries.Name);
+          
           objSeries.XAxisId = objDataSeries.XColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
           objSeries.YAxisId = objDataSeries.YColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
           //alert(index + " -" + objSeries.YAxisId);
@@ -610,7 +608,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           
           
           if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
-            debugger;
+            
             for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
 
 
@@ -642,7 +640,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
               objChart.initialize();
-              debugger;
+              
         objChart.reDraw();
 
       }

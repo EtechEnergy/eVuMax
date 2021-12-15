@@ -312,7 +312,10 @@ export class Axis {
 
       this.__axisWidth = titleSpace + labelSpace + 10;
       
-    } catch (error) { }
+    } catch (error) {
+      alert(error + " - " + this.Id);
+
+     }
   };
 
   //Creates actual d3 axis on the chart
@@ -323,6 +326,7 @@ export class Axis {
      this.Id= this.Id.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
      
       this.ChartRef = pChartRef;
+      debugger;
 
       if (this.IsDateTime) {
         //We will use initial scale
@@ -405,6 +409,7 @@ export class Axis {
 
       if (this.Position == axisPosition.right) {
         this.AxisRef = d3.axisRight(this.ScaleRef);
+        debugger;
       }
 
       //we've created the axis, now time to append it to SVG ref
@@ -432,6 +437,7 @@ export class Axis {
 
       this.__selectorStartPos = 100;
       this.__selectorEndPos = 500;
+      
     } catch (error) { }
   };
 
