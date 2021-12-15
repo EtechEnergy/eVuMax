@@ -54,7 +54,7 @@ export class PointSeries {
 
                         let rotateAngle: number = 0;
                         // Add the point
-
+                            debugger;
                         switch (objSeries.PointStyle) {
                             case pointStyle.DownTriangle:
                                 rotateAngle = 180;
@@ -350,7 +350,8 @@ export class PointSeries {
 
 
                     break;
-                case pointStyle.LeftTriangle:
+                case pointStyle.LeftTriangle : //Wip
+            //    case 10 : //Wip
                     var h = objSeries.PointSize * (Math.sqrt(3) / 2);
                     this.ChartRef.CanvasContext.save();
                     this.ChartRef.CanvasContext.translate(px, py);
@@ -363,7 +364,8 @@ export class PointSeries {
                     this.ChartRef.CanvasContext.closePath();
                     this.ChartRef.CanvasContext.restore();
                     break;
-                case pointStyle.RightTriangle:
+                case pointStyle.RightTriangle : //Wip
+                //case 11 : //Wip
                     var h = objSeries.PointSize * (Math.sqrt(3) / 2);
                     this.ChartRef.CanvasContext.save();
                     this.ChartRef.CanvasContext.translate(px, py);

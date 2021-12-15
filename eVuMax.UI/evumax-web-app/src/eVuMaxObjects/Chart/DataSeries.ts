@@ -12,16 +12,33 @@ export enum dataSeriesType {
   Pie = 7, //prath 01-10-2020
 }
 
+// export enum pointStyle {
+//   Circle = 0,
+//   Rectangle = 1,
+//   Diamond = 2,
+//   Star = 3,
+//   Triangle = 4,
+//   DownTriangle = 5,
+//   LeftTriangle = 6,
+//   RightTriangle = 7,
+// }
+
+//as per vumax
 export enum pointStyle {
-  Circle = 0,
-  Rectangle = 1,
-  Diamond = 2,
-  Star = 3,
-  Triangle = 4,
-  DownTriangle = 5,
-  LeftTriangle = 6,
-  RightTriangle = 7,
+  Rectangle = 0,  //old 1
+  Circle = 1,//old 0
+  Triangle = 2, //old=4,
+  DownTriangle = 3, //old=5,
+
+  Diamond = 7,//old=2,
+  Star = 6,//old=3,
+  
+  
+  LeftTriangle = 10,//old=6,
+  RightTriangle = 11,//old=7,
 }
+
+
 
 export class DataSeries {
   Id: string = "";

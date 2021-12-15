@@ -13,6 +13,8 @@ import { AxisRange, AxisDateRange } from "../Chart/AxisRange";
 import { Axis } from "../Chart/Axis";
 import { DataSeries, dataSeriesType } from "./DataSeries";
 import { ChartData } from "./ChartData";
+import { exit } from "process";
+import { Series } from "@progress/kendo-react-charts/dist/npm/option-types/series-item.interface";
 
 //This file contains logic of generating stacked bar chart on the plot
 export class BarSeries {
@@ -29,6 +31,8 @@ export class BarSeries {
   objHorizontalAxis: Axis;
   objVerticalAxis: Axis;
   ShowLabelOnSeries: boolean = false;
+  uniqueBarScale = [];
+  
 
   //Draws the series, this will draw vertical bars along with X Axis
   redrawSeries = () => {
@@ -36,40 +40,68 @@ export class BarSeries {
       let isDateTimeScale = false;
       let objHorizontalAxis: any;
 
-      for (let key of this.ChartRef.DataSeries.keys()) {
-        let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
+      // for (let key of this.ChartRef.DataSeries.keys()) {
+      //   let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
 
-        if (objSeries.Type == dataSeriesType.Bar) {
-          objHorizontalAxis = this.ChartRef.getAxisByID(objSeries.XAxisId);
+      //   if (objSeries.Type == dataSeriesType.Bar) {
+      //     objHorizontalAxis = this.ChartRef.getAxisByID(objSeries.XAxisId);
 
-          if (objHorizontalAxis.IsDateTime) {
-            isDateTimeScale = true;
+      //     if (objHorizontalAxis.IsDateTime) {
+      //       isDateTimeScale = true;
+      //       break;
+      //     }
+      //   }
+      // }
+
+      //Make barSeries Groping
+      
+      this.findUniqueBarScale();
+      
+
+      for (let i=0; i< this.uniqueBarScale.length; i++){
+
+        for (let key of this.ChartRef.DataSeries.keys()) {
+          let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
+
+          if (objSeries.XAxisId== this.uniqueBarScale[i].X  && objSeries.Type == dataSeriesType.Bar){
+            objHorizontalAxis = this.ChartRef.getAxisByID(objSeries.XAxisId);
+            if (objHorizontalAxis.IsDateTime) {
+              isDateTimeScale = true;
+              break;
+            }
             break;
           }
         }
+
+        if (isDateTimeScale) {
+          //Pending for Rewrite logic as per redrawNumeric
+          this.redrawDateTime();
+        } else {
+          this.redrawNumeric(this.uniqueBarScale[i].X);
+        }
+
       }
 
-      if (isDateTimeScale) {
-        this.redrawDateTime();
-      } else {
-        this.redrawNumeric();
-      }
+
+     
     } catch (error) { }
   };
 
-  redrawNumeric = () => {
+  redrawNumeric = (XScaleId) => {
     try {
       //Remove existing data
       
       let xValues = new Array<number>();
+
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
         if (objSeries.ShowLabelOnSeries) {
           this.ShowLabelOnSeries = true;
         }
 
-        if (objSeries.Type == dataSeriesType.Bar) {
+        if (objSeries.Type == dataSeriesType.Bar && objSeries.XAxisId == XScaleId ) {
           try {
+            debugger;
             $("." + objSeries.Id).remove();
           } catch (error) { }
         }
@@ -83,42 +115,50 @@ export class BarSeries {
 
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
+        if (objSeries.Type != dataSeriesType.Bar){
+          continue;
+        }
+
+        if (objSeries.XAxisId != XScaleId){
+          continue;
+        }
+
         keys.push(objSeries.Id);
         colors.push(objSeries.Color);
         
 
         if (objSeries.Type == dataSeriesType.Bar) {
-          if (!findBarSeries) {
+       //   if (!findBarSeries) {
             this.objHorizontalAxis = this.ChartRef.getAxisByID(
               objSeries.XAxisId
             );
-            this.objVerticalAxis = this.ChartRef.getAxisByID(objSeries.YAxisId);
 
+            
             this.objHorizontalAxisScaleRef = this.objHorizontalAxis.ScaleRef; //x0
-
             this.objHorizontalAxisScaleRef_x1 = d3.scaleBand().padding(0.05); //objHorizontalAxis.ScaleRef_x1;//x1
-
             this.objHorizontalAxisRef = this.objHorizontalAxis.AxisRef;
 
-            this.objVerticalAxisScaleRef = this.objVerticalAxis.ScaleRef;
-            this.objVerticalAxisRef = this.objVerticalAxis.AxisRef;
+            // this.objVerticalAxis = this.ChartRef.getAxisByID(objSeries.YAxisId);
+            // this.objVerticalAxisScaleRef = this.objVerticalAxis.ScaleRef;
+            // this.objVerticalAxisRef = this.objVerticalAxis.AxisRef;
+              
+            //alert(this.objVerticalAxisRef);
 
             //Not allow to Scroll Axes
             this.objHorizontalAxis.isAllowScrolling = false;
-            this.objVerticalAxis.isAllowScrolling = false;
+            //this.objVerticalAxis.isAllowScrolling = false;
 
-            let axisDomainValues: string[] = this.objHorizontalAxisScaleRef.domain();
-            let axisDomainValues_x1: string[] = this.objHorizontalAxisScaleRef_x1.domain(); 
+            // let axisDomainValues: string[] = this.objHorizontalAxisScaleRef.domain();
+            // let axisDomainValues_x1: string[] = this.objHorizontalAxisScaleRef_x1.domain(); 
             this.objHorizontalAxisScaleRef_x1
               .domain(keys)
               .range([0, this.objHorizontalAxisScaleRef.bandwidth()]);
-            findBarSeries = true;
-          }
+          //   findBarSeries = true;
+           //}
 
           for (let d = 0; d < objSeries.Data.length; d++) {
             let objData: ChartData = objSeries.Data[d];
 
-            
             let i = data.findIndex((value) => value.X == objData.x);
             if (i == -1) {
               if (objData.y !=0){
@@ -138,7 +178,7 @@ export class BarSeries {
       }
 
       //new code
-
+      
       let z = d3.scaleOrdinal().range(colors);
       this.objHorizontalAxisScaleRef_x1
         .domain(keys)
@@ -156,13 +196,13 @@ export class BarSeries {
       let height = 0;
       height = this.ChartRef.Height - this.ChartRef.MarginBottom;
 
-
       //let date1: any = new Date(); // 9:00 AM
 
       let HAxisScale = this.objHorizontalAxisScaleRef;
       let HAxisScale_x1 = this.objHorizontalAxisScaleRef_x1;
-      let VAxisScale = this.objVerticalAxisScaleRef;
-
+      let DataSeriesKeyList = this.ChartRef.DataSeries;
+      let ChartRef_ = this.ChartRef;
+      
       var selection = this.ChartRef.SVGRect.append("g")
         .selectAll("g")
         .data(data)
@@ -172,11 +212,13 @@ export class BarSeries {
           return "translate(" + HAxisScale(d.X) + ",0)";
         });
 
-      selection
+       
+        selection
         .selectAll("rect")
         //Use map function with the subCategories array and the Econ2 array
         .data(function (d) {
           return keys.map(function (key) {
+            
             return { key: key, value: d[key] };
           });
         })
@@ -187,10 +229,20 @@ export class BarSeries {
         })
         //If the value is negative, put the top left corner of the rect bar on the zero line
         .attr("y", function (d) {
+          
+          // let objVerticalAxis = this.ChartRef.getAxisByID(d.YAxisId);
+          // let VAxisScale = this.objVerticalAxisScaleRef;
+          //return VAxisScale(d.value);
+          let objSeries_  = DataSeriesKeyList.get(d.key);
+          let objVerticalAxis : Axis = ChartRef_.getAxisByID(objSeries_.YAxisId);
+          let VAxisScale = objVerticalAxis.ScaleRef;
           return VAxisScale(d.value);
         })
         .attr("width", barWidth)
         .attr("height", function (d) {
+          let objSeries_  = DataSeriesKeyList.get(d.key);
+          let objVerticalAxis : Axis = ChartRef_.getAxisByID(objSeries_.YAxisId);
+          let VAxisScale = objVerticalAxis.ScaleRef;
           return height - Math.abs(VAxisScale(d.value));
         })
         .attr("fill", function (d) {
@@ -230,6 +282,9 @@ export class BarSeries {
           //offset the position of the y value (positive / negative) to have the text over/under the rect bar
           //.attr("y", function (d) { return d.value <= 0 ? objVerticalAxisScaleRef(0) - (objVerticalAxisScaleRef(4) - (Math.abs(objVerticalAxisScaleRef(d.value) - objVerticalAxisScaleRef(0)) + 20)) : objVerticalAxisScaleRef(d.value) - 10 })
           .attr("y", function (d) {
+            let objSeries_  = DataSeriesKeyList.get(d.key);
+            let objVerticalAxis : Axis = ChartRef_.getAxisByID(objSeries_.YAxisId);
+            let VAxisScale = objVerticalAxis.ScaleRef;
             return VAxisScale(d.value) - 25;    //25 is offset of bar label
           })
           .style("fill", function (d) {
@@ -310,7 +365,6 @@ export class BarSeries {
 
             objHorizontalAxis.isAllowScrolling = false;
             objVerticalAxis.isAllowScrolling = false;
-
 
             let axisDomainValues: Date[] = objHorizontalAxisScaleRef.domain();
 
@@ -396,7 +450,6 @@ export class BarSeries {
             prevHeight = height;
           }
 
-
           let xPos: number =
             (barWidth * objHorizontalAxisScaleRef(lx)) /
             objHorizontalAxisScaleRef.bandwidth();
@@ -473,9 +526,41 @@ export class BarSeries {
     } catch (error) { }
   };
 
+  findUniqueBarScale = () =>{
+    try {
+      
+      let uniqueScale =[];
+        
+
+      for (let key of this.ChartRef.DataSeries.keys()) {
+        let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
+          if  (objSeries.Type == dataSeriesType.Bar) {
+      
+            let rec= {};
+            rec["X"] = objSeries.XAxisId;
+//            rec["Y"] = objSeries.YAxisId;
+
+            //let i = uniqueScale.findIndex((value) => value.X === objSeries.XAxisId  && value.Y === objSeries.YAxisId);
+            let i = uniqueScale.findIndex((value) => value.X === objSeries.XAxisId);
+            if (i==-1){
+              uniqueScale.push(rec);
+            }
+          }
+          
+      }
+      this.uniqueBarScale = uniqueScale;
+      
+
+    } catch (error) {
+      
+    }
+
+  }
+
   isBarClicked = (x: number, y: number) => {
     try {
       let allbars = d3.selectAll("rect");
     } catch (error) { }
   };
 }
+

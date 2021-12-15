@@ -23,7 +23,6 @@ let _gMod = new GlobalMod();
 
 export default function CustomDrillingSummary({ ...props }: any) {
 
-  //const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
   const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
 
   let objChart: Chart = new Chart(props.parentRef, "SummaryChart");
@@ -57,9 +56,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objParameter = new BrokerParameter("PlotID", props.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
-
-      //objParameter = new BrokerParameter("UserID", "NIS-PC\\ETECH-NIS");
-      
       objParameter = new BrokerParameter("UserID",_gMod._userId);
       
       objBrokerRequest.Parameters.push(objParameter);
@@ -110,7 +106,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           if (res.data.RequestSuccessfull == true) {
             const objData_ = JSON.parse(res.data.Response);
             
-           // console.log(objData);
+            console.log(objData);
 
 
             let warnings: string = res.data.Warnings;
@@ -260,7 +256,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
           if (axisList[index].AxisPosition == 3) { //Top
             totalTopAxis += 1;
           }
-
         }
 
       }
@@ -323,6 +318,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
      // console.log("objData", objData);
       if (objData.Axis != null || objData.Axis != undefined) {
         objSummaryAxisList = Object.values(objData.Axis);
+        
+        
         setAxisPerColumnAndRow(objSummaryAxisList);
 
         objChart.Axes.clear();
@@ -336,7 +333,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
       
-
+        
         for (let index = 0; index < axisList.length; index++) {
 
           let objSummaryAxis: any = axisList[index];
@@ -347,10 +344,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
           //objAxis.CustomPosition = true;
           objAxis.DisplayOrder = index;
           objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
+
           objAxis.AutoScale = true; // as in toolface objSummaryAxis.Automatic;
           objAxis.Position = axisPosition.left;
+          
           objAxis.IsDateTime = false;
           objAxis.bandScale = false; //as in Toolface
+          objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.Title = objSummaryAxis.AxisTitle;
 
           objAxis.ShowLabels = true;
@@ -379,6 +379,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           //*************************************************** */
         }
 
+
         //// 0-left, 1-bottom, 2-right, 3-top
         axisList = getOrdersAxisListByPosition(2);//Right
         for (let index = 0; index < axisList.length; index++) {
@@ -389,7 +390,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           let objAxis = new Axis();
 
           objAxis.CustomPosition = true;
-          objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
+          objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
           objAxis.Position = axisPosition.right;
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.IsDateTime = false;
@@ -477,6 +478,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         axisList = getOrdersAxisListByPosition(3);//Top
         for (let index = 0; index < axisList.length; index++) {
 
+        
           let objSummaryAxis: any = axisList[index];
 
           //Create Custom Bottom Axis 
@@ -488,11 +490,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.IsDateTime = false;
 
-          if (objSummaryAxis.Id == "DiffPressure") {
-            objAxis.bandScale = true; //false; need to check 
-          } else {
-            objAxis.bandScale = false;// need to check if series has Bar then True
-          }
+          // if (objSummaryAxis.Id == "DiffPressure") {
+          //   objAxis.bandScale = true; //false; need to check 
+          // } else {
+          //   objAxis.bandScale = false;// need to check if series has Bar then True
+          // }
 
           objAxis.Title = objSummaryAxis.AxisTitle;
           objAxis.ShowLabels = true;
@@ -528,16 +530,25 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-
+        
         for (let index = 0; index < SeriesList.length; index++) {
+          // if (index==0){
+          //   continue;
+          // }
+          // alert(index);
+          
+
           const objDataSeries: any = SeriesList[index];
           
           let objSeries = new DataSeries();
           objSeries.Id = objDataSeries.SeriesID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');// objDataSeries.SeriesID;
           objSeries.Name = objDataSeries.SeriesName;
-          objSeries.XAxisId = objDataSeries.XColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
-          objSeries.YAxisId = objDataSeries.YColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
+          console.log(objSeries.Name);
           
+          objSeries.XAxisId = objDataSeries.XColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
+          objSeries.YAxisId = objDataSeries.YColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
+          //alert(index + " -" + objSeries.YAxisId);
+
           objSeries.PointSize = objDataSeries.PointWidth;
           let SeriesType: dataSeriesType = dataSeriesType.Line;
           //////alert(objDataSeries.SeriesType);
@@ -597,8 +608,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
           
           
           if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
-
+            
             for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
+
+
+
               let objVal: ChartData = new ChartData();
 
               if( objSeries.Type==dataSeriesType.Bar){
@@ -626,7 +640,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
               objChart.initialize();
-        
+              
         objChart.reDraw();
 
       }
