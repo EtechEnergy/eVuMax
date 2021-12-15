@@ -2096,7 +2096,151 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             }
         }
 
+
         //New Code 
+
+        #region "Offset Multi Well Functionality"
+        public bool isOffsetWellSeriesExist(string paramWellID)
+        {
+            try
+            {
+                bool isExist = false;
+
+                foreach (gdsDataSeries objSeries in dataSeries.Values)
+                {
+                    if (objSeries.isOffset)
+                    {
+                        if (objSeries.__WellID == paramWellID)
+                        {
+                            isExist = true;
+                            break;
+                        }
+                    }
+                }
+
+                return isExist;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+               
+        public void addMissingOffsetSeries(ref DataService objDataService)
+        {
+            try
+            {
+                Dictionary<string, string> existingOffsetWells = new Dictionary<string, string>();
+
+                startOver:
+
+                //foreach (gdsDataSeries objSeries in dataSeries.Values)
+                foreach (gdsDataSeries objSeries in localSeries.Values)
+                {
+                    if (objSeries.isOffset)
+                    {
+                        if (!existingOffsetWells.ContainsKey(objSeries.__WellID))
+                            existingOffsetWells.Add(objSeries.__WellID, objSeries.__WellID);
+                    }
+                }
+
+                int existingWellCount = existingOffsetWells.Count;
+
+                int colorPickIndex = 1;
+
+                colorPickIndex = existingWellCount + 1;
+
+                if (colorPickIndex > 5)
+                    colorPickIndex = 5;
+
+                colorPickIndex = 1;
+
+                foreach (string strKey in objDataSelection.offsetWells.Keys)
+                {
+                    LogCorOffsetWellInfo objOffsetInfo = objDataSelection.offsetWells[strKey];
+
+                    string strWellID = objOffsetInfo.OffsetWellID;
+
+                    if (!isOffsetWellSeriesExist(strWellID))
+                    {
+
+                        // '## Time Log *****************************************************
+                        foreach (gdsDataSeries objSeries in dataSeries.Values)
+                        {
+                            if (objSeries.DataSource == 0)
+                            {
+                                gdsDataSeries objNewSeries = objSeries.getCopy();
+                                objNewSeries.SeriesID = Guid.NewGuid().ToString(); //   objSeries.SeriesID; // objIDFactory.getObjectID;
+                                objNewSeries.isOffset = true;
+                                objNewSeries.__WellID = strWellID;
+
+                                TimeLog objOffsetTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref objDataService, strWellID);
+
+                                if (objOffsetTimeLog != null)
+                                {
+                                    objNewSeries.ObjectID = objOffsetTimeLog.WellboreID + "~" + objOffsetTimeLog.ObjectID;
+
+                                    // 'We need to change the color for offset wells ...
+                                    switch (colorPickIndex)
+                                    {
+                                        case 1:
+                                            {
+                                                objNewSeries.LineColor = objSeries.Color1;
+                                                objNewSeries.PointColor = objSeries.Color1;
+                                                break;
+                                            }
+
+                                        case 2:
+                                            {
+                                                objNewSeries.LineColor = objSeries.Color2;
+                                                objNewSeries.PointColor = objSeries.Color2;
+                                                break;
+                                            }
+
+                                        case 3:
+                                            {
+                                                objNewSeries.LineColor = objSeries.Color3;
+                                                objNewSeries.PointColor = objSeries.Color3;
+                                                break;
+                                            }
+
+                                        case 4:
+                                            {
+                                                objNewSeries.LineColor = objSeries.Color4;
+                                                objNewSeries.PointColor = objSeries.Color4;
+                                                break;
+                                            }
+
+                                        case 5:
+                                            {
+                                                objNewSeries.LineColor = objSeries.Color5;
+                                                objNewSeries.PointColor = objSeries.Color5;
+                                                break;
+                                            }
+                                    }
+
+                                    localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
+                                    //dataSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
+                                    //goto startOver;
+                                }
+                            }
+                        }
+
+
+                        colorPickIndex = colorPickIndex + 1;
+
+                        if (colorPickIndex > 5)
+                            colorPickIndex = 5;
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+            }
+        }
+
+        #endregion
         public static Broker.BrokerResponse loadSummaryData(ref gdSummary paramObjSummary)
         {
             try
@@ -2112,9 +2256,23 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                //Below is commented cos User will change the data from DataSelector (Client Side)
                //Save is pending in UserSettings
                 // paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+
+                
+
                 gdSummary objLocalSummary = new gdSummary(paramObjSummary.objRequest, paramObjSummary.wellID, paramObjSummary.SummaryPlotID);
 
+                
+                objLocalSummary.objDataSelection.WellID = paramObjSummary.wellID;
+
                 objLocalSummary = gdSummary.loadSummaryObject(ref objLocalSummary);
+
+                ////Initialize Data Selection by default last 24 hours and create default series...
+                //objLocalSummary.objDataSelection.loadInitialData(objLocalSummary);
+
+                //////addMissingOffset Series Here
+
+                //objLocalSummary.addMissingOffsetSeries(ref paramObjSummary.objRequest.objDataService);
+                //////*****************
 
                 Broker.BrokerResponse objResponse = paramObjSummary.objRequest.createResponseObject();
 
@@ -2145,8 +2303,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 paramObjSummary.objDataSelection.loadInitialData(paramObjSummary);
                 //Based on the data sources... copy series to the local list
 
+                //paramObjSummary.addMissingOffsetSeries(ref paramObjSummary.objRequest.objDataService);
                 //## Time Log *****************************************************
-                foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+                //foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+                foreach (gdsDataSeries objSeries in paramObjSummary.dataSeries.Values)
                 {
                     if (objSeries.DataSource == 0)
                     {
@@ -2155,12 +2315,14 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         objNewSeries.isOffset = false;
                         objNewSeries.ObjectID = paramObjSummary.objTimeLog.WellboreID + "~" + paramObjSummary.objTimeLog.ObjectID;
                         paramObjSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
+                        //objLocalSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
                     }
                 }
 
                 //''## Trajectory *****************************************************
 
-                foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+                //foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+                foreach (gdsDataSeries objSeries in paramObjSummary.dataSeries.Values)
 
                 {
                     if (objSeries.DataSource == 1)
@@ -2179,10 +2341,19 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             objNewSeries.SeriesName = objNewSeries.SeriesName + " (" + objTrajectory.name + ")";
                             objNewSeries.ObjectID = strKey;
                             paramObjSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
+                            //objLocalSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
                         }
                     }
                 }
 
+                //addMissingOffset Series Here
+                paramObjSummary.addMissingOffsetSeries(ref paramObjSummary.objRequest.objDataService);
+
+                //objLocalSummary.addMissingOffsetSeries(ref paramObjSummary.objRequest.objDataService);
+                //paramObjSummary.addMissingOffsetSeries(ref paramObjSummary.objRequest.objDataService);
+                //Copy localSummarySeries to localSeries of parentSummarySeries 
+                //paramObjSummary.localSeries = objLocalSummary.dataSeries;
+                //*****************
 
                 paramObjSummary.generateColorData();
                 if (paramObjSummary.ShowTops)
@@ -2190,7 +2361,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     paramObjSummary.loadFormationTops();
                 }
 
-                gdsDataSeries[] arrSeries = objLocalSummary.dataSeries.Values.ToArray();
+                //gdsDataSeries[] arrSeries = objLocalSummary.dataSeries.Values.ToArray();
+                //gdsDataSeries[] arrSeries = paramObjSummary.dataSeries.Values.ToArray();
+                gdsDataSeries[] arrSeries = paramObjSummary.localSeries.Values.ToArray();
 
                 Array.Sort(arrSeries);
 
@@ -2208,6 +2381,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             if (objSeries.isOffset)
                             {
                                 paramObjSummary.generateOffsetTimeLogData(objSeries.SeriesID);//dataSeries Copied with data
+                                //objLocalSummary.generateOffsetTimeLogData(objSeries.SeriesID);
                             }
                             else
                             {
