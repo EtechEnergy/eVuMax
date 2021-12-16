@@ -312,6 +312,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   const generateReport = () => {
     try {
 
+      
       initializeChart();
 
       //Generate Plot using state objGDSummary object
@@ -332,8 +333,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
-      
-        
+   
+       
         for (let index = 0; index < axisList.length; index++) {
 
           let objSummaryAxis: any = axisList[index];
@@ -365,6 +366,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
+          //objAxis.RelativePosition= objSummaryAxis.RelativePosition;
+
 
 
           if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
@@ -611,8 +614,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
             
             for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
 
-
-
               let objVal: ChartData = new ChartData();
 
               if( objSeries.Type==dataSeriesType.Bar){
@@ -640,6 +641,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
               objChart.initialize();
+              
               
         objChart.reDraw();
 
