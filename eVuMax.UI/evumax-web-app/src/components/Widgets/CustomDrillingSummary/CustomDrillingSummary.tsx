@@ -366,15 +366,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
-          //objAxis.RelativePosition= objSummaryAxis.RelativePosition;
-
-
-
-          if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
-            objAxis.LabelAngel = 0;
-          } else {
-            objAxis.LabelAngel = 90;
-          }
+          objAxis.LabelAngel = 0;
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
@@ -411,13 +403,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
-
-
-          if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
-            objAxis.LabelAngel = 0;
-          } else {
-            objAxis.LabelAngel = 90;
-          }
+          objAxis.LabelAngel = 0;
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
@@ -461,13 +447,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
-
-
-          if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
-            objAxis.LabelAngel = 0;
-          } else {
-            objAxis.LabelAngel = 90;
-          }
+          objAxis.LabelAngel = 0;
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
@@ -512,11 +492,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
           objAxis.Min = objSummaryAxis.MinValue;
           objAxis.Max = objSummaryAxis.MaxValue;
-          if (objSummaryAxis.Orientation == 0) { //// 0-Horizontal, 1-Vertical
-            objAxis.LabelAngel = 0;
-          } else {
-            objAxis.LabelAngel = 90;
-          }
+          objAxis.LabelAngel = 0;
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
