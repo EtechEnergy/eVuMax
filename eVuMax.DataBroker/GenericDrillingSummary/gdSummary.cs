@@ -2176,6 +2176,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                                 string wellName = VuMaxDR.Data.Objects.Well.loadObject(ref objDataService, strWellID, ref lastError).name;
                                 
                                 objNewSeries.SeriesName = wellName + "-" + objNewSeries.SeriesName;
+                                
 
                                 TimeLog objOffsetTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref objDataService, strWellID);
 
