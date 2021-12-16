@@ -770,12 +770,14 @@ export class Chart {
     try {
       //now we have to arrange the axes
       //Left axes
+      
       let arrLeftAxes: Axis[] = Array.from(this.Axes.values()).filter(
         (x) => x.Position == axisPosition.left
       );
 
       if (arrLeftAxes.length > 1) {
         arrLeftAxes = arrLeftAxes.sort((obj1, obj2) => {
+          
           if (obj1.DisplayOrder > obj2.DisplayOrder) {
             return 1;
           }
@@ -1992,6 +1994,8 @@ export class Chart {
 
 
       }
+
+      
 
 
       this.updateSeries();
