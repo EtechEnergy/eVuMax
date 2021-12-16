@@ -2173,6 +2173,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                                 objNewSeries.SeriesID = Guid.NewGuid().ToString(); //   objSeries.SeriesID; // objIDFactory.getObjectID;
                                 objNewSeries.isOffset = true;
                                 objNewSeries.__WellID = strWellID;
+                                string wellName = VuMaxDR.Data.Objects.Well.loadObject(ref objDataService, strWellID, ref lastError).name;
+                                
+                                objNewSeries.SeriesName = wellName + "-" + objNewSeries.SeriesName;
 
                                 TimeLog objOffsetTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref objDataService, strWellID);
 
@@ -2306,6 +2309,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 //paramObjSummary.addMissingOffsetSeries(ref paramObjSummary.objRequest.objDataService);
                 //## Time Log *****************************************************
                 //foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+                string lastError = "";
                 foreach (gdsDataSeries objSeries in paramObjSummary.dataSeries.Values)
                 {
                     if (objSeries.DataSource == 0)
@@ -2314,6 +2318,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         objNewSeries.SeriesID = objSeries.SeriesID;// Guid.NewGuid().ToString();
                         objNewSeries.isOffset = false;
                         objNewSeries.ObjectID = paramObjSummary.objTimeLog.WellboreID + "~" + paramObjSummary.objTimeLog.ObjectID;
+                        
+
+                        objNewSeries.SeriesName = paramObjSummary.objWell.name + "-" + objNewSeries.SeriesName;
+
                         paramObjSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
                         //objLocalSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
                     }
