@@ -117,16 +117,37 @@ export class AreaSeries {
 
             //.curve(d3.curveStepBefore);
 
-            this.ChartRef.SVGRef.append("g")
-              .attr("class", objSeries.Id)
-              .append("path")
-              .datum(objSeries.Data)
-              .style("opacity", 1)
-              .style("fill", objSeries.Color) //Nishant 28/07/2021
-              .attr("stroke", objSeries.Color) //Nishant 28/07/2021
-              .attr("stroke-width", objSeries.LineWidth)
-              .attr("stroke-dasharray", dashStyle)
-              .attr("d", line);
+            //Added by prath on 16-Dec-2021
+        d3.select("."+ "AreaChart-"+ objSeries.Id).remove();
+
+        this.ChartRef.SVGRect.append("g")
+        .attr("class", "AreaChart-"+ objSeries.Id)
+        //.attr("class", objSeries.Id)
+        .append("path")
+        
+        .datum(objSeries.Data)
+        .style("opacity", 1)
+        .style("fill", objSeries.Color) //Nishant 28/07/2021
+        .attr("stroke", objSeries.Color) //Nishant 28/07/2021
+        .attr("stroke-width", objSeries.LineWidth)
+        .attr("stroke-dasharray", dashStyle)
+        .attr("d", line);
+
+            //=============================
+
+
+            //Original
+
+            // this.ChartRef.SVGRef.append("g")
+            //   .attr("class", objSeries.Id)
+            //   .append("path")
+            //   .datum(objSeries.Data)
+            //   .style("opacity", 1)
+            //   .style("fill", objSeries.Color) //Nishant 28/07/2021
+            //   .attr("stroke", objSeries.Color) //Nishant 28/07/2021
+            //   .attr("stroke-width", objSeries.LineWidth)
+            //   .attr("stroke-dasharray", dashStyle)
+            //   .attr("d", line);
           } catch (error) {}
         }
       }
