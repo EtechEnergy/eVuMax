@@ -586,7 +586,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objSeries.Type = SeriesType;
 
           objSeries.PointStyle = objDataSeries.PointerStyle;
-          objSeries.Title = WellName + "-" + objDataSeries.SeriesName;
+          //objSeries.Title = WellName + "-" + objDataSeries.SeriesName;
+          objSeries.Title = objDataSeries.SeriesName;
 
 
           if (SeriesType == dataSeriesType.Area || SeriesType == dataSeriesType.Point) {
