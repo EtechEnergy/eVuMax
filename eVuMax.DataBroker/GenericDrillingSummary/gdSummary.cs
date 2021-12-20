@@ -72,7 +72,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         [NonSerialized()]
         public double[] roadmapMax;
 
-        public Dictionary<int, Color> IntervalColors = new Dictionary<int, Color>();
+        public Dictionary<int, string> IntervalColors = new Dictionary<int, string>();
         public string ChartTitle = "";
 
         public gdSummary(Broker.BrokerRequest paramRequest, string paramWellID, string paramPlotID)
@@ -414,7 +414,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             }
         }
 
-        private Color getColor(double pValue)
+        private string getColor(double pValue)
         {
             try
             {
@@ -424,11 +424,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         return IntervalColors[i];
                 }
 
-                return Color.Transparent;
+                return ColorTranslator.ToHtml(Color.Transparent);
+                
             }
             catch (Exception ex)
             {
-                return Color.Transparent;
+                return ColorTranslator.ToHtml(Color.Transparent);
             }
         }
 
@@ -533,7 +534,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                 double[] xData = new double[0];
                 double[] yData = new double[0];
-                Color[] colorData = new Color[0];
+                string[] colorData = new string[0];
 
                 string strSQL = "";
 
@@ -583,7 +584,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                         xData = new double[objXData.Rows.Count - 1 + 1];
                         yData = new double[objXData.Rows.Count - 1 + 1];
-                        colorData = new Color[objXData.Rows.Count - 1 + 1];
+                        colorData = new string[objXData.Rows.Count - 1 + 1];
 
                         int rowIndex = 0;
                         double colorValue = 0;
@@ -626,7 +627,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             // 'Get the temp array
                             double[] tempXData = new double[elementCount - 1 + 1];
                             double[] tempYData = new double[elementCount - 1 + 1];
-                            Color[] tempColorData = new Color[elementCount - 1 + 1];
+                            string[] tempColorData = new string[elementCount - 1 + 1];
 
                             int subCounter = 0;
 
@@ -645,7 +646,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             // 'Now again, resize the main arrays and copy temp data ...
                             xData = new double[elementCount - 1 + 1];
                             yData = new double[elementCount - 1 + 1];
-                            colorData = new Color[elementCount - 1 + 1];
+                            colorData = new string[elementCount - 1 + 1];
 
                             for (int i = 0; i <= tempXData.Length - 1; i++)
                             {
@@ -660,7 +661,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     {
                         xData = new double[0];
                         yData = new double[0];
-                        colorData = new Color[0];
+                        colorData = new string[0];
                     }
                 }
 
@@ -704,7 +705,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                         xData = new double[objXData.Rows.Count - 1 + 1];
                         yData = new double[objXData.Rows.Count - 1 + 1];
-                        colorData = new Color[objXData.Rows.Count - 1 + 1];
+                        colorData = new string[objXData.Rows.Count - 1 + 1];
 
                         int rowIndex = 0;
                         double colorValue = 0;
@@ -747,7 +748,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             // 'Get the temp array
                             double[] tempXData = new double[elementCount - 1 + 1];
                             double[] tempYData = new double[elementCount - 1 + 1];
-                            Color[] tempColorData = new Color[elementCount - 1 + 1];
+                            string[] tempColorData = new string[elementCount - 1 + 1];
 
                             int subCounter = 0;
 
@@ -766,7 +767,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             // 'Now again, resize the main arrays and copy temp data ...
                             xData = new double[elementCount - 1 + 1];
                             yData = new double[elementCount - 1 + 1];
-                            colorData = new Color[elementCount - 1 + 1];
+                            colorData = new string[elementCount - 1 + 1];
 
                             for (int i = 0; i <= tempXData.Length - 1; i++)
                             {
@@ -782,7 +783,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     {
                         xData = new double[0];
                         yData = new double[0];
-                        colorData = new Color[0];
+                        colorData = new string[0];
                     }
                 }
 
@@ -899,7 +900,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
             double[] xData = new double[0];
             double[] yData = new double[0];
-            Color[] colorData = new Color[0];
+            string[] colorData = new string[0];
             string strSQL = "";
 
             // 'Retrieve only Drilling data i.e. with drilling rig states only
@@ -1130,7 +1131,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 RM objRoadMap = RM.load(ref objRequest.objDataService, RMID, ref lastError);
                 if (objRoadMap is object)
                 {
-                    objSeries.RMColor = objRoadMap.RMColor;
+                    objSeries.RMColor = ColorTranslator.ToHtml(objRoadMap.RMColor);
+                    
                     if (objRoadMap.RoadmapEntries.Count > 0)
                     {
 
@@ -2177,6 +2179,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                                 string wellName = VuMaxDR.Data.Objects.Well.loadObject(ref objDataService, strWellID, ref lastError).name;
                                 
                                 objNewSeries.SeriesName = wellName + "-" + objNewSeries.SeriesName;
+                                
 
                                 TimeLog objOffsetTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref objDataService, strWellID);
 
@@ -2610,16 +2613,17 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         {
             try
             {
-                IntervalColors.Add(1, Color.Blue);
-                IntervalColors.Add(2, Color.FromArgb(4, 186, 255));
-                IntervalColors.Add(3, Color.FromArgb(4, 255, 255));
-                IntervalColors.Add(4, Color.FromArgb(12, 248, 153));
-                IntervalColors.Add(5, Color.FromArgb(141, 233, 3));
-                IntervalColors.Add(6, Color.FromArgb(121, 185, 51));
-                IntervalColors.Add(7, Color.FromArgb(188, 185, 48));
-                IntervalColors.Add(8, Color.FromArgb(255, 128, 0));
-                IntervalColors.Add(9, Color.FromArgb(211, 95, 24));
-                IntervalColors.Add(10, Color.FromArgb(255, 0, 0));
+                IntervalColors.Add(1, "Blue");
+                IntervalColors.Add(2, ColorTranslator.ToHtml(Color.FromArgb(4, 186, 255)));
+                IntervalColors.Add(3, ColorTranslator.ToHtml( Color.FromArgb(4, 255, 255)));
+                IntervalColors.Add(4, ColorTranslator.ToHtml( Color.FromArgb(12, 248, 153)));
+                IntervalColors.Add(5, ColorTranslator.ToHtml(Color.FromArgb(141, 233, 3)));
+                IntervalColors.Add(6, ColorTranslator.ToHtml( Color.FromArgb(121, 185, 51)));
+                IntervalColors.Add(7, ColorTranslator.ToHtml(Color.FromArgb(188, 185, 48)));
+                IntervalColors.Add(8, ColorTranslator.ToHtml( Color.FromArgb(255, 128, 0)));
+                IntervalColors.Add(9, ColorTranslator.ToHtml(Color.FromArgb(211, 95, 24)));
+                IntervalColors.Add(10, ColorTranslator.ToHtml(Color.FromArgb(255, 0, 0)));
+                
             }
             catch (Exception ex)
             {
@@ -2673,16 +2677,17 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             try
             {
                 objSummary.objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref objSummary.objRequest.objDataService, objSummary.wellID);
-                objSummary.IntervalColors.Add(1, Color.Blue);
-                objSummary.IntervalColors.Add(2, Color.FromArgb(4, 186, 255));
-                objSummary.IntervalColors.Add(3, Color.FromArgb(4, 255, 255));
-                objSummary.IntervalColors.Add(4, Color.FromArgb(12, 248, 153));
-                objSummary.IntervalColors.Add(5, Color.FromArgb(141, 233, 3));
-                objSummary.IntervalColors.Add(6, Color.FromArgb(121, 185, 51));
-                objSummary.IntervalColors.Add(7, Color.FromArgb(188, 185, 48));
-                objSummary.IntervalColors.Add(8, Color.FromArgb(255, 128, 0));
-                objSummary.IntervalColors.Add(9, Color.FromArgb(211, 95, 24));
-                objSummary.IntervalColors.Add(10, Color.FromArgb(255, 0, 0));
+                objSummary.IntervalColors.Add(1, "Blue");
+                objSummary.IntervalColors.Add(2,  ColorTranslator.ToHtml(Color.FromArgb(4, 186, 255)));
+                objSummary.IntervalColors.Add(3,  ColorTranslator.ToHtml(Color.FromArgb(4, 255, 255)));
+                objSummary.IntervalColors.Add(4, ColorTranslator.ToHtml(Color.FromArgb(12, 248, 153)));
+                objSummary.IntervalColors.Add(5, ColorTranslator.ToHtml(Color.FromArgb(141, 233, 3)));
+                objSummary.IntervalColors.Add(6, ColorTranslator.ToHtml(Color.FromArgb(121, 185, 51)));
+                objSummary.IntervalColors.Add(7, ColorTranslator.ToHtml(Color.FromArgb(188, 185, 48)));
+                objSummary.IntervalColors.Add(8, ColorTranslator.ToHtml(Color.FromArgb(255, 128, 0)));
+                objSummary.IntervalColors.Add(9, ColorTranslator.ToHtml(Color.FromArgb(211, 95, 24)));
+                objSummary.IntervalColors.Add(10, ColorTranslator.ToHtml(Color.FromArgb(255, 0, 0)));
+                
 
                 DataTable objData = objSummary.objRequest.objDataService.getTable("SELECT * FROM VMX_GDS_TEMPLATES WHERE TEMPLATE_ID='" + objSummary.SummaryPlotID + "'");
 
@@ -2755,7 +2760,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objItem.grpFilter = (string)DataService.checkNull(objRow["GRP_FILTER"], "");
                     objItem.grpColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["GRP_COLOR"], 0))));
 
-                    objItem.Color1 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], 0))));
+                    objItem.Color1 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], "red" ))));
                     objItem.Color2 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], 0))));
                     objItem.Color3 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], 0))));
                     objItem.Color4 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], 0))));
@@ -2793,7 +2798,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objItem.StackedBars = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["STACKED_BARS"], 0)) == 1, true, false);
 
                     objItem.ShowRoadMap = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_ROADMAP"], 0)) == 1, true, false);
-                    objItem.RoadMapColor = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_COLOR"], 0)));
+                    objItem.RoadMapColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_COLOR"], "red"))));
+
 
                     objItem.RoadMapTransparency = Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_TRANS"], 0));
 

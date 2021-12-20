@@ -74,10 +74,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public bool StackedBars = false;
 
         public bool ShowRoadMap = false;
-        public Color RoadMapColor = System.Drawing.Color.Black;
+        public string RoadMapColor = "Black";
         public int RoadMapTransparency = 60;
 
-        public Color RMColor = Color.Yellow;
+        public string RMColor = "Yellow";
 
         public int DisplayOrder = 0;
 
@@ -89,7 +89,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         
         public double[] yDataBuffer;
         
-        public Color[] colorBuffer;
+        public String[] colorBuffer;
         
         public string[] labelBuffer;
        
