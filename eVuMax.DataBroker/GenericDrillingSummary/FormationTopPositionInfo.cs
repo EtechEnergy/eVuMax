@@ -12,7 +12,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public string TopID = "";
         public string TopName = "";
         public double BottomPosition = 0;
-        public Color TopColor = Color.Black;
+        public string TopColor = "red";
         public double Depth = 0;
     }
 }

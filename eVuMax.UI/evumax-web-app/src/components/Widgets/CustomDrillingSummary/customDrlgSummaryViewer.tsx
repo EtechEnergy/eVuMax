@@ -94,7 +94,8 @@ export default class customDrlgSummaryViewer extends Component {
         .then((res) => {
 
           const objData = JSON.parse(res.data.Response);
-
+          console.log(objData);
+          
           if (objData != null || objData != "") {
             let _data = Object.values(objData);
             this.wellName = res.data.Category;

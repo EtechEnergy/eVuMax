@@ -54,7 +54,7 @@ export class PointSeries {
 
                         let rotateAngle: number = 0;
                         // Add the point
-                            debugger;
+                            
                         switch (objSeries.PointStyle) {
                             case pointStyle.DownTriangle:
                                 rotateAngle = 180;

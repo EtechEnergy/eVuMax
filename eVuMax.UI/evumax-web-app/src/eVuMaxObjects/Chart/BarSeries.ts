@@ -458,7 +458,8 @@ export class BarSeries {
             objHorizontalAxisScaleRef(lx) +
             objHorizontalAxisScaleRef.bandwidth() / 2 -
             barWidth / 2;
-
+          debugger;
+          
           this.ChartRef.SVGRect.append("g")
             .attr("class", seriesIds[s])
             .attr("id", seriesIds[s] + "--" + s.toString())

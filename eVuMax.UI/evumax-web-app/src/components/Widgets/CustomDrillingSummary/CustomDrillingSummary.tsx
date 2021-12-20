@@ -15,6 +15,8 @@ import DataSelector_ from "../../Common/DataSelector_";
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearchMinus } from "@fortawesome/free-solid-svg-icons";
+import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
+import * as d3 from "d3";
 
 
 
@@ -22,16 +24,18 @@ let _gMod = new GlobalMod();
 
 
 export default function CustomDrillingSummary({ ...props }: any) {
-
-  const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
-
   let objChart: Chart = new Chart(props.parentRef, "SummaryChart");
+  const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
   
   let objSummaryAxisList: any = [];
   let WellName: string = "";
   let objData: any="";
+ 
 
   useEffect(() => {
+    
+
+   
 
     loadSummary();
   }, []);
@@ -56,8 +60,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objParameter = new BrokerParameter("PlotID", props.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
-      objParameter = new BrokerParameter("UserID",_gMod._userId);
-      
+      //objParameter = new BrokerParameter("UserID",_gMod._userId);
+      //PRATH\PRATH
+      objParameter = new BrokerParameter("UserID","PRATH\\PRATH");
+      //alert("User Name Hard Coaded");
+
       objBrokerRequest.Parameters.push(objParameter);
 
       //props.objDataSelector
@@ -106,7 +113,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
           if (res.data.RequestSuccessfull == true) {
             const objData_ = JSON.parse(res.data.Response);
             
-            console.log(objData);
+            console.log(objData_);
+            
 
 
             let warnings: string = res.data.Warnings;
@@ -160,11 +168,15 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objChart = new Chart(props.parentRef, "chart1");
       objChart.ContainerId = "SummaryChart";
+
+      objChart.onAfterSeriesDraw.subscribe((e, i) => {
+        onAfterSeriesDraw(e, i);
+      });
       
-      this.objChart.DataSeries.clear();
-      this.objChart.Axes.clear();
-      this.objChart.createDefaultAxes();
-      this.objChart.updateChart();
+      objChart.DataSeries.clear();
+      objChart.Axes.clear();
+      objChart.createDefaultAxes();
+      objChart.updateChart();
 
       objChart.leftAxis().AutoScale = true;
 
@@ -186,12 +198,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objChart.rightAxis().Visible = false;
       objChart.rightAxis().ShowLabels = false;
+      
 
       // objChart.MarginLeft = 10;
       // objChart.MarginBottom = 10;
       // objChart.MarginTop = 0;
       // objChart.MarginRight = 100;
-
+      
       objChart.initialize();
       
       objChart.reDraw();
@@ -312,6 +325,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   const generateReport = () => {
     try {
 
+     
       
       initializeChart();
 
@@ -511,10 +525,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         
         for (let index = 0; index < SeriesList.length; index++) {
-          // if (index==0){
-          //   continue;
-          // }
-          // alert(index);
+       
           
 
           const objDataSeries: any = SeriesList[index];
@@ -522,16 +533,24 @@ export default function CustomDrillingSummary({ ...props }: any) {
           let objSeries = new DataSeries();
           objSeries.Id = objDataSeries.SeriesID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');// objDataSeries.SeriesID;
           objSeries.Name = objDataSeries.SeriesName;
-          console.log(objSeries.Name);
+          
           
           objSeries.XAxisId = objDataSeries.XColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
           objSeries.YAxisId = objDataSeries.YColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
-          //alert(index + " -" + objSeries.YAxisId);
-
+          
           objSeries.PointSize = objDataSeries.PointWidth;
           let SeriesType: dataSeriesType = dataSeriesType.Line;
           //////alert(objDataSeries.SeriesType);
           objSeries.Color = objDataSeries.LineColor;//Dont change position of this line
+          
+          objSeries.RoadMapTransparency= objDataSeries.RoadMapTransparency;
+          objSeries.RoadMapColor = objDataSeries.RoadMapColor;
+          objSeries.RoadmapDepth= objDataSeries.roadmapDepth;
+          objSeries.RoadmapMin= objDataSeries.roadmapMin;
+          objSeries.RoadmapMax= objDataSeries.roadmapMax;
+
+
+
           switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar
             case 0:
               SeriesType = dataSeriesType.Line;
@@ -575,9 +594,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
           else if (SeriesType == dataSeriesType.Line) {
             objSeries.Color = objDataSeries.LineColor;
           }
-
-
-
 
 
           objSeries.ShowInLegend = true;
@@ -735,6 +751,142 @@ export default function CustomDrillingSummary({ ...props }: any) {
   }
 
 
+const  onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
+    try {
+      //Formation Tops
+      d3.selectAll(".formationTop-" + objChart.Id).remove();
+      d3.selectAll(".formationTopText-" + objChart.Id).remove();
+      
+      let objFormationTops : any = Object.values(objData.allFormationTopsInfo);
+
+       //Bottom axes
+       let arrBottomAxes: Axis[] = Array.from(objChart.Axes.values()).filter(
+        (x) => x.Position == axisPosition.bottom
+      );
+             
+        
+      if (objFormationTops.length > 0 && objData.ShowTops) {
+        
+        for (let index = 0; index < objFormationTops.length; index++) {
+          const depth  =  objFormationTops[index].Depth;
+          
+          if (depth > arrBottomAxes[0].ScaleRef.domain()[1]){
+            break;
+          }
+          let x1 = arrBottomAxes[0].ScaleRef(depth);
+          let x2 = x1;
+          let y1 = objChart.__chartRect.top;
+          let y2 = objChart.__chartRect.bottom;
+
+          let formationTop = objChart.SVGRef.append("g")
+            .attr("class", "formationTop-" + objChart.Id)
+            .append("line")
+            .attr("id", "line-1")
+            .attr("x1", x1)
+            .attr("y1", y1)
+            .attr("x2", x2)
+            .attr("y2", y2)
+            .style("fill", objFormationTops[index].TopColor)
+            .style("stroke",  objFormationTops[index].TopColor);
+
+          objChart.SVGRef.append("g")
+            .attr("class", "formationTopText-" + objChart.Id)
+            .attr(
+              "transform",
+              "translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(-90)"
+            )
+            .append('text')
+            .style('background-color', 'green')
+            .attr('class', 'axis-title')
+
+            .attr('dy', '.75em')
+            .text(objFormationTops[index].TopName);
+        }
+      }
+
+
+      //RoadMap
+      let x1=0;
+      let x2=0;
+      let y1=0;
+      let y2=0;
+
+      if (objData.PlotOrientation==1){ //Vertical
+            //Bottom axes
+            let arrBottomAxes: Axis[] = Array.from(objChart.Axes.values()).filter(
+                (x) => x.Position == axisPosition.bottom);
+
+            for (let index = 0; index < arrBottomAxes.length; index++) {
+              const element = arrBottomAxes[index];
+              //alert(element.Id);
+            }    
+      }else {
+        //Horizontal
+
+        //objCRMColor
+        //RoadMapTransparency
+        debugger;
+          for (let key of objChart.DataSeries.keys()) {
+            let objSeries: DataSeries = objChart.DataSeries.get(key);
+
+            let mnemonicY =objSeries.YAxisId;
+            let objYAxis : Axis = objChart.getAxisByID(mnemonicY);
+            
+            let mnemonicX =objSeries.XAxisId;
+            let objXAxis = objChart.getAxisByID(mnemonicX);
+            
+
+            if (objYAxis.Position== axisPosition.left){
+                  //Left axes
+                  if (objXAxis.Position == axisPosition.bottom){
+                    let startPos = objChart.__chartRect.left;
+
+                    for (let index = 0; index < objSeries.RoadmapDepth.length; index++) {
+                    x1 = startPos;
+                    x2 = objXAxis.ScaleRef(objSeries.RoadmapDepth[index]);
+                    y1 = objYAxis.ScaleRef(objSeries.RoadmapMin[index]);
+                    y2 = objYAxis.ScaleRef(objSeries.RoadmapMax[index]);
+                      //alert(y1 +  " - "+ y2);
+
+                    objChart.SVGRect.append("g")
+                    .attr("class", "RoadMapId-"+mnemonicY)
+                    .attr("id",  "RoadMapId-"+mnemonicY)
+                    .append("rect")
+                    .attr("x", x1)
+                    .attr("y", y1)
+                    .attr("width", (x2-x1))
+                    .attr("height",(y1-y2))
+                    .style("border", "0px solid black")
+                    .style("stroke-width", "20px solid black")
+                    .style("fill", "red"); //objSeries.RoadMapColor
+                    //.style("opacity", objSeries.RoadMapTransparency/100);
+                    //.style("border", "0px solid black")
+                    }
+                    
+                  }
+            }
+
+            if (objYAxis.Position== axisPosition.right){
+                  //Right axes
+                  let arrRightAxes: Axis[] = Array.from(objChart.Axes.values()).filter((x) => x.Position == axisPosition.right);
+
+            }
+          }
+
+             
+
+          
+
+
+      
+
+      }
+
+
+
+    } catch (error) { }
+  };
+  
   return (
     <div>
       

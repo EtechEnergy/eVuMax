@@ -528,7 +528,7 @@ export class DrillingSummary extends Component {
       objROPLine.XAxisId = this.objChart_ROPLine.bottomAxis().Id;
       objROPLine.YAxisId = this.objChart_ROPLine.leftAxis().Id;
       objROPLine.Type = dataSeriesType.Line;
-             
+
 
       //objROPLine.PointStyle = pointStyle.Circle;
       objROPLine.Title = "ROP";
@@ -1868,7 +1868,7 @@ export class DrillingSummary extends Component {
                     id="drlgSummary2"
                     style={{
                       //height: "calc(100vh - 700px)",
-                      height: "calc(30vh)",
+                      height: "calc(35vh)",
                       width: "calc(33vw)",
                       minWidth: "400px",
                       flex: 1,
@@ -1884,7 +1884,7 @@ export class DrillingSummary extends Component {
                     style={{
                       //height: "calc(100vh - 700px)",
                       flex: 1,
-                      height: "calc(30vh)",
+                      height: "calc(35vh)",
                       width: "calc(33vw)",
                       minWidth: "400px",
                       backgroundColor: "transparent",

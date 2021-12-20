@@ -2086,7 +2086,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objPositionInfo.TopID = objTop.TopID;
                     objPositionInfo.TopName = objTop.TopName;
                     objPositionInfo.BottomPosition = objTop.Depth;
-                    objPositionInfo.TopColor = Color.FromArgb(Convert.ToInt32(objTop.Color));
+                    objPositionInfo.TopColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(objTop.Color)));
+                    //ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["LINE_COLOR"], Color.Black.ToArgb()))));
                     objPositionInfo.Depth = objTop.Depth;
                     allFormationTopsInfo.Add(objTop.TopID, objPositionInfo);
                 }

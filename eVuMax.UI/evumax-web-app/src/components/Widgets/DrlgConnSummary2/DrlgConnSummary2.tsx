@@ -461,6 +461,7 @@ class DrlgConnSummary2 extends Component {
         "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
+      
 
       this.AxiosSource = axios.CancelToken.source();
       axios
@@ -474,6 +475,8 @@ class DrlgConnSummary2 extends Component {
         })
         .then((res) => {
           this.objSummaryData = JSON.parse(res.data.Response);
+//          console.log(this.objSummaryData);
+          
           Util.StatusSuccess("Data successfully retrived  ");
           //Warnings Notifications
           let warnings: string = res.data.Warnings;
@@ -775,7 +778,11 @@ class DrlgConnSummary2 extends Component {
                 /> */}
               </div>
 
-              <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
+              
+
+              <div className="float-left">
+                <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
+                </div>
               <div
                 //vimal
                 className="form-inline eVumaxPanelChart"
@@ -787,6 +794,7 @@ class DrlgConnSummary2 extends Component {
                   padding: "3px",
                 }}
               >
+               
                 <label className="connInfo" style={{ marginRight: "20px" }}>
                   ({this.state.ConnCount}) Connections
                 </label>
@@ -813,7 +821,7 @@ class DrlgConnSummary2 extends Component {
                   id="bts_chart"
                   style={{
                     float: "left",
-                    height: "calc( ((100vh - 400px)*30)/100)",
+                    height: "calc(((100vh - 400px)*30)/100)",
                     width: "calc(100vw - 240px )",
                     backgroundColor: "transparent",
                   }}
@@ -849,7 +857,7 @@ class DrlgConnSummary2 extends Component {
                     //viaml
                     paddingTop: "60px",
                     float: "right",
-                    height: "calc( ((100vh - 400px)*30)/100)",
+                    height: "calc(((100vh - 400px)*30)/100)",
                     width: "150px",
                     backgroundColor: "transparent",
                   }}

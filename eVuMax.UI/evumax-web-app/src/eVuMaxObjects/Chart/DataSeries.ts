@@ -74,6 +74,12 @@ export class DataSeries {
 
   PieRadius: number = 50;
 
+  RoadMapTransparency : number=50;//prath
+  RoadMapColor: string =""; //prath
+  RoadmapDepth:  [];
+  RoadmapMax:[];
+  RoadmapMin:[];
+
   //StepLine: boolean = false;
 
   //#region Min/Max Methods
