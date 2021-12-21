@@ -1145,13 +1145,14 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         minDepth = arrRoadMap[0].depth;
                         maxDepth = arrRoadMap[arrRoadMap.Length - 1].depth;
 
-                        Array.Resize(ref roadmapDepth, arrRoadMap.Length - 1);
-                        Array.Resize(ref roadmapMax, arrRoadMap.Length - 1);
-                        Array.Resize(ref roadmapMin, arrRoadMap.Length - 1);
+                        Array.Resize(ref roadmapDepth, arrRoadMap.Length);
+                        Array.Resize(ref roadmapMax, arrRoadMap.Length);
+                        Array.Resize(ref roadmapMin, arrRoadMap.Length);
 
 
 
-                        for (int i = 0, loopTo = arrRoadMap.Length - 1; i < loopTo; i++)
+                        //for (int i = 0, loopTo = arrRoadMap.Length - 1; i < loopTo; i++)
+                        for (int i = 0; i <= arrRoadMap.Length - 1; i++)
                         {
                             //objSeries.roadmapDepth[i] = arrRoadMap[i].depth;
                             //objSeries.roadmapMin[i] = arrRoadMap[i].minValue;
@@ -2695,7 +2696,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 {
                     objSummary.SummaryPlotID = (string)DataService.checkNull(objData.Rows[0]["TEMPLATE_ID"], "");
                     objSummary.SummaryPlotName = (string)DataService.checkNull(objData.Rows[0]["TEMPLATE_NAME"], "");
-                    objSummary.ShowColorAxis = DataService.checkNumericNull(objData.Rows[0]["SHOW_COLOR_AXIS"]) == 0 ? true : false;
+                    objSummary.ShowColorAxis = DataService.checkNumericNull(objData.Rows[0]["SHOW_COLOR_AXIS"]) == 1 ? true : false;
                     objSummary.ColorAxisMnemonic = (string)DataService.checkNull(objData.Rows[0]["COLOR_AXIS_MNEMONIC"], "");
                     objSummary.PlotOrientation = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["ORIENTATION"], 0));
                     objSummary.MultiWell = Global.Iif(Convert.ToInt32(DataService.checkNull(objData.Rows[0]["MULTI_WELL"], 0)) == 1, true, false);
