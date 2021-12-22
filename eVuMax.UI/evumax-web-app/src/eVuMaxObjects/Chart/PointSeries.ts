@@ -79,7 +79,7 @@ export class PointSeries {
                         if (!this.ChartRef.isScrollingInProgress) {
 
                             this.ChartRef.CanvasContext.fillStyle = objSeries.Color;
-                            let px, py;
+                            let px, py,pColor;//Nishant 22-12-2021
                             objSeries.Data.forEach(point => {
                                 this.ChartRef.CanvasContext.beginPath();
 
@@ -90,10 +90,19 @@ export class PointSeries {
                                 }
                                 py = Number(objVerticalAxisScaleRef(point.y));
 
+                                if(objSeries.ColorEach)//Nishant 22-12-2021
+                                {
+                                    pColor=point.color;//Nishant 22-12-2021
+                                }
+                                else
+                                {
+                                    pColor=objSeries.Color;//Nishant 22-12-2021
+                                }
+
                                 //this.ChartRef.CanvasContext.arc(px, py, objSeries.PointSize, 0, 2 * Math.PI, true);
 
 
-                                this.drawPoint(px, py, objSeries);
+                                this.drawPoint(px, py,pColor, objSeries);//Nishant 22-12-2021
 
                                 this.ChartRef.CanvasContext.fill();
                                 this.ChartRef.CanvasContext.closePath();
@@ -190,7 +199,7 @@ export class PointSeries {
                         } else {
                             //While scrolling
                             this.ChartRef.CanvasContext.fillStyle = objSeries.Color;
-                            let px, py;
+                            let px, py,pColor;
                             objSeries.Data.forEach(point => {
                                 this.ChartRef.CanvasContext.beginPath();
                                 if (objHorizontalAxis.IsDateTime) {
@@ -200,8 +209,17 @@ export class PointSeries {
                                 }
                                 py = Number(sy(point.y));
 
+                                if(objSeries.ColorEach)
+                                {
+                                    pColor=point.color;
+                                }
+                                else
+                                {
+                                    pColor=objSeries.Color;
+                                }
+
                                 //this.ChartRef.CanvasContext.arc(px, py, objSeries.PointSize, 0, 2 * Math.PI, true);
-                                this.drawPoint(px, py, objSeries);
+                                this.drawPoint(px, py,pColor, objSeries);//Nishant 22-12-2021
 
                                 this.ChartRef.CanvasContext.fill();
                                 this.ChartRef.CanvasContext.closePath();
@@ -267,8 +285,11 @@ export class PointSeries {
         } catch (error) { }
     }
 
-    drawPoint = (px, py, objSeries) => {
+    //drawPoint = (px, py, objSeries) => {
+        drawPoint = (px, py,pColor, objSeries) => {
         try {
+            
+            this.ChartRef.CanvasContext.fillStyle = pColor; //Nishant 22-12-2021
             let pointSize = 0;
 
             switch (objSeries.PointStyle) {
