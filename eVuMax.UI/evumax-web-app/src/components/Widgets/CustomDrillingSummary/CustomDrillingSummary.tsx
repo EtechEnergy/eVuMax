@@ -822,18 +822,15 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
     for (let key of objChart.DataSeries.keys()) {
       let objSeries: DataSeries = objChart.DataSeries.get(key);
-      //  if (objSeries.YAxisId !="RPM"){
-      //     break;
-      //  }
+     
 
       if (objSeries.ShowRoadMap) {
 
-        if (objSeries.RoadmapDepth.length > 0) {
-          let TransPercent = 65;
-          let actualTransParency = 255 - (TransPercent * 2.55);
-          let highlightColor = objSeries.RoadMapColor;
-        }
-
+        // if (objSeries.RoadmapDepth.length > 0) {
+        //   let TransPercent = 65;
+        //   let actualTransParency = 255 - (TransPercent * 2.55);
+        //   let highlightColor = objSeries.RoadMapColor;
+        // }
 
         let x0 = 0;
         let x1 = 0;
@@ -842,7 +839,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         let currentDepth = 0;
         let prevDepth = 0;
-
 
         if (objData.PlotOrientation == 0) {//horizontal
 
@@ -902,8 +898,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
             } else {//tested on false case
               y1 = objYAxis.ScaleRef(objSeries.RoadmapMin[i]);
               y0 = objYAxis.ScaleRef(objSeries.RoadmapMax[i]);
-
-
             }
 
 
@@ -923,8 +917,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               y1 = objChart.__chartRect.top;
             }
 
-
-
+            
 
             objChart.SVGRect.append("g")
               .attr("class", "RoadMapId-" + mnemonicY)
@@ -942,6 +935,103 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
           }
+        }else{
+          //Vertical Plot (Untested)
+          for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
+            if (i > 0) {
+              currentDepth = objSeries.RoadmapDepth[i];
+              prevDepth = objSeries.RoadmapDepth[i - 1];
+            } else {
+
+              currentDepth = objSeries.RoadmapDepth[i];
+              prevDepth = 0
+            }
+
+            let mnemonicY = objSeries.YAxisId;
+            let objYAxis: Axis = objChart.getAxisByID(mnemonicY);
+
+            let mnemonicX = objSeries.XAxisId;
+            let objXAxis = objChart.getAxisByID(mnemonicX);
+
+
+            if (objYAxis.Inverted) {
+              y1 = objXAxis.ScaleRef(prevDepth);
+              y0 = objXAxis.ScaleRef(currentDepth);
+            } else {
+              y1 = objXAxis.ScaleRef(currentDepth);
+              y0 = objXAxis.ScaleRef(prevDepth);
+            }
+
+        //     If y0 > objChartSeries.CustomVertAxis.IEndPos Then
+        //     y0 = objChartSeries.CustomVertAxis.IEndPos
+        // End If
+
+
+            if (y0 > objChart.__chartRect.bottom) {
+              y0 = objChart.__chartRect.bottom;
+            }
+
+            if (y0 < objChart.__chartRect.top) {
+              y0 = objChart.__chartRect.top;
+            }
+
+
+            if (y1 > objChart.__chartRect.bottom) {
+              y1 = objChart.__chartRect.bottom;
+            }
+
+
+            if (y1 < objChart.__chartRect.top) {
+              y1 = objChart.__chartRect.top;
+            }
+
+
+            // Xaxies cordinate from left to right (top means 0 & bottom is max)
+
+            if (objXAxis.Inverted) {
+              x1 = objXAxis.ScaleRef(objSeries.RoadmapMax[i]);
+              x0 = objXAxis.ScaleRef(objSeries.RoadmapMin[i]);
+
+            } else {//tested on false case
+              x1 = objXAxis.ScaleRef(objSeries.RoadmapMin[i]);
+              x0 = objXAxis.ScaleRef(objSeries.RoadmapMax[i]);
+            }
+
+
+            if (x0 > objChart.__chartRect.right) {
+              x0 = objChart.__chartRect.right;
+            }
+
+            if (x0 < objChart.__chartRect.left) {
+              x0 = objChart.__chartRect.left;
+            }
+
+            if (x1 > objChart.__chartRect.right) {
+              x1 = objChart.__chartRect.right;
+            }
+
+            if (x1 < objChart.__chartRect.left) {
+              x1 = objChart.__chartRect.left;
+            }
+
+
+            
+            //Need to verify ??
+            objChart.SVGRect.append("g")
+              .attr("class", "RoadMapId-" + mnemonicX)
+              .attr("id", "RoadMapId-" + mnemonicX)
+              .append("rect")
+              .attr("x", x0)
+              .attr("y", y0)
+              .attr("width", (x1 - x0))
+              .attr("height", (y1 - y0))
+              .style("border", "0px solid black")
+              .style("stroke-width", "20px solid black")
+              .style("fill", objSeries.RoadMapColor)  //
+              .style("opacity", objSeries.RoadMapTransparency / 100);
+          }
+          //=====
+
         }
 
       }
@@ -949,20 +1039,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
     }
 
     //
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
