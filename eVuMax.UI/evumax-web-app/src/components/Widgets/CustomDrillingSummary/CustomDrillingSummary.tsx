@@ -562,7 +562,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
               SeriesType = dataSeriesType.Point;
               objSeries.Color = objDataSeries.PointColor;
 
-
               break;
             case 2:
               SeriesType = dataSeriesType.Area;
@@ -624,12 +623,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
               }
 
               objVal.y = objDataSeries.yDataBuffer[i];
+
               objSeries.Data.push(objVal);
 
             }
 
-            formatSeries(objSeries, objDataSeries);
-            debugger;
             if (objDataSeries.Visible) {
               objChart.DataSeries.set(objSeries.Id, objSeries);
             }
@@ -755,257 +753,382 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
   }
 
-  //Nishant to Plot Heat Map for Point Series
-  const formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
-    try {
-      debugger;
-      if (paramDataSeries.ColorPointsAsColumn) {
-        paramSeries.ColorEach = true;
-
-        for (let index = 0; index < paramDataSeries.colorBuffer.length; index++) {
-          paramSeries.Data[index].color = paramDataSeries.colorBuffer[index]
-        }
-
-      }
-      //return "";
-      // Dim doColorCode As Boolean = True
-
-      // If Not objSeries.ColorPointsAsColumn Then
-      //     doColorCode = False
-      // End If
-
-      // If Not objSeries.hasColorData Then
-      //     doColorCode = False
-      // End If
-
-      // If doColorCode Then
-      //     Me.ColorEach = True
-
-      //     For i As Integer = 0 To objSeries.colorBuffer.Length - 1
-
-      //         Me.Colors(i) = objSeries.colorBuffer(i)
-
-      //     Next
-
-      // Else
-      //     Me.ColorEach = False
-      // End If
-
-
-
-    } catch (error) {
-
-    }
-  }
-  //********************* */
 
   const onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
-    try {
-      //Formation Tops
-      d3.selectAll(".formationTop-" + objChart.Id).remove();
-      d3.selectAll(".formationTopText-" + objChart.Id).remove();
 
-      let objFormationTops: any = Object.values(objData.allFormationTopsInfo);
+    //Formation Tops
+    d3.selectAll(".formationTop-" + objChart.Id).remove();
+    d3.selectAll(".formationTopText-" + objChart.Id).remove();
 
-      //Bottom axes
-      let arrBottomAxes: Axis[] = Array.from(objChart.Axes.values()).filter(
-        (x) => x.Position == axisPosition.bottom
-      );
+    let objFormationTops: any = Object.values(objData.allFormationTopsInfo);
+
+    //Bottom axes
+    let arrBottomAxes: Axis[] = Array.from(objChart.Axes.values()).filter(
+      (x) => x.Position == axisPosition.bottom
+    );
 
 
-      if (objFormationTops.length > 0 && objData.ShowTops) {
+    if (objFormationTops.length > 0 && objData.ShowTops) {
 
-        for (let index = 0; index < objFormationTops.length; index++) {
-          const depth = objFormationTops[index].Depth;
+      for (let index = 0; index < objFormationTops.length; index++) {
+        const depth = objFormationTops[index].Depth;
 
-          if (depth > arrBottomAxes[0].ScaleRef.domain()[1]) {
-            break;
-          }
-          let x1 = arrBottomAxes[0].ScaleRef(depth);
-          let x2 = x1;
-          let y1 = objChart.__chartRect.top;
-          let y2 = objChart.__chartRect.bottom;
-
-          let formationTop = objChart.SVGRef.append("g")
-            .attr("class", "formationTop-" + objChart.Id)
-            .append("line")
-            .attr("id", "line-1")
-            .attr("x1", x1)
-            .attr("y1", y1)
-            .attr("x2", x2)
-            .attr("y2", y2)
-            .style("fill", objFormationTops[index].TopColor)
-            .style("stroke", objFormationTops[index].TopColor);
-
-          objChart.SVGRef.append("g")
-            .attr("class", "formationTopText-" + objChart.Id)
-            .attr(
-              "transform",
-              "translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(-90)"
-            )
-            .append('text')
-            .style('background-color', 'green')
-            .attr('class', 'axis-title')
-
-            .attr('dy', '.75em')
-            .text(objFormationTops[index].TopName);
+        if (depth > arrBottomAxes[0].ScaleRef.domain()[1]) {
+          break;
         }
-      }
+        let x1 = arrBottomAxes[0].ScaleRef(depth);
+        let x2 = x1;
+        let y1 = objChart.__chartRect.top;
+        let y2 = objChart.__chartRect.bottom;
 
-
-      //RoadMap
-      let x1 = 0;
-      let x2 = 0;
-      let y1 = 0;
-      let y2 = 0;
-
-
-
-      //objCRMColor
-      //RoadMapTransparency
-      debugger;
-      // for (let key of objChart.DataSeries.keys()) {
-      //   let objSeries: DataSeries = objChart.DataSeries.get(key);
-
-
-
-
-      // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      //Axis Color
-      debugger;
-
-      d3.selectAll(".ColorAxis-").remove();
-      d3.selectAll(".ColroAxisId-").remove();
-      d3.selectAll(".ColorAxisLine-").remove();
-      d3.selectAll(".ColroAxisLineId-").remove();
-
-
-      if (objData.ShowColorAxis == false) {
-        return;
-      }
-
-      let Intervals: number = 10;
-      let x1_: number = (objChart.Width - 100);
-      let x2_: number = (x1_ + 10);
-      let y1_: number = ((topAxisCount * 35) + objChart.MarginTop);
-      let y2_: number = (objChart.Height - objChart.MarginBottom);
-      let TotalHeight: number = (y2_ - y1_);
-      let SectionHeight: number = (TotalHeight / Intervals);
-      let rStartY: number = y1_;
-
-
-
-
-      for (let j = Intervals; j >= 1; j--) {
-        //let objBrush: System.Drawing.SolidBrush = new System.Drawing.SolidBrush(IntervalColors(i));
-        //g.FillRectangle(objBrush, x1, rStartY, (x2 - x1), SectionHeight);
-
-        try {
-          objChart.SVGRect.append("g")
-            .attr("class", "ColorAxis-" + j)
-            .attr("id", "ColroAxisId-" + j)
-            .append("rect")
-            .attr("x", x1_)
-            .attr("y", rStartY)
-            .attr("width", (x2_ - x1_))
-            .attr("height", SectionHeight)
-            //.style("border", "1px solid black")
-            //.style("stroke-width", "20px solid " + objData.IntervalColors[j])
-            .style("fill", objData.IntervalColors[j]);
-
-          rStartY = (rStartY + SectionHeight);
-        } catch (error) {
-
-        }
-
-      }
-
-      let startY: number = (y2_ - 1);
-      let startX: number = x2_;
-      let depthStart: number = objData.colorColStart;
-      let depthInterval: number = Math.round(((objData.colorColEnd - objData.colorColStart) / Intervals));
-      for (let j: number = 1; j <= Intervals + 1; j++) {
-        //g.Line(startX, startY, (startX + 5), startY);
-
-        objChart.SVGRect.append("g")
-          .attr("class", "ColorAxisLine-" + j)
-          .attr("id", "ColroAxisLineId-" + j)
+        let formationTop = objChart.SVGRef.append("g")
+          .attr("class", "formationTop-" + objChart.Id)
           .append("line")
-          .attr("x1", startX)
-          .attr("y1", rStartY)
-          .attr("x2", (startX + 5))
-          .attr("y2", startY)
-          .style("fill", objData.IntervalColors[i]);
+          .attr("id", "line-1")
+          .attr("x1", x1)
+          .attr("y1", y1)
+          .attr("x2", x2)
+          .attr("y2", y2)
+          .style("fill", objFormationTops[index].TopColor)
+          .style("stroke", objFormationTops[index].TopColor);
+
+        objChart.SVGRef.append("g")
+          .attr("class", "formationTopText-" + objChart.Id)
+          .attr(
+            "transform",
+            "translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(-90)"
+          )
+          .append('text')
+          .style('background-color', 'green')
+          .attr('class', 'axis-title')
+
+          .attr('dy', '.75em')
+          .text(objFormationTops[index].TopName);
+      }
+    }
 
 
-        //g.TextOut((startX + (5 + 5)), (startY - 8), Math.Round(depthStart).ToString);
-        objChart.SVGRect.append("g")
-          .append("text")
-          .attr("x", (startX + (5 + 5)))
-          .attr("y", (startY - 8))
-          .attr("dy", ".35em")
-          .text(Math.round(depthStart).toString());
+    //
+    //RoadMap
+    let x1 = 0;
+    let x2 = 0;
+    let y1 = 0;
+    let y2 = 0;
 
-        depthStart = (depthStart + depthInterval);
-        startY = (startY - SectionHeight);
+
+
+    //objCRMColor
+    //RoadMapTransparency
+
+    for (let key of objChart.DataSeries.keys()) {
+      let objSeries: DataSeries = objChart.DataSeries.get(key);
+     
+
+      if (objSeries.ShowRoadMap) {
+
+        // if (objSeries.RoadmapDepth.length > 0) {
+        //   let TransPercent = 65;
+        //   let actualTransParency = 255 - (TransPercent * 2.55);
+        //   let highlightColor = objSeries.RoadMapColor;
+        // }
+
+        let x0 = 0;
+        let x1 = 0;
+        let y0 = 0;
+        let y1 = 0;
+
+        let currentDepth = 0;
+        let prevDepth = 0;
+
+        if (objData.PlotOrientation == 0) {//horizontal
+
+          for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
+            if (i > 0) {
+              currentDepth = objSeries.RoadmapDepth[i];
+              prevDepth = objSeries.RoadmapDepth[i - 1];
+            } else {
+
+              currentDepth = objSeries.RoadmapDepth[i];
+              prevDepth = 0
+            }
+
+            let mnemonicY = objSeries.YAxisId;
+            let objYAxis: Axis = objChart.getAxisByID(mnemonicY);
+
+            let mnemonicX = objSeries.XAxisId;
+            let objXAxis = objChart.getAxisByID(mnemonicX);
+
+            if (objXAxis.Inverted) {
+              x1 = objXAxis.ScaleRef(prevDepth);
+              x0 = objXAxis.ScaleRef(currentDepth);
+            } else {
+              x1 = objXAxis.ScaleRef(currentDepth);
+              x0 = objXAxis.ScaleRef(prevDepth);
+            }
+
+
+            if (x0 > objChart.__chartRect.right) {
+              x0 = objChart.__chartRect.right;
+            }
+
+            if (x0 < objChart.__chartRect.left) {
+              x0 = objChart.__chartRect.left;
+            }
+
+
+            if (x1 > objChart.__chartRect.right) {
+              x1 = objChart.__chartRect.right;
+            }
+
+
+            if (x1 < objChart.__chartRect.left) {
+              x1 = objChart.__chartRect.left;
+            }
+
+
+            // yaxies cordinate from top to bottom (top means 0 & bottom is max)
+
+            if (objYAxis.Inverted) {
+              y1 = objYAxis.ScaleRef(objSeries.RoadmapMax[i]);
+              y0 = objYAxis.ScaleRef(objSeries.RoadmapMin[i]);
+
+            } else {//tested on false case
+              y1 = objYAxis.ScaleRef(objSeries.RoadmapMin[i]);
+              y0 = objYAxis.ScaleRef(objSeries.RoadmapMax[i]);
+            }
+
+
+            if (y0 > objChart.__chartRect.bottom) {
+              y0 = objChart.__chartRect.bottom;
+            }
+
+            if (y0 < objChart.__chartRect.top) {
+              y0 = objChart.__chartRect.top;
+            }
+
+            if (y1 > objChart.__chartRect.bottom) {
+              y1 = objChart.__chartRect.bottom;
+            }
+
+            if (y1 < objChart.__chartRect.top) {
+              y1 = objChart.__chartRect.top;
+            }
+
+            
+
+            objChart.SVGRect.append("g")
+              .attr("class", "RoadMapId-" + mnemonicY)
+              .attr("id", "RoadMapId-" + mnemonicY)
+              .append("rect")
+              .attr("x", x0)
+              .attr("y", y0)
+              .attr("width", (x1 - x0))
+              .attr("height", (y1 - y0))
+              .style("border", "0px solid black")
+              .style("stroke-width", "20px solid black")
+              .style("fill", objSeries.RoadMapColor)  //
+              .style("opacity", objSeries.RoadMapTransparency / 100);
+
+
+
+          }
+        }else{
+          //Vertical Plot (Untested)
+          
+          for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
+            if (i > 0) {
+              currentDepth = objSeries.RoadmapDepth[i];
+              prevDepth = objSeries.RoadmapDepth[i - 1];
+            } else {
+
+              currentDepth = objSeries.RoadmapDepth[i];
+              prevDepth = 0
+            }
+
+            let mnemonicY = objSeries.YAxisId;
+            let objYAxis: Axis = objChart.getAxisByID(mnemonicY);
+
+            let mnemonicX = objSeries.XAxisId;
+            let objXAxis = objChart.getAxisByID(mnemonicX);
+
+
+            if (objYAxis.Inverted) {
+              y1 = objXAxis.ScaleRef(prevDepth);
+              y0 = objXAxis.ScaleRef(currentDepth);
+            } else {
+              y1 = objXAxis.ScaleRef(currentDepth);
+              y0 = objXAxis.ScaleRef(prevDepth);
+            }
+
+        //     If y0 > objChartSeries.CustomVertAxis.IEndPos Then
+        //     y0 = objChartSeries.CustomVertAxis.IEndPos
+        // End If
+
+
+            if (y0 > objChart.__chartRect.bottom) {
+              y0 = objChart.__chartRect.bottom;
+            }
+
+            if (y0 < objChart.__chartRect.top) {
+              y0 = objChart.__chartRect.top;
+            }
+
+
+            if (y1 > objChart.__chartRect.bottom) {
+              y1 = objChart.__chartRect.bottom;
+            }
+
+
+            if (y1 < objChart.__chartRect.top) {
+              y1 = objChart.__chartRect.top;
+            }
+
+
+            // Xaxies cordinate from left to right (top means 0 & bottom is max)
+
+            if (objXAxis.Inverted) {
+              x1 = objXAxis.ScaleRef(objSeries.RoadmapMax[i]);
+              x0 = objXAxis.ScaleRef(objSeries.RoadmapMin[i]);
+
+            } else {//tested on false case
+              x1 = objXAxis.ScaleRef(objSeries.RoadmapMin[i]);
+              x0 = objXAxis.ScaleRef(objSeries.RoadmapMax[i]);
+            }
+
+
+            if (x0 > objChart.__chartRect.right) {
+              x0 = objChart.__chartRect.right;
+            }
+
+            if (x0 < objChart.__chartRect.left) {
+              x0 = objChart.__chartRect.left;
+            }
+
+            if (x1 > objChart.__chartRect.right) {
+              x1 = objChart.__chartRect.right;
+            }
+
+            if (x1 < objChart.__chartRect.left) {
+              x1 = objChart.__chartRect.left;
+            }
+
+
+            
+            //Need to verify ??
+            objChart.SVGRect.append("g")
+              .attr("class", "RoadMapId-" + mnemonicX)
+              .attr("id", "RoadMapId-" + mnemonicX)
+              .append("rect")
+              .attr("x", x0)
+              .attr("y", y0)
+              .attr("width", (x1 - x0))
+              .attr("height", (y1 - y0))
+              .style("border", "0px solid black")
+              .style("stroke-width", "20px solid black")
+              .style("fill", objSeries.RoadMapColor)  //
+              .style("opacity", objSeries.RoadMapTransparency / 100);
+          }
+          //=====
+
+        }
+
       }
 
-      // objFont = new Steema.TeeChart.Drawing.ChartFont();
-      // objFont.Name = "Arial";
-      // objFont.Size = 10;
-      // objFont.Color = Color.Black;
-      // objFont.Bold = true;
-      // g.Font = objFont;
-      let textWidth: number = 100;// objChart.SVGRect.g.TextWidth(objData.ColorAxisMnemonic);
-      let totalWidth: number = (y2_ - y1_);
-      let startPoint: number = ((totalWidth - textWidth) / 2);
-      //g.RotateLabel((startX + (5 + (5 + 40))), (y2 - startPoint), objData.ColorAxisMnemonic, 90);
-      // objChart.SVGRect.append("g")
-      //   .append("text")
-      //   .attr("x", (startX + (5 + (5 + 40))))
-      //   .attr("y", (y2_ - startPoint))
-      //   .attr("dy", ".35em")
-      //   .attr("font-family", "Arial")
-      //   //.style('fill', 'red')
-      //   .attr("transform", "rotate(90)")
-      //   .text(objData.ColorAxisMnemonic.toString());
+    }
 
-
-
-      objChart.SVGRect.append("g")
-        .append("text")
-        .attr("x", (startX + (5 + (5 + 10))))
-        .attr("y", (y2_ - startPoint))
-        //.attr("dy", ".35em")
-        //.attr("transform", "rotate(90)")
-        .text(objData.ColorAxisMnemonic.toString());
-
-      //******************** */
+    //
 
 
 
 
 
 
-    } catch (error) { }
+    //Heat MAP
+    //Axis Color
+    //
+    // if (objData.ShowColorAxis == false) {
+    //   return;
+    // }
+
+    // let Intervals: number = 10;
+    // let x1_: number = (objChart.Width - 100);
+    // let x2_: number = (x1_ + 10);
+    // let y1_: number = ((topAxisCount * 35) + objChart.MarginTop);
+    // let y2_: number = (objChart.Height - objChart.MarginBottom);
+    // let TotalHeight: number = (y2_ - y1_);
+    // let SectionHeight: number = (TotalHeight / Intervals);
+    // let rStartY: number = y1_;
+
+
+
+
+    // for (let j = Intervals; j >= 1; j--) {
+    //   try {
+    //     objChart.SVGRect.append("g")
+    //       .attr("class", "ColorAxis-" + j)
+    //       .attr("id", "ColroAxisId-" + j)
+    //       .append("rect")
+    //       .attr("x", x1_)
+    //       .attr("y", rStartY)
+    //       .attr("width", (x2_ - x1_))
+    //       .attr("height", SectionHeight)
+    //       .style("border", "0px solid black")
+    //       .style("stroke-width", "20px solid black")
+    //       .style("fill", objData.IntervalColors[j]);
+
+    //     rStartY = (rStartY + SectionHeight);
+    //   } catch (error) {
+    //     alert(error);
+    //   }
+
+    // }
+
+    // let startY: number = (y2_ - 1);
+    // let startX: number = x2_;
+    // let depthStart: number = objData.colorColStart;
+    // let depthInterval: number = Math.round(((objData.colorColEnd - objData.colorColStart) / Intervals));
+    // for (let j: number = 1; j <= Intervals + 1; j++) {
+
+    //   objChart.SVGRect.append("g")
+    //     .attr("class", "ColorAxisLine-" + j)
+    //     .attr("id", "ColroAxisLineId-" + j)
+    //     .append("line")
+    //     .attr("x1", startX)
+    //     .attr("y1", rStartY)
+    //     .attr("x2", (startX + 5))
+    //     .attr("y2", startY)
+    //     .style("fill", objData.IntervalColors[i]);
+
+
+    //   objChart.SVGRect.append("g")
+    //     .append("text")
+    //     .attr("x", (startX + (5 + 5)))
+    //     .attr("y", (startY - 8))
+    //     .attr("dy", ".35em")
+    //     .text(Math.round(depthStart).toString() + "-Nis");
+
+    //   depthStart = (depthStart + depthInterval);
+    //   startY = (startY - SectionHeight);
+    // }
+
+    // let textWidth: number = 100;// objChart.SVGRect.g.TextWidth(objData.ColorAxisMnemonic);
+    // let totalWidth: number = (y2_ - y1_);
+    // let startPoint: number = ((totalWidth - textWidth) / 2);
+
+    // objChart.SVGRect.append("g")
+    //   .append("text")
+    //   .attr("x", (startX + (5 + (5 + 40))))
+    //   .attr("y", (y2_ - startPoint))
+    //   .attr("dy", ".35em")
+    //   .attr("transform", "rotate(90)")
+    //   .text(objData.ColorAxisMnemonic.toString());
+
+    //******************** */
+
+
+
+
+
   };
 
   return (
@@ -1037,6 +1160,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           width: "100%",
           height: "calc(65vh)",
           backgroundColor: "transparent",
+          // float: "right",
           marginLeft: "10px",
         }}
       ></div>

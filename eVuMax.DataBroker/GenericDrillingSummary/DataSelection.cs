@@ -1711,10 +1711,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         objCurve.Visible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["VISIBLE"], 0)) == 1, true, false);
                         objCurve.IgnoreNegative = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["IGNORE_NEGATIVE"], 0)) == 1, true, false);
                         objCurve.Color1 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], getRandomColorName().ToString())));
-                        objCurve.Color2 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], "Orange")));
-                        objCurve.Color3 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], "Orange")));
-                        objCurve.Color4 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], "Orange")));
-                        objCurve.Color5 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR5"], "Orange")));
+                        objCurve.Color2 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], getRandomColorName().ToString())));
+                        objCurve.Color3 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], getRandomColorName().ToString())));
+                        objCurve.Color4 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], getRandomColorName().ToString())));
+                        objCurve.Color5 = Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR5"], getRandomColorName().ToString())));
                         objCurve.DisplayOrder = Convert.ToInt32(DataService.checkNull(objRow["DISPLAY_ORDER"], 0));
 
                         if (!logCurves.ContainsKey(objCurve.Mnemonic))

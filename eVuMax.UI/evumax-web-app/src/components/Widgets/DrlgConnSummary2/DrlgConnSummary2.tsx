@@ -1684,6 +1684,7 @@ class DrlgConnSummary2 extends Component {
       objBTS.Color = "#00E5FF"; //1089ff
       objBTS.XAxisId = this.objBTSChart.bottomAxis().Id;
       objBTS.YAxisId = this.objBTSChart.leftAxis().Id;
+      objBTS.ColorEach = true;
       this.objBTSChart.DataSeries.set(objBTS.Id, objBTS);
 
       let objSTS = new DataSeries();
@@ -1703,6 +1704,7 @@ class DrlgConnSummary2 extends Component {
       objSTB.Title = "Slips To Bottom";
       objSTB.Type = dataSeriesType.Bar;
       objSTB.Color = "#FFEB3B"; //ec0101
+      objSTB.ColorEach = true;
       objSTB.XAxisId = this.objSTBChart.bottomAxis().Id;
       objSTB.YAxisId = this.objSTBChart.leftAxis().Id;
       this.objSTBChart.DataSeries.set(objSTB.Id, objSTB);
@@ -1730,16 +1732,6 @@ class DrlgConnSummary2 extends Component {
         let objSTSPoint = new ChartData();
         objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
-
-        if (this.state.HighlightDayNight) {
-          if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
-            objSTSPoint.color = "#00E676"; //ffc93c
-          } else {
-            objSTSPoint.color = "#bcbab8";
-          }
-        } else {
-          objSTSPoint.color = "#00E676"; //ffc93c
-        }
         objSTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         objSTS.Data.push(objSTSPoint);
 
@@ -1749,6 +1741,27 @@ class DrlgConnSummary2 extends Component {
         objSTBPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_BOTTOM"];
         objSTBPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         objSTB.Data.push(objSTBPoint);
+
+        this.objBTSChart.isNightConnection=false;
+        this.objSTSChart.isNightConnection=false;
+        this.objSTBChart.isNightConnection=false;
+
+        if (this.state.HighlightDayNight) {
+          if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
+            objSTSPoint.color = "#00E676"; //ffc93c
+            objBTSPoint.color = "#00E5FF"; //ffc93c
+            objSTBPoint.color = "#00E676"; //ffc93c
+          } else {
+            //objSTSPoint.color = "#bcbab8";
+            objBTSPoint.color = "black";
+            objSTSPoint.color = "black";
+            objSTBPoint.color = "black";
+
+            this.objBTSChart.isNightConnection=true;
+            this.objSTSChart.isNightConnection=true;
+            this.objSTBChart.isNightConnection=true;
+          }
+        }
 
         if (this.objSummaryData.connData[i]["STS_COST"]) {
           let objCost2Point = new ChartData();

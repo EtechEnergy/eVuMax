@@ -528,8 +528,6 @@ export class DrillingSummary extends Component {
       objROPLine.XAxisId = this.objChart_ROPLine.bottomAxis().Id;
       objROPLine.YAxisId = this.objChart_ROPLine.leftAxis().Id;
       objROPLine.Type = dataSeriesType.Line;
-
-
       //objROPLine.PointStyle = pointStyle.Circle;
       objROPLine.Title = "ROP";
       objROPLine.Color = "#1762ad";

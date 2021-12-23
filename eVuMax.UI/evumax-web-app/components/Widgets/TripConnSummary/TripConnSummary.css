@@ -1,0 +1,108 @@
+.summaryTitle {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1.2em;
+  color: #3282b8;
+}
+
+.summaryLabel {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: #f6ab6c;
+  padding: 3px;
+  border: 1px solid;
+  border-radius: 5px;
+  width: 80px;
+  text-align: right;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.summaryLabelHeader {
+  width: 150px !important;
+  text-align: right;
+}
+
+.summaryLabelHeader-long {
+  width: 150px;
+  text-align: right;
+}
+
+.summaryGroupHeader {
+  color: #3282b8;
+  
+}
+
+.leftPadding {
+  margin-left: 20px;
+}
+
+.leftPadding-small {
+  margin-left: 20px;
+}
+
+.k-switch-container {
+  height: 1em !important;
+}
+
+.k-switch-handle {
+  border-radius: 1.6em;
+  width: 2em;
+  height: 2em;
+  border-width: 0;
+  border-style: solid;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  left: 0;
+  transition: left 200ms ease-out 0s;
+}
+
+.k-switch {
+  border-radius: 2em;
+  width: 2em !important;
+}
+/* vimal */
+.form-inline label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 0;
+}
+.form-inline .form-group {
+  padding-bottom: 5px;
+}
+
+.form-group {
+  margin-bottom: 0px !important;
+}
+@media (max-width: 400px) {
+  .summaryLabelHeader {
+    text-align: left !important;
+  }
+  .summaryLabelHeader-long {
+    text-align: left !important;
+  }
+}
+@media (min-width: 1850px) and (max-width: 1920px) {
+  .Table_Grid {
+    width: 60% !important;
+    max-width: 1500px !important;
+  }
+}
+@media (min-width: 1725px) and (max-width: 1850px) {
+  .Table_Grid {
+    width: 65% !important;
+    max-width: 1100px !important;
+  }
+}
+@media (min-width: 1300px) and (max-width: 1725px) {
+  .Table_Grid {
+    width: 90% !important;
+    max-width: 1100px !important;
+  }
+}
+@media (min-width: 540px) and (max-width: 1300px) {
+  .Table_Grid {
+    width: 95% !important;
+    max-width: 1800px !important;
+  }
+}

@@ -1613,20 +1613,17 @@ class TripConnSummary extends Component {
 
         objSTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
 
-
+        this.objChart.isNightConnection=false;
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00e676";
           } else {
-            objSTSPoint.color = "#bcbab8";
+            objSTSPoint.color = "black"; //"#bcbab8";
+            this.objChart.isNightConnection=true;
           }
-        } else {
-          objSTSPoint.color = "#00e676";
         }
 
         objSTS.Data.push(objSTSPoint);
-
-
 
         let objCostPoint = new ChartData();
 

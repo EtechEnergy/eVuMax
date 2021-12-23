@@ -25,7 +25,6 @@ import GlobalMod from "../../objects/global";
 import BrokerRequest from "../../broker/BrokerRequest";
 import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
-import { Util } from "../../Models/eVuMax";
 
 
 
@@ -50,13 +49,10 @@ const switchRoutes = (
 );
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
-let version = "";
 export class Dashboard extends React.Component<Props> {
-
   state = {
     //showPopupMenu: true
     showAboutDialog: false,
-    Version: ""
 
   }
 
@@ -66,10 +62,6 @@ export class Dashboard extends React.Component<Props> {
       await this.loadTheme();
     }
 
-  }
-
-  componentDidMount(): void {
-    this.getVersion();
   }
 
 
@@ -237,51 +229,6 @@ export class Dashboard extends React.Component<Props> {
     // window.location.href = '/dashboard/manage-theme';
   };
 
-  getVersion = () => {
-    try {
-
-      axios
-        .get(_gMod._getVersion, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=UTF-8",
-          },
-        })
-        .then((res) => {
-
-
-          let version = res.data[0];
-          let DateTime = res.data[1];
-
-
-          //Version: res.data[0] + "("+ res.data[1] + ")"
-          this.setState({
-            Version: res.data[0]
-
-          })
-
-        })
-        .catch((error) => {
-          Util.StatusError(error.message);
-
-          if (error.response) {
-            // return <CustomeNotifications Key="success" Icon={false}  />
-            // this.errors(error.response.message);
-          } else if (error.request) {
-            // return <CustomeNotifications Key="success" Icon={false}  />
-            console.log("error.request");
-          } else {
-            // return <CustomeNotifications Key="success" Icon={false}  />
-            console.log("Error", error);
-          }
-          // return <CustomeNotifications Key="success" Icon={false}  />
-          console.log("rejected");
-
-        });
-    } catch (error) { }
-
-
-  }
   render() {
     return (
       <div>
@@ -437,7 +384,7 @@ export class Dashboard extends React.Component<Props> {
           </div>
           <div id="" className="ml-auto mr-3 float-right d-inline-flex">
             <div id="PoweredByText" className="pt-1 pb-1 pl-1 hidenOverFlow ">
-              Powered by <img src={ETECHLogo} style={{ height: "15px" }} className="img-fluid ml-1 mr-1" /> Etech &copy; {new Date().getFullYear()} Build Version {this.state.Version}
+              Powered by <img src={ETECHLogo} style={{ height: "15px" }} className="img-fluid ml-1 mr-1" /> Etech &copy; {new Date().getFullYear()}
             </div>
             {/* Powered by  <img src={ETECHLogo} style={{height:"15px"}} className="img-fluid ml-2 mr-2 mt-2" /> ETECH <p>&copy; {new Date().getFullYear()}  </p> */}
           </div>
