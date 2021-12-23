@@ -852,9 +852,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
               prevDepth = 0
             }
 
-
-
-
             let mnemonicY = objSeries.YAxisId;
             let objYAxis: Axis = objChart.getAxisByID(mnemonicY);
 
@@ -937,6 +934,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           }
         }else{
           //Vertical Plot (Untested)
+          
           for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
             if (i > 0) {
               currentDepth = objSeries.RoadmapDepth[i];

@@ -998,7 +998,11 @@ class DrlgConnSummary extends Component {
                     backgroundColor: "transparent",
                     display: "inline-block",
                   }}
-                ></div>
+                >
+                  
+                </div>
+
+          
 
                 {/* <DataSelectorOriginal {...this} /> */}
                 <div className="Data">
@@ -1904,12 +1908,14 @@ class DrlgConnSummary extends Component {
         let objSTSPoint = new ChartData();
         objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
-
+        
+        this.objChart.isNightConnection=true;
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00E676";
           } else {
-            objSTSPoint.color = "#bcbab8";
+            objSTSPoint.color = "black";// "#bcbab8";
+            this.objChart.isNightConnection=true;
           }
         } else {
           objSTSPoint.color = "#00E676";

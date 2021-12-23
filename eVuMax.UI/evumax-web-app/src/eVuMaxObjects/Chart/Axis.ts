@@ -313,8 +313,7 @@ export class Axis {
       this.__axisWidth = titleSpace + labelSpace + 10;
       
     } catch (error) {
-      alert(error + " - " + this.Id);
-
+      //alert(error + " - " + this.Id);
      }
   };
 

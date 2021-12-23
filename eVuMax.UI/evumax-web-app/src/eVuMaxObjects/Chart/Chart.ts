@@ -138,6 +138,8 @@ export class Chart {
 
   __lastButtonClicked: number = 0;
 
+  isNightConnection= false;
+
   //Tooltip element reference
   __toolTip: any;
 
@@ -770,7 +772,7 @@ export class Chart {
     try {
       //now we have to arrange the axes
       //Left axes
-      debugger;
+    
       let arrLeftAxes: Axis[] = Array.from(this.Axes.values()).filter(
         (x) => x.Position == axisPosition.left
       );
@@ -1833,6 +1835,7 @@ export class Chart {
 
   drawLegend = () => {
     try {
+      
       $("#" + this.ContainerId + "_legend").empty();
 
       if (this.ShowLegend == false) {
@@ -1859,11 +1862,42 @@ export class Chart {
               objSeries.Title +
               "</p></div> ";
             legendString = legendString + "</div>";
+
+            
           }
         }
       }
 
+
+      //
+      if (this.isNightConnection){
+      legendString =
+      legendString.trim() + '<div style="display:inline-block;text-al">';
+      legendString =
+      legendString +
+      '<div style="margin-left:3px;display:inline-block;background-color:#000000;height:15px;width:15px"><p style="color:transparent">x</p> </div> ';
+      legendString =
+      legendString +
+      '<div style="white-space:nowrap; overflow: hidden;margin-left:3px;margin-right:3px;display:inline-block;background-color:transparent;height:18px;width:auto"><p style="white-space:nowrap; overflow: hidden; text-overflow: ellipsis;max-width:200px;text-align:left" >' +
+      "Night" +
+      "</p></div> ";
+      legendString = legendString + "</div>";
+    }
+      //
+      
       $("#" + this.ContainerId + "_legend").html(legendString);
+
+
+
+      //$("#" + this.ContainerId + "_legend").html(legendString);
+
+//        var node = document.createElement("div");                 // Create a <li> node
+//  var textnode = document.createTextNode("Black");         // Create a text node
+//  node.appendChild(textnode);                              // Append the text to <li>
+
+// document.getElementById(("#" + this.ContainerId + "_legend")).appendChild(node);  
+
+
       //added by prath
       if (this.LegendPosition === 3 || this.LegendPosition === 4) {
         $("#" + this.ContainerId + "_legend").css("marginLeft", this.__chartRect.LeftEdge);
