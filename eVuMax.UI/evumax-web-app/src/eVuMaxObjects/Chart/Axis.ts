@@ -79,7 +79,7 @@ export class Axis {
   DateIncrementVal: number = 1;
   NumberPrecision: number = 2;
   PaddingMin: number = 0; //Axis Padding Min %
-  PaddingMax: number = 0; //Axis Padding Max %
+  PaddingMax: number = 10; //Axis Padding Max %
   Labels: string[] = [];
   LabelStyle: axisLabelStyle = axisLabelStyle.values;
   NumericFormat: string = "00";

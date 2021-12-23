@@ -95,7 +95,23 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         //    this.objRequest = paramRequest;
         //}
 
+        public Color getRandomColorName()
+        {
+            try
+            {
+                Random randomGen = new Random();
+                KnownColor[] names = (KnownColor[])Enum.GetValues(typeof(KnownColor));
+                KnownColor randomColorName = names[randomGen.Next(names.Length)];
+                Color randomColor = Color.FromKnownColor(randomColorName);
 
+                return randomColor;
+            }
+            catch (Exception ex)
+            {
+
+                return Color.Black;
+            }
+        }
 
 
 
@@ -2136,7 +2152,11 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             {
                 Dictionary<string, string> existingOffsetWells = new Dictionary<string, string>();
 
-                startOver:
+                
+
+
+
+            startOver:
 
                 //foreach (gdsDataSeries objSeries in dataSeries.Values)
                 foreach (gdsDataSeries objSeries in localSeries.Values)
@@ -2171,6 +2191,14 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         // '## Time Log *****************************************************
                         foreach (gdsDataSeries objSeries in dataSeries.Values)
                         {
+                            //objSeries.Color1 = ColorTranslator.ToHtml(  getRandomColorName());
+                            //objSeries.Color2 = ColorTranslator.ToHtml(getRandomColorName());
+                            //objSeries.Color3 = ColorTranslator.ToHtml(getRandomColorName());
+                            //objSeries.Color4 = ColorTranslator.ToHtml(getRandomColorName());
+                            //objSeries.Color5 = ColorTranslator.ToHtml(getRandomColorName());
+
+
+
                             if (objSeries.DataSource == 0)
                             {
                                 gdsDataSeries objNewSeries = objSeries.getCopy();

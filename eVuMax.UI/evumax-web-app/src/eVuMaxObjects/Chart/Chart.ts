@@ -770,7 +770,7 @@ export class Chart {
     try {
       //now we have to arrange the axes
       //Left axes
-      
+      debugger;
       let arrLeftAxes: Axis[] = Array.from(this.Axes.values()).filter(
         (x) => x.Position == axisPosition.left
       );
