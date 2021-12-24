@@ -1909,7 +1909,7 @@ class DrlgConnSummary extends Component {
         objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
         
-        this.objChart.isNightConnection=true;
+        this.objChart.isNightConnection=false;
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00E676";
@@ -1917,9 +1917,7 @@ class DrlgConnSummary extends Component {
             objSTSPoint.color = "black";// "#bcbab8";
             this.objChart.isNightConnection=true;
           }
-        } else {
-          objSTSPoint.color = "#00E676";
-        }
+        } 
 
         objSTS.Data.push(objSTSPoint);
 

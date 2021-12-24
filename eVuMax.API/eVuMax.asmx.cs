@@ -138,7 +138,6 @@ namespace eVuMax.API
                         if (objDataService != null)
                         {
                             objDataService.closeConnection();
-
                         }
 
                         //JsonConvert.SerializeObject(objResponse);

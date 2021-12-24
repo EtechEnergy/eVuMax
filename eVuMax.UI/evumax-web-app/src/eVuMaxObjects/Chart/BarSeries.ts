@@ -101,7 +101,7 @@ export class BarSeries {
 
         if (objSeries.Type == dataSeriesType.Bar && objSeries.XAxisId == XScaleId ) {
           try {
-            debugger;
+            
             $("." + objSeries.Id).remove();
           } catch (error) { }
         }

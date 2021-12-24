@@ -343,10 +343,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
         objChart.MarginLeft = 10;
         objChart.MarginBottom = 10;
         objChart.MarginTop = 0;
-        objChart.MarginRight = 10;
+        objChart.MarginRight = 100;
 
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
+        
 
 
         for (let index = 0; index < axisList.length; index++) {
@@ -627,7 +628,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
               objSeries.Data.push(objVal);
 
             }
-
+            
+            if (objDataSeries.ColorPointsAsColumn) {
+              
+              formatSeries(objSeries, objDataSeries); //Nishant
+            }
             if (objDataSeries.Visible) {
               objChart.DataSeries.set(objSeries.Id, objSeries);
             }
@@ -754,6 +759,29 @@ export default function CustomDrillingSummary({ ...props }: any) {
   }
 
 
+
+  //Nishant to Plot Heat Map for Point Series
+  const formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
+    try {
+      
+      if (paramDataSeries.ColorPointsAsColumn) {
+        //alert(paramSeries.Name);
+        paramSeries.ColorEach = true;
+
+        for (let index = 0; index < paramDataSeries.colorBuffer.length; index++) {
+          paramSeries.Data[index].color = paramDataSeries.colorBuffer[index]
+        }
+
+      }
+
+
+
+    } catch (error) {
+
+    }
+  }
+  //********************* */
+
   const onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
 
     //Formation Tops
@@ -822,7 +850,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
     for (let key of objChart.DataSeries.keys()) {
       let objSeries: DataSeries = objChart.DataSeries.get(key);
-     
+
 
       if (objSeries.ShowRoadMap) {
 
@@ -914,7 +942,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               y1 = objChart.__chartRect.top;
             }
 
-            
+
 
             objChart.SVGRect.append("g")
               .attr("class", "RoadMapId-" + mnemonicY)
@@ -932,9 +960,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
           }
-        }else{
+        } else {
           //Vertical Plot (Untested)
-          
+
           for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
             if (i > 0) {
               currentDepth = objSeries.RoadmapDepth[i];
@@ -960,9 +988,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
               y0 = objXAxis.ScaleRef(prevDepth);
             }
 
-        //     If y0 > objChartSeries.CustomVertAxis.IEndPos Then
-        //     y0 = objChartSeries.CustomVertAxis.IEndPos
-        // End If
+            //     If y0 > objChartSeries.CustomVertAxis.IEndPos Then
+            //     y0 = objChartSeries.CustomVertAxis.IEndPos
+            // End If
 
 
             if (y0 > objChart.__chartRect.bottom) {
@@ -1013,7 +1041,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
             }
 
 
-            
+
             //Need to verify ??
             objChart.SVGRect.append("g")
               .attr("class", "RoadMapId-" + mnemonicX)
@@ -1042,16 +1070,24 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-
-    //Heat MAP
+    //Heat Map logic
     //Axis Color
-    //
+    
+
+    
+    // d3.selectAll(".ColorAxis").remove();
+    // d3.selectAll(".ColorAxisLine").remove();
+    // d3.selectAll(".ColorAxisLineText").remove();
+    
+
+
     // if (objData.ShowColorAxis == false) {
     //   return;
     // }
+    
 
     // let Intervals: number = 10;
-    // let x1_: number = (objChart.Width - 100);
+    // let x1_: number =  objChart.__chartRect.right; //(objChart.Width - 100);
     // let x2_: number = (x1_ + 10);
     // let y1_: number = ((topAxisCount * 35) + objChart.MarginTop);
     // let y2_: number = (objChart.Height - objChart.MarginBottom);
@@ -1061,24 +1097,31 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-
     // for (let j = Intervals; j >= 1; j--) {
-    //   try {
-    //     objChart.SVGRect.append("g")
-    //       .attr("class", "ColorAxis-" + j)
-    //       .attr("id", "ColroAxisId-" + j)
-    //       .append("rect")
-    //       .attr("x", x1_)
-    //       .attr("y", rStartY)
-    //       .attr("width", (x2_ - x1_))
-    //       .attr("height", SectionHeight)
-    //       .style("border", "0px solid black")
-    //       .style("stroke-width", "20px solid black")
-    //       .style("fill", objData.IntervalColors[j]);
+    //        try {
+    //     // objChart.SVGRect.append("g")
+    //     //   .attr("class", "ColorAxis")
+    //     //   .append("rect")
+    //     //   .attr("x", x1_)
+    //     //   .attr("y", rStartY)
+    //     //   .attr("width", (x2_ - x1_))
+    //     //   .attr("height", SectionHeight)
+    //     //   .style("fill", "red");
+    //       //.style("fill", objData.IntervalColors[j]);
+
+
+    //       objChart.SVGRef.append("g").append("text")
+    //       .attr("x", this.Width / 2)
+    //       .attr("y", 20)
+    //       .attr("class", "title")
+    //       // .attr("font-size", "10pt")
+    //       // .attr("fill", "red")
+    //       .style("text-anchor", "middle")
+    //       .text("PRATHMESH SHAH");
 
     //     rStartY = (rStartY + SectionHeight);
     //   } catch (error) {
-    //     alert(error);
+
     //   }
 
     // }
@@ -1088,10 +1131,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
     // let depthStart: number = objData.colorColStart;
     // let depthInterval: number = Math.round(((objData.colorColEnd - objData.colorColStart) / Intervals));
     // for (let j: number = 1; j <= Intervals + 1; j++) {
+      
 
     //   objChart.SVGRect.append("g")
-    //     .attr("class", "ColorAxisLine-" + j)
-    //     .attr("id", "ColroAxisLineId-" + j)
+    //     .attr("class", "ColorAxisLine" )
     //     .append("line")
     //     .attr("x1", startX)
     //     .attr("y1", rStartY)
@@ -1100,27 +1143,30 @@ export default function CustomDrillingSummary({ ...props }: any) {
     //     .style("fill", objData.IntervalColors[i]);
 
 
+      
     //   objChart.SVGRect.append("g")
     //     .append("text")
+    //     .attr("class", "ColorAxisLineText" )
     //     .attr("x", (startX + (5 + 5)))
     //     .attr("y", (startY - 8))
     //     .attr("dy", ".35em")
-    //     .text(Math.round(depthStart).toString() + "-Nis");
+    //     .text(Math.round(depthStart).toString());
 
     //   depthStart = (depthStart + depthInterval);
     //   startY = (startY - SectionHeight);
     // }
-
+    
     // let textWidth: number = 100;// objChart.SVGRect.g.TextWidth(objData.ColorAxisMnemonic);
     // let totalWidth: number = (y2_ - y1_);
     // let startPoint: number = ((totalWidth - textWidth) / 2);
+    
 
     // objChart.SVGRect.append("g")
     //   .append("text")
-    //   .attr("x", (startX + (5 + (5 + 40))))
+    //   .attr("x", (startX + (5 + (5 + 10))))
     //   .attr("y", (y2_ - startPoint))
-    //   .attr("dy", ".35em")
-    //   .attr("transform", "rotate(90)")
+    //   //.attr("dy", ".35em")
+    //   //.attr("transform", "rotate(90)")
     //   .text(objData.ColorAxisMnemonic.toString());
 
     //******************** */
