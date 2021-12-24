@@ -34,7 +34,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
   useEffect(() => {
 
-
+    window.addEventListener("resize", loadSummary);
 
 
     loadSummary();
@@ -342,12 +342,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         objChart.MarginLeft = 10;
         objChart.MarginBottom = 10;
-        objChart.MarginTop = 0;
-        objChart.MarginRight = 100;
+        objChart.MarginTop = 20;
+        objChart.MarginRight = 90;
 
         let axisList = Object.values(objData.Axis);
         axisList = getOrdersAxisListByPosition(0);//Left
-        
+
 
 
         for (let index = 0; index < axisList.length; index++) {
@@ -549,6 +549,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objSeries.ShowRoadMap = objDataSeries.ShowRoadMap;
           objSeries.RoadMapTransparency = objDataSeries.RoadMapTransparency;
           objSeries.RoadMapColor = objDataSeries.RoadMapColor;
+          objSeries.RMColor = objDataSeries.RMColor;
           objSeries.RoadmapDepth = objDataSeries.roadmapDepth;
           objSeries.RoadmapMin = objDataSeries.roadmapMin;
           objSeries.RoadmapMax = objDataSeries.roadmapMax;
@@ -628,9 +629,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
               objSeries.Data.push(objVal);
 
             }
-            
+
             if (objDataSeries.ColorPointsAsColumn) {
-              
+
               formatSeries(objSeries, objDataSeries); //Nishant
             }
             if (objDataSeries.Visible) {
@@ -763,7 +764,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   //Nishant to Plot Heat Map for Point Series
   const formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
     try {
-      
+
       if (paramDataSeries.ColorPointsAsColumn) {
         //alert(paramSeries.Name);
         paramSeries.ColorEach = true;
@@ -838,6 +839,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
     //
     //RoadMap
+
+
+    d3.selectAll(".RoadMap").remove();
     let x1 = 0;
     let x2 = 0;
     let y1 = 0;
@@ -954,7 +958,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               .attr("height", (y1 - y0))
               .style("border", "0px solid black")
               .style("stroke-width", "20px solid black")
-              .style("fill", objSeries.RoadMapColor)  //
+              .style("fill", objSeries.RMColor)  //
               .style("opacity", objSeries.RoadMapTransparency / 100);
 
 
@@ -1044,7 +1048,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
             //Need to verify ??
             objChart.SVGRect.append("g")
-              .attr("class", "RoadMapId-" + mnemonicX)
+              .attr("class", "RoadMap")
               .attr("id", "RoadMapId-" + mnemonicX)
               .append("rect")
               .attr("x", x0)
@@ -1053,7 +1057,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               .attr("height", (y1 - y0))
               .style("border", "0px solid black")
               .style("stroke-width", "20px solid black")
-              .style("fill", objSeries.RoadMapColor)  //
+              .style("fill", objSeries.RMColor) // objSeries.RoadMapColor)  //
               .style("opacity", objSeries.RoadMapTransparency / 100);
           }
           //=====
@@ -1071,103 +1075,83 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
     //Heat Map logic
-    //Axis Color
-    
-
-    
-    // d3.selectAll(".ColorAxis").remove();
-    // d3.selectAll(".ColorAxisLine").remove();
-    // d3.selectAll(".ColorAxisLineText").remove();
-    
 
 
-    // if (objData.ShowColorAxis == false) {
-    //   return;
-    // }
-    
 
-    // let Intervals: number = 10;
-    // let x1_: number =  objChart.__chartRect.right; //(objChart.Width - 100);
-    // let x2_: number = (x1_ + 10);
+    d3.selectAll(".HeatMap").remove();
+    d3.selectAll(".ColorAxisLineText").remove();
+
+    if (objData.ShowColorAxis == false) {
+      return;
+    }
+
+
+
+    let Intervals: number = 10;
+    let x1_: number = objChart.Width - 80;
+    let x2_: number = (x1_ + 10);
     // let y1_: number = ((topAxisCount * 35) + objChart.MarginTop);
     // let y2_: number = (objChart.Height - objChart.MarginBottom);
-    // let TotalHeight: number = (y2_ - y1_);
-    // let SectionHeight: number = (TotalHeight / Intervals);
-    // let rStartY: number = y1_;
+
+    let y1_: number = objChart.__chartRect.top + 5;
+    let y2_: number = objChart.__chartRect.bottom - 5;
+    // let y2_: number = (objChart.Height - objChart.MarginBottom);
+    let TotalHeight: number = (y2_ - y1_) - 10;
+    let SectionHeight: number = (TotalHeight / Intervals);
+    let rStartY: number = y1_;
+
+    for (let j = Intervals; j > 0; j--) {
+      try {
+
+        objChart.SVGRef.append("g")
+          .append('rect')
+          .attr("class", "HeatMap") //custom axis title from base color  01-10-2020
+          .attr('x', x1_)
+          .attr('y', rStartY)
+          .attr('width', (x2_ - x1_))
+          .attr('height', SectionHeight)
+          .attr('stroke', 'black')
+          .attr('fill', objData.IntervalColors[j]);
+
+
+        let val = (objData.IntervalList[j].maxValue).toFixed(0);
 
 
 
-    // for (let j = Intervals; j >= 1; j--) {
-    //        try {
-    //     // objChart.SVGRect.append("g")
-    //     //   .attr("class", "ColorAxis")
-    //     //   .append("rect")
-    //     //   .attr("x", x1_)
-    //     //   .attr("y", rStartY)
-    //     //   .attr("width", (x2_ - x1_))
-    //     //   .attr("height", SectionHeight)
-    //     //   .style("fill", "red");
-    //       //.style("fill", objData.IntervalColors[j]);
+        objChart.SVGRef.append("g").append("text")
+          .attr("x", x2_ + 2)
+          .attr("y", rStartY + 2)
+          .attr("class", "title")
+          // .attr("font-size", "10pt")
+          // .attr("fill", "red")
+          //.style("text-anchor", "middle")
+          .text(val);
 
 
-    //       objChart.SVGRef.append("g").append("text")
-    //       .attr("x", this.Width / 2)
-    //       .attr("y", 20)
-    //       .attr("class", "title")
-    //       // .attr("font-size", "10pt")
-    //       // .attr("fill", "red")
-    //       .style("text-anchor", "middle")
-    //       .text("PRATHMESH SHAH");
 
-    //     rStartY = (rStartY + SectionHeight);
-    //   } catch (error) {
-
-    //   }
-
-    // }
-
-    // let startY: number = (y2_ - 1);
-    // let startX: number = x2_;
-    // let depthStart: number = objData.colorColStart;
-    // let depthInterval: number = Math.round(((objData.colorColEnd - objData.colorColStart) / Intervals));
-    // for (let j: number = 1; j <= Intervals + 1; j++) {
-      
-
-    //   objChart.SVGRect.append("g")
-    //     .attr("class", "ColorAxisLine" )
-    //     .append("line")
-    //     .attr("x1", startX)
-    //     .attr("y1", rStartY)
-    //     .attr("x2", (startX + 5))
-    //     .attr("y2", startY)
-    //     .style("fill", objData.IntervalColors[i]);
+        if (j == 1) {
+          objChart.SVGRef.append("g").append("text")
+            .attr("x", x2_ + 2)
+            .attr("y", (rStartY + SectionHeight))
+            .attr("class", "title")
+            // .attr("font-size", "10pt")
+            // .attr("fill", "red")
+            //.style("text-anchor", "middle")
+            .text((objData.IntervalList[j].minValue).toFixed(0));
+        }
 
 
-      
-    //   objChart.SVGRect.append("g")
-    //     .append("text")
-    //     .attr("class", "ColorAxisLineText" )
-    //     .attr("x", (startX + (5 + 5)))
-    //     .attr("y", (startY - 8))
-    //     .attr("dy", ".35em")
-    //     .text(Math.round(depthStart).toString());
 
-    //   depthStart = (depthStart + depthInterval);
-    //   startY = (startY - SectionHeight);
-    // }
-    
-    // let textWidth: number = 100;// objChart.SVGRect.g.TextWidth(objData.ColorAxisMnemonic);
-    // let totalWidth: number = (y2_ - y1_);
-    // let startPoint: number = ((totalWidth - textWidth) / 2);
-    
+        rStartY = (rStartY + SectionHeight);
+      } catch (error) {
 
-    // objChart.SVGRect.append("g")
-    //   .append("text")
-    //   .attr("x", (startX + (5 + (5 + 10))))
-    //   .attr("y", (y2_ - startPoint))
-    //   //.attr("dy", ".35em")
-    //   //.attr("transform", "rotate(90)")
-    //   .text(objData.ColorAxisMnemonic.toString());
+      }
+
+
+
+    }
+
+
 
     //******************** */
 
