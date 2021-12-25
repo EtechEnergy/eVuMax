@@ -60,9 +60,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objParameter = new BrokerParameter("PlotID", props.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
-      //objParameter = new BrokerParameter("UserID",_gMod._userId);
+      objParameter = new BrokerParameter("UserID",_gMod._userId);
       //PRATH\PRATH
-      objParameter = new BrokerParameter("UserID", "PRATH\\PRATH");
+      //objParameter = new BrokerParameter("UserID", "PRATH\\PRATH");
       //alert("User Name Hard Coaded");
 
       objBrokerRequest.Parameters.push(objParameter);
