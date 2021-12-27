@@ -1,8 +1,8 @@
-import * as Chart from "../Chart/Chart";
+import * as Chart from "./Chart";
 import * as d3 from "d3";
 import $ from "jquery";
-import { AxisRange, AxisDateRange } from "../Chart/AxisRange";
-import { Axis } from "../Chart/Axis";
+import { AxisRange, AxisDateRange } from "./AxisRange";
+import { Axis } from "./Axis";
 import { min } from "d3";
 import { faUnderline } from "@fortawesome/free-solid-svg-icons";
 import { text } from "@fortawesome/fontawesome-svg-core";
@@ -14,12 +14,13 @@ import { debug } from "console";
 export class AreaSeries {
   //External References
   ChartRef: Chart.Chart;
-  s;
+  
 
   //Draws the series, this will draw vertical bars along with X Axis
   redrawSeries = () => {
     try {
       //Remove existing data
+      
       let xValues = new Array<number>();
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);

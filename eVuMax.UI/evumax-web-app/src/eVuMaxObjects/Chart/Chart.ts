@@ -2077,7 +2077,7 @@ export class Chart {
       let pointSeriesFound: boolean = false;
       let areaSeriesFound: boolean = false;
       let barChartFound: boolean = false;
-
+      
       for (let key of this.DataSeries.keys()) {
 
         if (this.DataSeries.get(key).Type == dataSeriesType.Bar) {
@@ -2104,6 +2104,7 @@ export class Chart {
 
         if (this.DataSeries.get(key).Type == dataSeriesType.Area) {
           areaSeriesFound = true;
+          
         }
       }
 

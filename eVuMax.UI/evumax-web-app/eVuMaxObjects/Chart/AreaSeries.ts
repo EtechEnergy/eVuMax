@@ -14,17 +14,18 @@ import { debug } from "console";
 export class AreaSeries {
   //External References
   ChartRef: Chart.Chart;
-  s;
+
 
   //Draws the series, this will draw vertical bars along with X Axis
   redrawSeries = () => {
     try {
+      
       //Remove existing data
       let xValues = new Array<number>();
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
 
-        if (objSeries.Type == dataSeriesType.Line) {
+        if (objSeries.Type == dataSeriesType.Area) {
           try {
             $("." + objSeries.Id).remove();
           } catch (error) {}
@@ -33,6 +34,7 @@ export class AreaSeries {
 
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
+        
 
         if (objSeries.Type == dataSeriesType.Area) {
           try {
@@ -118,9 +120,9 @@ export class AreaSeries {
             //.curve(d3.curveStepBefore);
 
             //Added by prath on 16-Dec-2021
-
+            
         d3.select("."+ "AreaChart-"+ objSeries.Id).remove();
-            debugger;
+            
         this.ChartRef.SVGRect.append("g")
         .attr("class", "AreaChart-"+ objSeries.Id)
         //.attr("class", objSeries.Id)

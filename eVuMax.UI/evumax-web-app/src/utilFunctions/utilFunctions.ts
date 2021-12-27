@@ -148,7 +148,6 @@ export function getWidgetList() {
 export function launchWidget(interfaceID: string, wellID: string) {
   try {
     if (interfaceID === "ROPSummary") {
-      debugger;
       
       history.push("ROPSummaryPlot/" + wellID);
     }
