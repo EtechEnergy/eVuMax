@@ -1870,7 +1870,10 @@ export class Chart {
 
 
       //
+      debugger;
       if (this.isNightConnection){
+        //alert(this.isNightConnection);
+
       legendString =
       legendString.trim() + '<div style="display:inline-block;text-al">';
       legendString =
