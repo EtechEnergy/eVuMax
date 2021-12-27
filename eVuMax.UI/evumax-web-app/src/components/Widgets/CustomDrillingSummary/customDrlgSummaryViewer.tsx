@@ -272,7 +272,8 @@ updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
               style={{
                 height: "800px",
               }}
-              //data={this.state.grdData}
+              resizable={true}
+              scrollable={"scrollable"}
               selectedField="selected"
               data={this.state.grdData != null ? (this.state.grdData.map((item: any) =>
                 ({ ...item, selected: item.TEMPLATE_ID === this.state.currentPlotID })
@@ -284,7 +285,8 @@ updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
               <GridColumn
                 field="TEMPLATE_NAME"
                 title="Plot Name"
-                width="300px"
+                width="auto"
+                resizable= {true}
               />
               {false && <GridColumn field="TEMPLATE_ID" width="80px" title="Plot Id" />}
               <GridColumn
