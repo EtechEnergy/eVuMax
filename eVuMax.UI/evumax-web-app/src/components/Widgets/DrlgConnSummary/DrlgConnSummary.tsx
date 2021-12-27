@@ -1898,6 +1898,7 @@ class DrlgConnSummary extends Component {
       });
 
       //Fill up the data for data series
+      this.objChart.isNightConnection=false;
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let objBTSPoint = new ChartData();
         objBTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
@@ -1908,8 +1909,9 @@ class DrlgConnSummary extends Component {
         let objSTSPoint = new ChartData();
         objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
+        debugger;
+
         
-        this.objChart.isNightConnection=false;
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00E676";

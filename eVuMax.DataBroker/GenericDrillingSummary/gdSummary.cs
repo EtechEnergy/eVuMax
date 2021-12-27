@@ -2827,7 +2827,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objItem.StackedBars = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["STACKED_BARS"], 0)) == 1, true, false);
 
                     objItem.ShowRoadMap = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["SHOW_ROADMAP"], 0)) == 1, true, false);
-                    objItem.RoadMapColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_COLOR"], "0")))); //if null black color i.e. 0
+                    //objItem.RoadMapColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_COLOR"], "red"))));
+                    objItem.RoadMapColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_COLOR"], 0))));
 
 
                     objItem.RoadMapTransparency = Convert.ToInt32(DataService.checkNull(objRow["ROADMAP_TRANS"], 0));

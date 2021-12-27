@@ -1598,7 +1598,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Labels = [];
 
       //Fill up the data for data series
-
+      this.objChart.isNightConnection=false;
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
 
@@ -1613,7 +1613,7 @@ class TripConnSummary extends Component {
 
         objSTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
 
-        this.objChart.isNightConnection=false;
+        
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00e676";
