@@ -729,6 +729,7 @@ export default class ActiveWell extends React.Component {
 
       //prath
       if (this.state.OpenInterfaceID === "customDrillingSummary") {
+        
         history.push("customDrillingSummary/" + this.state.currentWellID);
       }
     } catch (error) { }

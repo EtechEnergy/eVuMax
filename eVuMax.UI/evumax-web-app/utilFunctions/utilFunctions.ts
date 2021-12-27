@@ -147,6 +147,7 @@ export function getWidgetList() {
 }
 export function launchWidget(interfaceID: string, wellID: string) {
   try {
+    
     if (interfaceID === "ROPSummary") {
       history.push("ROPSummaryPlot/" + wellID);
     }
@@ -185,7 +186,7 @@ export function launchWidget(interfaceID: string, wellID: string) {
     if (interfaceID === "Broomstick") {
       history.push("Broomstick/" + wellID);
     }
-
+    
     if (interfaceID === "customDrlgSummaryViewer") {
       history.push("customDrlgSummaryViewer/" + wellID);
     }

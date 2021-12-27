@@ -204,6 +204,7 @@ export default class WidgetSelector extends React.Component<IProps> {
   };
 
   OpenWidget = (props) => {
+    
 
     utilFunc.launchWidget(props.id, this.currentWellID);
   };

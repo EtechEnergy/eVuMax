@@ -44,6 +44,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   const loadSummary = () => {
     try {
 
+      
       //Axios call API Function with PlotID
 
       let objBrokerRequest = new BrokerRequest();
@@ -109,12 +110,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
           },
         })
         .then((res) => {
-
+          
           if (res.data.RequestSuccessfull == true) {
             const objData_ = JSON.parse(res.data.Response);
 
             console.log(objData_);
-
+            debugger;
 
 
             let warnings: string = res.data.Warnings;

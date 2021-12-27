@@ -118,8 +118,9 @@ export class AreaSeries {
             //.curve(d3.curveStepBefore);
 
             //Added by prath on 16-Dec-2021
-        d3.select("."+ "AreaChart-"+ objSeries.Id).remove();
 
+        d3.select("."+ "AreaChart-"+ objSeries.Id).remove();
+            debugger;
         this.ChartRef.SVGRect.append("g")
         .attr("class", "AreaChart-"+ objSeries.Id)
         //.attr("class", objSeries.Id)

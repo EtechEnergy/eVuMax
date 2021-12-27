@@ -1870,7 +1870,7 @@ export class Chart {
 
 
       //
-      debugger;
+      
       if (this.isNightConnection){
         //alert(this.isNightConnection);
 

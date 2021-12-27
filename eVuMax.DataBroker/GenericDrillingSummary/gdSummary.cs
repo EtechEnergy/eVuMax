@@ -2789,7 +2789,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     objItem.grpFilter = (string)DataService.checkNull(objRow["GRP_FILTER"], "");
                     objItem.grpColor = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["GRP_COLOR"], 0))));
 
-                    objItem.Color1 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], "red" ))));
+                    objItem.Color1 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR1"], 0 ))));
                     objItem.Color2 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR2"], 0))));
                     objItem.Color3 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR3"], 0))));
                     objItem.Color4 = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(DataService.checkNull(objRow["COLOR4"], 0))));
