@@ -559,10 +559,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
           switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar
             case 0:
               SeriesType = dataSeriesType.Line;
+              objSeries.showPointsOnLineSeries = objDataSeries.ShowPoints;
+              objSeries.LineWidth = objDataSeries.LineWidth;
               break;
             case 1:
               SeriesType = dataSeriesType.Point;
               objSeries.Color = objDataSeries.PointColor;
+              
 
               break;
             case 2:
