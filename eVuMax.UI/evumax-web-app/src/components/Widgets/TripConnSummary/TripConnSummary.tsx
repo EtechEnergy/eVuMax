@@ -1613,7 +1613,7 @@ class TripConnSummary extends Component {
 
         objSTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
 
-        
+     
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00e676";

@@ -1720,11 +1720,9 @@ class DrlgConnSummary2 extends Component {
       this.objSTSChart.DataSeries.set(objSTSCost.Id, objSTSCost);
 
       //Fill up the data for data series
-      
       this.objBTSChart.isNightConnection=false;
       this.objSTSChart.isNightConnection=false;
       this.objSTBChart.isNightConnection=false;
-      
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let objBTSPoint = new ChartData();
         objBTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
@@ -1747,6 +1745,7 @@ class DrlgConnSummary2 extends Component {
         objSTBPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
         objSTB.Data.push(objSTBPoint);
 
+      
 
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {

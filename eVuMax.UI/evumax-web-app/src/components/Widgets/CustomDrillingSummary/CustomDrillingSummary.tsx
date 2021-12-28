@@ -44,7 +44,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
   const loadSummary = () => {
     try {
 
-      
       //Axios call API Function with PlotID
 
       let objBrokerRequest = new BrokerRequest();
@@ -62,6 +61,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objParameter = new BrokerParameter("PlotID", props.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
       objParameter = new BrokerParameter("UserID",_gMod._userId);
+      //PRATH\PRATH
+      //objParameter = new BrokerParameter("UserID", "PRATH\\PRATH");
+      //alert("User Name Hard Coaded");
+
       objBrokerRequest.Parameters.push(objParameter);
 
       //props.objDataSelector
@@ -106,12 +109,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
           },
         })
         .then((res) => {
-          
+
           if (res.data.RequestSuccessfull == true) {
             const objData_ = JSON.parse(res.data.Response);
 
             console.log(objData_);
-            
+
 
 
             let warnings: string = res.data.Warnings;
@@ -584,7 +587,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               break;
           }
           objSeries.Type = SeriesType;
-          
+
           objSeries.PointStyle = objDataSeries.PointerStyle;
           //objSeries.Title = WellName + "-" + objDataSeries.SeriesName;
           objSeries.Title = objDataSeries.SeriesName;
