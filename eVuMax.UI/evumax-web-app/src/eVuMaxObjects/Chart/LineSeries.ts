@@ -8,7 +8,7 @@ import { Axis } from "../Chart/Axis";
 import { min } from "d3";
 import { faUnderline } from "@fortawesome/free-solid-svg-icons";
 import { text } from "@fortawesome/fontawesome-svg-core";
-import { DataSeries, dataSeriesType } from "./DataSeries";
+import { DataSeries, dataSeriesType, pointStyle } from "./DataSeries";
 import { ChartData } from "./ChartData";
 import { debug } from "console";
 import moment from "moment";
@@ -17,6 +17,133 @@ import moment from "moment";
 export class LineSeries {
   //External References
   ChartRef: Chart.Chart;
+
+
+  drawPoint = (px, py,pColor, objSeries) => {
+    try {
+        this.ChartRef.CanvasContext.fillStyle = pColor; //Nishant 22-12-2021
+     
+
+        switch (objSeries.PointStyle) {
+            case pointStyle.Circle:
+                this.ChartRef.CanvasContext.arc(px, py, objSeries.PointSize, 0, 2 * Math.PI, true);
+                break;
+            case pointStyle.Diamond:
+                this.ChartRef.CanvasContext.moveTo(px, py);
+                this.ChartRef.CanvasContext.lineTo(px - objSeries.PointWidth / 2, py + objSeries.PointHeight / 2);//left
+                this.ChartRef.CanvasContext.lineTo(px, py + objSeries.PointHeight); //bottom left
+                this.ChartRef.CanvasContext.lineTo(px + objSeries.PointWidth / 2, py + objSeries.PointHeight / 2);// bottom right edge
+                break;
+            case pointStyle.Rectangle:
+                this.ChartRef.CanvasContext.fillRect(px, py, objSeries.PointWidth, objSeries.PointHeight);
+                
+                break;
+            case pointStyle.Star:
+                try {
+                    //triangle
+                    var h = objSeries.PointSize * (Math.sqrt(3) / 2);
+                    this.ChartRef.CanvasContext.save();
+                    this.ChartRef.CanvasContext.translate(px, py);
+                    this.ChartRef.CanvasContext.beginPath();
+                    this.ChartRef.CanvasContext.moveTo(0, -h);
+                    this.ChartRef.CanvasContext.lineTo(-objSeries.PointSize, h);  // line a
+                    this.ChartRef.CanvasContext.lineTo(objSeries.PointSize, h); // line b
+                    this.ChartRef.CanvasContext.lineTo(0, -h);            // line c
+                    this.ChartRef.CanvasContext.fill();
+                    this.ChartRef.CanvasContext.closePath();
+                    this.ChartRef.CanvasContext.restore();
+
+                    //reverse triangle
+
+                    let side = objSeries.PointSize * (-1);
+
+                    h = side * (Math.sqrt(3) / 2);
+                    this.ChartRef.CanvasContext.save();
+                    this.ChartRef.CanvasContext.translate(px, py + objSeries.PointSize / 2);
+                    this.ChartRef.CanvasContext.beginPath();
+                    this.ChartRef.CanvasContext.moveTo(0, -h);
+                    this.ChartRef.CanvasContext.lineTo(-side, h);  // line a
+                    this.ChartRef.CanvasContext.lineTo(side, h); // line b
+                    this.ChartRef.CanvasContext.lineTo(0, -h);            // line c
+                    this.ChartRef.CanvasContext.fill();
+                    this.ChartRef.CanvasContext.restore();
+
+
+
+                } catch (error) {
+
+                }
+
+
+                break;
+            case pointStyle.Triangle:
+                var h = objSeries.PointSize * (Math.sqrt(3) / 2);
+                this.ChartRef.CanvasContext.save();
+                this.ChartRef.CanvasContext.translate(px, py);
+                this.ChartRef.CanvasContext.beginPath();
+                this.ChartRef.CanvasContext.moveTo(0, -h);
+                this.ChartRef.CanvasContext.lineTo(-objSeries.PointSize, h);  // line a
+                this.ChartRef.CanvasContext.lineTo(objSeries.PointSize, h); // line b
+                this.ChartRef.CanvasContext.lineTo(0, -h);            // line c
+                this.ChartRef.CanvasContext.closePath();
+                this.ChartRef.CanvasContext.restore();
+                break;
+            case pointStyle.DownTriangle:
+                var h = objSeries.PointSize * (Math.sqrt(3) / 2);
+                this.ChartRef.CanvasContext.save();
+                this.ChartRef.CanvasContext.translate(px, py);
+                this.ChartRef.CanvasContext.beginPath();
+                this.ChartRef.CanvasContext.rotate(Math.PI);
+                this.ChartRef.CanvasContext.moveTo(0, -h);
+                this.ChartRef.CanvasContext.lineTo(-objSeries.PointSize, h);  // line a
+                this.ChartRef.CanvasContext.lineTo(objSeries.PointSize, h); // line b
+                this.ChartRef.CanvasContext.lineTo(0, -h);            // line c
+                this.ChartRef.CanvasContext.closePath();
+                this.ChartRef.CanvasContext.restore();
+
+
+
+                break;
+            case pointStyle.LeftTriangle : //Wip
+        //    case 10 : //Wip
+                var h = objSeries.PointSize * (Math.sqrt(3) / 2);
+                this.ChartRef.CanvasContext.save();
+                this.ChartRef.CanvasContext.translate(px, py);
+                this.ChartRef.CanvasContext.beginPath();
+                this.ChartRef.CanvasContext.rotate(90 * Math.PI / 180);
+                this.ChartRef.CanvasContext.moveTo(0, -h);
+                this.ChartRef.CanvasContext.lineTo(-objSeries.PointSize, h);  // line a
+                this.ChartRef.CanvasContext.lineTo(objSeries.PointSize, h); // line b
+                this.ChartRef.CanvasContext.lineTo(0, -h);            // line c
+                this.ChartRef.CanvasContext.closePath();
+                this.ChartRef.CanvasContext.restore();
+                break;
+            case pointStyle.RightTriangle : //Wip
+            //case 11 : //Wip
+                var h = objSeries.PointSize * (Math.sqrt(3) / 2);
+                this.ChartRef.CanvasContext.save();
+                this.ChartRef.CanvasContext.translate(px, py);
+                this.ChartRef.CanvasContext.beginPath();
+                this.ChartRef.CanvasContext.rotate(-90 * Math.PI / 180);
+                this.ChartRef.CanvasContext.moveTo(0, -h);
+                this.ChartRef.CanvasContext.lineTo(-objSeries.PointSize, h);  // line a
+                this.ChartRef.CanvasContext.lineTo(objSeries.PointSize, h); // line b
+                this.ChartRef.CanvasContext.lineTo(0, -h);            // line c
+                this.ChartRef.CanvasContext.closePath();
+                this.ChartRef.CanvasContext.restore();
+                break;
+            default:
+                break;
+        }
+
+
+    } catch (error) {
+
+    }
+
+}
+
+
 
   redrawSeries = () => {
     let plotOn: any;
@@ -95,6 +222,7 @@ export class LineSeries {
               dashStyle = "5,2";
             }
 
+           
             // var f = objSeries.Data;
             // if (this.ChartRef.isScrolling) {
             //   f = objSeries.Data.filter((d) => {
@@ -110,6 +238,8 @@ export class LineSeries {
             let sx = this.ChartRef.ScrollingScale.get(objHorizontalAxis.Id); //  this.ChartRef.sxBottom;
             let sy = this.ChartRef.ScrollingScale.get(objVerticalAxis.Id); //.syLeft;
             let line;
+
+          
 
             // Scrolling Disable in case (1) any x/y axis is bandscale (2) for both x/y axes allow scrolling false (while defind axes)
             if ((objHorizontalAxis.bandScale || objVerticalAxis.bandScale) || !(objHorizontalAxis.isAllowScrolling && objVerticalAxis.isAllowScrolling)) {
@@ -185,6 +315,47 @@ export class LineSeries {
                 .attr("stroke-width", objSeries.LineWidth)
                 .attr("stroke-dasharray", dashStyle)
                 .attr("d", line);
+
+
+                //Below Code is for drawing Point on Line 
+                this.ChartRef.CanvasContext.fillStyle = objSeries.Color;
+                
+                let px, py,pColor;//Nishant 28-12-2021
+                
+                objSeries.Data.forEach(point => {
+                  
+                  this.ChartRef.CanvasContext.beginPath();
+
+                    if (objHorizontalAxis.IsDateTime) {
+                        px = Number(objHorizontalAxisScaleRef(point.datetime));
+                    } else {
+                        px = Number(objHorizontalAxisScaleRef(point.x));
+                    }
+                    py = Number(objVerticalAxisScaleRef(point.y));
+
+                    if(objSeries.ColorEach)//Nishant 22-12-2021
+                    {
+                        pColor=point.color;//Nishant 22-12-2021
+                    }
+                    else
+                    {
+                        pColor=objSeries.Color;//Nishant 22-12-2021
+                    }
+                    
+                    this.drawPoint(px, py,pColor, objSeries);//Nishant 22-12-2021
+                    this.ChartRef.CanvasContext.fill();
+                    this.ChartRef.CanvasContext.closePath();
+                    // This will be used in Tooltip in MouseMove event of SVG
+                    point.xPixel = Number(px.toFixed(0));
+                    point.yPixel = Number(py.toFixed(0));
+                    //
+
+                });
+                //*********************************** */
+
+
+
+
             } else {
               // logic ColorEach=false (For vertual immaginary line for CrossHairCursor)
               plotOn

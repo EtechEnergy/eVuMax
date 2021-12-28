@@ -24,7 +24,7 @@ export class AreaSeries {
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
 
-        if (objSeries.Type == dataSeriesType.Line) {
+        if (objSeries.Type == dataSeriesType.Area) {
           try {
             $("." + objSeries.Id).remove();
           } catch (error) {}
