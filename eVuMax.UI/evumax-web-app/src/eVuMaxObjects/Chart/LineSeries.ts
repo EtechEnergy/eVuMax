@@ -317,40 +317,40 @@ export class LineSeries {
                 .attr("d", line);
 
 
-                //Below Code is for drawing Point on Line 
-                this.ChartRef.CanvasContext.fillStyle = objSeries.Color;
+                //Below Code is for drawing Point on Line  (WIP HIGH PRIORITY)
+                // this.ChartRef.CanvasContext.fillStyle = objSeries.Color;
                 
-                let px, py,pColor;//Nishant 28-12-2021
+                // let px, py,pColor;//Nishant 28-12-2021
                 
-                objSeries.Data.forEach(point => {
+                // objSeries.Data.forEach(point => {
                   
-                  this.ChartRef.CanvasContext.beginPath();
+                //   this.ChartRef.CanvasContext.beginPath();
 
-                    if (objHorizontalAxis.IsDateTime) {
-                        px = Number(objHorizontalAxisScaleRef(point.datetime));
-                    } else {
-                        px = Number(objHorizontalAxisScaleRef(point.x));
-                    }
-                    py = Number(objVerticalAxisScaleRef(point.y));
+                //     if (objHorizontalAxis.IsDateTime) {
+                //         px = Number(objHorizontalAxisScaleRef(point.datetime));
+                //     } else {
+                //         px = Number(objHorizontalAxisScaleRef(point.x));
+                //     }
+                //     py = Number(objVerticalAxisScaleRef(point.y));
 
-                    if(objSeries.ColorEach)//Nishant 22-12-2021
-                    {
-                        pColor=point.color;//Nishant 22-12-2021
-                    }
-                    else
-                    {
-                        pColor=objSeries.Color;//Nishant 22-12-2021
-                    }
+                //     if(objSeries.ColorEach)//Nishant 22-12-2021
+                //     {
+                //         pColor=point.color;//Nishant 22-12-2021
+                //     }
+                //     else
+                //     {
+                //         pColor=objSeries.Color;//Nishant 22-12-2021
+                //     }
                     
-                    this.drawPoint(px, py,pColor, objSeries);//Nishant 22-12-2021
-                    this.ChartRef.CanvasContext.fill();
-                    this.ChartRef.CanvasContext.closePath();
-                    // This will be used in Tooltip in MouseMove event of SVG
-                    point.xPixel = Number(px.toFixed(0));
-                    point.yPixel = Number(py.toFixed(0));
-                    //
+                //     this.drawPoint(px, py,pColor, objSeries);//Nishant 22-12-2021
+                //     this.ChartRef.CanvasContext.fill();
+                //     this.ChartRef.CanvasContext.closePath();
+                //     // This will be used in Tooltip in MouseMove event of SVG
+                //     point.xPixel = Number(px.toFixed(0));
+                //     point.yPixel = Number(py.toFixed(0));
+                //     //
 
-                });
+                // });
                 //*********************************** */
 
 
@@ -454,6 +454,46 @@ export class LineSeries {
                   .attr("stroke-width", objSeries.LineWidth); //wip
               }
             }
+
+
+              //Below Code is for drawing Point on Line  (WIP HIGH PRIORITY)
+              if (objSeries.ShowPointsOnLineSeries){
+              this.ChartRef.CanvasContext.fillStyle = objSeries.Color;
+                
+              let px, py,pColor;//Nishant 28-12-2021
+              
+              objSeries.Data.forEach(point => {
+                
+                this.ChartRef.CanvasContext.beginPath();
+
+                  if (objHorizontalAxis.IsDateTime) {
+                      px = Number(objHorizontalAxisScaleRef(point.datetime));
+                  } else {
+                      px = Number(objHorizontalAxisScaleRef(point.x));
+                  }
+                  py = Number(objVerticalAxisScaleRef(point.y));
+
+                  if(objSeries.ColorEach)//Nishant 22-12-2021
+                  {
+                      pColor=point.color;//Nishant 22-12-2021
+                  }
+                  else
+                  {
+                      pColor=objSeries.Color;//Nishant 22-12-2021
+                  }
+                  
+                  this.drawPoint(px, py,pColor, objSeries);//Nishant 22-12-2021
+                  this.ChartRef.CanvasContext.fill();
+                  this.ChartRef.CanvasContext.closePath();
+                  // This will be used in Tooltip in MouseMove event of SVG
+                  point.xPixel = Number(px.toFixed(0));
+                  point.yPixel = Number(py.toFixed(0));
+                  //
+
+              });
+            }
+              //*********************************** */
+
           } catch (error) { }
         }
 
@@ -700,6 +740,13 @@ export class LineSeries {
             //prath code end for Crosshair Cursor
           } catch (error) { }
         }
+
+
+
+
+
+       
+
       }
     } catch (error) { }
   };

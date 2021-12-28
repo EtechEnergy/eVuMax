@@ -274,6 +274,7 @@ updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
               }}
               //data={this.state.grdData}
               selectedField="selected"
+              resizable ={true}
               data={this.state.grdData != null ? (this.state.grdData.map((item: any) =>
                 ({ ...item, selected: item.TEMPLATE_ID === this.state.currentPlotID })
               )) : null}
@@ -285,7 +286,8 @@ updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
                 field="TEMPLATE_NAME"
                 title="Plot Name"
                 width="300px"
-              />
+                resizable={true}
+                              />
               {false && <GridColumn field="TEMPLATE_ID" width="80px" title="Plot Id" />}
               <GridColumn
                 width="50px"

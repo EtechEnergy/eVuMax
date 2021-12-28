@@ -3,7 +3,7 @@ import axios from "axios";
 import { BrokerParameter, BrokerRequest, Util } from "../../../Models/eVuMax";
 import GlobalMod from "../../../objects/global";
 import { Button } from "@progress/kendo-react-buttons";
-import { Chart } from "../../../eVuMaxObjects/Chart/Chart";
+import { Chart, curveStyle, lineStyle } from "../../../eVuMaxObjects/Chart/Chart";
 import { DataSeries, dataSeriesType, pointStyle } from "../../../eVuMaxObjects/Chart/DataSeries";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 
@@ -36,7 +36,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
     window.addEventListener("resize", loadSummary);
 
-
     loadSummary();
   }, []);
 
@@ -61,9 +60,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objParameter = new BrokerParameter("PlotID", props.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
       objParameter = new BrokerParameter("UserID",_gMod._userId);
+      //alert(_gMod._userId);
+
       //PRATH\PRATH
-      //objParameter = new BrokerParameter("UserID", "PRATH\\PRATH");
-      //alert("User Name Hard Coaded");
+      // objParameter = new BrokerParameter("UserID", "PRATH\\PRATH");
+      // alert("User Name Hard Coaded");
 
       objBrokerRequest.Parameters.push(objParameter);
 
@@ -173,6 +174,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
         onAfterSeriesDraw(e, i);
       });
 
+      // objChart.onBeforeSeriesDraw.subscribe((e, i) => {
+      //   onBeforeSeriesDraw(e, i);
+      // });
+
+
       objChart.DataSeries.clear();
       objChart.Axes.clear();
       objChart.createDefaultAxes();
@@ -195,6 +201,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
       objChart.bottomAxis().LabelAngel = 90;
       objChart.bottomAxis().ShowSelector = false;
       objChart.bottomAxis().Visible = true;
+      objChart.bottomAxis().PaddingMax = 0; //wip
+      
 
       objChart.rightAxis().Visible = false;
       objChart.rightAxis().ShowLabels = false;
@@ -386,6 +394,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
           objChart.Axes.set(objAxis.Id, objAxis);
+          
           //*************************************************** */
         }
 
@@ -466,6 +475,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
+          objAxis.PaddingMax = 2;
           objChart.Axes.set(objAxis.Id, objAxis);
           //*************************************************** */
 
@@ -559,6 +569,18 @@ export default function CustomDrillingSummary({ ...props }: any) {
           switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar
             case 0:
               SeriesType = dataSeriesType.Line;
+              
+              objSeries.LineWidth = objDataSeries.LineWidth==0?1:objDataSeries.LineWidth;
+              objSeries.ShowPointsOnLineSeries= objDataSeries.ShowPoints;
+              // smooth = 0,
+              // step = 1,
+              // normal = 2,
+              if(objDataSeries.StepLine == true){
+                objSeries.CurveStyle= curveStyle.step;
+              }else{
+                
+                objSeries.CurveStyle= curveStyle.normal;
+              }
               break;
             case 1:
               SeriesType = dataSeriesType.Point;
@@ -785,7 +807,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
   const onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
 
-    //Formation Tops
+    // //Formation Tops
     d3.selectAll(".formationTop-" + objChart.Id).remove();
     d3.selectAll(".formationTopText-" + objChart.Id).remove();
 
@@ -838,7 +860,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
     //
-    //RoadMap
+    // //RoadMap
 
 
     d3.selectAll(".RoadMap").remove();
@@ -960,7 +982,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
               .style("stroke-width", "20px solid black")
               .style("fill", objSeries.RMColor)  //
               .style("opacity", objSeries.RoadMapTransparency / 100);
-
+              //.style("filter", "opacity(" + (100 - objSeries.RoadMapTransparency) + "%)"); //Kuldip 28/08/2021
+              
 
 
           }
@@ -1160,6 +1183,306 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
   };
+
+  const onBeforeSeriesDraw = (e: ChartEventArgs, i: number) => {
+    
+    // //Formation Tops
+    // d3.selectAll(".formationTop-" + objChart.Id).remove();
+    // d3.selectAll(".formationTopText-" + objChart.Id).remove();
+
+    // let objFormationTops: any = Object.values(objData.allFormationTopsInfo);
+
+    // //Bottom axes
+    // let arrBottomAxes: Axis[] = Array.from(objChart.Axes.values()).filter(
+    //   (x) => x.Position == axisPosition.bottom
+    // );
+
+
+    // if (objFormationTops.length > 0 && objData.ShowTops) {
+
+    //   for (let index = 0; index < objFormationTops.length; index++) {
+    //     const depth = objFormationTops[index].Depth;
+
+    //     if (depth > arrBottomAxes[0].ScaleRef.domain()[1]) {
+    //       break;
+    //     }
+    //     let x1 = arrBottomAxes[0].ScaleRef(depth);
+    //     let x2 = x1;
+    //     let y1 = objChart.__chartRect.top;
+    //     let y2 = objChart.__chartRect.bottom;
+
+    //     let formationTop = objChart.SVGRef.append("g")
+    //       .attr("class", "formationTop-" + objChart.Id)
+    //       .append("line")
+    //       .attr("id", "line-1")
+    //       .attr("x1", x1)
+    //       .attr("y1", y1)
+    //       .attr("x2", x2)
+    //       .attr("y2", y2)
+    //       .style("fill", objFormationTops[index].TopColor)
+    //       .style("stroke", objFormationTops[index].TopColor);
+
+    //     objChart.SVGRef.append("g")
+    //       .attr("class", "formationTopText-" + objChart.Id)
+    //       .attr(
+    //         "transform",
+    //         "translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(-90)"
+    //       )
+    //       .append('text')
+    //       .style('background-color', 'green')
+    //       .attr('class', 'axis-title')
+
+    //       .attr('dy', '.75em')
+    //       .text(objFormationTops[index].TopName);
+    //   }
+    // }
+
+
+    //
+    //RoadMap
+  //RoadMap
+
+
+  d3.selectAll(".RoadMap").remove();
+  let x1 = 0;
+  let x2 = 0;
+  let y1 = 0;
+  let y2 = 0;
+
+
+
+  //objCRMColor
+  //RoadMapTransparency
+
+  for (let key of objChart.DataSeries.keys()) {
+    let objSeries: DataSeries = objChart.DataSeries.get(key);
+
+
+    if (objSeries.ShowRoadMap) {
+
+      // if (objSeries.RoadmapDepth.length > 0) {
+      //   let TransPercent = 65;
+      //   let actualTransParency = 255 - (TransPercent * 2.55);
+      //   let highlightColor = objSeries.RoadMapColor;
+      // }
+
+      let x0 = 0;
+      let x1 = 0;
+      let y0 = 0;
+      let y1 = 0;
+
+      let currentDepth = 0;
+      let prevDepth = 0;
+
+      if (objData.PlotOrientation == 0) {//horizontal
+
+        for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
+          if (i > 0) {
+            currentDepth = objSeries.RoadmapDepth[i];
+            prevDepth = objSeries.RoadmapDepth[i - 1];
+          } else {
+
+            currentDepth = objSeries.RoadmapDepth[i];
+            prevDepth = 0
+          }
+
+          let mnemonicY = objSeries.YAxisId;
+          let objYAxis: Axis = objChart.getAxisByID(mnemonicY);
+
+          let mnemonicX = objSeries.XAxisId;
+          let objXAxis = objChart.getAxisByID(mnemonicX);
+
+          if (objXAxis.Inverted) {
+            x1 = objXAxis.ScaleRef(prevDepth);
+            x0 = objXAxis.ScaleRef(currentDepth);
+          } else {
+            x1 = objXAxis.ScaleRef(currentDepth);
+            x0 = objXAxis.ScaleRef(prevDepth);
+          }
+
+
+          if (x0 > objChart.__chartRect.right) {
+            x0 = objChart.__chartRect.right;
+          }
+
+          if (x0 < objChart.__chartRect.left) {
+            x0 = objChart.__chartRect.left;
+          }
+
+
+          if (x1 > objChart.__chartRect.right) {
+            x1 = objChart.__chartRect.right;
+          }
+
+
+          if (x1 < objChart.__chartRect.left) {
+            x1 = objChart.__chartRect.left;
+          }
+
+
+          // yaxies cordinate from top to bottom (top means 0 & bottom is max)
+
+          if (objYAxis.Inverted) {
+            y1 = objYAxis.ScaleRef(objSeries.RoadmapMax[i]);
+            y0 = objYAxis.ScaleRef(objSeries.RoadmapMin[i]);
+
+          } else {//tested on false case
+            y1 = objYAxis.ScaleRef(objSeries.RoadmapMin[i]);
+            y0 = objYAxis.ScaleRef(objSeries.RoadmapMax[i]);
+          }
+
+
+          if (y0 > objChart.__chartRect.bottom) {
+            y0 = objChart.__chartRect.bottom;
+          }
+
+          if (y0 < objChart.__chartRect.top) {
+            y0 = objChart.__chartRect.top;
+          }
+
+          if (y1 > objChart.__chartRect.bottom) {
+            y1 = objChart.__chartRect.bottom;
+          }
+
+          if (y1 < objChart.__chartRect.top) {
+            y1 = objChart.__chartRect.top;
+          }
+
+
+
+          objChart.SVGRect.append("g")
+            .attr("class", "RoadMapId-" + mnemonicY)
+            .attr("id", "RoadMapId-" + mnemonicY)
+            .append("rect")
+            .attr("x", x0)
+            .attr("y", y0)
+            .attr("width", (x1 - x0))
+            .attr("height", (y1 - y0))
+            .style("border", "0px solid black")
+            .style("stroke-width", "20px solid black")
+            .style("fill", objSeries.RMColor)  //
+            .style("opacity", objSeries.RoadMapTransparency / 100);
+
+
+
+        }
+      } else {
+        //Vertical Plot (Untested)
+
+        for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
+          if (i > 0) {
+            currentDepth = objSeries.RoadmapDepth[i];
+            prevDepth = objSeries.RoadmapDepth[i - 1];
+          } else {
+
+            currentDepth = objSeries.RoadmapDepth[i];
+            prevDepth = 0
+          }
+
+          let mnemonicY = objSeries.YAxisId;
+          let objYAxis: Axis = objChart.getAxisByID(mnemonicY);
+
+          let mnemonicX = objSeries.XAxisId;
+          let objXAxis = objChart.getAxisByID(mnemonicX);
+
+
+          if (objYAxis.Inverted) {
+            y1 = objXAxis.ScaleRef(prevDepth);
+            y0 = objXAxis.ScaleRef(currentDepth);
+          } else {
+            y1 = objXAxis.ScaleRef(currentDepth);
+            y0 = objXAxis.ScaleRef(prevDepth);
+          }
+
+          //     If y0 > objChartSeries.CustomVertAxis.IEndPos Then
+          //     y0 = objChartSeries.CustomVertAxis.IEndPos
+          // End If
+
+
+          if (y0 > objChart.__chartRect.bottom) {
+            y0 = objChart.__chartRect.bottom;
+          }
+
+          if (y0 < objChart.__chartRect.top) {
+            y0 = objChart.__chartRect.top;
+          }
+
+
+          if (y1 > objChart.__chartRect.bottom) {
+            y1 = objChart.__chartRect.bottom;
+          }
+
+
+          if (y1 < objChart.__chartRect.top) {
+            y1 = objChart.__chartRect.top;
+          }
+
+
+          // Xaxies cordinate from left to right (top means 0 & bottom is max)
+
+          if (objXAxis.Inverted) {
+            x1 = objXAxis.ScaleRef(objSeries.RoadmapMax[i]);
+            x0 = objXAxis.ScaleRef(objSeries.RoadmapMin[i]);
+
+          } else {//tested on false case
+            x1 = objXAxis.ScaleRef(objSeries.RoadmapMin[i]);
+            x0 = objXAxis.ScaleRef(objSeries.RoadmapMax[i]);
+          }
+
+
+          if (x0 > objChart.__chartRect.right) {
+            x0 = objChart.__chartRect.right;
+          }
+
+          if (x0 < objChart.__chartRect.left) {
+            x0 = objChart.__chartRect.left;
+          }
+
+          if (x1 > objChart.__chartRect.right) {
+            x1 = objChart.__chartRect.right;
+          }
+
+          if (x1 < objChart.__chartRect.left) {
+            x1 = objChart.__chartRect.left;
+          }
+
+
+
+          //Need to verify ??
+          objChart.SVGRect.append("g")
+            .attr("class", "RoadMap")
+            .attr("id", "RoadMapId-" + mnemonicX)
+            .append("rect")
+            .attr("x", x0)
+            .attr("y", y0)
+            .attr("width", (x1 - x0))
+            .attr("height", (y1 - y0))
+            .style("border", "0px solid black")
+            .style("stroke-width", "20px solid black")
+            .style("fill", objSeries.RMColor) // objSeries.RoadMapColor)  //
+            .style("opacity", objSeries.RoadMapTransparency / 100);
+        }
+        //=====
+
+      }
+
+    }
+
+  }
+
+    //
+
+
+
+
+
+
+
+
+
+
+  };
+
 
   return (
     <div>

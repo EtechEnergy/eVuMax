@@ -2291,7 +2291,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 paramObjSummary.objDataSelection.getRange2(ref paramObjSummary.fromDate, ref paramObjSummary.toDate, ref paramObjSummary.fromDepth, ref paramObjSummary.toDepth, ref paramObjSummary.ChartTitle, paramObjSummary);
                //Below is commented cos User will change the data from DataSelector (Client Side)
                //Save is pending in UserSettings
-                // paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+                 paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
 
                 
 

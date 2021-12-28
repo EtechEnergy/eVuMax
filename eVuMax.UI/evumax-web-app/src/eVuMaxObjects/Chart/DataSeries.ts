@@ -84,6 +84,7 @@ export class DataSeries {
   RoadmapMax:[];//prath
   RoadmapMin:[];//prath
   
+  ShowPointsOnLineSeries : boolean = false;
   //StepLine: boolean = false;
 
   //#region Min/Max Methods
