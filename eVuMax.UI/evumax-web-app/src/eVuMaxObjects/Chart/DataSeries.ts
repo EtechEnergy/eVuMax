@@ -74,6 +74,8 @@ export class DataSeries {
 
   PieRadius: number = 50;
 
+  showPointsOnLineSeries: boolean = false;
+
 
   
   ShowRoadMap: boolean = false; //prath
