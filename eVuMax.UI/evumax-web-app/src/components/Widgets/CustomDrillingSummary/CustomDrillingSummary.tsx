@@ -45,7 +45,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
     try {
 
       //Axios call API Function with PlotID
-
+      
       let objBrokerRequest = new BrokerRequest();
 
       //alert(props.objDataSelector.selectedval);
