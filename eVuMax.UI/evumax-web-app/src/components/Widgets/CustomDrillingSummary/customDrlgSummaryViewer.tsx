@@ -26,7 +26,7 @@ export default class customDrlgSummaryViewer extends Component {
   WellID: string = "";
   wellName: string = "";
   state = {
-    panes: [{ size: "20%", collapsible: false }, {}],
+    panes: [{ size: "30%", collapsible: false }, {}],
     grdData: [{ template_Name: "Plot-1", template_Id: "Plot1" }],
     currentRow: [] as any,
     currentPlotID: "",
@@ -176,6 +176,7 @@ export default class customDrlgSummaryViewer extends Component {
         runReport: false,
         warningMsg: []
       });
+     
     } catch (error) { }
   };
 
@@ -270,23 +271,25 @@ updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
 
             <Grid
               style={{
-                height: "800px",
+                height: "750px", width:"auto"
               }}
               //data={this.state.grdData}
               selectedField="selected"
-              resizable ={true}
+             // resizable ={true}
               data={this.state.grdData != null ? (this.state.grdData.map((item: any) =>
                 ({ ...item, selected: item.TEMPLATE_ID === this.state.currentPlotID })
               )) : null}
               onRowClick={this.PlotListRowClick}
+
 
             >
 
               <GridColumn
                 field="TEMPLATE_NAME"
                 title="Plot Name"
-                width="300px"
-                resizable={true}
+               //width="490px"
+//                width="100%"
+               // resizable={true}
                               />
               {false && <GridColumn field="TEMPLATE_ID" width="80px" title="Plot Id" />}
               <GridColumn

@@ -37,7 +37,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
     window.addEventListener("resize", loadSummary);
 
     loadSummary();
+
+    return ()=>{
+      window.removeEventListener("resize", loadSummary);
+    }
   }, []);
+
+
 
   //Step-1
   const loadSummary = () => {
@@ -95,7 +101,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objParameter = new BrokerParameter("refreshHrs", props.objDataSelector.refreshHrs.toString());
       objBrokerRequest.Parameters.push(objParameter);
-
+      
       //gdSummary Plot ID: 308-656-954-204-796
       //Well ID:
       //User ID:
@@ -115,7 +121,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
             const objData_ = JSON.parse(res.data.Response);
 
             console.log(objData_);
-
+            
 
 
             let warnings: string = res.data.Warnings;
@@ -350,7 +356,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         objChart.MarginLeft = 10;
         objChart.MarginBottom = 10;
-        objChart.MarginTop = 20;
+        objChart.MarginTop = 10;
         objChart.MarginRight = 90;
 
         let axisList = Object.values(objData.Axis);
@@ -863,7 +869,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
     // //RoadMap
 
 
-    d3.selectAll(".RoadMap").remove();
+    //d3.selectAll(".RoadMap").remove();
     let x1 = 0;
     let x2 = 0;
     let y1 = 0;
@@ -969,9 +975,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
             }
 
 
+            d3.selectAll(".RoadMapId-"+ mnemonicY+ i.toString()).remove();
 
             objChart.SVGRect.append("g")
-              .attr("class", "RoadMapId-" + mnemonicY)
+              .attr("class", "RoadMapId-" + mnemonicY + i.toString())
               .attr("id", "RoadMapId-" + mnemonicY)
               .append("rect")
               .attr("x", x0)

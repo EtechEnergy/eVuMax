@@ -1035,13 +1035,20 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     {
                         objColorData = objData;
                     };
-                    Array.Resize(ref xData, objXData.Rows.Count - 1);
-                    Array.Resize(ref yData, objXData.Rows.Count - 1);
-                    Array.Resize(ref colorData, objXData.Rows.Count - 1);
+                    //Change prath below resize
+                    Array.Resize(ref xData, objXData.Rows.Count);
+                    Array.Resize(ref yData, objXData.Rows.Count);
+                    Array.Resize(ref colorData, objXData.Rows.Count);
                     int rowIndex = 0;
                     double colorValue = 0;
-                    for (int i = 0, loopTo = objXData.Rows.Count - 1; i <= loopTo; i++)
+                    //change by prath 30-Dec-2021
+                    //for (int i = 0, loopTo = objXData.Rows.Count - 1; i <= loopTo; i++)
+                    for (int i=0; i <= objXData.Rows.Count-1; i++)
                     {
+                        if (i== objXData.Rows.Count - 1)
+                        {
+                            int x = 5;
+                        }
                         xData[i] = Convert.ToDouble(DataService.checkNull(objXData.Rows[i][XColumn], 0));
                         yData[i] = Convert.ToDouble(DataService.checkNull(objYData.Rows[i][YColumn], 0));
                         if (ShowColorAxis)
