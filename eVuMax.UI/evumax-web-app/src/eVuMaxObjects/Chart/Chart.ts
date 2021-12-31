@@ -2031,7 +2031,7 @@ export class Chart {
 
       
 
-
+    
       this.updateSeries();
       this._onAfterSeriesDraw.dispatch(null, 0);
     } catch (error) {
@@ -2076,7 +2076,7 @@ export class Chart {
       let barChartFound: boolean = false;
 
       for (let key of this.DataSeries.keys()) {
-
+        //alert("update series " + key);
         if (this.DataSeries.get(key).Type == dataSeriesType.Bar) {
           if (this.DataSeries.get(key).Stacked) {
             stackedBarChartsFound = true;

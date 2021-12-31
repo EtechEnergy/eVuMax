@@ -79,7 +79,7 @@ export class DataSeries {
 
   
   ShowRoadMap: boolean = false; //prath
-  RoadMapTransparency : number=50;//prath
+  RoadMapTransparency : number=20;//prath
   RoadMapColor: string =""; //prath
   RMColor: string =""; //prath
   RoadmapDepth:  [];//prath
