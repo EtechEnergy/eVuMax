@@ -1282,7 +1282,7 @@ export class Chart {
         .attr("height", "0px")
         .style("fill", "gray")
         .style("opacity", 0.2);
-
+     
       this.updateChart();
       this.drawLegend();
 
