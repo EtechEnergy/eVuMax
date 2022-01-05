@@ -818,7 +818,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
   const onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
-
+    debugger;
     // //Formation Tops
     d3.selectAll(".formationTop-" + objChart.Id).remove();
     d3.selectAll(".formationTopText-" + objChart.Id).remove();
@@ -861,13 +861,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
             .attr("class", "formationTopText-" + objChart.Id)
             .attr(
               "transform",
-              "translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(-90)"
+              "translate(" + (x1 + 9) + "," + (y2 - 20) + ") rotate(-90)"
             )
             .append('text')
             .style('background-color', 'green')
             .attr('class', 'axis-title')
 
-            .attr('dy', '.75em')
+            .attr('dy', '0.25em !important')
             .text(objFormationTops[index].TopName);
         }
       }
@@ -928,12 +928,12 @@ export default function CustomDrillingSummary({ ...props }: any) {
           .attr(
             "transform",
             //"translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(0)"
-            "translate(" + (objXAxis.StartPos + 2) + "," + (y2 + 5) + ") rotate(0)"
+            "translate(" + (objXAxis.StartPos + 5) + "," + (y2 + 5) + ") rotate(0)"
           )
           .append('text')
           .style('background-color', 'green')
           .attr('class', 'axis-title')
-          .attr('dy', '.75em')
+          .attr('dy', '0.25em !important')
           .text(objFormationTops[index].TopName);
 
         }
@@ -1318,9 +1318,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
         style={{
           textAlign: "center",
           height: "40px",
-          width: "100%",
+           width: "100%",
           backgroundColor: "transparent",
           display: "inline-block",
+          paddingBottom:'10px',
+          fontSize:'81.25% !important',
+          lineHeight:1.5,
+          fontWeight:'bold'
         }}
       />
       <div className="Data">

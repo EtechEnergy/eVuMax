@@ -1835,7 +1835,7 @@ export class Chart {
 
   drawLegend = () => {
     try {
-      
+     
       $("#" + this.ContainerId + "_legend").empty();
 
       if (this.ShowLegend == false) {
@@ -1871,6 +1871,7 @@ export class Chart {
 
       //
       if (this.isNightConnection){
+        
       legendString =
       legendString.trim() + '<div style="display:inline-block;text-al">';
       legendString =

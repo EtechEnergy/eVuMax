@@ -1103,6 +1103,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
                 // 'Check if roadmap exist ...
 
+                RMID = ""; //Added by prath to remove bug in VuMax (Using one Map Roadmap for all changels) 05-Jan-2022
                 if (PlotOrientation == 0)
                 {
                     if (wellRoadMaps.ContainsKey(YColumn))
