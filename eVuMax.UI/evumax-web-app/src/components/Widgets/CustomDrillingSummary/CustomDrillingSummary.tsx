@@ -663,6 +663,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
             }
 
+            
             if (objDataSeries.ColorPointsAsColumn) {
 
               formatSeries(objSeries, objDataSeries); //Nishant
@@ -797,7 +798,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   //Nishant to Plot Heat Map for Point Series
   const formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
     try {
-
+      
       if (paramDataSeries.ColorPointsAsColumn) {
         //alert(paramSeries.Name);
         paramSeries.ColorEach = true;
@@ -818,7 +819,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
   const onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
-    debugger;
+    
     // //Formation Tops
     d3.selectAll(".formationTop-" + objChart.Id).remove();
     d3.selectAll(".formationTopText-" + objChart.Id).remove();
@@ -969,6 +970,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       return;
     }
 
+    
 
 
     let Intervals: number = 10;
@@ -1001,11 +1003,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
         let val = (objData.IntervalList[j].maxValue).toFixed(0);
 
 
-
         objChart.SVGRef.append("g").append("text")
           .attr("x", x2_ + 2)
           .attr("y", rStartY + 2)
-          .attr("class", "title")
+          .attr("class", "heatmapText")
           // .attr("font-size", "10pt")
           // .attr("fill", "red")
           //.style("text-anchor", "middle")
@@ -1017,10 +1018,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objChart.SVGRef.append("g").append("text")
             .attr("x", x2_ + 2)
             .attr("y", (rStartY + SectionHeight))
-            .attr("class", "title")
-            // .attr("font-size", "10pt")
-            // .attr("fill", "red")
-            //.style("text-anchor", "middle")
+            .attr("class", "heatmapText")
             .text((objData.IntervalList[j].minValue).toFixed(0));
         }
 
@@ -1034,9 +1032,15 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
     }
+    let x1 : number = objChart.Width - 20;  //80
+    let y1 : number = objChart.__chartRect.top + (objChart.__chartRect.height)/2;
 
-
-
+    //HeatMap Memonic Text
+    objChart.SVGRef.append("g").append("text")
+    .attr("class", "heatmapText")
+    .attr("transform", "translate(" + x1 + "," + y1 + ") rotate(-90)")
+    //.attr("style", "stroke-dasharray:0;font-family:arial;font-size:1vw")
+    .text(objData.ColorAxisMnemonic);
     //******************** */
 
 
@@ -1065,9 +1069,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       for (let key of objChart.DataSeries.keys()) {
         let objSeries: DataSeries = objChart.DataSeries.get(key);
 
-
-        if (objSeries.ShowRoadMap) {
-
+        if (objSeries.ShowRoadMap &&  (objSeries.RoadmapDepth != null && objSeries.RoadmapMin != null && objSeries.RoadmapMax !=null)) {
           let x0 = 0;
           let x1 = 0;
           let y0 = 0;

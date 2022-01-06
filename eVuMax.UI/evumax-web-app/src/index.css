@@ -682,3 +682,10 @@ div.k-time-tab.k-datetime-wrap {
 .k-dropdowntree .k-dropdown-wrap .k-select {
   color: var(--base-anchor-color) !important ;
 }
+
+
+.heatmapText{
+  font-weight: bold !important;
+  font-size: 12px !important;
+  color: var(--base-anchor-color) !important;
+}
