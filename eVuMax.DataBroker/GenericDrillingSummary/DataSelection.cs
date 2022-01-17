@@ -148,6 +148,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public string WellID = "";
         private string LastError = "";
         //public string userName = "";
+        public bool showOffsetWell = false;  //prath 10-Jan-2021
 
         private VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
 
@@ -1091,7 +1092,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         {
             try
             {
-                DataTable objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName + "' AND PLOT_ID='" + paramPlotID + "'");
+                       DataTable objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName + "' AND PLOT_ID='" + paramPlotID + "'");
+
 
                 if (objData.Rows.Count > 0)
                 {
@@ -1099,7 +1101,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     LastHours = Convert.ToInt32(DataService.checkNull(objData.Rows[0]["HOURS"], 0));
                     FromDate = (DateTime)DataService.checkNull(objData.Rows[0]["FROM_DATE"], DateTime.Now);
                     ToDate = (DateTime)DataService.checkNull(objData.Rows[0]["TO_DATE"], DateTime.Now);
-                    FromDepth = Convert.ToDouble( DataService.checkNull(objData.Rows[0]["FROM_DEPTH"], 0));
+                    FromDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["FROM_DEPTH"], 0));
                     ToDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["TO_DEPTH"], ""));
                     sideTrackKey = (string)DataService.checkNull(objData.Rows[0]["SIDE_TRACK_ID"], "");
 
@@ -1411,6 +1413,32 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 }
 
 
+
+                //prath offsetwell wip 10-Jan-2021
+                offsetWells.Clear();
+                if (showOffsetWell)
+                {
+
+                
+                objData = objRequest.objDataService.getTable("SELECT * FROM VMX_WELL_OFFSET WHERE WELL_ID='" + WellID + "'");
+
+                foreach (DataRow objRow in objData.Rows)
+                {
+                    string strWellID = (string)DataService.checkNull(objRow["OFFSET_WELL_ID"], "");
+
+                    if (!offsetWells.ContainsKey(strWellID))
+                    {
+                        LogCorOffsetWellInfo objOffset = new LogCorOffsetWellInfo();
+                        objOffset.OffsetWellID = strWellID;
+                        //objOffset.DepthLogID = (string)DataService.checkNull(objRow["DEPTH_LOG_ID"], "");
+                        //objOffset.DepthOffset = Convert.ToDouble(DataService.checkNull(objRow["OFFSET_DEPTH"], 0));
+                        //objOffset.ShortName = (string)DataService.checkNull(objRow["SHORT_NAME"], "");
+
+                        offsetWells.Add(strWellID, objOffset);
+                    }
+                }
+                }
+                //============================
                 timeLogs.Clear();
 
                 objData = objRequest.objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION_LOGS WHERE PLOT_ID='" + paramPlotID + "' AND USER_NAME='" + this.objRequest.objDataService.UserName.Replace("'", "''") + "'");

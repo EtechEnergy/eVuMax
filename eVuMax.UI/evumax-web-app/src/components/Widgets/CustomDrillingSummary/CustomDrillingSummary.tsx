@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import * as d3 from "d3";
+import { Checkbox } from "@progress/kendo-react-inputs";
 
 
 
@@ -24,8 +25,11 @@ let _gMod = new GlobalMod();
 
 
 export default function CustomDrillingSummary({ ...props }: any) {
+
+
   let objChart: Chart = new Chart(props.parentRef, "SummaryChart");
   const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
+  const [showOffsetWell, setShowOffsetWell] = useState(true);
 
   let objSummaryAxisList: any = [];
   let WellName: string = "";
@@ -41,7 +45,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
     return () => {
       window.removeEventListener("resize", loadSummary);
     }
-  }, []);
+  }, [showOffsetWell]);
 
 
 
@@ -101,6 +105,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       objParameter = new BrokerParameter("refreshHrs", props.objDataSelector.refreshHrs.toString());
       objBrokerRequest.Parameters.push(objParameter);
+
+      objParameter = new BrokerParameter("showOffsetWell", showOffsetWell.toString());
+      objBrokerRequest.Parameters.push(objParameter);
+
 
       //gdSummary Plot ID: 308-656-954-204-796
       //Well ID:
@@ -400,7 +408,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
-          
+
 
           objChart.Axes.set(objAxis.Id, objAxis);
 
@@ -412,10 +420,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
         //// 0-left, 1-bottom, 2-right, 3-top
         axisList = getOrdersAxisListByPosition(2);//Right
         for (let index = 0; index < axisList.length; index++) {
-          
+
           let objSummaryAxis: any = axisList[index];
 
-        
+
           let objAxis = new Axis();
 
           objAxis.CustomPosition = true;
@@ -548,7 +556,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         for (let index = 0; index < SeriesList.length; index++) {
-          
+
 
 
           const objDataSeries: any = SeriesList[index];
@@ -663,7 +671,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
             }
 
-            
+
             if (objDataSeries.ColorPointsAsColumn) {
 
               formatSeries(objSeries, objDataSeries); //Nishant
@@ -798,7 +806,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   //Nishant to Plot Heat Map for Point Series
   const formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
     try {
-      
+
       if (paramDataSeries.ColorPointsAsColumn) {
         //alert(paramSeries.Name);
         paramSeries.ColorEach = true;
@@ -819,7 +827,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
   const onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
-    
+
     // //Formation Tops
     d3.selectAll(".formationTop-" + objChart.Id).remove();
     d3.selectAll(".formationTopText-" + objChart.Id).remove();
@@ -884,19 +892,19 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
         for (let index = 0; index < objFormationTops.length; index++) {
           const depth = objFormationTops[index].Depth;
-          
 
-          if (arrLeftAxes[0].Inverted){
+
+          if (arrLeftAxes[0].Inverted) {
             if (depth > arrLeftAxes[0].ScaleRef.domain()[1]) {
               break;
             }
-          }else{
+          } else {
             if (depth > arrLeftAxes[0].ScaleRef.domain()[0]) {
               break;
             }
           }
-          
-          
+
+
 
           let y1 = arrLeftAxes[0].ScaleRef(depth);
           let y2 = y1;
@@ -915,35 +923,35 @@ export default function CustomDrillingSummary({ ...props }: any) {
             .style("fill", objFormationTops[index].TopColor)
             .style("stroke", objFormationTops[index].TopColor);
 
-           
-         
-        let SeriesList = Object.values(objData.dataSeries);
-        for (let i = 0; i < SeriesList.length; i++) {
-          const objSeries: any = SeriesList[i];
-
-          let mnemonicX = objSeries.XColumnID;
-          let objXAxis = objChart.getAxisByID(mnemonicX);
-         
-          objChart.SVGRef.append("g")
-          .attr("class", "formationTopText-" + objChart.Id)
-          .attr(
-            "transform",
-            //"translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(0)"
-            "translate(" + (objXAxis.StartPos + 5) + "," + (y2 + 5) + ") rotate(0)"
-          )
-          .append('text')
-          .style('background-color', 'green')
-          .attr('class', 'axis-title')
-          .attr('dy', '0.25em !important')
-          .text(objFormationTops[index].TopName);
-
-        }
-            
-       
 
 
-            
-          
+          let SeriesList = Object.values(objData.dataSeries);
+          for (let i = 0; i < SeriesList.length; i++) {
+            const objSeries: any = SeriesList[i];
+
+            let mnemonicX = objSeries.XColumnID;
+            let objXAxis = objChart.getAxisByID(mnemonicX);
+
+            objChart.SVGRef.append("g")
+              .attr("class", "formationTopText-" + objChart.Id)
+              .attr(
+                "transform",
+                //"translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(0)"
+                "translate(" + (objXAxis.StartPos + 5) + "," + (y2 + 5) + ") rotate(0)"
+              )
+              .append('text')
+              .style('background-color', 'green')
+              .attr('class', 'axis-title')
+              .attr('dy', '0.25em !important')
+              .text(objFormationTops[index].TopName);
+
+          }
+
+
+
+
+
+
         }
       }
 
@@ -970,7 +978,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       return;
     }
 
-    
+
 
 
     let Intervals: number = 10;
@@ -1032,15 +1040,15 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
     }
-    let x1 : number = objChart.Width - 20;  //80
-    let y1 : number = objChart.__chartRect.top + (objChart.__chartRect.height)/2;
+    let x1: number = objChart.Width - 20;  //80
+    let y1: number = objChart.__chartRect.top + (objChart.__chartRect.height) / 2;
 
     //HeatMap Memonic Text
     objChart.SVGRef.append("g").append("text")
-    .attr("class", "heatmapText")
-    .attr("transform", "translate(" + x1 + "," + y1 + ") rotate(-90)")
-    //.attr("style", "stroke-dasharray:0;font-family:arial;font-size:1vw")
-    .text(objData.ColorAxisMnemonic);
+      .attr("class", "heatmapText")
+      .attr("transform", "translate(" + x1 + "," + y1 + ") rotate(-90)")
+      //.attr("style", "stroke-dasharray:0;font-family:arial;font-size:1vw")
+      .text(objData.ColorAxisMnemonic);
     //******************** */
 
 
@@ -1069,7 +1077,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       for (let key of objChart.DataSeries.keys()) {
         let objSeries: DataSeries = objChart.DataSeries.get(key);
 
-        if (objSeries.ShowRoadMap &&  (objSeries.RoadmapDepth != null && objSeries.RoadmapMin != null && objSeries.RoadmapMax !=null)) {
+        if (objSeries.ShowRoadMap && (objSeries.RoadmapDepth != null && objSeries.RoadmapMin != null && objSeries.RoadmapMax != null)) {
           let x0 = 0;
           let x1 = 0;
           let y0 = 0;
@@ -1174,7 +1182,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
             for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
-              
+
               if (i > 0) {
                 currentDepth = objSeries.RoadmapDepth[i];
                 prevDepth = objSeries.RoadmapDepth[i - 1];
@@ -1275,34 +1283,46 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
     }
 
-
-
-
-
   };
-
+  const handleChange = () => {
+    setShowOffsetWell(!showOffsetWell);
+  }
 
   return (
     <div>
 
       <div className="" style={{ display: "inline-flex", justifyContent: "space-between", width: "92vw", }}>
-        <div className="flex-item" >
-          <label>{props.PlotName} </label>
+        <div className="col-lg-2">
+          <div className="flex-item" >
+            <label>{props.PlotName} </label>
+          </div>
         </div>
 
 
-        <div className="flex-item">
-          <DataSelectorInfo objDataSelector={dataSelector} isRealTime={false} />
+        <div className="col-lg-2">
+          <div>
+            <input type="checkbox" id="offsetWell" name="chkOffsetWell" value="true" checked={showOffsetWell} onChange={handleChange} /> Show OffsetWell
+          </div>
+
+        </div><div className="col-lg-2">
+            <label className=" ml-5 mr-1" onClick={() => { generateReport(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+            <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { generateReport() }} />
         </div>
 
-        <div>
-          <label className=" ml-5 mr-1" onClick={() => { generateReport(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
-          <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { generateReport() }} />
+        <div className="col-lg-4">
+          <div className="flex-item">
+            <DataSelectorInfo objDataSelector={dataSelector} isRealTime={false} />
+          </div>
         </div>
 
+
+
+        <div className="col-lg-1">
         <div className="flex-item">
           <Button onClick={props.showListPanel}>Close</Button>
+        </div>  
         </div>
+        
       </div>
 
       <div
@@ -1320,13 +1340,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
         style={{
           textAlign: "center",
           height: "40px",
-           width: "100%",
+          width: "100%",
           backgroundColor: "transparent",
           display: "inline-block",
-          paddingBottom:'10px',
-          fontSize:'81.25% !important',
-          lineHeight:1.5,
-          fontWeight:'bold'
+          paddingBottom: '10px',
+          fontSize: '81.25% !important',
+          lineHeight: 1.5,
+          fontWeight: 'bold'
         }}
       />
       <div className="Data">

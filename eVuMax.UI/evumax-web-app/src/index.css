@@ -688,4 +688,5 @@ div.k-time-tab.k-datetime-wrap {
   font-weight: bold !important;
   font-size: 12px !important;
   color: var(--base-anchor-color) !important;
+  fill: var(--base-anchor-color) !important;
 }

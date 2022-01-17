@@ -41,6 +41,8 @@ export default class customDrlgSummaryViewer extends Component {
   componentDidMount() {
     try {
 
+      
+
       this.loadSummaryList();
       console.log(this.state.objDataSelector)
 
