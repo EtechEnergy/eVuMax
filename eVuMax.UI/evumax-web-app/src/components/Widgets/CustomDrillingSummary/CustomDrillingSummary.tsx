@@ -148,6 +148,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
             WellName = res.data.Category;
             objData = objData_;
             //generateReport(objData);
+            debugger;
             generateReport();
             Util.StatusSuccess("Data successfully retrived");
             Util.StatusReady();
@@ -660,7 +661,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
                 let objBottomAxes = objChart.getAxisByID(objSeries.XAxisId);
                 objBottomAxes.bandScale = true;
-                objChart.Axes.get(objSeries.XAxisId).Labels.push(objDataSeries.labelBuffer[i]);
+                if (objDataSeries.labelBuffer != null){
+                  objChart.Axes.get(objSeries.XAxisId).Labels.push(objDataSeries.labelBuffer[i]);
+                }
+                
               } else {
                 objVal.x = objDataSeries.xDataBuffer[i];
               }
