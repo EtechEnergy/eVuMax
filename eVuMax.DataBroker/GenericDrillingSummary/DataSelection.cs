@@ -2261,236 +2261,179 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         }
 
 
-        //public bool getRange3(ref DateTime paramFromDate, ref DateTime paramToDate, ref double paramFromDepth, ref double paramToDepth, ref string paramTitle, ref string paramPlotName)
-        //{
-        //    try
-        //    {
-        //        objTimeLog = objProject.getPrimaryTimeLog();
+        public void getRange3(ref DateTime paramFromDate, ref DateTime paramToDate, ref double paramFromDepth, ref double paramToDepth, ref string paramTitle, ref string paramPlotName, string paramWellID, ref DataService objDataService)
+        {
+            try
+            {
+                objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref objDataService, paramWellID);
 
 
-        //        if (selectionType == sPlotSelectionType.FormationTops)
-        //        {
-        //            paramToDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(objDataService));
-        //            paramFromDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(objDataService));
+                if (selectionType == sPlotSelectionType.FormationTops)
+                {
+                    paramToDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref objDataService));
+                    paramFromDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref objDataService));
 
-        //            string strList = getTopsList();
+                    string strList = getTopsList();
 
-        //            paramTitle = objWell.name + "  -  " + paramPlotName + " (" + strList + ")";
+                    paramTitle = objWell.name + "  -  " + paramPlotName + " (" + strList + ")";
 
-        //            getTopsDepthRange(ref paramFromDepth, ref paramToDepth);
-        //        }
+                    getTopsDepthRange(ref paramFromDepth, ref paramToDepth);
+                }
 
 
-        //        if (selectionType == sPlotSelectionType.ByHours)
-        //        {
-        //            double lastIndex = objTimeLog.getLastIndexOptimized(objDataService);
+                if (selectionType == sPlotSelectionType.ByHours)
+                {
+                    double lastIndex = objTimeLog.getLastIndexOptimized(ref objDataService);
 
-        //            paramToDate = DateTime.FromOADate(lastIndex);
-        //            paramFromDate = paramToDate.AddHours(-1 * ValEx(LastHours));
+                    paramToDate = DateTime.FromOADate(lastIndex);
+                    paramFromDate = paramToDate.AddHours(-1 * Util.ValEx(LastHours));
 
-        //            paramTitle = objWell.name + "  -  " + paramPlotName + " (Last " + ValEx(LastHours).ToString + " Hours)";
+                    paramTitle = objWell.name + "  -  " + paramPlotName + " (Last " + Util.ValEx(LastHours).ToString() + " Hours)";
 
-        //            paramFromDepth = objTimeLog.getHoleDepthFromDateTime(objDataService, paramFromDate.ToOADate());
-        //            paramToDepth = objTimeLog.getHoleDepthFromDateTime(objDataService, paramToDate.ToOADate());
-        //        }
+                    paramFromDepth = objTimeLog.getHoleDepthFromDateTime(ref objDataService, paramFromDate.ToOADate());
+                    paramToDepth = objTimeLog.getHoleDepthFromDateTime(ref objDataService, paramToDate.ToOADate());
+                }
 
 
-        //        if (selectionType == sPlotSelectionType.DateRange)
-        //        {
-        //            if (objWell.wellDateFormat == Well.wDateFormatUTC)
-        //            {
-        //                paramFromDate = utilFunctions.convertWellTimeZoneToUTC(FromDate);
-        //                paramToDate = utilFunctions.convertWellTimeZoneToUTC(ToDate);
-        //            }
-        //            else
-        //            {
-        //                paramFromDate = utilFunctions.convertWellToLocalTimeZone(FromDate);
-        //                paramToDate = utilFunctions.convertWellToLocalTimeZone(ToDate);
-        //            }
+                if (selectionType == sPlotSelectionType.DateRange)
+                {
+                    if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
+                    {
+                        paramFromDate = Util.convertWellTimeZoneToUTC(FromDate, objWell);  // convertWellTimeZoneToUTC(FromDate);
+                        paramToDate = Util.convertWellTimeZoneToUTC(ToDate, objWell);
+                    }
+                    else
+                    {
+                        paramFromDate = Util.convertWellToLocalTimeZone(FromDate, objWell);
+                        paramToDate = Util.convertWellToLocalTimeZone(ToDate, objWell);
+                    }
 
-        //            paramFromDepth = objTimeLog.getHoleDepthFromDateTime(objDataService, paramFromDate.ToOADate());
-        //            paramToDepth = objTimeLog.getHoleDepthFromDateTime(objDataService, paramToDate.ToOADate());
+                    paramFromDepth = objTimeLog.getHoleDepthFromDateTime(ref objDataService, paramFromDate.ToOADate());
+                    paramToDepth = objTimeLog.getHoleDepthFromDateTime(ref objDataService, paramToDate.ToOADate());
 
-        //            paramTitle = objWell.name + "  -  " + paramPlotName + " (From Date: " + FromDate.ToString("MMM-dd-yyyy HH:mm:ss:") + " to " + ToDate.ToString("MMM-dd-yyyy HH:mm:ss") + ")";
-        //        }
+                    paramTitle = objWell.name + "  -  " + paramPlotName + " (From Date: " + FromDate.ToString("MMM-dd-yyyy HH:mm:ss:") + " to " + ToDate.ToString("MMM-dd-yyyy HH:mm:ss") + ")";
+                }
 
 
-        //        if (selectionType == sPlotSelectionType.FromDateOnwards)
-        //        {
-        //            if (objWell.wellDateFormat == Well.wDateFormatUTC)
-        //            {
-        //                paramFromDate = utilFunctions.convertWellTimeZoneToUTC(FromDate);
-        //                paramToDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(objDataService));
-        //                ToDate = paramToDate;
-        //            }
-        //            else
-        //            {
-        //                paramFromDate = utilFunctions.convertWellToLocalTimeZone(FromDate);
-        //                paramToDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(objDataService));
-        //                ToDate = paramToDate;
-        //            }
+                if (selectionType == sPlotSelectionType.FromDateOnwards)
+                {
+                    if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
+                    {
+                        paramFromDate = Util.convertWellTimeZoneToUTC(FromDate, objWell);
+                        paramToDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref objDataService));
+                        ToDate = paramToDate;
+                    }
+                    else
+                    {
+                        paramFromDate = Util.convertWellToLocalTimeZone(FromDate, objWell);
+                        paramToDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref objDataService));
+                        ToDate = paramToDate;
+                    }
 
 
-        //            paramFromDepth = objTimeLog.getHoleDepthFromDateTime(objDataService, FromDate.ToOADate());
-        //            paramToDepth = objTimeLog.getHoleDepthFromDateTime(objDataService, ToDate.ToOADate());
+                    paramFromDepth = objTimeLog.getHoleDepthFromDateTime(ref objDataService, FromDate.ToOADate());
+                    paramToDepth = objTimeLog.getHoleDepthFromDateTime(ref objDataService, ToDate.ToOADate());
 
-        //            DateTime localToDate;
+                    DateTime localToDate;
 
-        //            if (objWell.wellDateFormat == Well.wDateFormatUTC)
-        //                localToDate = utilFunctions.convertUTCToWellTimeZone(DateTime.FromOADate(objTimeLog.getLastIndexOptimized(objDataService)));
-        //            else
-        //                localToDate = utilFunctions.convertWellToLocalTimeZone(DateTime.FromOADate(objTimeLog.getLastIndexOptimized(objDataService)));
+                    if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
+                        localToDate = Util.convertUTCToWellTimeZone(DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref objDataService)), objWell);
+                    else
+                        localToDate = Util.convertWellToLocalTimeZone(DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref objDataService)), objWell);
 
-        //            paramTitle = objWell.name + "  -  " + paramPlotName + " (From Date: " + FromDate.ToString("MMM-dd-yyyy HH:mm:ss:") + " to " + localToDate.ToString("MMM-dd-yyyy HH:mm:ss") + ")";
-        //        }
+                    paramTitle = objWell.name + "  -  " + paramPlotName + " (From Date: " + FromDate.ToString("MMM-dd-yyyy HH:mm:ss:") + " to " + localToDate.ToString("MMM-dd-yyyy HH:mm:ss") + ")";
+                }
 
 
-        //        if (selectionType == sPlotSelectionType.DepthRange)
-        //        {
-        //            paramTitle = objWell.name + "  -  " + paramPlotName + " (From Depth: " + ValEx(FromDepth).ToString + " to " + ValEx(ToDepth).ToString + ")";
+                if (selectionType == sPlotSelectionType.DepthRange)
+                {
+                    paramTitle = objWell.name + "  -  " + paramPlotName + " (From Depth: " + Util.ValEx(FromDepth).ToString() + " to " + Util.ValEx(ToDepth).ToString() + ")";
 
-        //            paramFromDepth = FromDepth;
-        //            paramToDepth = ToDepth;
+                    paramFromDepth = FromDepth;
+                    paramToDepth = ToDepth;
 
-        //            DateTime limitFromDate;
-        //            DateTime limitToDate;
+                    DateTime limitFromDate = new DateTime();
+                    DateTime limitToDate = new DateTime();
 
-        //            getDateRangeFromSideTrack(ref limitFromDate, ref limitToDate);
+                    getDateRangeFromSideTrack(ref limitFromDate, ref limitToDate);
 
-        //            string dataTableName = objTimeLog.getDataTableName(objDataService);
+                    string dataTableName = objTimeLog.getDataTableName(ref objDataService);
 
-        //            string strSQL = "";
+                    string strSQL = "";
 
-        //            // '## Old Query
-        //            // 'strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + FromDepth.ToString + " ORDER BY HDTH"
+                    // '## Old Query
+                    // 'strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + FromDepth.ToString + " ORDER BY HDTH"
 
-        //            // '## New Query
-        //            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + FromDepth.ToString() + " ORDER BY DATETIME";
+                    // '## New Query
+                    strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + FromDepth.ToString() + " ORDER BY DATETIME";
 
 
-        //            DataTable objData = objDataService.getTable(strSQL);
+                    DataTable objData = objDataService.getTable(strSQL);
 
-        //            if (objData.Rows.Count > 0)
-        //                paramFromDate = objData.Rows(0)("DATETIME");
+                    if (objData.Rows.Count > 0)
+                        paramFromDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
 
 
-        //            // '##New Query
-        //            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH<=" + ToDepth.ToString() + " ORDER BY DATETIME DESC";
+                    // '##New Query
+                    strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH<=" + ToDepth.ToString() + " ORDER BY DATETIME DESC";
 
 
-        //            objData = objDataService.getTable(strSQL);
+                    objData = objDataService.getTable(strSQL);
 
-        //            if (objData.Rows.Count > 0)
-        //                paramToDate = objData.Rows(0)("DATETIME");
-        //        }
+                    if (objData.Rows.Count > 0)
+                        paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+                }
 
 
 
-        //        if (selectionType == sPlotSelectionType.FromDepthOnwards)
-        //        {
-        //            string dataTableName = objTimeLog.getDataTableName(objDataService);
-        //            string strSQL = "";
+                if (selectionType == sPlotSelectionType.FromDepthOnwards)
+                {
+                    string dataTableName = objTimeLog.getDataTableName(ref objDataService);
+                    string strSQL = "";
 
-        //            strSQL = "SELECT MAX(HDTH) FROM " + dataTableName;
+                    strSQL = "SELECT MAX(HDTH) FROM " + dataTableName;
 
-        //            paramToDepth = ValEx(objDataService.getValueFromDatabase(strSQL));
-        //            ToDepth = paramToDepth;
+                    paramToDepth = Util.ValEx(objDataService.getValueFromDatabase(strSQL));
+                    ToDepth = paramToDepth;
 
-        //            paramFromDepth = FromDepth;
+                    paramFromDepth = FromDepth;
 
-        //            paramTitle = objWell.name + "  -  " + paramPlotName + " (From Depth: " + ValEx(FromDepth).ToString + " to " + ValEx(paramToDepth).ToString + ")";
+                    paramTitle = objWell.name + "  -  " + paramPlotName + " (From Depth: " + Util.ValEx(FromDepth).ToString() + " to " + Util.ValEx(paramToDepth).ToString() + ")";
 
-        //            DateTime limitFromDate;
-        //            DateTime limitToDate;
+                    DateTime limitFromDate = new DateTime();
+                    DateTime limitToDate = new DateTime();
 
-        //            getDateRangeFromSideTrack(ref limitFromDate, ref limitToDate);
+                    getDateRangeFromSideTrack(ref limitFromDate, ref limitToDate);
 
 
-        //            // '### Old Query ...
-        //            // 'strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + FromDepth.ToString + " ORDER BY HDTH"
+                    // '### Old Query ...
+                    // 'strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + FromDepth.ToString + " ORDER BY HDTH"
 
-        //            // '### New Query
-        //            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + FromDepth.ToString() + " ORDER BY DATETIME";
+                    // '### New Query
+                    strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH>=" + FromDepth.ToString() + " ORDER BY DATETIME";
 
-        //            DataTable objData = objDataService.getTable(strSQL);
+                    DataTable objData = objDataService.getTable(strSQL);
 
-        //            if (objData.Rows.Count > 0)
-        //                paramFromDate = objData.Rows(0)("DATETIME");
+                    if (objData.Rows.Count > 0)
+                        paramFromDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
 
-        //            // '### New Query
-        //            strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH<=" + ToDepth.ToString() + " ORDER BY DATETIME DESC";
+                    // '### New Query
+                    strSQL = "SELECT TOP 1 DATETIME FROM " + dataTableName + " WHERE DATETIME>='" + limitFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + limitToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND HDTH<=" + ToDepth.ToString() + " ORDER BY DATETIME DESC";
 
-        //            objData = objDataService.getTable(strSQL);
+                    objData = objDataService.getTable(strSQL);
 
-        //            if (objData.Rows.Count > 0)
-        //                paramToDate = objData.Rows(0)("DATETIME");
-        //        }
-        //    }
+                    if (objData.Rows.Count > 0)
+                        paramToDate = Convert.ToDateTime(objData.Rows[0]["DATETIME"]);
+                }
+                //return true;
+            }
 
-        //    catch (Exception ex)
-        //    {
-        //    }
-        //}
 
-
-        //public void loadAnyOffsetWellInfo(string paramPlotID)
-        //{
-        //    try
-        //    {
-        //        offsetWells.Clear();
-
-        //        if (objWell.offsetWells.Count > 0)
-        //        {
-        //            LogCorOffsetWellInfo objOffset = new LogCorOffsetWellInfo();
-        //            objOffset.OffsetWellID = objWell.offsetWells.Values.First.OffsetWellID;
-        //            objOffset.DepthLogID = "";
-        //            objOffset.DepthOffset = 0;
-        //            offsetWells.Add(objOffset.OffsetWellID, objOffset);
-        //        }
-        //    }
-
-
-        //    ////Commented by Nitin (copied from Original VB Code)
-
-        //    // offsetWells.Clear()
-
-        //    // Dim objData As DataTable = objDataService.getTable("SELECT DISTINCT(USER_NAME) AS USER_NAME FROM VMX_USER_DATA_SELECTION_OFFSET WHERE WELL_ID='" + WellID + "' AND PLOT_ID='" + paramPlotID + "'")
-
-        //    // If objData.Rows.Count > 0 Then
-
-        //    // Dim UserName As String = DataService.checkNull(objData.Rows(0)("USER_NAME"), "")
-
-
-        //    // objData = objDataService.getTable("SELECT * FROM VMX_USER_DATA_SELECTION_OFFSET WHERE WELL_ID='" + WellID + "' AND USER_NAME='" + UserName + "' AND PLOT_ID='" + paramPlotID + "'")
-
-        //    // For Each objRow As DataRow In objData.Rows
-
-        //    // Dim strWellID As String = DataService.checkNull(objRow("OFFSET_WELL_ID"), "")
-
-        //    // If Not offsetWells.ContainsKey(strWellID) Then
-
-        //    // Dim objOffset As New LogCorOffsetWellInfo
-        //    // objOffset.OffsetWellID = strWellID
-        //    // objOffset.DepthLogID = DataService.checkNull(objRow("DEPTH_LOG_ID"), "")
-        //    // objOffset.DepthOffset = DataService.checkNull(objRow("OFFSET_DEPTH"), 0)
-        //    // offsetWells.Add(strWellID, objOffset)
-
-        //    // End If
-
-        //    // Next
-
-        //    // Else
-
-        //    // ''Nothing to do ...
-        //    // Exit Sub
-
-        //    // End If
-
-        //    catch (Exception ex)
-        //    {
-        //    }
-        //}
-
+            catch (Exception ex)
+            {
+                //return false;
+            }
+        }
 
         public void getTopsDepthRange(string paramWellID, ref double paramMinDepth, ref double paramMaxDepth)
         {

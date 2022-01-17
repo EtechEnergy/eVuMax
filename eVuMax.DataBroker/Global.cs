@@ -29,6 +29,7 @@ namespace eVuMax.DataBroker
         public const string DO_DownloadManager = "DownloadManager";
         public const string PasswordEncryptionKey = "V0K9iPqdUnt0i#*(%^@"; //Nishant: 27-11-2020
         public const int ServerLogMaxLimit = 100; //Nishant 27-11-2020
+        public const string DRLG_STAND_PLOT = "DrlgStandPlot";
 
         #endregion
 

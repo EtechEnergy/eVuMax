@@ -140,6 +140,8 @@ export function getWidgetList() {
       { id: "TripSpeed2", name: "Trip Speed 2", isFav: false },
       { id: "Broomstick", name: "Broomstick", isFav: false },
       { id: "customDrlgSummaryViewer", name: "Custom Drilling Summary", isFav: false },
+      { id: "DrlgStandPlot", name: "Drilling Stand Plot", isFav: false },
+      
     ];
 
     return WidgetList;
@@ -188,6 +190,11 @@ export function launchWidget(interfaceID: string, wellID: string) {
 
     if (interfaceID === "customDrlgSummaryViewer") {
       history.push("customDrlgSummaryViewer/" + wellID);
+    }
+
+
+    if (interfaceID === "DrlgStandPlot") {
+      history.push("DrlgStandPlot/" + wellID);
     }
   } catch (error) { }
 }

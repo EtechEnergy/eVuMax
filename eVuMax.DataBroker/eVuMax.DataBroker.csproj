@@ -42,6 +42,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -122,6 +123,15 @@
     <Compile Include="Summary\DrlgConn\DrlgConnData.cs" />
     <Compile Include="Summary\DrlgConn\DrlgConnSettings.cs" />
     <Compile Include="Summary\DrlgConn\DrlgConnSummary.cs" />
+    <Compile Include="Summary\DrlgStand\ADSettings.cs" />
+    <Compile Include="Summary\DrlgStand\ConFontSetup.cs" />
+    <Compile Include="Summary\DrlgStand\ConnectionLogProcessor.cs" />
+    <Compile Include="Summary\DrlgStand\DrlgStandPlot.cs" />
+    <Compile Include="Summary\DrlgStand\DrlgStandPlotBroker.cs" />
+    <Compile Include="Summary\DrlgStand\DrlgStandPlotMgr.cs" />
+    <Compile Include="Summary\DrlgStand\DrlgStandUserSettings.cs" />
+    <Compile Include="Summary\DrlgStand\StandLogProcessor.cs" />
+    <Compile Include="Summary\DrlgStand\StandPoint.cs" />
     <Compile Include="Summary\DrlgSummary\DrlgSummary.cs" />
     <Compile Include="Summary\DrlgSummary\DrlgSummaryData.cs" />
     <Compile Include="Summary\ROPSummary\DepthMatchingInfo.cs" />

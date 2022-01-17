@@ -23,6 +23,7 @@ import Broomstick from "../components/Widgets/Broomstick/Broomstick";
 import ChartTesting from "../components/ChartTesting/ChartTesting";
 import ChangePassword from "../components/login/changePassword";
 import customDrlgSummaryViewer from "../components/Widgets/CustomDrillingSummary/customDrlgSummaryViewer";
+import DrlgStandPlot from "../components/Widgets/DrlgStandPlot/DrlgStandPlot";
 
 
 
@@ -203,6 +204,15 @@ const dashbordRoutes = [
     component: customDrlgSummaryViewer,
     layout: "/dashboard",
   },
+
+  {
+    path: "/DrlgStandPlot/:WellId",
+    name: "DrlgStandPlot",
+    icon: "",
+    component: DrlgStandPlot,
+    layout: "/dashboard",
+  },
+  
 ];
 
 export default dashbordRoutes;
