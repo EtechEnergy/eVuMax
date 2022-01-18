@@ -344,6 +344,27 @@ namespace eVuMax.DataBroker.Common
         }
 
 
+
+        //Nishant 18-01-2022
+        public static DateTime convertLocalToWellTimeZone(DateTime paramDate, VuMaxDR.Data.Objects.Well paramObjWell)
+        {
+            try
+            {
+                var dtDate = paramDate; // 'The date will already be in local time zone ...
+                string localOffset = TimeOffsetInfo.getLocalTimeZoneUTCOffset(dtDate);
+                string newOffset = paramObjWell.timeZone;
+                int Difference = TimeOffsetInfo.getTimeZoneDifferenceMinutes(localOffset, newOffset);
+                dtDate = dtDate.AddMinutes(Difference);
+                return dtDate;
+            }
+            catch (Exception ex)
+            {
+                return paramDate;
+            }
+        }
+
+
+
     }
 
 

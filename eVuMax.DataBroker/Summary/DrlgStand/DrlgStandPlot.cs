@@ -73,7 +73,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         #endregion
 
 
-
+        public VuMaxDR.Data.Objects.rigState objRigSate = new VuMaxDR.Data.Objects.rigState();
         //Nishant
         [NonSerialized]
         public Broker.BrokerRequest objRequest = new Broker.BrokerRequest();
@@ -168,6 +168,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 this.WellID = paramWellID;
                 this.objRequest = paramRequest;
                 this.objDataSelection.objRequest = paramRequest;
+                objRigSate = rigState.loadWellRigStateSetup(ref objRequest.objDataService, WellID);
+
 
                 objStandProcessor = new StandLogProcessor(ref paramRequest, paramWellID);
 

@@ -70,7 +70,7 @@ export default class DrlgStandPlot extends React.Component {
         CurrentView: 0,
         objGridData: [] as any,
         selectedTab: 0,
-        refreshDataSelector:false
+        refreshDataSelector: false
 
     }
 
@@ -147,20 +147,20 @@ export default class DrlgStandPlot extends React.Component {
 
     disableRealTime = () => {
         try {
-          if (this.state.realTime) {
-            this.setState({
-                realTime: false 
-            });
-            sessionStorage.setItem("realTimeDrlgStandPlot", "false");
-            this.AxiosSource.cancel();
-            clearInterval(this.intervalID);
-            this.intervalID = null;
-          }
-    
+            if (this.state.realTime) {
+                this.setState({
+                    realTime: false
+                });
+                sessionStorage.setItem("realTimeDrlgStandPlot", "false");
+                this.AxiosSource.cancel();
+                clearInterval(this.intervalID);
+                this.intervalID = null;
+            }
+
         } catch (error) {
-    
+
         }
-      }
+    }
 
     selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
         //alert(paramRefreshHrs);
@@ -246,6 +246,67 @@ export default class DrlgStandPlot extends React.Component {
         }
     }
 
+    getUniqueRigStates = () => {
+        
+
+   let uniqueRigStateList:Map<number,number> = new Map();
+   //objStandProcessor.connectionPoints.length
+   //RigStates
+
+  //sort array on depth
+  let connPoints: any = Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
+  connPoints.sort(function (a, b) {
+      return a.Depth - b.Depth;
+  });
+
+  for (let i = 0; i < connPoints.length; i++) {
+    for(let j=0;j< connPoints.RigStates.length;j++){
+        if(uniqueRigStateList.get(connPoints.RigStates[j]) == null){
+            
+        }
+    }
+  }
+
+
+
+//    For i As Integer = 0 To arrItems.Length - 1
+
+//        For Each lnKey As Integer In arrItems(i).RigStates.Keys
+
+//            If Not uniqueRigStateList.ContainsKey(lnKey) Then
+//                uniqueRigStateList.Add(lnKey, lnKey)
+//            End If
+//        Next
+
+//    Next
+    }
+
+    plotChartRigStateView = () => {
+        //Clear all the series
+
+        this.objChart.DataSeries.clear();
+        this.objChart.ShowLegend = true;
+        this.objChart.updateChart();
+        // this.objChart.ShowCustomComments = this.state.ShowComments;
+
+        //Configure Axes
+        this.objChart.leftAxis().Inverted = false;
+        this.objChart.leftAxis().AutoScale = true;
+        this.objChart.leftAxis().Title = "Time (Hours)";
+        this.objChart.leftAxis().ShowSelector = false;
+        this.objChart.leftAxis().ShowTitle = true;
+        this.objChart.leftAxis().Visible = true;
+
+        this.objChart.bottomAxis().AutoScale = true;
+        this.objChart.bottomAxis().Title = "Measured Depth" + "(" + this.state.objPlotData.DepthUnit + ")";
+        this.objChart.bottomAxis().LabelAngel = 90;
+        this.objChart.bottomAxis().ShowSelector = false;
+        this.objChart.bottomAxis().ShowTitle = true;
+        this.objChart.bottomAxis().Visible = true;
+
+
+    }
+
     plotRegularChart = () => {
         try {
             //Clear all the series
@@ -272,6 +333,25 @@ export default class DrlgStandPlot extends React.Component {
 
 
             //Add new serieses
+            let objOffsetWellBar = new DataSeries();
+
+            objOffsetWellBar.Id = "OffsetWellBar1";
+            objOffsetWellBar.Stacked = true;
+            objOffsetWellBar.Title = "Time (Hrs)";
+            objOffsetWellBar.Type = dataSeriesType.Bar;
+            objOffsetWellBar.Color = "Blue"; //#1089ff
+            objOffsetWellBar.XAxisId = this.objChart.bottomAxis().Id;
+            objOffsetWellBar.YAxisId = this.objChart.leftAxis().Id;
+            objOffsetWellBar.ColorEach = true;
+
+
+            //Nishant for Offset Well
+            if (this.state.objPlotData.objDataSelection.StandPlot_ShowOffset) {
+                objOffsetWellBar.ColorEach = false;
+
+                this.objChart.DataSeries.set(objOffsetWellBar.Id, objOffsetWellBar);
+            }
+
 
             let objBar = new DataSeries();
             objBar.Id = "Bar1";
@@ -282,7 +362,7 @@ export default class DrlgStandPlot extends React.Component {
             objBar.XAxisId = this.objChart.bottomAxis().Id;
             objBar.YAxisId = this.objChart.leftAxis().Id;
             objBar.ColorEach = true;
-            
+
 
             this.objChart.DataSeries.set(objBar.Id, objBar);
 
@@ -301,17 +381,26 @@ export default class DrlgStandPlot extends React.Component {
                 // standTime = Math.round(((standTime / 60) / 60));
                 objStandPoint.y = Math.round(standTime);
 
-                 if(this.state.objDrlgStandUserSettings.HighlightDayNight == true){
-                    if(chartData[i].DayNightStatus == 1){
+                if (this.state.objDrlgStandUserSettings.HighlightDayNight == true) {
+                    if (chartData[i].DayNightStatus == 1) {
                         objStandPoint.color = "Yellow";
                         //yellow
-                    }else{
+                    } else {
                         //Black
                         objStandPoint.color = "Black";
                     }
-                    
+
                 }
-                objBar.Data.push(objStandPoint);
+
+                objOffsetWellBar.Data.push()
+
+                let objOffsetStandPoint = new ChartData();
+                objOffsetStandPoint.x = Math.round(chartData[i]["Depth"]);
+                objOffsetStandPoint.y = Math.round(chartData[i]["OffsetTime"]);
+
+                objBar.Data.push(objOffsetStandPoint);
+
+                //
             }
 
             this.objChart.reDraw();
@@ -328,11 +417,13 @@ export default class DrlgStandPlot extends React.Component {
         }
 
         if (this.state.CurrentView == 1) {
-            // this.plotChartRigStateView();
+            this.plotChartRigStateView();
         }
 
 
     }
+
+
 
     loadDrlgStandPlotData = () => {
         try {
@@ -397,9 +488,9 @@ export default class DrlgStandPlot extends React.Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    
+
                     let warnings: string = "";
-                    if(res.data.RequestSuccessfull == false){
+                    if (res.data.RequestSuccessfull == false) {
                         warnings = res.data.Warnings;
                         if (warnings.trim() != "") {
                             let warningList = [];
@@ -423,9 +514,9 @@ export default class DrlgStandPlot extends React.Component {
                             if (objData_.objStandProcessor.connectionPoints != undefined) {
                                 grdData = Object.values(objData_.objStandProcessor.connectionPoints);
 
-                            } 
-                            
-                            if( Object.values(objData_.objStandProcessor.connectionPoints).length==0) {
+                            }
+
+                            if (Object.values(objData_.objStandProcessor.connectionPoints).length == 0) {
                                 warnings += "No Connections found";
                             }
 
@@ -507,11 +598,11 @@ export default class DrlgStandPlot extends React.Component {
                             ConnCount: grdData.length,
                             objDrlgStandUserSettings: objData_.objUserSettings,
                             objDataSelector: objDataSelector,
-                            refreshDataSelector:true
+                            refreshDataSelector: true
 
                         });
 
-                        
+
                         this.refreshChart();
                     } else {
                         warnings += "No Data Available";
@@ -519,7 +610,7 @@ export default class DrlgStandPlot extends React.Component {
 
 
                     //Warnings Notifications
-                   // warnings = res.data.Warnings;
+                    // warnings = res.data.Warnings;
                     if (warnings.trim() != "") {
                         let warningList = [];
                         warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
@@ -566,9 +657,9 @@ export default class DrlgStandPlot extends React.Component {
         this.setState({ selectedTab: e.selected });
     }
 
-    saveSettings=()=>{
+    saveSettings = () => {
         try {
-            
+
             //Util.StatusInfo("Getting data from the server  ");
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Summary.Manager";
@@ -591,14 +682,14 @@ export default class DrlgStandPlot extends React.Component {
 
             objUserSettings.RealTime = this.state.realTime;
             objUserSettings.ShowComments = this.state.objDrlgStandUserSettings.ShowComments;
-            objUserSettings.ShowExcludedStands =this.state.objDrlgStandUserSettings.ShowExcludedStands;
+            objUserSettings.ShowExcludedStands = this.state.objDrlgStandUserSettings.ShowExcludedStands;
             objUserSettings.ShowRigStateView = this.state.objDrlgStandUserSettings.ShowRigStateView;
-            
+
             objUserSettings.dtDayTimeFrom = this.state.objDrlgStandUserSettings.dtDayTimeFrom;
             objUserSettings.dtDayTimeTo = this.state.objDrlgStandUserSettings.dtDayTimeTo;
             objUserSettings.HighlightDayNight = this.state.objDrlgStandUserSettings.HighlightDayNight;
 
-debugger;
+            debugger;
 
             switch (this.state.objDataSelector.selectedval) ////"-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
             {
@@ -630,43 +721,43 @@ debugger;
 
 
             axios
-            .get(_gMod._performTask, {
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json;charset=UTF-8",
-              },
-              params: { paramRequest: JSON.stringify(objBrokerRequest) },
-            })
-    
-            .then((res) => {
-              Util.StatusSuccess("Data successfully retrived  ");
-    
-              this.setState({ selected: 0 });
-              //reload all the connections
-              
-              //this.loadDrlgStandPlotData();
-            })
-            .catch((error) => {
-              Util.StatusError(error.message);
-              Util.StatusReady();
-    
-              if (error.response) {
-                // return <CustomeNotifications Key="success" Icon={false}  />
-                // this.errors(error.response.message);
-              } else if (error.request) {
-                // return <CustomeNotifications Key="success" Icon={false}  />
-                console.log("error.request");
-              } else {
-                // return <CustomeNotifications Key="success" Icon={false}  />
-                console.log("Error", error);
-              }
-              // return <CustomeNotifications Key="success" Icon={false}  />
-              console.log("rejected");
-            });
+                .get(_gMod._performTask, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+
+                .then((res) => {
+                    Util.StatusSuccess("Data successfully retrived  ");
+
+                    this.setState({ selected: 0 });
+                    //reload all the connections
+
+                    //this.loadDrlgStandPlotData();
+                })
+                .catch((error) => {
+                    Util.StatusError(error.message);
+                    Util.StatusReady();
+
+                    if (error.response) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        // this.errors(error.response.message);
+                    } else if (error.request) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("error.request");
+                    } else {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("Error", error);
+                    }
+                    // return <CustomeNotifications Key="success" Icon={false}  />
+                    console.log("rejected");
+                });
         } catch (error) { }
 
         // } catch (error) {
-            
+
         // }
     }
 
@@ -1004,7 +1095,7 @@ debugger;
                             </div>}
 
                             <div className="Data">
-                               {this.state.refreshDataSelector && <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>}
+                                {this.state.refreshDataSelector && <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>}
                             </div>
                             {/* </div> */}
 
@@ -1012,34 +1103,35 @@ debugger;
                     </TabStripTab>
                     <TabStripTab title="Numeric Summary">
                         <div
-                            //vimal
-                            // className="row col-xl-12 col-lg-12 col-md-12 col-sm-12"
-                            // style={{
-                            //     backgroundColor: "transparent",
-                            //     width: "80%",
-                                
-                            //     minHeight: "100px",//180px
-                            //     minWidth: "600px",//350px
-                            // }}
+                        //vimal
+                        // className="row col-xl-12 col-lg-12 col-md-12 col-sm-12"
+                        // style={{
+                        //     backgroundColor: "transparent",
+                        //     width: "80%",
+
+                        //     minHeight: "100px",//180px
+                        //     minWidth: "600px",//350px
+                        // }}
                         >
                             <Grid
                                 className="mb-3 col-xl-12 col-lg-12 col-md-12 col-sm-12"
                                 style={{ height: "530px", width: "100%" }}//height:120px Vimal
                                 resizable={true}
                                 scrollable={"scrollable"}//make commented
-                                sortable={false}
+                                sortable={true}
                                 //onRowClick={this.grdNumSummaryRowClick}
                                 // editField="inEdit"
                                 // selectedField="selected"
                                 data={this.state.objGridData}
                             >
                                 <Column
-                                
-                                headerClassName="text-center"
-                                className="text-right"
-                                width="80px"
-                                    
-                                    
+
+                                    headerClassName="text-center"
+                                    className="text-right"
+                                    width="80px"
+
+
+
                                     field="Depth"
                                     title="Depth"
                                     cell={(props) => (
@@ -1050,7 +1142,7 @@ debugger;
                                             </span>
                                         </td>
                                     )}
-                                
+
 
                                 />
                                 <Column
@@ -1059,16 +1151,16 @@ debugger;
                                     field="FromDate"
                                     title="Time [HH:MM:SS]"
                                     width="100px"
-                                    
+
                                     cell={(props) => (
                                         <td className="text-right" style={{}}>
                                             <span>
                                                 {" "}
-                                                {moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asHours().toFixed() + ":" + moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asMinutes().toFixed() + ":" + (moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asSeconds()/60).toFixed()}
+                                                {moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asHours().toFixed() + ":" + moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asMinutes().toFixed() + ":" + (moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asSeconds() / 60).toFixed()}
                                                 {/* {moment.duration(moment(props.dataItem.FromDate).diff(moment(props.dataItem.FromDate))).asHours()} */}
-                                                
+
                                                 {/* {moment(props.dataItem.FromDate).format("LT")} */}
-                                                
+
                                                 {/* {formatNumber(props.dataItem.Depth, "n2")}{" "} */}
                                             </span>
                                         </td>
@@ -1180,24 +1272,24 @@ debugger;
                             <Checkbox
                                 className="mr-5 ml-5"
                                 label={"Hightlight Day & Night Stand"}
-                            checked={this.state.objDrlgStandUserSettings.HighlightDayNight}
-                            onChange={(event) => {
-                              this.disableRealTime();
-                              let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
-                              objUserSettings.HighlightDayNight = event.value;
+                                checked={this.state.objDrlgStandUserSettings.HighlightDayNight}
+                                onChange={(event) => {
+                                    this.disableRealTime();
+                                    let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
+                                    objUserSettings.HighlightDayNight = event.value;
 
-                              this.setState({ objDrlgStandUserSettings: objUserSettings });
-                            }}
+                                    this.setState({ objDrlgStandUserSettings: objUserSettings });
+                                }}
                             />
                             <span>DayTime Hours from</span>
                             <span style={{ marginLeft: "10px", marginRight: "10px" }}>
-                            <TimePicker onChange={(event) => {
+                                <TimePicker onChange={(event) => {
                                     let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
                                     objUserSettings.dtDayTimeFrom = event.target.value;
                                     console.log(event.target.value);
                                     this.setState({ objDrlgStandUserSettings: objUserSettings });
                                 }}
-                                value={ new Date(this.state.objDrlgStandUserSettings.dtDayTimeFrom)}    
+                                    value={new Date(this.state.objDrlgStandUserSettings.dtDayTimeFrom)}
                                 //value = {new Date(moment(this.state.objDrlgStandUserSettings.dtDayTimeTo).format("LT"))}
                                 //value= {moment(this.state.objDrlgStandUserSettings.dtDayTimeTo).format("LT")} 
                                 />
@@ -1230,7 +1322,7 @@ debugger;
                                     objUserSettings.dtDayTimeTo = event.target.value;
                                     this.setState({ objDrlgStandUserSettings: objUserSettings });
                                 }}
-                                value={ new Date(this.state.objDrlgStandUserSettings.dtDayTimeTo)}    
+                                    value={new Date(this.state.objDrlgStandUserSettings.dtDayTimeTo)}
                                 //value = {new Date(moment(this.state.objDrlgStandUserSettings.dtDayTimeTo).format("LT"))}
                                 //value= {moment(this.state.objDrlgStandUserSettings.dtDayTimeTo).format("LT")} 
                                 />
@@ -1239,14 +1331,14 @@ debugger;
                             <Checkbox
                                 className=" ml-2"
                                 label={"Show Excluded Stands"}
-                            checked={this.state.objDrlgStandUserSettings.ShowExcludedStands}
-                            onChange={(event) => {
-                                this.disableRealTime();
-                                let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
-                                objUserSettings.ShowExcludedStands = event.value;
-  
-                                this.setState({ objDrlgStandUserSettings: objUserSettings });
-                              }}
+                                checked={this.state.objDrlgStandUserSettings.ShowExcludedStands}
+                                onChange={(event) => {
+                                    this.disableRealTime();
+                                    let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
+                                    objUserSettings.ShowExcludedStands = event.value;
+
+                                    this.setState({ objDrlgStandUserSettings: objUserSettings });
+                                }}
                             />
                             <Checkbox
                                 className=" ml-4"
@@ -1263,7 +1355,7 @@ debugger;
                                 id="cmdApplySettings"
                                 onClick={() => {
                                     this.setState({
-                                        selectedTab:0
+                                        selectedTab: 0
                                     });
                                     this.saveSettings();
                                 }}

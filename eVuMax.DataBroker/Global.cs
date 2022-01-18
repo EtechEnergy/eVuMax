@@ -30,6 +30,7 @@ namespace eVuMax.DataBroker
         public const string PasswordEncryptionKey = "V0K9iPqdUnt0i#*(%^@"; //Nishant: 27-11-2020
         public const int ServerLogMaxLimit = 100; //Nishant 27-11-2020
         public const string DRLG_STAND_PLOT = "DrlgStandPlot";
+        public const string TripReportBroker = "TripReportBroker"; //Nishant 18-01-2022
 
         #endregion
 

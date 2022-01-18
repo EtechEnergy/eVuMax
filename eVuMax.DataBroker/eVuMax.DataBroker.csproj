@@ -148,6 +148,9 @@
     <Compile Include="Summary\TripConn\TripConnData.cs" />
     <Compile Include="Summary\TripConn\TripConnSettings.cs" />
     <Compile Include="Summary\TripConn\TripConnSummary.cs" />
+    <Compile Include="Summary\TripReport\SingleTripStats.cs" />
+    <Compile Include="Summary\TripReport\TripReportData.cs" />
+    <Compile Include="Summary\TripReport\TripReportMgr.cs" />
     <Compile Include="Summary\TripSpeed\TripAnalyzer.cs" />
     <Compile Include="Summary\TripSpeed\TripAnalyzerSelection\TripAnalyzerSelection.cs" />
     <Compile Include="Summary\TripSpeed\TripDepthInformation.cs" />
