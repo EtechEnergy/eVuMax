@@ -315,9 +315,8 @@ export class StackedBarSeries {
 								.attr('dy', '.75em')
 								.text(function (d) {
 									if (stackValues[s] > 0) {
-										return stackValues[s];
+										return stackValues[s] ;
 									}
-
 								});
 						}
 

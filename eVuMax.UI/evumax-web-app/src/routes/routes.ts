@@ -24,6 +24,7 @@ import ChartTesting from "../components/ChartTesting/ChartTesting";
 import ChangePassword from "../components/login/changePassword";
 import customDrlgSummaryViewer from "../components/Widgets/CustomDrillingSummary/customDrlgSummaryViewer";
 import DrlgStandPlot from "../components/Widgets/DrlgStandPlot/DrlgStandPlot";
+import TripReport from "../components/Widgets/TripReport/TripReport";
 
 
 
@@ -210,6 +211,14 @@ const dashbordRoutes = [
     name: "DrlgStandPlot",
     icon: "",
     component: DrlgStandPlot,
+    layout: "/dashboard",
+  },
+
+  {
+    path: "/TripReport/:WellId",
+    name: "DrlgStandPlot",
+    icon: "",
+    component: TripReport,
     layout: "/dashboard",
   },
   

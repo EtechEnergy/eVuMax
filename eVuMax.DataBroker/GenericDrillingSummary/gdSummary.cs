@@ -50,7 +50,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         Broker.BrokerRequest objRequest = new Broker.BrokerRequest();
         public string wellID = "";
         string lastError = "";
-        MnemonicMappingMgr objMnemonicMappingMgr = new MnemonicMappingMgr();
+        DataBroker.MnemonicMappingMgr objMnemonicMappingMgr = new MnemonicMappingMgr();
 
         private double fromDepth = 0;
         private double toDepth = 0;

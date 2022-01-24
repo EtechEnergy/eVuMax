@@ -272,10 +272,11 @@ export class BarSeries {
             ).width;
 
             let barWidth = HAxisScale_x1.bandwidth();
-
+              
             if (barWidth > textWidth) {
               return HAxisScale_x1(d.key) + (barWidth - textWidth) / 2 - 10; //-10 is to adjust on center
             } else {
+              debugger;
               return HAxisScale_x1(d.key);
             }
           })
@@ -285,7 +286,7 @@ export class BarSeries {
             let objSeries_  = DataSeriesKeyList.get(d.key);
             let objVerticalAxis : Axis = ChartRef_.getAxisByID(objSeries_.YAxisId);
             let VAxisScale = objVerticalAxis.ScaleRef;
-            return VAxisScale(d.value) - 25;    //25 is offset of bar label
+            return VAxisScale(d.value) - 5;    //5 is offset of bar label
           })
           .style("fill", function (d) {
             return z(d.key);

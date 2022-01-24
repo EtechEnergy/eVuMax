@@ -1,4 +1,5 @@
 ﻿using eVuMax.DataBroker.Broker;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,22 @@ namespace eVuMax.DataBroker.Summary.TripReport
             Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
             if (paramRequest.Function == generateTripReport)
             {
-               
+                TripReportData objTripReport = new TripReportData();
                 string WellID = "";
                 WellID =  paramRequest.Parameters.Where(x => x.ParamName.Contains("WellID")).FirstOrDefault().ParamValue.ToString();
+                              
+                string strTripReportSettings = "";
+               
+                strTripReportSettings = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserSettings")).FirstOrDefault().ParamValue.ToString();
+
+                if (strTripReportSettings != "")
+                {
+                    objTripReport.objUserSettings = JsonConvert.DeserializeObject<TripReportSettings>(strTripReportSettings);
+                    
+                }
+
                 
-                TripReportData objTripReport = new TripReportData();
-                objResponse= objTripReport.generateTripReport(ref paramRequest.objDataService, WellID);
+                objResponse = objTripReport.generateTripReport(ref paramRequest.objDataService, WellID);
                                 
                 if (objResponse.RequestSuccessfull == false)
                 {
@@ -41,7 +52,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 int phaseIndexID = 0;
 
                 WellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellID")).FirstOrDefault().ParamValue.ToString();
-                phaseIndexID = Convert.ToInt32( paramRequest.Parameters.Where(x => x.ParamName.Contains("phaseIndexID")).FirstOrDefault().ParamValue.ToString());
+                phaseIndexID = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("phaseIndexID")).FirstOrDefault().ParamValue.ToString());
 
                 TripReportData objTripReport = new TripReportData();
                 objResponse = objTripReport.refreshSingleTripStats(ref paramRequest.objDataService, WellID, phaseIndexID);

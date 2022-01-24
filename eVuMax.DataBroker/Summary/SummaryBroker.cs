@@ -80,6 +80,15 @@ namespace eVuMax.DataBroker.Summary
                     return objDrlgStandPlotMgr.getData(paramRequest);
 
                 }
+                
+                      //Nishant
+                if (paramRequest.Broker == Global.TripReportBroker)
+                {
+
+                    Summary.TripReport.TripReportMgr objTripReportMgr = new TripReport.TripReportMgr();
+                    return objTripReportMgr.getData(paramRequest);
+
+                }
 
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();

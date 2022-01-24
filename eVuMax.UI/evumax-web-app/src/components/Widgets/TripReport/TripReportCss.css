@@ -1,0 +1,19 @@
+.summaryLabelTripReport {
+    /* width: 85px !important;
+    height: 25px; */
+    font-size: 11px;
+    text-align: right;
+    margin-bottom: 0.3rem;
+  }
+
+  .summaryGroupHeaderTripReport {
+    color: #3282b8;
+    font-weight: bold !important;
+   
+  }
+  .summaryLabelHeader-longTripReport {
+    width: 190px;
+  }
+  .summaryLabelHeader-SmallTripReport{
+    width: 110px;
+  }

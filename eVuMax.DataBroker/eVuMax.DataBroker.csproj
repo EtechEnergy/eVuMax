@@ -63,15 +63,16 @@
     <Reference Include="VuMaxDR.AdvKPI">
       <HintPath>..\lib\VuMaxDR.AdvKPI.dll</HintPath>
     </Reference>
-    <Reference Include="VuMaxDR.Common">
-      <HintPath>..\lib\VuMaxDR.Common.dll</HintPath>
+    <Reference Include="VuMaxDR.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\LatestVuMax Data Objects\VuMaxDR.Common\VuMaxDR.Common\bin\x86\Release\VuMaxDR.Common.dll</HintPath>
     </Reference>
     <Reference Include="VuMaxDR.Data">
-      <HintPath>..\lib\VuMaxDR.Data.dll</HintPath>
+      <HintPath>E:\LatestVuMax Data Objects\VuMaxDR.Data\VuMaxDR.Data\bin\x86\Release\VuMaxDR.Data.dll</HintPath>
     </Reference>
     <Reference Include="VuMaxDR.Data.Objects, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Etech-Nis\Desktop\VuMaxDR.Data.Objects\VuMaxDR.Data.Objects\bin\x86\Debug\VuMaxDR.Data.Objects.dll</HintPath>
+      <HintPath>E:\LatestVuMax Data Objects\VuMaxDR.Data.Objects\VuMaxDR.Data.Objects\bin\x86\Debug\VuMaxDR.Data.Objects.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +119,7 @@
     <Compile Include="IBroker.cs" />
     <Compile Include="Logger\eVuMaxLogger.cs" />
     <Compile Include="Logger\eVuMaxLoggerBroker.cs" />
+    <Compile Include="MnemonicMappingMgr\MnemonicMappingMgr.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\Themes\Theme.cs" />
     <Compile Include="Summary\DrlgConn\DrlgConnData.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Summary\TripReport\SingleTripStats.cs" />
     <Compile Include="Summary\TripReport\TripReportData.cs" />
     <Compile Include="Summary\TripReport\TripReportMgr.cs" />
+    <Compile Include="Summary\TripReport\TripReportSettings.cs" />
     <Compile Include="Summary\TripSpeed\TripAnalyzer.cs" />
     <Compile Include="Summary\TripSpeed\TripAnalyzerSelection\TripAnalyzerSelection.cs" />
     <Compile Include="Summary\TripSpeed\TripDepthInformation.cs" />

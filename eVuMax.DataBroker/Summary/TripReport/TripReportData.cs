@@ -18,25 +18,27 @@ namespace eVuMax.DataBroker.Summary.TripReport
         private TimeLog objTimeLog;
         public const string MyPlotID = "TRIPREPORT";
         public VuMaxDR.Data.Objects.TripReport objReport = new VuMaxDR.Data.Objects.TripReport();
-        public TripReportSettings objTripReportSettings = new TripReportSettings();
+        private VuMaxDR.Data.Objects.TripReportSettings objTripReportSettings = new VuMaxDR.Data.Objects.TripReportSettings();
         public bool RefreshRequired = false;
         public Dictionary<int, clsPhaseTag> TripTypeTags = new Dictionary<int, clsPhaseTag>();
         public Dictionary<int, clsPhaseTag> TripTags = new Dictionary<int, clsPhaseTag>();
         public Dictionary<int, TripInfo> tripData = new Dictionary<int, TripInfo>();
-        private bool generatingReport = false;
+        
         public string depthUnit = "";
         public Dictionary<int, string> colorTable = new Dictionary<int, string>();
         
 
-        public VuMaxDR.Data.DataService objDataService;
+        public DataService objDataService;
         public string WellID = "";
         [NonSerialized]
         public Broker.BrokerRequest objRequest = new Broker.BrokerRequest();
 
         public string Warnings = "";
         public DataTable grdData = new DataTable();
+        public string WellName = "";
 
         private VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
+        public TripReportSettings objUserSettings = new TripReportSettings();
 
         
         private void generateGrdTable()
@@ -85,17 +87,29 @@ namespace eVuMax.DataBroker.Summary.TripReport
         {
             try
             {
-                objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref objRequest.objDataService, paramWellID);
+                objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref objDataService, paramWellID);
                 if (objTimeLog is object)
                 {
                     depthUnit = objTimeLog.logCurves["DEPTH"].VuMaxUnitID;
                 }
 
-                objTripReportSettings = TripReportSettings.getSettings(objDataService, WellID);
+                //objTripReportSettings = TripReportSettings.getSettings(objDataService, WellID); //original
+                objUserSettings.loadSettings();
+
+                objUserSettings.copySettingsToVuMaxTripReportSettings(ref objTripReportSettings);
                 objReport.objTimeLog = objTimeLog;
                 objReport.objSettings = objTripReportSettings;
 
                 objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref objDataService, paramWellID);
+                WellName = objWell.name;
+
+                //Populating color tale
+                colorTable.Add(1, "Blue");
+                colorTable.Add(2, "Red");
+                colorTable.Add(3, "Green");
+                colorTable.Add(4, "Yellow");
+                colorTable.Add(5, "Brown");
+
                 generateGrdTable();
             }
             catch (Exception ex)
@@ -108,18 +122,19 @@ namespace eVuMax.DataBroker.Summary.TripReport
         {
             try
             {
-
-                Initialize(paramWellID);
-               
                 objDataService = new VuMaxDR.Data.DataService(paramWellID);
                 objDataService = paramObjDataService;
+
+                Initialize(paramWellID);
+                WellID = paramWellID;
+               
+              
                 Broker.BrokerResponse objResponse = objRequest.createResponseObject();
 
 
-                objTripReportSettings = TripReportSettings.getSettings(objDataService, WellID);
-                generatingReport = true;
+                
                 var exList = new Dictionary<int, int>();
-                exList = TripReportSettings.getTripExclusionList(objDataService, WellID);
+                exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
                 tripData = new Dictionary<int, TripInfo>();
                 TripTags = new Dictionary<int, clsPhaseTag>();
                 TripTypeTags = PhaseMapping.getList(objDataService, AdvKPIProfile.TRIP);
@@ -211,12 +226,14 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 // '//Save this report
                 TripInfo.removeAllTripInfo(objDataService, WellID);
                 foreach (TripInfo objItem in tripData.Values)
+                {
                     TripInfo.saveTripInfo(objDataService, objItem, WellID);
+                }
                 calculateBottomToBottomStats();
                 calculateSurfaceTimeWithTags();
                 //generatingReport = false;
                 //RefreshRequired = true;
-
+                refreshTable();
                 
 
 
@@ -243,13 +260,14 @@ namespace eVuMax.DataBroker.Summary.TripReport
         {
             try
             {
-                grdData.Columns["COL_DEPTH"].ColumnName = "Depth (" + depthUnit + ")";//HeaderText 
-                grdData.Columns["COL_OFF_TO_ON_BTM_SPEED"].ColumnName = "Off to On Btm. Speed (" + depthUnit + "/hr.)";
-                grdData.Columns["COL_SPEED_WITH_CONN"].Caption= "Speed W/Conn. (" + depthUnit + "/hr.)";
-                grdData.Columns["COL_SPEED_WO_CONN"].ColumnName = "Speed W/O Conn. (" + depthUnit + "/hr.)";
+                //grdData.Columns["COL_DEPTH"].ColumnName = "Depth (" + depthUnit + ")";//HeaderText 
+                //grdData.Columns["COL_OFF_TO_ON_BTM_SPEED"].ColumnName = "Off to On Btm. Speed (" + depthUnit + "/hr.)";
+                //grdData.Columns["COL_SPEED_WITH_CONN"].Caption= "Speed W/Conn. (" + depthUnit + "/hr.)";
+                //grdData.Columns["COL_SPEED_WO_CONN"].ColumnName = "Speed W/O Conn. (" + depthUnit + "/hr.)";
 
                 // prath Ticket no. VM-1815
-                grdData.Columns["COL_DIFF_W"].Caption= "Delta Speed W/ Conn. (" + depthUnit + "/hr.)";
+                //grdData.Columns["COL_DIFF_W"].Caption= "Delta Speed W/ Conn. (" + depthUnit + "/hr.)";
+
                 //grdData.Columns("COL_DIFF_WO").HeaderText = "Delta Speed W/O Conn. (" + depthUnit + "/hr.)";
               //  grdData.Columns("COL_DIFF").HeaderText = "Delta Avg. Conn. Time (Min)";
                 // '**************
@@ -272,7 +290,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 // '//Add Heading ...
                 grdData.Rows.Add();
                 int rowIndex = grdData.Rows.Count - 1;
-                for (int i = 0, loopTo = arrTags.Length - 1; i <= loopTo; i++)
+                for (int i = 0; i <= arrTags.Length - 1; i++)
                 {
                     var objTag = arrTags[i];
                     if (objTag.PhaseName.Trim().ToUpper() != RunningSection)
@@ -287,15 +305,15 @@ namespace eVuMax.DataBroker.Summary.TripReport
                             grdData.Rows.Add(2);
                             rowIndex = grdData.Rows.Count - 1;
                             grdData.Rows[rowIndex]["COL_DIRECTION"] = "Avg. Time";
-                            grdData.Rows[rowIndex]["COL_DIRECTION_BKCOLOR"] = Color.LightGray.ToString();
+                            grdData.Rows[rowIndex]["COL_DIRECTION_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                             grdData.Rows[rowIndex]["COL_START_DATE"] = "Best Time";
-                            grdData.Rows[rowIndex]["COL_START_DATE_BKCOLOR"]= Color.LightGray.ToString();
+                            grdData.Rows[rowIndex]["COL_START_DATE_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                             grdData.Rows[rowIndex]["COL_TOTAL_TIME"] = "Diff.";
-                            grdData.Rows[rowIndex]["COL_TOTAL_TIME_BKCOLOR"] = Color.LightGray.ToString();
+                            grdData.Rows[rowIndex]["COL_TOTAL_TIME_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                             grdData.Rows[rowIndex]["COL_OFF_TO_ON_BTM_TIME"]= "Speed w/ conn.";
-                            grdData.Rows[rowIndex]["COL_OFF_TO_ON_BTM_TIME_BKCOLOR"] = Color.LightGray.ToString();
+                            grdData.Rows[rowIndex]["COL_OFF_TO_ON_BTM_TIME_BKCOLOR"] = "LightGray"; // Color.LightGray.ToString();
                             grdData.Rows[rowIndex]["COL_SPEED_WITH_CONN"] = "Speed w/o conn.";
-                            grdData.Rows[rowIndex]["COL_SPEED_WITH_CONN_BKCOLOR"] = Color.LightGray.ToString();
+                            grdData.Rows[rowIndex]["COL_SPEED_WITH_CONN_BKCOLOR"] = "LightGray"; // Color.LightGray.ToString();
                             calcSectionStats(subset, ref sectionAvgTime, ref sectionBestTime, ref sectionDiff,ref  sectionSpeedWithConn, ref sectionSpeedWOConn);
 
                             // //Display Statistics
@@ -315,7 +333,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                         rowIndex = grdData.Rows.Count - 1;
                         
                         grdData.Rows[rowIndex]["COL_SECTION"] = objTag.PhaseName;
-                        grdData.Rows[rowIndex]["COL_SECTION_BKCOLOR"]= Color.LightGray.ToString();
+                        grdData.Rows[rowIndex]["COL_SECTION_BKCOLOR"] = "LightGray"; // Color.LightGray.ToString();
                         
                         RunningRun = "";
 
@@ -330,7 +348,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                         grdData.Rows.Add();
                         rowIndex = grdData.Rows.Count - 1;
                         grdData.Rows[rowIndex]["COL_RUN"] = objTag.EmphName;
-                        grdData.Rows[rowIndex]["COL_RUN_BKCOLOR"] =  Color.LightGray.ToString();
+                        grdData.Rows[rowIndex]["COL_RUN_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                         //grdData.Rows[rowIndex]["COL_RUN"].Style.BackColor = Color.LightGray;
 
                     }
@@ -410,32 +428,32 @@ namespace eVuMax.DataBroker.Summary.TripReport
                     if (objTag.DeltaTargetTime > 0)
                     {
                         grdData.Rows[rowIndex]["COL_DIFF"] = Math.Round(objTag.DeltaTargetTime, 2);
-                        grdData.Rows[rowIndex]["COL_DIFF_BKCOLOR"]= Color.LightGreen.ToString();
+                        grdData.Rows[rowIndex]["COL_DIFF_BKCOLOR"] = "Green";// Color.LightGreen.ToString();
                     }
                     else
                     {
                         grdData.Rows[rowIndex]["COL_DIFF"] = Math.Round(objTag.DeltaTargetTime, 2);
-                        grdData.Rows[rowIndex]["COL_DIFF_BKCOLOR"] = Color.OrangeRed.ToString();
+                        grdData.Rows[rowIndex]["COL_DIFF_BKCOLOR"] = "OrangeRed";// Color.OrangeRed.ToString();
                     }
 
                     grdData.Rows[rowIndex]["COL_DIFF_W"] = Math.Round(objTag.DeltaSpeedWConn, 2).ToString();
                     if (objTag.DeltaSpeedWConn > 0)
                     {
-                        grdData.Rows[rowIndex]["COL_DIFF_W_BKCOLOR"] = Color.OrangeRed.ToString();
+                        grdData.Rows[rowIndex]["COL_DIFF_W_BKCOLOR"] = "OrangeRed";// Color.OrangeRed.ToString();
                     }
                     else
                     {
-                        grdData.Rows[rowIndex]["COL_DIFF_W_BKCOLOR"] = Color.LightGreen.ToString();
+                        grdData.Rows[rowIndex]["COL_DIFF_W_BKCOLOR"] = "Green";// Color.LightGreen.ToString();
                     }
 
                     grdData.Rows[rowIndex]["COL_DIFF_WO"] = Math.Round(objTag.DeltaSpeedWOConn, 2).ToString();
                     if (objTag.DeltaSpeedWOConn > 0)
                     {
-                        grdData.Rows[rowIndex]["COL_DIFF_WO_BKCOLOR"] = Color.OrangeRed.ToString();
+                        grdData.Rows[rowIndex]["COL_DIFF_WO_BKCOLOR"] = "OrangeRed";// Color.OrangeRed.ToString();
                     }
                     else
                     {
-                        grdData.Rows[rowIndex]["COL_DIFF_WO_BKCOLOR"] = Color.LightGreen.ToString();
+                        grdData.Rows[rowIndex]["COL_DIFF_WO_BKCOLOR"] = "Green";// Color.LightGreen.ToString();
                     }
 
 
@@ -463,15 +481,15 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 grdData.Rows.Add(2);
                 rowIndex = grdData.Rows.Count - 1;
                 grdData.Rows[rowIndex]["COL_DIRECTION"] = "Avg. Time";
-                grdData.Rows[rowIndex]["COL_DIRECTION_BKCOLOR"] = Color.LightGray.ToString();
+                grdData.Rows[rowIndex]["COL_DIRECTION_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                 grdData.Rows[rowIndex]["COL_START_DATE"] = "Best Time";
-                grdData.Rows[rowIndex]["COL_START_DATE_BKCOLOR"] = Color.LightGray.ToString();
+                grdData.Rows[rowIndex]["COL_START_DATE_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                 grdData.Rows[rowIndex]["COL_TOTAL_TIME"] = "Diff.";
-                grdData.Rows[rowIndex]["COL_TOTAL_TIME_BKCOLOR"] = Color.LightGray.ToString();
+                grdData.Rows[rowIndex]["COL_TOTAL_TIME_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                 grdData.Rows[rowIndex]["COL_OFF_TO_ON_BTM_TIME"] = "Speed w/ conn.";
-                grdData.Rows[rowIndex]["COL_OFF_TO_ON_BTM_TIME_BKCOLOR"] = Color.LightGray.ToString();
+                grdData.Rows[rowIndex]["COL_OFF_TO_ON_BTM_TIME_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                 grdData.Rows[rowIndex]["COL_SPEED_WITH_CONN"] = "Speed w/o conn.";
-                grdData.Rows[rowIndex]["COL_SPEED_WITH_CONN_BKCOLOR"] = Color.LightGray.ToString();
+                grdData.Rows[rowIndex]["COL_SPEED_WITH_CONN_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                 calcSectionStats(subset, ref sectionAvgTime, ref sectionBestTime, ref sectionDiff, ref sectionSpeedWithConn, ref sectionSpeedWOConn);
 
                 // //Display Statistics
