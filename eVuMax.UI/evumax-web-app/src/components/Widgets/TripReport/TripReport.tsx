@@ -1481,35 +1481,9 @@ export default class DrlgStandPlot extends React.Component {
                     </div>
                     <div className="form-inline m-1">
 
+                        <label className=" ml-5 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+                        <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
 
-
-
-                    {/* <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "380px" : "255px" }}> */}
-              {/* <label className=" mr-1">Realtime</label> 
-                    <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch> */}
-
-              <label className=" ml-5 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
-              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
-
-
-              {/* {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
-                this.objLogger.downloadFile();
-              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
-
-                this.objLogger.downloadFile();
-
-              }} 
-              
-              />
-              
-              </>
-              } */}
-            {/* </div> */}
-
-
-
-
-                        
                         <NotifyMe
                             data={this.state.warningMsg}
                             storageKey='notific_key'
@@ -1971,20 +1945,20 @@ export default class DrlgStandPlot extends React.Component {
                     </TabStripTab>
 
 
-<TabStripTab title="Settings">
-                        <div className="row" style={{width:"50vw"}} >                            
-                                <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <TabStripTab title="Settings">
+                        <div className="row" style={{ width: "50vw" }} >
+                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                 <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Connection Time</h6>
-                                    <div className="group-inline">
-                                        <div className="form-group">
-                                            <label className="summaryLabelHeader-longTripReport">
-                                                Min.Connection Time
-                                            </label>
-                                            <label className="ml-2" id="txtPositiveFlow">
+                                <div className="group-inline">
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Min.Connection Time
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
                                             <NumericTextBox
-                                            format="n2"
-                                            width="80px"
-                                            className="mr-2"
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
                                             //value={this.state.DrlgBenchMark}
                                             //   onChange={(event) => {
                                             //     this.disableRealTime();
@@ -1994,17 +1968,17 @@ export default class DrlgStandPlot extends React.Component {
                                             //   }}
                                             />
                                             (Min.)
-                                            </label>
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="summaryLabelHeader-longTripReport">
-                                                Max.Connection Time
-                                            </label>
-                                            <label className="ml-2" id="txtPositiveFlow">
+                                        </label>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Max.Connection Time
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
                                             <NumericTextBox
-                                            format="n2"
-                                            width="80px"
-                                            className="mr-2"
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
                                             //value={this.state.DrlgBenchMark}
                                             //   onChange={(event) => {
                                             //     this.disableRealTime();
@@ -2014,22 +1988,22 @@ export default class DrlgStandPlot extends React.Component {
                                             //   }}
                                             />
                                             (Min.)
-                                            </label>
-                                        </div>
-                                     
-                                        <div className="form-group">
+                                        </label>
+                                    </div>
+
+                                    <div className="form-group">
                                         <Checkbox
-                        className="mr-2"
-                        label={"Remove Fill-up Time"}
-                        //checked={this.state.ShowComments}
-                        // onChange={(event) => {
-                        //   this.setState({ ShowComments: event.value });
-                        // }}
-                      />
-                                        </div>
+                                            className="mr-2"
+                                            label={"Remove Fill-up Time"}
+                                        //checked={this.state.ShowComments}
+                                        // onChange={(event) => {
+                                        //   this.setState({ ShowComments: event.value });
+                                        // }}
+                                        />
                                     </div>
                                 </div>
-                                <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                            </div>
+                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                 <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Surface</h6>
                                 <div className="group-inline">
                                     <div className="form-group">
@@ -2037,42 +2011,42 @@ export default class DrlgStandPlot extends React.Component {
                                             Surface Depth
                                         </label>
                                         <label className="ml-2" id="txtPositiveFlow">
-                                        <NumericTextBox
-                                        format="n2"
-                                        width="80px"
-                                        className="mr-2"
-                                        //value={this.state.DrlgBenchMark}
-                                        //   onChange={(event) => {
-                                        //     this.disableRealTime();
-                                        //     this.setState({
-                                        //       DrlgBenchMark: event.target.value,
-                                        //     });
-                                        //   }}
-                                        />
-                                        Ft
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                            //value={this.state.DrlgBenchMark}
+                                            //   onChange={(event) => {
+                                            //     this.disableRealTime();
+                                            //     this.setState({
+                                            //       DrlgBenchMark: event.target.value,
+                                            //     });
+                                            //   }}
+                                            />
+                                            Ft
                                         </label>
                                     </div>
-                                
-                                
-                                
-                                </div>
-                                </div>
 
-                            
+
+
+                                </div>
+                            </div>
+
+
                         </div>
-                        <div className="row mt-5" style={{width:"50vw"}} >                            
-                                <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div className="row mt-5" style={{ width: "50vw" }} >
+                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                 <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Benchmarking</h6>
-                                    <div className="group-inline">
-                                        <div className="form-group">
-                                            <label className="summaryLabelHeader-longTripReport">
-                                                Benchmark Conn. Time
-                                            </label>
-                                            <label className="ml-2" id="txtPositiveFlow">
+                                <div className="group-inline">
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Benchmark Conn. Time
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
                                             <NumericTextBox
-                                            format="n2"
-                                            width="80px"
-                                            className="mr-2"
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
                                             //value={this.state.DrlgBenchMark}
                                             //   onChange={(event) => {
                                             //     this.disableRealTime();
@@ -2082,17 +2056,17 @@ export default class DrlgStandPlot extends React.Component {
                                             //   }}
                                             />
                                             (Min.)
-                                            </label>
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="summaryLabelHeader-longTripReport">
-                                                Trip Speed with connections
-                                            </label>
-                                            <label className="ml-2" id="txtPositiveFlow">
+                                        </label>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Trip Speed with connections
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
                                             <NumericTextBox
-                                            format="n2"
-                                            width="80px"
-                                            className="mr-2"
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
                                             //value={this.state.DrlgBenchMark}
                                             //   onChange={(event) => {
                                             //     this.disableRealTime();
@@ -2102,18 +2076,18 @@ export default class DrlgStandPlot extends React.Component {
                                             //   }}
                                             />
                                             ft/hr
-                                            </label>
-                                        </div>
-                                     
-                                        <div className="form-group">
-                                            <label className="summaryLabelHeader-longTripReport">
-                                                Trip Speed w/o connections
-                                            </label>
-                                            <label className="ml-2" id="txtPositiveFlow">
+                                        </label>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Trip Speed w/o connections
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
                                             <NumericTextBox
-                                            format="n2"
-                                            width="80px"
-                                            className="mr-2"
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
                                             //value={this.state.DrlgBenchMark}
                                             //   onChange={(event) => {
                                             //     this.disableRealTime();
@@ -2123,49 +2097,49 @@ export default class DrlgStandPlot extends React.Component {
                                             //   }}
                                             />
                                             ft/hr
-                                            </label>
-                                        </div>
+                                        </label>
                                     </div>
                                 </div>
-                                <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                            </div>
+                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                 <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Continuous Trip Speed</h6>
                                 <div className="group-inline">
                                     <div className="form-group">
                                         <label className="summaryLabelHeader-SmallTripReport">
-                                           Depth Interval
+                                            Depth Interval
                                         </label>
                                         <label className="ml-2" id="txtPositiveFlow">
-                                        <NumericTextBox
-                                        format="n2"
-                                        width="80px"
-                                        className="mr-2"
-                                        //value={this.state.DrlgBenchMark}
-                                        //   onChange={(event) => {
-                                        //     this.disableRealTime();
-                                        //     this.setState({
-                                        //       DrlgBenchMark: event.target.value,
-                                        //     });
-                                        //   }}
-                                        />
-                                        Ft
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                            //value={this.state.DrlgBenchMark}
+                                            //   onChange={(event) => {
+                                            //     this.disableRealTime();
+                                            //     this.setState({
+                                            //       DrlgBenchMark: event.target.value,
+                                            //     });
+                                            //   }}
+                                            />
+                                            Ft
                                         </label>
                                     </div>
                                     <div className="form-group">
                                         <Checkbox
-                        className="mr-2"
-                        label={"Include Pipe Movement"}
-                        //checked={this.state.ShowComments}
-                        // onChange={(event) => {
-                        //   this.setState({ ShowComments: event.value });
-                        // }}
-                      />
-                                        </div>
-                                
-                                
-                                </div>
-                                </div>
+                                            className="mr-2"
+                                            label={"Include Pipe Movement"}
+                                        //checked={this.state.ShowComments}
+                                        // onChange={(event) => {
+                                        //   this.setState({ ShowComments: event.value });
+                                        // }}
+                                        />
+                                    </div>
 
-                            
+
+                                </div>
+                            </div>
+
+
                         </div>
                     </TabStripTab>
                     {this.state.showSingleTripReport && <TabStripTab title="Single Trip Report">

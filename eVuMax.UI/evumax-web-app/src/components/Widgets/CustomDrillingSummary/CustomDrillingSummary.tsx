@@ -19,13 +19,9 @@ import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import * as d3 from "d3";
 import { Checkbox } from "@progress/kendo-react-inputs";
 
-
-
 let _gMod = new GlobalMod();
 
-
 export default function CustomDrillingSummary({ ...props }: any) {
-
 
   let objChart: Chart = new Chart(props.parentRef, "SummaryChart");
   const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
@@ -147,8 +143,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
             }
             WellName = res.data.Category;
             objData = objData_;
-            //generateReport(objData);
-            debugger;
             generateReport();
             Util.StatusSuccess("Data successfully retrived");
             Util.StatusReady();
@@ -553,9 +547,6 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-
-
-
         for (let index = 0; index < SeriesList.length; index++) {
 
 
@@ -689,7 +680,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         objChart.initialize();
-
+        debugger;
 
         objChart.reDraw();
 
@@ -1309,8 +1300,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
           </div>
 
         </div><div className="col-lg-2">
-            <label className=" ml-5 mr-1" onClick={() => { generateReport(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
-            <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { generateReport() }} />
+            <label className=" ml-5 mr-1" onClick={() => { loadSummary(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+            <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { loadSummary() }} />
         </div>
 
         <div className="col-lg-4">
