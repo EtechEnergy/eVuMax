@@ -17,3 +17,27 @@
   .summaryLabelHeader-SmallTripReport{
     width: 110px;
   }
+
+/*   
+.summaryLabelTripReport {
+  width: 85px !important;
+  height: 25px;
+  font-size: 11px;
+  text-align: right;
+  margin-bottom: 0.3rem;
+} */
+ 
+
+.statsLabelTripReport {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: #f6ab6c;
+  padding: 3px;
+  border: 1px solid;
+  border-radius: 5px;
+  width: 140px;
+  text-align: right;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 10px;
+  /* font-size: 1vw; */
+} 

@@ -74,7 +74,7 @@ export class DataSeries {
 
   PieRadius: number = 50;
 
-  showPointsOnLineSeries: boolean = false;
+  //showPointsOnLineSeries: boolean = false;
 
 
   

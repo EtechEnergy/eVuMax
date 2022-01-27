@@ -9,10 +9,10 @@ import NotifyMe from 'react-notification-timeline';
 
 import { Chart, lineStyle, curveStyle } from "../../../eVuMaxObjects/Chart/Chart";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
-
+import * as d3 from "d3";
 
 import { formatNumber, parseDate } from "@telerik/kendo-intl";
-
+import { faListAlt, faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -24,11 +24,14 @@ import {
 } from "../../../eVuMaxObjects/Chart/DataSeries";
 import "@progress/kendo-react-layout";
 import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
-import { Button, TabStrip, TabStripTab, TimePicker } from "@progress/kendo-react-all";
+import { Button, NumericTextBox, TabStrip, TabStripTab, TimePicker } from "@progress/kendo-react-all";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import { confirmAlert } from "react-confirm-alert";
 import * as util from "../../../utilFunctions/utilFunctions";
 import "./TripReportCss.css";
+import { lab } from "d3";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Checkbox } from "@progress/kendo-react-inputs";
 
 
 
@@ -70,7 +73,8 @@ export default class DrlgStandPlot extends React.Component {
         showSingleTripReport: false,
         objGridData: [] as any,
         selectedTab: 0,
-        SingleTripReportData: {} as any
+        SingleTripReportData: {} as any,
+        currentPhaseIndex: 0
     }
 
     componentWillUnmount() {
@@ -90,11 +94,11 @@ export default class DrlgStandPlot extends React.Component {
     }
 
     componentDidUpdate() {
-    try {
-      this.refreshChart();
+        try {
+            this.refreshChart();
 
-    } catch (error) { }
-  }
+        } catch (error) { }
+    }
 
     async componentDidMount() {
         try {
@@ -114,7 +118,7 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart1.leftAxis().Visible = true;
 
             this.objChart1.bottomAxis().AutoScale = true;
-            this.objChart1.bottomAxis().bandScale = true; //prath
+            this.objChart1.bottomAxis().bandScale = false; //prath
             this.objChart1.bottomAxis().Min = 100;
             this.objChart1.bottomAxis().Max = 200;
             this.objChart1.bottomAxis().Title = "Trips";
@@ -138,7 +142,7 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart1.reDraw();
 
 
-            this.objChart1.onAfterAxisDraw.subscribe((e, i) => {
+            this.objChart1.onAfterSeriesDraw.subscribe((e, i) => {
                 this.onAfterAxisDrawSeries(e, i);
             });
 
@@ -367,257 +371,118 @@ export default class DrlgStandPlot extends React.Component {
     onAfterAxisDrawSeries = (e: ChartEventArgs, i: number) => {
         try {
 
+            // '//Drawing Avg. Lines per section
+            d3.selectAll(".avgTimeLine").remove();
+            let startIndex = 0;
+            let endIndex = 0;
+
+            //let   arrData  : any[]= this.state.objPlotData.tripData.Values.ToArray();
+            let arrData: any[] = Object.values(this.state.objPlotData.tripData);
+
+            arrData.sort();
+
+            let RunningSection: string = "";
+
+            for (let i = 0; i <= arrData.length - 1; i++) {
+                if (i > 0) {
+                    if (arrData[i].PhaseName.trim().toUpperCase() != RunningSection.trim().toUpperCase()) {
+                        endIndex = i - 1;
+
+
+                        if (Math.abs(startIndex - endIndex) > 0) {
+
+                            // '//Only draw line if more than one
+                            let sectionAvg = 0;
+                            let sumAvgTime = 0;
+                            let counterAvgTime = 0;
+
+                            for (let j = startIndex; j <= endIndex; j++) {
+                                sumAvgTime = sumAvgTime + arrData[j].AvgConnTime;
+                                counterAvgTime += 1;
+                            }
+
+                            if (sumAvgTime > 0 && counterAvgTime > 0) {
+                                sectionAvg = eval(Number(sumAvgTime / counterAvgTime).toFixed(2));
+                            }
+
+                            let x1 = this.objChart1.bottomAxis().ScaleRef((startIndex + 1));
+                            let x2 = this.objChart1.bottomAxis().ScaleRef((endIndex + 1));
+
+                            let y1 = this.objChart1.leftAxis().ScaleRef(sectionAvg);
+                            let y2 = y1;
+
+
+
+                            this.objChart1.SVGRect
+                                //.attr("transform", "translate(" + x1 + "," + y1 + ") ")    
+
+                                .append("line")
+                                .attr("class", "avgTimeLine")
+                                .attr("stroke", "red")
+                                //.attr("stroke-width", 2) //wip
+                                .attr("x1", x1)     // x position of the first end of the line
+                                .attr("y1", y1)      // y position of the first end of the line
+                                .attr("x2", x2)     // x position of the second end of the line
+                                .attr("y2", y2);    // y position of the second end of the line
+
+
+
+                        }
+
+
+                        // '//Re-initialize the counters
+                        startIndex = i;
+                    }
+                }
+
+                RunningSection = arrData[i].PhaseName;
+            }
+
+
+
+            if (startIndex < arrData.length - 1) {
+                endIndex = arrData.length - 1;
+
+                if (Math.abs(startIndex - endIndex) > 0) {
+
+
+                    let sectionAvg = 0;
+                    let sumAvgTime = 0;
+                    let counterAvgTime = 0;
+
+                    for (let j = startIndex; j <= endIndex; j++) {
+                        sumAvgTime = sumAvgTime + arrData[j].AvgConnTime;
+                        counterAvgTime += 1;
+                    }
+
+                    if (sumAvgTime > 0 && counterAvgTime > 0)
+                        sectionAvg = eval(Number(sumAvgTime / counterAvgTime).toFixed(2));
+
+
+                    let x1 = this.objChart1.bottomAxis().ScaleRef(startIndex + 1);
+                    let x2 = this.objChart1.bottomAxis().ScaleRef(endIndex + 1);
+
+                    let y1 = this.objChart1.leftAxis().ScaleRef(sectionAvg);
+                    let y2 = y1;
+
+                    this.objChart1.SVGRect.append("g")
+                        //.attr("transform", "translate(" + x1 + "," + y1 + ") ")    
+                        .append("line")
+                        .attr("class", "avgTimeLine")
+                        .attr("stroke", "red")
+                        .attr("x1", x1)     // x position of the first end of the line
+                        .attr("y1", y1)      // y position of the first end of the line
+                        .attr("x2", x2)     // x position of the second end of the line
+                        .attr("y2", y2);    // y position of the second end of the line
+                }
+            }
+
         } catch (error) {
 
         }
 
     }
 
-
-
-    initializeChart = () => {
-        try {
-
-            //initialize chart
-            this.objChart1 = new Chart(this, "TripReport");
-            this.objChart1.ContainerId = "AvgTripConnChart";
-            this.objChart1.Title = "Average Tripping Connection Time";
-
-            this.objChart1.leftAxis().AutoScale = true;
-            this.objChart1.leftAxis().Min = 0;
-            this.objChart1.leftAxis().Max = 100;
-            this.objChart1.leftAxis().Inverted = false;
-            this.objChart1.leftAxis().ShowLabels = true;
-            this.objChart1.leftAxis().ShowTitle = true;
-            this.objChart1.leftAxis().Title = "Average Time (min.)";
-            this.objChart1.leftAxis().DisplayOrder = 1;
-            this.objChart1.leftAxis().Visible = true;
-
-            this.objChart1.bottomAxis().AutoScale = true;
-            this.objChart1.bottomAxis().bandScale = true; //prath
-            this.objChart1.bottomAxis().Min = 100;
-            this.objChart1.bottomAxis().Max = 200;
-            this.objChart1.bottomAxis().Title = "Trips";
-            this.objChart1.bottomAxis().ShowLabels = true;
-            this.objChart1.bottomAxis().ShowTitle = true;
-            this.objChart1.bottomAxis().LabelAngel = 90;
-            this.objChart1.bottomAxis().ShowSelector = false;
-            this.objChart1.bottomAxis().IsDateTime = false;
-            this.objChart1.bottomAxis().Visible = true;
-
-            // this.objChart.rightAxis().Visible = true;
-
-            this.objChart1.MarginLeft = 0; //10;
-            this.objChart1.MarginBottom = 0; //40;
-            this.objChart1.MarginTop = 20; //10;
-            this.objChart1.MarginRight = 0; // 10;
-
-            this.objChart1.initialize();
-            this.objChart1.reDraw();
-
-
-
-            //TripConnChart
-            this.objChart2 = new Chart(this, "TripReport");
-            this.objChart2.ContainerId = "TripConnChart";
-            this.objChart2.Title = "Tripping Connection Times";
-
-            this.objChart2.leftAxis().AutoScale = true;
-            this.objChart2.leftAxis().Min = 0;
-            this.objChart2.leftAxis().Max = 100;
-            this.objChart2.leftAxis().Inverted = false;
-            this.objChart2.leftAxis().ShowLabels = true;
-            this.objChart2.leftAxis().ShowTitle = true;
-            this.objChart2.leftAxis().Title = "Average Time (min.)";
-            this.objChart2.leftAxis().DisplayOrder = 1;
-            this.objChart2.leftAxis().Visible = true;
-
-            this.objChart2.bottomAxis().AutoScale = true;
-            this.objChart2.bottomAxis().bandScale = true; //prath
-            this.objChart2.bottomAxis().Min = 100;
-            this.objChart2.bottomAxis().Max = 200;
-            this.objChart2.bottomAxis().Title = "Trips";
-            this.objChart2.bottomAxis().ShowLabels = true;
-            this.objChart2.bottomAxis().ShowTitle = true;
-            this.objChart2.bottomAxis().LabelAngel = 90;
-            this.objChart2.bottomAxis().ShowSelector = false;
-            this.objChart2.bottomAxis().IsDateTime = false;
-            this.objChart2.bottomAxis().Visible = true;
-
-            // this.objChart.rightAxis().Visible = true;
-
-            this.objChart2.MarginLeft = 0; //10;
-            this.objChart2.MarginBottom = 0; //40;
-            this.objChart2.MarginTop = 0; //10;
-            this.objChart2.MarginRight = 0; // 10;
-
-            this.objChart2.initialize();
-            this.objChart2.reDraw();
-
-
-            ////ContiTripSpeedWithConnChart
-            this.objChart3 = new Chart(this, "TripReport");
-            this.objChart3.ContainerId = "ContiTripSpeedWithConnChart";
-            this.objChart3.Title = "Continuous Tripping Speed with Connection";
-
-            this.objChart3.leftAxis().AutoScale = true;
-            this.objChart3.leftAxis().Min = 0;
-            this.objChart3.leftAxis().Max = 100;
-            this.objChart3.leftAxis().Inverted = false;
-            this.objChart3.leftAxis().ShowLabels = true;
-            this.objChart3.leftAxis().ShowTitle = true;
-            this.objChart3.leftAxis().Title = "Depth (" + this.state.objPlotData.depthUnit + ")";
-            this.objChart3.leftAxis().DisplayOrder = 1;
-            this.objChart3.leftAxis().Visible = true;
-
-            this.objChart3.bottomAxis().AutoScale = true;
-            this.objChart3.bottomAxis().bandScale = true; //prath
-            this.objChart3.bottomAxis().Min = 100;
-            this.objChart3.bottomAxis().Max = 200;
-            this.objChart3.bottomAxis().Title = "Speed with Connection (" + this.state.objPlotData.depthUnit + "/Hr.)";
-            this.objChart3.bottomAxis().ShowLabels = true;
-            this.objChart3.bottomAxis().ShowTitle = true;
-            this.objChart3.bottomAxis().LabelAngel = 90;
-            this.objChart3.bottomAxis().ShowSelector = false;
-            this.objChart3.bottomAxis().IsDateTime = false;
-            this.objChart3.bottomAxis().Visible = true;
-
-            // this.objChart.rightAxis().Visible = true;
-
-            this.objChart3.MarginLeft = 0; //10;
-            this.objChart3.MarginBottom = 0; //40;
-            this.objChart3.MarginTop = 0; //10;
-            this.objChart3.MarginRight = 0; // 10;
-
-            this.objChart3.initialize();
-            this.objChart3.reDraw();
-
-
-
-            ////ContiTripSpeedWithOutConnChart
-            this.objChart4 = new Chart(this, "TripReport4");
-            this.objChart4.ContainerId = "ContiTripSpeedWithOutConnChart";
-            this.objChart4.Title = "Continuous Tripping Speed without Connection";
-            this.objChart4.DataSeries.clear();
-            this.objChart4.ShowLegend = true;
-            this.objChart4.updateChart();
-
-            this.objChart4.leftAxis().AutoScale = true;
-            this.objChart4.leftAxis().Min = 0;
-            this.objChart4.leftAxis().Max = 100;
-            this.objChart4.leftAxis().Inverted = false;
-            this.objChart4.leftAxis().ShowLabels = true;
-            this.objChart4.leftAxis().ShowTitle = true;
-            this.objChart4.leftAxis().Title = "Depth (" + this.state.objPlotData.depthUnit + ")";
-            this.objChart4.leftAxis().DisplayOrder = 1;
-            this.objChart4.leftAxis().Visible = true;
-
-            this.objChart4.bottomAxis().AutoScale = true;
-            this.objChart4.bottomAxis().bandScale = true; //prath
-            this.objChart4.bottomAxis().Min = 100;
-            this.objChart4.bottomAxis().Max = 200;
-            this.objChart4.bottomAxis().Title = "Speed with Connection (" + this.state.objPlotData.depthUnit + "/Hr.)";
-            this.objChart4.bottomAxis().ShowLabels = true;
-            this.objChart4.bottomAxis().ShowTitle = true;
-            this.objChart4.bottomAxis().LabelAngel = 90;
-            this.objChart4.bottomAxis().ShowSelector = false;
-            this.objChart4.bottomAxis().IsDateTime = false;
-            this.objChart4.bottomAxis().Visible = true;
-
-            // this.objChart.rightAxis().Visible = true;
-
-            this.objChart4.MarginLeft = 0; //10;
-            this.objChart4.MarginBottom = 0; //40;
-            this.objChart4.MarginTop = 0; //10;
-            this.objChart4.MarginRight = 0; // 10;
-
-            this.objChart4.initialize();
-            this.objChart4.reDraw();
-
-
-            ////ChartTripSpeed Chart
-            this.ST_objChartTripSpeed = new Chart(this, "ChartTripSpeed1");
-            this.ST_objChartTripSpeed.ContainerId = "ChartTripSpeed";
-
-            this.ST_objChartTripSpeed.leftAxis().AutoScale = true;
-            this.ST_objChartTripSpeed.leftAxis().Min = 0;
-            this.ST_objChartTripSpeed.leftAxis().Max = 100;
-            this.ST_objChartTripSpeed.leftAxis().Inverted = false;
-            this.ST_objChartTripSpeed.leftAxis().ShowLabels = true;
-            this.ST_objChartTripSpeed.leftAxis().ShowTitle = true;
-            this.ST_objChartTripSpeed.leftAxis().Title = "Depth";
-            this.ST_objChartTripSpeed.leftAxis().DisplayOrder = 1;
-            this.ST_objChartTripSpeed.leftAxis().Visible = true;
-
-            this.ST_objChartTripSpeed.bottomAxis().AutoScale = true;
-            this.ST_objChartTripSpeed.bottomAxis().bandScale = true;
-            this.ST_objChartTripSpeed.bottomAxis().Min = 100;
-            this.ST_objChartTripSpeed.bottomAxis().Max = 200;
-            this.ST_objChartTripSpeed.bottomAxis().Title = "Speed";
-            this.ST_objChartTripSpeed.bottomAxis().ShowLabels = true;
-            this.ST_objChartTripSpeed.bottomAxis().ShowTitle = true;
-            this.ST_objChartTripSpeed.bottomAxis().LabelAngel = 90;
-            this.ST_objChartTripSpeed.bottomAxis().ShowSelector = false;
-            this.ST_objChartTripSpeed.bottomAxis().IsDateTime = false;
-            this.ST_objChartTripSpeed.bottomAxis().Visible = true;
-
-
-
-            this.ST_objChartTripSpeed.MarginLeft = 0; //10;
-            this.ST_objChartTripSpeed.MarginBottom = 0; //40;
-            this.ST_objChartTripSpeed.MarginTop = 0; //10;
-            this.ST_objChartTripSpeed.MarginRight = 0; // 10;
-
-
-
-            this.ST_objChartTripSpeed.initialize();
-            this.ST_objChartTripSpeed.reDraw();
-
-
-
-            ////Bar TripConn Chart
-            this.ST_objChart3BarTripConn = new Chart(this, "ChartTripConnectionsBar1");
-            this.ST_objChart3BarTripConn.ContainerId = "ChartTripConnectionsBar";
-
-            this.ST_objChart3BarTripConn.leftAxis().AutoScale = true;
-            this.ST_objChart3BarTripConn.leftAxis().Min = 0;
-            this.ST_objChart3BarTripConn.leftAxis().Max = 100;
-            this.ST_objChart3BarTripConn.leftAxis().Inverted = false;
-            this.ST_objChart3BarTripConn.leftAxis().ShowLabels = true;
-            this.ST_objChart3BarTripConn.leftAxis().ShowTitle = true;
-            this.ST_objChart3BarTripConn.leftAxis().Title = "Time (Min.)"
-            this.ST_objChart3BarTripConn.leftAxis().DisplayOrder = 1;
-            this.ST_objChart3BarTripConn.leftAxis().Visible = true;
-
-            this.ST_objChart3BarTripConn.bottomAxis().AutoScale = true;
-            this.ST_objChart3BarTripConn.bottomAxis().bandScale = true;
-            this.ST_objChart3BarTripConn.bottomAxis().Min = 100;
-            this.ST_objChart3BarTripConn.bottomAxis().Max = 200;
-            this.ST_objChart3BarTripConn.bottomAxis().Title = "Depth (" + this.state.objPlotData.depthUnit + ")";
-            this.ST_objChart3BarTripConn.bottomAxis().ShowLabels = true;
-            this.ST_objChart3BarTripConn.bottomAxis().ShowTitle = true;
-            this.ST_objChart3BarTripConn.bottomAxis().LabelAngel = 90;
-            this.ST_objChart3BarTripConn.bottomAxis().ShowSelector = false;
-            this.ST_objChart3BarTripConn.bottomAxis().IsDateTime = false;
-            this.ST_objChart3BarTripConn.bottomAxis().Visible = true;
-
-
-
-            this.ST_objChart3BarTripConn.MarginLeft = 0; //10;
-            this.ST_objChart3BarTripConn.MarginBottom = 0; //40;
-            this.ST_objChart3BarTripConn.MarginTop = 0; //10;
-            this.ST_objChart3BarTripConn.MarginRight = 0; // 10;
-
-
-
-            this.ST_objChart3BarTripConn.initialize();
-            this.ST_objChart3BarTripConn.reDraw();
-
-
-        } catch (error) {
-
-        }
-    }
 
 
 
@@ -644,10 +509,11 @@ export default class DrlgStandPlot extends React.Component {
 
             this.objChart1.bottomAxis().AutoScale = true;
             this.objChart1.bottomAxis().Title = "Trips";
-            this.objChart1.bottomAxis().LabelAngel = 90;
+            this.objChart1.bottomAxis().LabelAngel = 0;
             this.objChart1.bottomAxis().ShowSelector = false;
             this.objChart1.bottomAxis().ShowTitle = true;
             this.objChart1.bottomAxis().Visible = true;
+            this.objChart1.bottomAxis().PaddingMin = 10;
 
             //this.objChart1.initialize();
 
@@ -662,6 +528,9 @@ export default class DrlgStandPlot extends React.Component {
             objAvgConnTime.LineWidth = 3;
             objAvgConnTime.ShowInLegend = false;
             objAvgConnTime.CurveStyle = curveStyle.normal;
+            objAvgConnTime.ShowPointsOnLineSeries = true;
+            objAvgConnTime.PointStyle = pointStyle.Circle;
+            objAvgConnTime.PointSize = 7;
 
             this.objChart1.DataSeries.set(objAvgConnTime.Id, objAvgConnTime);
             //Populate data in objAvgConnTime
@@ -680,6 +549,7 @@ export default class DrlgStandPlot extends React.Component {
 
             }
 
+            debugger;
             this.objChart1.reDraw();
             this.plotAvgConnBarChart();
 
@@ -713,10 +583,11 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart2.bottomAxis().Title = "Trips";
             this.objChart2.bottomAxis().ShowLabels = true;
             this.objChart2.bottomAxis().ShowTitle = true;
-            this.objChart2.bottomAxis().LabelAngel = 90;
+            this.objChart2.bottomAxis().LabelAngel = 0;
             this.objChart2.bottomAxis().ShowSelector = true;
             this.objChart2.bottomAxis().IsDateTime = false;
             this.objChart2.bottomAxis().Visible = true;
+
 
 
             // this.objChart.rightAxis().Visible = true;
@@ -748,8 +619,8 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.Id = strSection;
                 objSeries.Title = strSection;
                 objSeries.Type = dataSeriesType.Bar;
-                objSeries.Stacked =false;
-                objSeries.ShowLabelOnSeries=true;
+                objSeries.Stacked = false;
+                objSeries.ShowLabelOnSeries = true;
                 objSeries.Color = this.getColorForBar(sectionCounter);
                 objSeries.XAxisId = this.objChart2.bottomAxis().Id;
                 objSeries.YAxisId = this.objChart2.leftAxis().Id;
@@ -758,7 +629,7 @@ export default class DrlgStandPlot extends React.Component {
                 sectionCounter = sectionCounter + 1;
 
                 objSeries.LineWidth = 25
-                
+
                 // ''Add data to the series
                 for (let index = 0; index < arrData.length; index++) {
 
@@ -824,13 +695,13 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart3.leftAxis().Visible = true;
 
             this.objChart3.bottomAxis().AutoScale = true;
-            this.objChart3.bottomAxis().bandScale = false; 
+            this.objChart3.bottomAxis().bandScale = false;
             this.objChart3.bottomAxis().Min = 100;
             this.objChart3.bottomAxis().Max = 200;
             this.objChart3.bottomAxis().Title = "Speed with Connection (" + this.state.objPlotData.depthUnit + "/Hr.)";
             this.objChart3.bottomAxis().ShowLabels = true;
             this.objChart3.bottomAxis().ShowTitle = true;
-            this.objChart3.bottomAxis().LabelAngel = 90;
+            this.objChart3.bottomAxis().LabelAngel = 0;
             this.objChart3.bottomAxis().ShowSelector = false;
             this.objChart3.bottomAxis().IsDateTime = false;
             this.objChart3.bottomAxis().Visible = true;
@@ -842,7 +713,7 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart3.MarginTop = 0; //10;
             this.objChart3.MarginRight = 0; // 10;
 
-            
+
             this.objChart3.reDraw();
 
             let uniqueSections: any = [];
@@ -860,7 +731,7 @@ export default class DrlgStandPlot extends React.Component {
 
 
             let sectionCounter: number = 0;
-            
+
             for (let index = 0; index < uniqueSections.length; index++) {
                 const strSection = uniqueSections[index];
                 let objSeries = new DataSeries();
@@ -872,13 +743,15 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.YAxisId = this.objChart3.leftAxis().Id;
                 objSeries.ShowInLegend = true;
                 objSeries.PointStyle = pointStyle.Diamond;
-                objSeries.PointSize = 4;
+                objSeries.PointSize = 7;
+                objSeries.PointWidth = 10;
+                objSeries.PointHeight = 10;
 
                 this.objChart3.DataSeries.set(objSeries.Id, objSeries);
                 sectionCounter = sectionCounter + 1;
 
 
-                
+
                 // ''Add data to the series
                 for (let index1 = 0; index1 < arrData.length; index1++) {
 
@@ -920,13 +793,13 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart4.leftAxis().Visible = true;
 
             this.objChart4.bottomAxis().AutoScale = true;
-            this.objChart4.bottomAxis().bandScale = false; 
+            this.objChart4.bottomAxis().bandScale = false;
             this.objChart4.bottomAxis().Min = 100;
             this.objChart4.bottomAxis().Max = 200;
             this.objChart4.bottomAxis().Title = "Speed with Connection (" + this.state.objPlotData.depthUnit + "/Hr.)";
             this.objChart4.bottomAxis().ShowLabels = true;
             this.objChart4.bottomAxis().ShowTitle = true;
-            this.objChart4.bottomAxis().LabelAngel = 90;
+            this.objChart4.bottomAxis().LabelAngel = 0;
             this.objChart4.bottomAxis().ShowSelector = false;
             this.objChart4.bottomAxis().IsDateTime = false;
             this.objChart4.bottomAxis().Visible = true;
@@ -968,15 +841,17 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.YAxisId = this.objChart4.leftAxis().Id;
                 objSeries.ShowInLegend = true;
                 objSeries.PointStyle = pointStyle.Diamond;
-                objSeries.PointSize = 15;
+                objSeries.PointWidth = 10;
+                objSeries.PointHeight = 10;
+                //objSeries.PointSize = 15;
                 //alert(objSeries.Id);
                 //console.log(arrData);
-                
+
                 this.objChart4.DataSeries.set(objSeries.Id, objSeries);
                 sectionCounter = sectionCounter + 1;
 
 
-                
+
                 // ''Add data to the series
                 for (let index1 = 0; index1 < arrData.length; index1++) {
 
@@ -988,7 +863,7 @@ export default class DrlgStandPlot extends React.Component {
                             objDataPoint.x = tripData[i].Speed;
                             objDataPoint.y = tripData[i].Depth
                             objSeries.Data.push(objDataPoint);
-                            console.log(objSeries.Id + " x=" + objDataPoint.x + " y="+ objDataPoint.y);
+                            console.log(objSeries.Id + " x=" + objDataPoint.x + " y=" + objDataPoint.y);
                         }
 
 
@@ -1009,7 +884,7 @@ export default class DrlgStandPlot extends React.Component {
     refreshChart = () => {
 
         //this.objChart.LegendPosition = 4; // 1 (left), 2 (right), 3 (top), 4 (bottom)
-        
+
         if (this.state.selectedTab == 1) {
             this.plotPage2Charts();
         }
@@ -1018,7 +893,11 @@ export default class DrlgStandPlot extends React.Component {
             this.plotPage3Charts();
         }
 
-        
+        if (this.state.selectedTab == 3) {
+            this.refreshSingleTripReport();
+        }
+
+
         document.title = this.state.objPlotData.WellName + " -Trip Report";
     }
 
@@ -1089,7 +968,7 @@ export default class DrlgStandPlot extends React.Component {
 
             //Populate the data series with this data
             objSeries.Data.slice(0, objSeries.Data.length);
-            
+
             let plotData: any = Object.values(this.state.SingleTripReportData.arrSpeedWO);
 
             for (let i = 0; i < plotData.length; i++) {
@@ -1203,7 +1082,7 @@ export default class DrlgStandPlot extends React.Component {
             objSeries.CurveStyle = curveStyle.normal;
 
             this.ST_objChart3BarTripConn.DataSeries.set(objSeries.Id, objSeries);
-            
+
             //Load data
 
             for (let i = 0; i < this.state.SingleTripReportData.arrConn.length; i++) {
@@ -1265,7 +1144,7 @@ export default class DrlgStandPlot extends React.Component {
             //Fill up the data for data series
             objPieData = new ChartData();
             objPieData.y = movePercent;
-            objPieData.label = "Movement Time (" + movePercent.toString() + ")"
+            objPieData.label = "Mov.Time (" + movePercent.toString() + ")"
             objPieData.color = "orange";
             objPieSeries.Data.push(objPieData);
 
@@ -1295,6 +1174,8 @@ export default class DrlgStandPlot extends React.Component {
                 })
                 return;
             }
+
+
 
             this.refreshPieChart();
             this.refreshContiTripSpeedChart();
@@ -1329,6 +1210,7 @@ export default class DrlgStandPlot extends React.Component {
             objBrokerRequest.Module = "Summary.Manager";
             objBrokerRequest.Broker = "TripReportBroker";
             objBrokerRequest.Function = "generateTripReport";
+
 
 
             objParameter = new BrokerParameter("WellID", this.WellID);
@@ -1423,7 +1305,7 @@ export default class DrlgStandPlot extends React.Component {
 
 
     handleTabSelection = (e: any) => {
-        
+
         this.setState({ selectedTab: e.selected });
 
         // if (e.selected == 1) {
@@ -1438,7 +1320,7 @@ export default class DrlgStandPlot extends React.Component {
 
     grdRowClick = (objRow: any) => {
         try {
-            console.log("objRow", objRow);
+
             if (objRow.dataItem.COL_PHASE_ID == null) {
 
                 confirmAlert({
@@ -1602,6 +1484,32 @@ export default class DrlgStandPlot extends React.Component {
 
 
 
+                    {/* <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "380px" : "255px" }}> */}
+              {/* <label className=" mr-1">Realtime</label> 
+                    <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch> */}
+
+              <label className=" ml-5 mr-1" onClick={() => { this.refreshChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+              <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.refreshChart(); }} />
+
+
+              {/* {this.objLogger.LogList.length > 0 && <><label className=" ml-2 mr-1" onClick={() => {
+                this.objLogger.downloadFile();
+              }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+
+                this.objLogger.downloadFile();
+
+              }} 
+              
+              />
+              
+              </>
+              } */}
+            {/* </div> */}
+
+
+
+
+                        
                         <NotifyMe
                             data={this.state.warningMsg}
                             storageKey='notific_key'
@@ -1612,13 +1520,39 @@ export default class DrlgStandPlot extends React.Component {
                             showDate={false}
                             size={24}
                             color="yellow"
-                        // markAsReadFn={() => 
-                        //   this.state.warningMsg = []
-                        // }
                         />
 
                     </div>
                 </div>
+
+                <div className="row">
+                    <div className="col-lg-12">
+                        <div className="float-right">
+                            <button type="button" onClick={() => {
+                                if (this.state.showSingleTripReport) {
+                                    this.setState({ selectedTab: 3 });
+                                } else {
+                                    confirmAlert({
+                                        //title: 'eVuMax',
+                                        message: 'Please Select the Trip from the table',
+                                        childrenElement: () => <div />,
+                                        buttons: [
+                                            {
+                                                label: 'Ok',
+                                                onClick: () => null
+                                            }
+                                        ]
+                                    });
+                                    return;
+                                }
+
+                            }} className="btn-custom btn-custom-primary ml-1">
+                                Show Single Trip Report</button>
+                        </div>
+
+                    </div>
+                </div>
+
 
 
 
@@ -1642,6 +1576,11 @@ export default class DrlgStandPlot extends React.Component {
                                 // selectedField="selected"
                                 data={this.state.objGridData}
                             >
+
+                                {/* <Column title="Unit">
+                                    <Column field="xx" title="Price" />
+                                    <Column  title="In Stock" />
+                                </Column> */}
                                 {false && <Column
                                     field="COL_PHASE_INDEX"
 
@@ -1662,7 +1601,7 @@ export default class DrlgStandPlot extends React.Component {
                                 <Column
                                     field="COL_SECTION"
                                     title="Section"
-                                    width={100}
+                                    width={80}
                                     cell={(props) => (
                                         <td style={{ backgroundColor: props.dataItem.COL_SECTION_BKCOLOR }} className="summaryLabelTripReport">
                                             <span>
@@ -1715,6 +1654,7 @@ export default class DrlgStandPlot extends React.Component {
 
 
                                 />
+
                                 <Column
                                     //headerClassName="text-center"
                                     className="summaryLabel"
@@ -1757,95 +1697,109 @@ export default class DrlgStandPlot extends React.Component {
                                     )}
                                 />
 
-                                <Column
-                                    field="COL_TOTAL_TIME"
-                                    width={100}
-                                    title="Total Time (Hr.)"
-                                    cell={(props) => (
 
-                                        <td className="text-left summaryLabelTripReport" style={{ backgroundColor: (props.dataItem.COL_TOTAL_TIME_BKCOLOR == null ? "" : props.dataItem.COL_TOTAL_TIME_BKCOLOR) }}>
-                                            <span>
-                                                {" "}
-                                                {props.dataItem.COL_TOTAL_TIME}
-                                            </span>
-                                        </td>
-                                    )}
-                                >
+                                <Column title="Time (Hr.)">
+                                    <Column
+                                        field="COL_TOTAL_TIME"
+                                        width={90}
+                                        title="Total"
+                                        cell={(props) => (
 
+                                            <td className="text-left summaryLabelTripReport" style={{ backgroundColor: (props.dataItem.COL_TOTAL_TIME_BKCOLOR == null ? "" : props.dataItem.COL_TOTAL_TIME_BKCOLOR) }}>
+                                                <span>
+                                                    {" "}
+                                                    {props.dataItem.COL_TOTAL_TIME}
+                                                </span>
+                                            </td>
+                                        )}
+                                    >
+
+                                    </Column>
+
+
+                                    <Column
+                                        field="COL_TIME_ON_SURFACE"
+                                        width={80}
+                                        title="on Surface"
+                                        className="summaryLabelTripReport"
+                                    />
                                 </Column>
 
                                 <Column
-                                    field="COL_TIME_ON_SURFACE"
-                                    width={140}
-                                    title="Time on Surface (Hr.)"
-                                    className="summaryLabelTripReport"
-                                />
-
-                                <Column
-                                    field="COL_OFF_TO_ON_BTM_TIME"
-                                    width={155}
-                                    title="Off to On Btm. Time (Hr.)"
-                                    cell={(props) => (
-
-                                        <td className="text-left summaryLabelTripReport" style={{ backgroundColor: (props.dataItem.COL_OFF_TO_ON_BTM_TIME_BKCOLOR == null ? "" : props.dataItem.COL_OFF_TO_ON_BTM_TIME_BKCOLOR) }}>
-                                            <span>
-                                                {" "}
-                                                {props.dataItem.COL_OFF_TO_ON_BTM_TIME}
-                                            </span>
-                                        </td>
-                                    )}
+                                    title="Off to On Bottom"
                                 >
+                                    <Column
+                                        field="COL_OFF_TO_ON_BTM_TIME"
+                                        width={100}
+                                        title="Time (Hr.)"
+                                        cell={(props) => (
+
+                                            <td className="text-left summaryLabelTripReport" style={{ backgroundColor: (props.dataItem.COL_OFF_TO_ON_BTM_TIME_BKCOLOR == null ? "" : props.dataItem.COL_OFF_TO_ON_BTM_TIME_BKCOLOR) }}>
+                                                <span>
+                                                    {" "}
+                                                    {props.dataItem.COL_OFF_TO_ON_BTM_TIME}
+                                                </span>
+                                            </td>
+                                        )}
+                                    >
+                                    </Column>
+
+                                    <Column
+                                        field="COL_OFF_TO_ON_BTM_SPEED"
+                                        width={100}
+                                        title="Speed (ft/hr.)"
+                                        className="text-right summaryLabelTripReport"
+
+                                    >
+                                    </Column>
                                 </Column>
 
                                 <Column
-                                    field="COL_OFF_TO_ON_BTM_SPEED"
-                                    width={170}
-                                    title="Off to On Btm. Speed (ft/hr.)"
-                                    className="text-right summaryLabelTripReport"
-
+                                    title="Speed (ft/hr.)"
                                 >
+                                    <Column
+                                        field="COL_SPEED_WITH_CONN"
+                                        width={100}
+                                        title="W/Conn"
+                                        cell={(props) => (
+
+                                            <td className="text-left summaryLabelTripReport" style={{ backgroundColor: (props.dataItem.COL_SPEED_WITH_CONN_BKCOLOR == null ? "" : props.dataItem.COL_SPEED_WITH_CONN_BKCOLOR) }}>
+                                                <span>
+                                                    {" "}
+                                                    {props.dataItem.COL_SPEED_WITH_CONN}
+                                                </span>
+                                            </td>
+                                        )}
+                                    >
+                                    </Column>
+
+
+
+                                    <Column
+                                        field="COL_SPEED_WO_CONN"
+                                        width={90}
+                                        title="WO/Conn)"
+                                        className="text-right summaryLabelTripReport"
+                                    >
+                                    </Column>
                                 </Column>
 
-                                <Column
-                                    field="COL_SPEED_WITH_CONN"
-                                    width={140}
-                                    title="Speed W/Conn (ft/hr.)"
-                                    cell={(props) => (
+                                <Column title="Delta Avg.">
+                                    <Column
+                                        field="COL_DIFF"
+                                        title="Conn. Time(Min)"
+                                        width={109}
 
-                                        <td className="text-left summaryLabelTripReport" style={{ backgroundColor: (props.dataItem.COL_SPEED_WITH_CONN_BKCOLOR == null ? "" : props.dataItem.COL_SPEED_WITH_CONN_BKCOLOR) }}>
-                                            <span>
-                                                {" "}
-                                                {props.dataItem.COL_SPEED_WITH_CONN}
-                                            </span>
-                                        </td>
-                                    )}
-                                >
-                                </Column>
-
-
-
-                                <Column
-                                    field="COL_SPEED_WO_CONN"
-                                    width={140}
-                                    title="Speed WO/Conn (ft/hr.)"
-                                    className="text-right summaryLabelTripReport"
-                                >
-                                </Column>
-
-                                <Column
-                                    field="COL_DIFF"
-                                    title="Delta Avg Conn. Time(Min)"
-                                    width={150}
-
-                                    cell={(props) => (
-                                        <td className="text-right summaryLabelTripReport" style={{ backgroundColor: props.dataItem.COL_DIFF_BKCOLOR }}>
-                                            <span>
-                                                {" "}
-                                                {props.dataItem.COL_DIFF}{" "}
-                                            </span>
-                                        </td>
-                                    )}
-                                >
+                                        cell={(props) => (
+                                            <td className="text-right summaryLabelTripReport" style={{ backgroundColor: props.dataItem.COL_DIFF_BKCOLOR }}>
+                                                <span>
+                                                    {" "}
+                                                    {props.dataItem.COL_DIFF}{" "}
+                                                </span>
+                                            </td>
+                                        )}
+                                    >
+                                    </Column>
                                 </Column>
 
 
@@ -1857,54 +1811,61 @@ export default class DrlgStandPlot extends React.Component {
                                 />
 
 
-                                <Column
-                                    field="COL_DIFF_W"
-                                    width={"100px"}
-                                    title="Delta Speed W/Conn.(ft/hr)"
-                                    cell={(props) => (
-                                        <td className="text-right summaryLabelTripReport" style={{ backgroundColor: props.dataItem.COL_DIFF_W_BKCOLOR }}>
-                                            <span>
-                                                {" "}
-                                                {props.dataItem.COL_DIFF_W}{" "}
-                                            </span>
-                                        </td>
-                                    )}
-                                />
+                                <Column title="Delta Speed (ft/hr)">
+                                    <Column
+                                        field="COL_DIFF_W"
+                                        width={"80px"}
+                                        title="W/Conn."
+                                        cell={(props) => (
+                                            <td className="text-right summaryLabelTripReport" style={{ backgroundColor: props.dataItem.COL_DIFF_W_BKCOLOR }}>
+                                                <span>
+                                                    {" "}
+                                                    {props.dataItem.COL_DIFF_W}{" "}
+                                                </span>
+                                            </td>
+                                        )}
+                                    />
 
-                                <Column
-                                    field="COL_DIFF_WO"
-                                    width={"100px"}
-                                    title="Delta Speed WO/Conn.(ft/hr)"
-                                    cell={(props) => (
-                                        <td className="text-right summaryLabelTripReport" style={{ backgroundColor: props.dataItem.COL_DIFF_WO_BKCOLOR }}>
-                                            <span>
-                                                {" "}
-                                                {props.dataItem.COL_DIFF_WO}{" "}
-                                            </span>
-                                        </td>
-                                    )}
-                                />
+                                    <Column
+                                        field="COL_DIFF_WO"
+                                        width={"80px"}
+                                        title="WO/Conn."
+                                        cell={(props) => (
+                                            <td className="text-right summaryLabelTripReport" style={{ backgroundColor: props.dataItem.COL_DIFF_WO_BKCOLOR }}>
+                                                <span>
+                                                    {" "}
+                                                    {props.dataItem.COL_DIFF_WO}{" "}
+                                                </span>
+                                            </td>
+                                        )}
+                                    />
+                                </Column>
 
-                                <Column
-                                    field="COL_AVG_CONN_TIME"
-                                    width={"100px"}
-                                    title="Avg. Conn. Time (Min.)"
-                                    className="text-right summaryLabelTripReport"
-                                />
 
-                                <Column
-                                    field="COL_AVG_DAY_TIME"
-                                    width={"100px"}
-                                    title="Avg. Day Conn. Time (Min.)"
-                                    className="text-right summaryLabelTripReport"
-                                />
+                                <Column title="Avg. Conn. ">
+                                    <Column
+                                        field="COL_AVG_CONN_TIME"
+                                        width={"80px"}
+                                        title="Time (Min.)"
+                                        className="text-right summaryLabelTripReport"
+                                    />
+                                </Column>
 
-                                <Column
-                                    field="COL_AVG_NIGHT_TIME"
-                                    width={"100px"}
-                                    title="Avg. Night Conn. Time (Min.)"
-                                    className="text-right summaryLabelTripReport"
-                                />
+                                <Column title="Avg.Conn.Time(Min.)">
+                                    <Column
+                                        field="COL_AVG_DAY_TIME"
+                                        width={"70px"}
+                                        title="Day"
+                                        className="text-right summaryLabelTripReport"
+                                    />
+
+                                    <Column
+                                        field="COL_AVG_NIGHT_TIME"
+                                        width={"70px"}
+                                        title="Night"
+                                        className="text-right summaryLabelTripReport"
+                                    />
+                                </Column>
 
 
 
@@ -1918,8 +1879,7 @@ export default class DrlgStandPlot extends React.Component {
                             <div
                                 id="avgTripConnChart"
                                 style={{
-                                    marginTop: "0px",
-                                    height: "calc(36vh)",
+                                    height: "calc(34vh)",
                                     width: "calc(100vw - 130px)",
                                     backgroundColor: "transparent",
                                 }}
@@ -1927,7 +1887,7 @@ export default class DrlgStandPlot extends React.Component {
 
                             </div>
 
-                    
+
 
                             <div className="mt-1">
                             </div>
@@ -1935,7 +1895,7 @@ export default class DrlgStandPlot extends React.Component {
                                 id="TripConnChart"
                                 style={{
                                     marginTop: "0px",
-                                    height: "calc(36vh)",
+                                    height: "calc(34vh)",
                                     width: "calc(100vw - 130px)",
                                     backgroundColor: "transparent",
                                 }}
@@ -1964,7 +1924,7 @@ export default class DrlgStandPlot extends React.Component {
                                 id="ContiTripSpeedWithConnChart"
                                 style={{
                                     marginTop: "0px",
-                                    height: "calc(36vh)",
+                                    height: "calc(33vh)",
                                     width: "calc(100vw - 130px)",
                                     backgroundColor: "transparent",
                                 }}
@@ -1988,7 +1948,7 @@ export default class DrlgStandPlot extends React.Component {
                                 id="ContiTripSpeedWithOutConnChart"
                                 style={{
                                     marginTop: "0px",
-                                    height: "calc(36vh)",
+                                    height: "calc(33vh)",
                                     width: "calc(100vw - 130px)",
                                     backgroundColor: "transparent",
                                 }}
@@ -2010,6 +1970,204 @@ export default class DrlgStandPlot extends React.Component {
 
                     </TabStripTab>
 
+
+<TabStripTab title="Settings">
+                        <div className="row" style={{width:"50vw"}} >                            
+                                <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Connection Time</h6>
+                                    <div className="group-inline">
+                                        <div className="form-group">
+                                            <label className="summaryLabelHeader-longTripReport">
+                                                Min.Connection Time
+                                            </label>
+                                            <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                            format="n2"
+                                            width="80px"
+                                            className="mr-2"
+                                            //value={this.state.DrlgBenchMark}
+                                            //   onChange={(event) => {
+                                            //     this.disableRealTime();
+                                            //     this.setState({
+                                            //       DrlgBenchMark: event.target.value,
+                                            //     });
+                                            //   }}
+                                            />
+                                            (Min.)
+                                            </label>
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="summaryLabelHeader-longTripReport">
+                                                Max.Connection Time
+                                            </label>
+                                            <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                            format="n2"
+                                            width="80px"
+                                            className="mr-2"
+                                            //value={this.state.DrlgBenchMark}
+                                            //   onChange={(event) => {
+                                            //     this.disableRealTime();
+                                            //     this.setState({
+                                            //       DrlgBenchMark: event.target.value,
+                                            //     });
+                                            //   }}
+                                            />
+                                            (Min.)
+                                            </label>
+                                        </div>
+                                     
+                                        <div className="form-group">
+                                        <Checkbox
+                        className="mr-2"
+                        label={"Remove Fill-up Time"}
+                        //checked={this.state.ShowComments}
+                        // onChange={(event) => {
+                        //   this.setState({ ShowComments: event.value });
+                        // }}
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Surface</h6>
+                                <div className="group-inline">
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-SmallTripReport">
+                                            Surface Depth
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                        <NumericTextBox
+                                        format="n2"
+                                        width="80px"
+                                        className="mr-2"
+                                        //value={this.state.DrlgBenchMark}
+                                        //   onChange={(event) => {
+                                        //     this.disableRealTime();
+                                        //     this.setState({
+                                        //       DrlgBenchMark: event.target.value,
+                                        //     });
+                                        //   }}
+                                        />
+                                        Ft
+                                        </label>
+                                    </div>
+                                
+                                
+                                
+                                </div>
+                                </div>
+
+                            
+                        </div>
+                        <div className="row mt-5" style={{width:"50vw"}} >                            
+                                <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Benchmarking</h6>
+                                    <div className="group-inline">
+                                        <div className="form-group">
+                                            <label className="summaryLabelHeader-longTripReport">
+                                                Benchmark Conn. Time
+                                            </label>
+                                            <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                            format="n2"
+                                            width="80px"
+                                            className="mr-2"
+                                            //value={this.state.DrlgBenchMark}
+                                            //   onChange={(event) => {
+                                            //     this.disableRealTime();
+                                            //     this.setState({
+                                            //       DrlgBenchMark: event.target.value,
+                                            //     });
+                                            //   }}
+                                            />
+                                            (Min.)
+                                            </label>
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="summaryLabelHeader-longTripReport">
+                                                Trip Speed with connections
+                                            </label>
+                                            <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                            format="n2"
+                                            width="80px"
+                                            className="mr-2"
+                                            //value={this.state.DrlgBenchMark}
+                                            //   onChange={(event) => {
+                                            //     this.disableRealTime();
+                                            //     this.setState({
+                                            //       DrlgBenchMark: event.target.value,
+                                            //     });
+                                            //   }}
+                                            />
+                                            ft/hr
+                                            </label>
+                                        </div>
+                                     
+                                        <div className="form-group">
+                                            <label className="summaryLabelHeader-longTripReport">
+                                                Trip Speed w/o connections
+                                            </label>
+                                            <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                            format="n2"
+                                            width="80px"
+                                            className="mr-2"
+                                            //value={this.state.DrlgBenchMark}
+                                            //   onChange={(event) => {
+                                            //     this.disableRealTime();
+                                            //     this.setState({
+                                            //       DrlgBenchMark: event.target.value,
+                                            //     });
+                                            //   }}
+                                            />
+                                            ft/hr
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Continuous Trip Speed</h6>
+                                <div className="group-inline">
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-SmallTripReport">
+                                           Depth Interval
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                        <NumericTextBox
+                                        format="n2"
+                                        width="80px"
+                                        className="mr-2"
+                                        //value={this.state.DrlgBenchMark}
+                                        //   onChange={(event) => {
+                                        //     this.disableRealTime();
+                                        //     this.setState({
+                                        //       DrlgBenchMark: event.target.value,
+                                        //     });
+                                        //   }}
+                                        />
+                                        Ft
+                                        </label>
+                                    </div>
+                                    <div className="form-group">
+                                        <Checkbox
+                        className="mr-2"
+                        label={"Include Pipe Movement"}
+                        //checked={this.state.ShowComments}
+                        // onChange={(event) => {
+                        //   this.setState({ ShowComments: event.value });
+                        // }}
+                      />
+                                        </div>
+                                
+                                
+                                </div>
+                                </div>
+
+                            
+                        </div>
+                    </TabStripTab>
                     {this.state.showSingleTripReport && <TabStripTab title="Single Trip Report">
                         <div
                             style={{
@@ -2027,7 +2185,7 @@ export default class DrlgStandPlot extends React.Component {
                                     float: "left",
                                 }}
                             >
-                             
+
                                 {/* <label style={{ display: "flex", justifyContent: "center" }}>Continuous Tripping Speed</label> */}
                                 <h6 style={{ display: "flex", justifyContent: "center" }} className="summaryGroupHeaderTripReport">Continuous Tripping Speed</h6>
 
@@ -2069,7 +2227,7 @@ export default class DrlgStandPlot extends React.Component {
 
                                 <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6" style={{ backgroundColor: "transparent", height: "50%" }}>
                                     {/* <label style={{ display: "flex", justifyContent: "center" }}>Flat and Movement Time</label> */}
-                                    <h6 style={{display:"flex",justifyContent:"center"}} className="summaryGroupHeaderTripReport">Flat and Movement Time</h6>
+                                    <h6 style={{ display: "flex", justifyContent: "center" }} className="summaryGroupHeaderTripReport">Flat and Movement Time</h6>
                                     <div
                                         id="CurrentPie_Chart"
                                         style={{
@@ -2143,7 +2301,7 @@ export default class DrlgStandPlot extends React.Component {
                                                     <label className="summaryLabelHeader-long">
                                                         Start Time
                                                     </label>
-                                                    <label className="summaryLabel" id="txtNegativeFlow">
+                                                    <label className="statsLabelTripReport" id="txtNegativeFlow">
                                                         {this.state.SingleTripReportData.lblStartTime}
                                                     </label>
                                                 </div>
@@ -2188,7 +2346,7 @@ export default class DrlgStandPlot extends React.Component {
                                                     <label className="summaryLabelHeader-long">
                                                         End Time
                                                     </label>
-                                                    <label className="summaryLabel" id="txtNegativeFlow">
+                                                    <label className="statsLabelTripReport" id="txtNegativeFlow">
                                                         {this.state.SingleTripReportData.lblEndTime}
                                                     </label>
                                                 </div>
@@ -2220,7 +2378,7 @@ export default class DrlgStandPlot extends React.Component {
 
                                         id="ChartTripConnectionsBar"
                                         style={{
-                                            height: "calc(36vh)",
+                                            height: "calc(34vh)",
                                             minWidth: "380px",
                                             width: "calc(62vw)",
                                             backgroundColor: "transparent",

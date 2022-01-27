@@ -1971,13 +1971,11 @@ export class Chart {
       $("#canvas" + this.Id).remove();
       $(".dashed" + this.Id).remove();
       $(".dashed_" + this.Id).remove();
-
-
-
-      //IS BELOW CODE NEEDED ?????????
       $("#rect" + this.Id).remove();
 
 
+      //prath on 25-Jan-2022
+      $("#ClipingArea-" + this.Id).remove();
 
       if (!isNaN(this.__chartRect.width)) {
         this.SVGRef.append("rect")
@@ -1995,13 +1993,24 @@ export class Chart {
           .attr("x", this.__chartRect.left)
           .attr("y", this.__chartRect.top)
 
-          .attr("width", this.__chartRect.width)
-          .attr("height", this.__chartRect.height);
+          .attr("width", this.__chartRect.width )
+          .attr("height", this.__chartRect.height );
 
-        let SVGRect = this.SVGRef.append("g").attr(
+        
+        //Change prath on 25-Jan-2022
+        //   let SVGRect = this.SVGRef.append("g").attr(
+        //   "clip-path",
+        //   "url(#clip" + this.Id + ")"
+        // );
+
+        let SVGRect = this.SVGRef.append("g")
+        .attr("id", "ClipingArea-" + this.Id)
+        .attr(
           "clip-path",
           "url(#clip" + this.Id + ")"
         );
+        //===========================
+
         this.SVGRect = SVGRect;
 
         //????????

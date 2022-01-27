@@ -276,7 +276,7 @@ export class BarSeries {
             if (barWidth > textWidth) {
               return HAxisScale_x1(d.key) + (barWidth - textWidth) / 2 - 10; //-10 is to adjust on center
             } else {
-              debugger;
+              
               return HAxisScale_x1(d.key);
             }
           })

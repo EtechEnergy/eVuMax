@@ -583,7 +583,8 @@ namespace eVuMax.DataBroker.Summary.TripReport
 
                 // '//Get all the tags first
                 var exList = new Dictionary<int, int>();
-                exList = TripReportSettings.getTripExclusionList(objDataService, WellID);
+                //exList = TripReportSettings.getTripExclusionList(objDataService, WellID);
+                exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
                 var tagList = new Dictionary<int, clsPhaseTag>();
                 DataTable objData;
                 if (!objTripReportSettings.UseCustomTags)
@@ -698,7 +699,8 @@ namespace eVuMax.DataBroker.Summary.TripReport
 
                 // '//Get all the tags first
                 var exList = new Dictionary<int, int>();
-                exList = TripReportSettings.getTripExclusionList(objDataService, WellID);
+                //exList = TripReportSettings.getTripExclusionList(objDataService, WellID);
+                exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
                 var tagList = new Dictionary<int, clsPhaseTag>();
                 DataTable objData;
                 if (!objTripReportSettings.UseCustomTags)
