@@ -141,7 +141,7 @@ export function getWidgetList() {
       { id: "Broomstick", name: "Broomstick", isFav: false },
       { id: "customDrlgSummaryViewer", name: "Custom Drilling Summary", isFav: false },
       { id: "DrlgStandPlot", name: "Drilling Stand Plot", isFav: false },
-      
+      { id: "TripReport", name: "Trip Report", isFav: false },
     ];
 
     return WidgetList;
