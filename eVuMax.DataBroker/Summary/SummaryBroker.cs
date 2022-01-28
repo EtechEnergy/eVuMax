@@ -151,6 +151,13 @@ namespace eVuMax.DataBroker.Summary
 
                 }
 
+                if (paramRequest.Broker == Global.DRLG_STAND_PLOT)
+                {
+
+                    DrlgStand.DrlgStandPlotMgr objDrlgStandPlotMgrSummary = new DrlgStand.DrlgStandPlotMgr();
+                    return objDrlgStandPlotMgrSummary.performTask(paramRequest);
+
+                }
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;

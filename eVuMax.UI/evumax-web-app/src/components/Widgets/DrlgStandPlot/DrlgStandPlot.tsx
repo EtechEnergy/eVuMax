@@ -330,11 +330,12 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart.bottomAxis().ShowSelector = false;
             this.objChart.bottomAxis().ShowTitle = true;
             this.objChart.bottomAxis().Visible = true;
+            
 
 
             //Add new serieses
             let objOffsetWellBar = new DataSeries();
-
+            debugger;
             objOffsetWellBar.Id = "OffsetWellBar1";
             objOffsetWellBar.Stacked = true;
             objOffsetWellBar.Title = "Time (Hrs)";
@@ -342,7 +343,7 @@ export default class DrlgStandPlot extends React.Component {
             objOffsetWellBar.Color = "Blue"; //#1089ff
             objOffsetWellBar.XAxisId = this.objChart.bottomAxis().Id;
             objOffsetWellBar.YAxisId = this.objChart.leftAxis().Id;
-            objOffsetWellBar.ColorEach = true;
+            //objOffsetWellBar.ColorEach = true;
 
 
             //Nishant for Offset Well
@@ -361,7 +362,7 @@ export default class DrlgStandPlot extends React.Component {
             objBar.Color = "#00E5FF"; //#1089ff
             objBar.XAxisId = this.objChart.bottomAxis().Id;
             objBar.YAxisId = this.objChart.leftAxis().Id;
-            objBar.ColorEach = true;
+            //objBar.ColorEach = true;
 
 
             this.objChart.DataSeries.set(objBar.Id, objBar);
@@ -379,7 +380,7 @@ export default class DrlgStandPlot extends React.Component {
                 let standTime: number = 0;
                 standTime = moment.duration(moment(chartData[i]["ToDate"]).diff(moment(chartData[i]["FromDate"]))).asHours();
                 // standTime = Math.round(((standTime / 60) / 60));
-                objStandPoint.y = Math.round(standTime);
+                objStandPoint.y =Number(standTime.toFixed(2)); //Math.round(standTime);
 
                 if (this.state.objDrlgStandUserSettings.HighlightDayNight == true) {
                     if (chartData[i].DayNightStatus == 1) {
@@ -391,14 +392,15 @@ export default class DrlgStandPlot extends React.Component {
                     }
 
                 }
+                objBar.Data.push(objStandPoint);
 
-                objOffsetWellBar.Data.push()
+                // objOffsetWellBar.Data.push()
 
-                let objOffsetStandPoint = new ChartData();
-                objOffsetStandPoint.x = Math.round(chartData[i]["Depth"]);
-                objOffsetStandPoint.y = Math.round(chartData[i]["OffsetTime"]);
+                // let objOffsetStandPoint = new ChartData();
+                // objOffsetStandPoint.x = Math.round(chartData[i]["Depth"]);
+                // objOffsetStandPoint.y = Math.round(chartData[i]["OffsetTime"]);
 
-                objBar.Data.push(objOffsetStandPoint);
+                // objBar.Data.push(objOffsetStandPoint);
 
                 //
             }
@@ -437,7 +439,7 @@ export default class DrlgStandPlot extends React.Component {
 
             let objUserSettings: DrlgStandUserSettings = new DrlgStandUserSettings();
             debugger;
-            this.WellID = "us_1395675560"; //Fix
+          //  this.WellID = "us_1395675560"; //Fix
             objUserSettings.WellID = this.WellID;
             objUserSettings.UserID = _gMod._userId;
             objUserSettings.LastHrs = this.state.objDataSelector.refreshHrs;
@@ -551,7 +553,7 @@ export default class DrlgStandPlot extends React.Component {
 
                         let objDataSelector: DataSelector_ = new DataSelector_();
                         objDataSelector.wellID = objData_.WellID;
-                        objDataSelector.refreshHrs = objData_.objUserSettings.LastHours;
+                        objDataSelector.refreshHrs = objData_.objUserSettings.LastHrs;
                         objDataSelector.fromDate = objData_.objUserSettings.FromDate;
                         objDataSelector.toDepth = objData_.objUserSettings.ToDate;
                         objDataSelector.fromDepth = objData_.objUserSettings.FromDepth;
@@ -576,7 +578,8 @@ export default class DrlgStandPlot extends React.Component {
 
                         switch (objData_.objUserSettings.SelectionType) {
                             case 1 - 1:
-                                objDataSelector.selectedval = "-1" //-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
+                                //objDataSelector.selectedval = "-1" //-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
+                                objDataSelector.selectedval = "2" //-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
                                 break;
                             case 0:
                                 objDataSelector.selectedval = "0" //-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
@@ -601,7 +604,7 @@ export default class DrlgStandPlot extends React.Component {
                             refreshDataSelector: true
 
                         });
-
+                        console.log(objDataSelector);
 
                         this.refreshChart();
                     } else {
@@ -659,7 +662,7 @@ export default class DrlgStandPlot extends React.Component {
 
     saveSettings = () => {
         try {
-
+        
             //Util.StatusInfo("Getting data from the server  ");
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Summary.Manager";
@@ -669,7 +672,7 @@ export default class DrlgStandPlot extends React.Component {
 
             let objUserSettings: DrlgStandUserSettings = new DrlgStandUserSettings();
             debugger;
-            this.WellID = "us_1395675560"; //Fix
+          
             objUserSettings.WellID = this.WellID;
             objUserSettings.UserID = _gMod._userId;
             objUserSettings.LastHrs = this.state.objDataSelector.refreshHrs;
@@ -735,7 +738,7 @@ export default class DrlgStandPlot extends React.Component {
                     this.setState({ selected: 0 });
                     //reload all the connections
 
-                    //this.loadDrlgStandPlotData();
+                    this.loadDrlgStandPlotData();
                 })
                 .catch((error) => {
                     Util.StatusError(error.message);

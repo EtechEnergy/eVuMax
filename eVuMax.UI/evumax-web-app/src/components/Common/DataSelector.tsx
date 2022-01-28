@@ -57,33 +57,6 @@ interface IProps {
 
 
 class DataSelector extends Component<IProps> {
-  //Changed by prath on 30-08-2021
-  // constructor(parentRef, props: any) {
-  //   super(props);
-  //   this.__parentRef = parentRef;
-  //   this.WellId = parentRef.WellId;
-  //   this.state = { selectedval: "0" };
-  // }
-
-
-  //prath 14-09-2021
-
-  // constructor(props: any) {
-  //   super(props);
-  //   this.__parentRef = props;
-  //   this.WellId = props.wellID;
-  //   this.state = {
-  //     selectedval: "-1",
-  //     refreshHrs: 24,
-  //     objDataSelector: props.objDataSelector,
-  //   };
-  // }
-  // //=========================
-  // state = {
-  //   objDataSelector: new DataSelector_(),
-  //   selectedval: "-1",
-  //   refreshHrs: 24,
-  // }
 
 
   constructor(props: any) {

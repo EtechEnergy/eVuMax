@@ -134,7 +134,8 @@ namespace eVuMax.DataBroker.Summary.TripReport
 
                 
                 var exList = new Dictionary<int, int>();
-                exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
+                //exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
+                exList = objUserSettings.TripExclusionList;//Nishant
                 tripData = new Dictionary<int, TripInfo>();
                 TripTags = new Dictionary<int, clsPhaseTag>();
                 TripTypeTags = PhaseMapping.getList(objDataService, AdvKPIProfile.TRIP);

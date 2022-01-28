@@ -196,6 +196,10 @@ export function launchWidget(interfaceID: string, wellID: string) {
     if (interfaceID === "DrlgStandPlot") {
       history.push("DrlgStandPlot/" + wellID);
     }
+
+    if (interfaceID === "TripReport") {
+      history.push("TripReport/" + wellID);
+    }
   } catch (error) { }
 }
 

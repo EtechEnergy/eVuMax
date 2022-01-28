@@ -29,6 +29,9 @@ namespace eVuMax.DataBroker.Summary.TripReport
         private string PlotID = "TRIPREPORT";
         public DataService objDataService;
         public string Warnings = "";
+        public Dictionary<Int32, Int32> TripExclusionList = new Dictionary<Int32, Int32>();
+
+
 
         public TripReportSettings( ref DataService paramDataService)
         {
@@ -79,6 +82,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                     BenchmarkTime = objLocalSettings.BenchmarkTime;
                     MaxConnTime = objLocalSettings.MaxConnTime;
                     DepthInterval = objLocalSettings.DepthInterval;
+                    TripExclusionList = objLocalSettings.TripExclusionList;
                 }
                 
 
@@ -95,7 +99,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
         {
             try
             {
-                 objTripReportSettings.MinConnTime = MinConnTime;
+                objTripReportSettings.MinConnTime = MinConnTime;
                 objTripReportSettings.IncludePipeMovement = IncludePipeMovement;
                 objTripReportSettings.RemoveFillupTime = RemoveFillupTime;
                 objTripReportSettings.UseCustomTags= UseCustomTags;

@@ -119,7 +119,12 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         objDrlgStandPlot.objDataSelection.loadDataSelection("STANDREPORT");
                         //assign eVuMax User Settings to dataSelector of VuMax
                         objDrlgStandPlot.objDataSelection.selectionType = (DataSelection.sPlotSelectionType)objStandUserSettings.SelectionType;
-
+                        objDrlgStandPlot.objDataSelection.LastHours= objStandUserSettings.LastHrs;
+                        objDrlgStandPlot.objDataSelection.FromDate= objStandUserSettings.FromDate;
+                        objDrlgStandPlot.objDataSelection.ToDate = objStandUserSettings.ToDate;
+                        objDrlgStandPlot.objDataSelection.FromDepth= objStandUserSettings.FromDepth;
+                        objDrlgStandPlot.objDataSelection.ToDepth= objStandUserSettings.ToDepth;
+                        
                         // objStandUserSettings = JsonConvert.DeserializeObject<DrlgStandUserSettings>(objSettings.settingData);
 
                         //switch (objStandUserSettings.SelectionType)

@@ -216,11 +216,12 @@ const dashbordRoutes = [
 
   {
     path: "/TripReport/:WellId",
-    name: "DrlgStandPlot",
+    name: "TripReport",
     icon: "",
     component: TripReport,
     layout: "/dashboard",
   },
+
   
 ];
 

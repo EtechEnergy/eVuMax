@@ -3,7 +3,7 @@ import axios from "axios";
 import { BrokerParameter, BrokerRequest, Util } from "../../../Models/eVuMax";
 import GlobalMod from "../../../objects/global";
 import { Button } from "@progress/kendo-react-buttons";
-import { Chart, curveStyle, lineStyle } from "../../../eVuMaxObjects/Chart/Chart";
+import { Chart, curveStyle, lineStyle, zoomOnAxies } from "../../../eVuMaxObjects/Chart/Chart";
 import { DataSeries, dataSeriesType, pointStyle } from "../../../eVuMaxObjects/Chart/DataSeries";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 
@@ -271,6 +271,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
       //Set Axis Per Column
       for (let index = 0; index < axisList.length; index++) {
 
+
         if (axisList[index].Orientation == 0) { //// 0-Horizontal, 1-Vertical
           if (axisList[index].AxisPosition == 0) { //Left
             totalLeftAxis += 1;
@@ -354,6 +355,15 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         setAxisPerColumnAndRow(objSummaryAxisList);
+        debugger;
+        //prath on 27-Jan-2022 wip
+        if (objChart.axisPerColumn > 1) {
+          objChart.ZoomOnAxies = zoomOnAxies.x;
+        }
+
+        if (objChart.axisPerRow > 1) {
+          objChart.ZoomOnAxies = zoomOnAxies.y;
+        }
 
         objChart.Axes.clear();
         objChart.DataSeries.clear();
@@ -403,7 +413,16 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
+          objAxis.PaddingMin = 0;
 
+
+          //prath on 27-Jan-2022 wip
+          if (objChart.axisPerColumn > 1) {
+            //alert("xxx");
+            objAxis.isAllowZooming = false;
+            objAxis.isAllowScrolling = false;
+          }
+          //===============
 
           objChart.Axes.set(objAxis.Id, objAxis);
 
@@ -444,6 +463,14 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
+          //prath on 27-Jan-2022 wip
+          if (objChart.axisPerColumn > 1) {
+            //alert("xxx");
+            objAxis.isAllowZooming = false;
+            objAxis.isAllowScrolling = false;
+          }
+          //===============
+
           objChart.Axes.set(objAxis.Id, objAxis);
           //*************************************************** */
 
@@ -490,6 +517,14 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.Inverted = objSummaryAxis.Inverted;
           objAxis.PaddingMax = 2;
           objChart.Axes.set(objAxis.Id, objAxis);
+          //prath on 27-Jan-2022 wip
+          if (objChart.axisPerRow > 1) {
+            //alert("xxx");
+            objAxis.isAllowZooming = false;
+            objAxis.isAllowScrolling = false;
+          }
+          //===============
+
           //*************************************************** */
 
         }
@@ -535,6 +570,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
           objChart.Axes.set(objAxis.Id, objAxis);
+          //prath on 27-Jan-2022 wip
+          if (objChart.axisPerRow > 1) {
+            //alert("xxx");
+            objAxis.isAllowZooming = false;
+            objAxis.isAllowScrolling = false;
+          }
+          //===============
           //*************************************************** */
         }
 
@@ -652,10 +694,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
                 let objBottomAxes = objChart.getAxisByID(objSeries.XAxisId);
                 objBottomAxes.bandScale = true;
-                if (objDataSeries.labelBuffer != null){
+                if (objDataSeries.labelBuffer != null) {
                   objChart.Axes.get(objSeries.XAxisId).Labels.push(objDataSeries.labelBuffer[i]);
                 }
-                
+
               } else {
                 objVal.x = objDataSeries.xDataBuffer[i];
               }
@@ -1300,8 +1342,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
           </div>
 
         </div><div className="col-lg-2">
-            <label className=" ml-5 mr-1" onClick={() => { loadSummary(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
-            <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { loadSummary() }} />
+          <label className=" ml-5 mr-1" onClick={() => { loadSummary(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+          <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { loadSummary() }} />
         </div>
 
         <div className="col-lg-4">
@@ -1313,11 +1355,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         <div className="col-lg-1">
-        <div className="flex-item">
-          <Button onClick={props.showListPanel}>Close</Button>
-        </div>  
+          <div className="flex-item">
+            <Button onClick={props.showListPanel}>Close</Button>
+          </div>
         </div>
-        
+
       </div>
 
       <div

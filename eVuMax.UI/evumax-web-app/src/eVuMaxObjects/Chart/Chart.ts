@@ -543,7 +543,8 @@ export class Chart {
       this.__chartRect.top = this.MarginTop;
       this.__chartRect.right = this.Width - this.MarginRight;
       this.__chartRect.bottom = this.Height - this.MarginBottom;
-
+      
+      //alert(this.Id + " - " + this.axisPerRow  + " - " + this.axisPerColumn );
       if (this.axisPerColumn < 1) {
         this.axisPerColumn = 1;
       }
@@ -1421,6 +1422,7 @@ export class Chart {
 
       origin[0] = Math.max(0, Math.min(this.Width, origin[0]));
       origin[1] = Math.max(0, Math.min(this.Height, origin[1]));
+      
 
       let width_ = this.Width;
       let height_ = this.Height;
@@ -1494,6 +1496,7 @@ export class Chart {
       var m = d3.mouse(d);
       m[0] = Math.max(0, Math.min(this.Width, m[0]));
       m[1] = Math.max(0, Math.min(this.Height, m[1]));
+      debugger;
 
       if (m[0] !== origin[0] && m[1] !== origin[1]) {
         //Update Scale Domain of each axes based on Zoon Selection (Rectangle)
@@ -1526,6 +1529,7 @@ export class Chart {
 
           //////  if (Axis_.bandScale == false) { //original false
           //When only X axes zoom require
+          debugger;
           if (this.ZoomOnAxies == zoomOnAxies.x) {
 
             if (Axis_.bandScale == false) {
