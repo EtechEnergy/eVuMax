@@ -31,7 +31,7 @@ import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 
 
 import { faMoon, faSearchMinus, faSun } from "@fortawesome/free-solid-svg-icons";
-//import { confirmAlert } from "react-confirm-alert";
+//import { confirmAlert } from "react-confirm-(alert)";
 //import { ClientLogger } from "../../ClientLogger/ClientLogger";
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
 import { sPlotSelectionType } from "../CustomDrillingSummary/CustomDataSelector";
@@ -163,10 +163,10 @@ export default class DrlgStandPlot extends React.Component {
     }
 
     selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
-        //alert(paramRefreshHrs);
+
 
         let realtimeStatus: boolean = paramRefreshHrs;
-        //alert(paramDataSelector.selectedval);
+        
 
         await this.setState({
             objDataSelector: paramDataSelector,
@@ -194,19 +194,37 @@ export default class DrlgStandPlot extends React.Component {
         this.saveSettings();
 
         if (this.state.realTime) {
+         
             this.intervalID = setInterval(this.loadDrlgStandPlotData.bind(this), 15000);
         } else {
 
             this.AxiosSource.cancel();
             await clearInterval(this.intervalID);
             this.intervalID = null;
-            this.loadDrlgStandPlotData();
+           // this.loadDrlgStandPlotData();
         }
 
 
     }
 
+    formatDateHHMMSS = (FromDate: string, ToDate: string) => {
 
+      
+        
+        let hrs : number  =parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asHours().toString());
+
+        let min :number =  parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asMinutes().toString());
+                           
+         min = min - (hrs*60);
+         let ss :number = parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asSeconds().toString());
+        
+          ss = ss - (hrs*60*60) - (min*60);
+        
+         return "["+hrs+" : "+ min + " : " + ss +"]";
+
+      
+
+    }
 
     handleToggleSwitch = async () => {
 
@@ -247,38 +265,38 @@ export default class DrlgStandPlot extends React.Component {
     }
 
     getUniqueRigStates = () => {
-        
 
-   let uniqueRigStateList:Map<number,number> = new Map();
-   //objStandProcessor.connectionPoints.length
-   //RigStates
 
-  //sort array on depth
-  let connPoints: any = Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
-  connPoints.sort(function (a, b) {
-      return a.Depth - b.Depth;
-  });
+        let uniqueRigStateList: Map<number, number> = new Map();
+        //objStandProcessor.connectionPoints.length
+        //RigStates
 
-  for (let i = 0; i < connPoints.length; i++) {
-    for(let j=0;j< connPoints.RigStates.length;j++){
-        if(uniqueRigStateList.get(connPoints.RigStates[j]) == null){
-            
+        //sort array on depth
+        let connPoints: any = Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
+        connPoints.sort(function (a, b) {
+            return a.Depth - b.Depth;
+        });
+
+        for (let i = 0; i < connPoints.length; i++) {
+            for (let j = 0; j < connPoints.RigStates.length; j++) {
+                if (uniqueRigStateList.get(connPoints.RigStates[j]) == null) {
+
+                }
+            }
         }
-    }
-  }
 
 
 
-//    For i As Integer = 0 To arrItems.Length - 1
+        //    For i As Integer = 0 To arrItems.Length - 1
 
-//        For Each lnKey As Integer In arrItems(i).RigStates.Keys
+        //        For Each lnKey As Integer In arrItems(i).RigStates.Keys
 
-//            If Not uniqueRigStateList.ContainsKey(lnKey) Then
-//                uniqueRigStateList.Add(lnKey, lnKey)
-//            End If
-//        Next
+        //            If Not uniqueRigStateList.ContainsKey(lnKey) Then
+        //                uniqueRigStateList.Add(lnKey, lnKey)
+        //            End If
+        //        Next
 
-//    Next
+        //    Next
     }
 
     plotChartRigStateView = () => {
@@ -330,12 +348,12 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart.bottomAxis().ShowSelector = false;
             this.objChart.bottomAxis().ShowTitle = true;
             this.objChart.bottomAxis().Visible = true;
-            
+
 
 
             //Add new serieses
             let objOffsetWellBar = new DataSeries();
-            debugger;
+
             objOffsetWellBar.Id = "OffsetWellBar1";
             objOffsetWellBar.Stacked = true;
             objOffsetWellBar.Title = "Time (Hrs)";
@@ -363,7 +381,9 @@ export default class DrlgStandPlot extends React.Component {
             objBar.XAxisId = this.objChart.bottomAxis().Id;
             objBar.YAxisId = this.objChart.leftAxis().Id;
             //objBar.ColorEach = true;
-
+            if (this.state.objDrlgStandUserSettings.HighlightDayNight == true){
+                objBar.ColorEach = true;
+            }
 
             this.objChart.DataSeries.set(objBar.Id, objBar);
 
@@ -373,6 +393,7 @@ export default class DrlgStandPlot extends React.Component {
                 return a.Depth - b.Depth;
             });
             let chartData = connPoints;
+            
             //Fill up the data for data series
             for (let i = 0; i < chartData.length; i++) {
                 let objStandPoint = new ChartData();
@@ -380,8 +401,8 @@ export default class DrlgStandPlot extends React.Component {
                 let standTime: number = 0;
                 standTime = moment.duration(moment(chartData[i]["ToDate"]).diff(moment(chartData[i]["FromDate"]))).asHours();
                 // standTime = Math.round(((standTime / 60) / 60));
-                objStandPoint.y =Number(standTime.toFixed(2)); //Math.round(standTime);
-
+                objStandPoint.y = Number(standTime.toFixed(2)); //Math.round(standTime);
+                
                 if (this.state.objDrlgStandUserSettings.HighlightDayNight == true) {
                     if (chartData[i].DayNightStatus == 1) {
                         objStandPoint.color = "Yellow";
@@ -411,7 +432,7 @@ export default class DrlgStandPlot extends React.Component {
         }
     }
     refreshChart = () => {
-        debugger;
+
         this.objChart.LegendPosition = 4; // 1 (left), 2 (right), 3 (top), 4 (bottom)
 
         if (this.state.CurrentView == 0) {
@@ -438,15 +459,15 @@ export default class DrlgStandPlot extends React.Component {
 
 
             let objUserSettings: DrlgStandUserSettings = new DrlgStandUserSettings();
-            debugger;
-          //  this.WellID = "us_1395675560"; //Fix
+
+            //  this.WellID = "us_1395675560"; //Fix
             objUserSettings.WellID = this.WellID;
             objUserSettings.UserID = _gMod._userId;
             objUserSettings.LastHrs = this.state.objDataSelector.refreshHrs;
             objUserSettings.RealTime = this.state.realTime;
             objUserSettings.FromDate = this.state.objDataSelector.fromDateS.toLocaleString();
             objUserSettings.ToDate = this.state.objDataSelector.toDateS.toLocaleString();
-            debugger;
+
             objUserSettings.FromDepth = this.state.objDataSelector.fromDepth;
             objUserSettings.ToDepth = this.state.objDataSelector.toDepth;
 
@@ -473,7 +494,7 @@ export default class DrlgStandPlot extends React.Component {
             }
 
 
-            debugger;
+
             objParameter = new BrokerParameter("UserSettings", JSON.stringify(objUserSettings));//this.state.objDrlgStandUserSettings
             objBrokerRequest.Parameters.push(objParameter);
 
@@ -515,6 +536,7 @@ export default class DrlgStandPlot extends React.Component {
                         if (objData_.objStandProcessor != undefined || objData_.objStandProcessor != "") {
                             if (objData_.objStandProcessor.connectionPoints != undefined) {
                                 grdData = Object.values(objData_.objStandProcessor.connectionPoints);
+
 
                             }
 
@@ -662,7 +684,7 @@ export default class DrlgStandPlot extends React.Component {
 
     saveSettings = () => {
         try {
-        
+
             //Util.StatusInfo("Getting data from the server  ");
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Summary.Manager";
@@ -671,15 +693,15 @@ export default class DrlgStandPlot extends React.Component {
 
 
             let objUserSettings: DrlgStandUserSettings = new DrlgStandUserSettings();
-            debugger;
-          
+
+
             objUserSettings.WellID = this.WellID;
             objUserSettings.UserID = _gMod._userId;
             objUserSettings.LastHrs = this.state.objDataSelector.refreshHrs;
             objUserSettings.RealTime = this.state.realTime;
             objUserSettings.FromDate = this.state.objDataSelector.fromDateS.toLocaleString();
             objUserSettings.ToDate = this.state.objDataSelector.toDateS.toLocaleString();
-            debugger;
+
             objUserSettings.FromDepth = this.state.objDataSelector.fromDepth;
             objUserSettings.ToDepth = this.state.objDataSelector.toDepth;
 
@@ -692,7 +714,7 @@ export default class DrlgStandPlot extends React.Component {
             objUserSettings.dtDayTimeTo = this.state.objDrlgStandUserSettings.dtDayTimeTo;
             objUserSettings.HighlightDayNight = this.state.objDrlgStandUserSettings.HighlightDayNight;
 
-            debugger;
+
 
             switch (this.state.objDataSelector.selectedval) ////"-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
             {
@@ -715,7 +737,7 @@ export default class DrlgStandPlot extends React.Component {
             }
 
 
-            debugger;
+
             objParameter = new BrokerParameter("UserSettings", JSON.stringify(objUserSettings));//this.state.objDrlgStandUserSettings
             objBrokerRequest.Parameters.push(objParameter);
 
@@ -840,8 +862,8 @@ export default class DrlgStandPlot extends React.Component {
                                     backgroundColor: "transparent",
                                 }}
                             >
-                                <label style={{ marginRight: "20px" }}> View</label>
-                                <RadioButton
+                                {/* <label style={{ marginRight: "20px" }}> View</label> */}
+                                {/* <RadioButton
                                     name="opgView"
                                     value={0}
                                     checked={this.state.CurrentView === 0}
@@ -849,8 +871,8 @@ export default class DrlgStandPlot extends React.Component {
                                     onChange={() => {
                                         this.setState({ CurrentView: 0 });
                                     }}
-                                />
-                                <RadioButton
+                                /> */}
+                                {/* <RadioButton
                                     name="opgView1"
                                     value={1}
                                     checked={this.state.CurrentView === 1}
@@ -858,7 +880,7 @@ export default class DrlgStandPlot extends React.Component {
                                     onChange={() => {
                                         this.setState({ CurrentView: 1 });
                                     }}
-                                />
+                                /> */}
 
                             </div>
                             {/* <div> */}
@@ -866,7 +888,7 @@ export default class DrlgStandPlot extends React.Component {
                                 id="DrlgStandPlotChart"
                                 style={{
                                     marginTop: "0px",
-                                    height: "calc(100vh - 700px)",
+                                    height: "calc(100vh - 630px)",
                                     width: "calc(100vw - 130px)",
                                     backgroundColor: "transparent",
                                 }}
@@ -1159,12 +1181,11 @@ export default class DrlgStandPlot extends React.Component {
                                         <td className="text-right" style={{}}>
                                             <span>
                                                 {" "}
-                                                {moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asHours().toFixed() + ":" + moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asMinutes().toFixed() + ":" + (moment.duration(moment(props.dataItem.ToDate).diff(moment(props.dataItem.FromDate))).asSeconds() / 60).toFixed()}
-                                                {/* {moment.duration(moment(props.dataItem.FromDate).diff(moment(props.dataItem.FromDate))).asHours()} */}
-
-                                                {/* {moment(props.dataItem.FromDate).format("LT")} */}
-
-                                                {/* {formatNumber(props.dataItem.Depth, "n2")}{" "} */}
+                                                {this.formatDateHHMMSS(props.dataItem.FromDate,props.dataItem.ToDate)}
+                                                {/* {Number(moment.duration(moment(new Date(props.dataItem.ToDate)).diff(moment(new Date(props.dataItem.FromDate)))).asHours()).toFixed(0) + ":" +
+                                                    Number(moment.duration(moment(new Date(props.dataItem.ToDate)).diff(moment(new Date(props.dataItem.FromDate)))).asMinutes()).toFixed(0) + ":" +
+                                                    Number(moment.duration(moment(new Date(props.dataItem.ToDate)).diff(moment(new Date(props.dataItem.FromDate)))).asSeconds()).toFixed(0) + ":"
+                                                } */}
                                             </span>
                                         </td>
                                     )}

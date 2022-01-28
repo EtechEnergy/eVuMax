@@ -40,7 +40,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public DateTime ToDate = DateTime.Now;
         public double FromDepth;
         public double ToDepth;
-        public string sideTrackKey = "";
+        public string sideTrackKey = "-999";
 
         public Dictionary<string, string> topList = new Dictionary<string, string>();
         public Dictionary<string, string> trajList = new Dictionary<string, string>();

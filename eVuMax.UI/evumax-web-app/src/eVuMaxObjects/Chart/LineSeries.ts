@@ -481,7 +481,7 @@ export class LineSeries {
                   {
                       pColor=objSeries.Color;//Nishant 22-12-2021
                   }
-                  debugger;
+                  
                   this.drawPoint(px, py,pColor, objSeries);//Nishant 22-12-2021
                   this.ChartRef.CanvasContext.fill();
                   this.ChartRef.CanvasContext.closePath();

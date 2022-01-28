@@ -1945,7 +1945,7 @@ export default class DrlgStandPlot extends React.Component {
                     </TabStripTab>
 
 
-                    <TabStripTab title="Settings">
+                   {false && <TabStripTab title="Settings">
                         <div className="row" style={{ width: "50vw" }} >
                             <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                 <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Connection Time</h6>
@@ -2141,7 +2141,7 @@ export default class DrlgStandPlot extends React.Component {
 
 
                         </div>
-                    </TabStripTab>
+                    </TabStripTab> }
                     {this.state.showSingleTripReport && <TabStripTab title="Single Trip Report">
                         <div
                             style={{

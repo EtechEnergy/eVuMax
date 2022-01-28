@@ -420,7 +420,7 @@ class DrlgConnSummary extends Component {
           Util.StatusReady();
           this.objSummaryData = JSON.parse(res.data.Response);
 
-
+          
           //Warnings Notifications
           let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {

@@ -355,7 +355,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         setAxisPerColumnAndRow(objSummaryAxisList);
-        debugger;
+        
         //prath on 27-Jan-2022 wip
         if (objChart.axisPerColumn > 1) {
           objChart.ZoomOnAxies = zoomOnAxies.x;
@@ -722,7 +722,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         objChart.initialize();
-        debugger;
+        
 
         objChart.reDraw();
 

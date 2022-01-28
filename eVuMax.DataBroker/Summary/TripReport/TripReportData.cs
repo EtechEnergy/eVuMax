@@ -93,10 +93,10 @@ namespace eVuMax.DataBroker.Summary.TripReport
                     depthUnit = objTimeLog.logCurves["DEPTH"].VuMaxUnitID;
                 }
 
-                //objTripReportSettings = TripReportSettings.getSettings(objDataService, WellID); //original
-                objUserSettings.loadSettings();
+                objTripReportSettings = VuMaxDR.Data.Objects.TripReportSettings.getSettings(objDataService, WellID); //original
+                //objUserSettings.loadSettings(); PENDING
 
-                objUserSettings.copySettingsToVuMaxTripReportSettings(ref objTripReportSettings);
+               // objUserSettings.copySettingsToVuMaxTripReportSettings(ref objTripReportSettings);
                 objReport.objTimeLog = objTimeLog;
                 objReport.objSettings = objTripReportSettings;
 
@@ -134,8 +134,8 @@ namespace eVuMax.DataBroker.Summary.TripReport
 
                 
                 var exList = new Dictionary<int, int>();
-                //exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
-                exList = objUserSettings.TripExclusionList;//Nishant
+                exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
+                //exList = objUserSettings.TripExclusionList;//Nishant PENDING
                 tripData = new Dictionary<int, TripInfo>();
                 TripTags = new Dictionary<int, clsPhaseTag>();
                 TripTypeTags = PhaseMapping.getList(objDataService, AdvKPIProfile.TRIP);

@@ -1496,7 +1496,7 @@ export class Chart {
       var m = d3.mouse(d);
       m[0] = Math.max(0, Math.min(this.Width, m[0]));
       m[1] = Math.max(0, Math.min(this.Height, m[1]));
-      debugger;
+      
 
       if (m[0] !== origin[0] && m[1] !== origin[1]) {
         //Update Scale Domain of each axes based on Zoon Selection (Rectangle)
@@ -1529,7 +1529,7 @@ export class Chart {
 
           //////  if (Axis_.bandScale == false) { //original false
           //When only X axes zoom require
-          debugger;
+          
           if (this.ZoomOnAxies == zoomOnAxies.x) {
 
             if (Axis_.bandScale == false) {
@@ -1609,7 +1609,7 @@ export class Chart {
         }
         //====================================
 
-        this.refreshOnZoom(origin, m); //Used to only update axies - Line Update code bypassed
+        this.refreshOnZoom(origin, m); //Used to only update axies - Line Update code bypassed  (MOST IMP)
 
         this.updateChart(true); //Update Chart without axies
       }
@@ -1754,37 +1754,64 @@ export class Chart {
         let ymin = objVerticalAxis.getMin();
         let ymax = objVerticalAxis.getMax();
 
-        if (objHorizontalAxis.isAllowZooming == false || objVerticalAxis.isAllowZooming == false) {
+        //Change by prath on 28-Jan-2022
+        // if (objHorizontalAxis.isAllowZooming == false || objVerticalAxis.isAllowZooming == false) {
+        //   continue;
+        // }
+
+        if (objHorizontalAxis.isAllowZooming == false && objVerticalAxis.isAllowZooming == false) {
           continue;
         }
+        //======================
 
-        if (
+
+         //Change by prath on 28-Jan-2022
+       
+        //  if (
+        //   objHorizontalAxisScaleRef.domain()[1] -
+        //   objHorizontalAxisScaleRef.domain()[0] >=
+        //   xmax - xmin
+        // ) {
+        //   reset_s = 1;
+        // }
+       
+         if ((
           objHorizontalAxisScaleRef.domain()[1] -
           objHorizontalAxisScaleRef.domain()[0] >=
           xmax - xmin
-        ) {
-          //zoom.x(x.domain([xmin, xmax]));
+        ) && objHorizontalAxis.isAllowZooming ) {
           reset_s = 1;
         }
 
-        if (
+       
+        //==========
+
+
+        
+         //Change by prath on 28-Jan-2022
+        // if (
+        //   objVerticalAxisScaleRef.domain()[1] -
+        //   objVerticalAxisScaleRef.domain()[0] >=
+        //   xmax - xmin
+        // ) {
+        //   reset_s += 1;
+        // }
+
+        if ((
           objVerticalAxisScaleRef.domain()[1] -
           objVerticalAxisScaleRef.domain()[0] >=
           xmax - xmin
-        ) {
-          //zoom.y(y.domain([ymin, ymax]));
+        ) && objVerticalAxis.isAllowZooming) {
           reset_s += 1;
         }
+        //=================
 
         if (reset_s == 2) {
-          //alert("reset2");
-          // Both axes are full resolution. Reset.
           this.zoom.transform(
             d3.select("#" + this.ContainerId),
             d3.zoomIdentity
           );
         } else {
-          //alert("reset2 else");
           if (objHorizontalAxisScaleRef.domain()[0] < xmin) {
             objHorizontalAxisScaleRef.domain([
               xmin,

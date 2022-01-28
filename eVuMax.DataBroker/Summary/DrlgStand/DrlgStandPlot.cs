@@ -173,19 +173,21 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
                 objStandProcessor = new StandLogProcessor(ref paramRequest, paramWellID);
 
-                if (objUserSettings.dtDayTimeFrom == objUserSettings.dtDayTimeTo) //assuming that User has Not set the DayTime from To Value
-                {
-                    loadCustomization();
+                //if (objUserSettings.dtDayTimeFrom == objUserSettings.dtDayTimeTo) //assuming that User has Not set the DayTime from To Value
+                //{
+                //    loadCustomization();
 
-                }
-                else
-                {
-                    dtDayTimeFrom = Convert.ToDateTime(objUserSettings.dtDayTimeFrom);
-                    dtDayTimeTo = Convert.ToDateTime(objUserSettings.dtDayTimeTo);
-                    HighlightDayNight = objUserSettings.HighlightDayNight;
-                }
+                //}
+                //else
+                //{
+                //    dtDayTimeFrom = Convert.ToDateTime(objUserSettings.dtDayTimeFrom);
+                //    dtDayTimeTo = Convert.ToDateTime(objUserSettings.dtDayTimeTo);
+                //    HighlightDayNight = objUserSettings.HighlightDayNight;
+                //}
 
-
+                dtDayTimeFrom = Convert.ToDateTime(objUserSettings.dtDayTimeFrom);
+                dtDayTimeTo = Convert.ToDateTime(objUserSettings.dtDayTimeTo);
+                HighlightDayNight = objUserSettings.HighlightDayNight;
 
 
 

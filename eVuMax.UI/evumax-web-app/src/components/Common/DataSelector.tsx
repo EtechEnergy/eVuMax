@@ -190,7 +190,7 @@ class DataSelector extends Component<IProps> {
   //   pApplyRefreshHrs?: boolean
   // ) => {
   //   try {
-  //     debugger;
+  
   //     this.setState({
   //       selectedval: ptype,
   //       fromDate: pfromdate,
