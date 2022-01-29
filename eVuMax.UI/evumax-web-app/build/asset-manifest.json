@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/evumaxapp/static/css/main.2f6967b8.chunk.css",
-    "main.js": "/evumaxapp/static/js/main.cbd4d1c8.chunk.js",
+    "main.css": "/evumaxapp/static/css/main.aced7b8d.chunk.css",
+    "main.js": "/evumaxapp/static/js/main.f1e76879.chunk.js",
     "runtime-main.js": "/evumaxapp/static/js/runtime-main.582f3784.js",
     "static/css/2.dae06f06.chunk.css": "/evumaxapp/static/css/2.dae06f06.chunk.css",
-    "static/js/2.c8bff169.chunk.js": "/evumaxapp/static/js/2.c8bff169.chunk.js",
+    "static/js/2.92a1e2bd.chunk.js": "/evumaxapp/static/js/2.92a1e2bd.chunk.js",
     "index.html": "/evumaxapp/index.html",
-    "static/js/2.c8bff169.chunk.js.LICENSE.txt": "/evumaxapp/static/js/2.c8bff169.chunk.js.LICENSE.txt",
+    "static/js/2.92a1e2bd.chunk.js.LICENSE.txt": "/evumaxapp/static/js/2.92a1e2bd.chunk.js.LICENSE.txt",
     "static/media/downloading-blue.gif": "/evumaxapp/static/media/downloading-blue.1d117764.gif",
     "static/media/etechSVG.08de06c8.svg": "/evumaxapp/static/media/etechSVG.08de06c8.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.582f3784.js",
     "static/css/2.dae06f06.chunk.css",
-    "static/js/2.c8bff169.chunk.js",
-    "static/css/main.2f6967b8.chunk.css",
-    "static/js/main.cbd4d1c8.chunk.js"
+    "static/js/2.92a1e2bd.chunk.js",
+    "static/css/main.aced7b8d.chunk.css",
+    "static/js/main.f1e76879.chunk.js"
   ]
 }

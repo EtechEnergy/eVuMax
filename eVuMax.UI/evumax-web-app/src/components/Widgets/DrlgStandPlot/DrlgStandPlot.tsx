@@ -211,16 +211,33 @@ export default class DrlgStandPlot extends React.Component {
 
       
         
-        let hrs : number  =parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asHours().toString());
+        // let hrs : number  =parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asHours().toString());
 
-        let min :number =  parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asMinutes().toString());
+        // let min :number =  parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asMinutes().toString());
                            
-         min = min - (hrs*60);
-         let ss :number = parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asSeconds().toString());
+        //  min = min - (hrs*60);
+        //  let ss :number = parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asSeconds().toString());
         
-          ss = ss - (hrs*60*60) - (min*60);
+        //   ss = ss - (hrs*60*60) - (min*60);
+
+
+
+        let now  = ToDate;
+let then = FromDate;
+let diff = moment.duration(moment(now).diff(moment(then)));
+return "["+ diff.hours().toString().trim()+":"+  diff.minutes().toString().trim() + ":" + diff.seconds().toString().trim() +"]";
+
+// let days = parseInt(diff.asDays()); //84
+
+// var hours = parseInt(diff.asHours()); //2039 hours, but it gives total hours in given miliseconds which is not expacted.
+
+// hours = hours - days*24;  // 23 hours
+
+// var minutes = parseInt(diff.asMinutes()); //122360 minutes,but it gives total minutes in given miliseconds which is not expacted.
+
+// minutes = minutes - (days*24*60 + hours*60); //20 minutes.
         
-         return "["+hrs+" : "+ min + " : " + ss +"]";
+         //return "["+hrs+" : "+ min + " : " + ss +"]";
 
       
 
