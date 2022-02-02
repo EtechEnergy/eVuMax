@@ -38,9 +38,35 @@ namespace eVuMax.DataBroker.Summary.TripReport
         public string WellName = "";
 
         private VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
-        public TripReportSettings objUserSettings = new TripReportSettings();
+        public TripReportUserSettings objUserSettings = new TripReportUserSettings();
+        public DataTable CustomTagList = new DataTable();
 
-        
+        //Trip Selection Table Variables
+        public DataTable tagList = new DataTable();
+        public string UserID = "";
+
+
+
+        private void loadCustomTagSourceData()
+        {
+            try
+            {
+                
+                var objData = new DataTable();
+                objData = objDataService.getTable("SELECT SOURCE_ID,SOURCE_NAME FROM VMX_TAG_SOURCES ORDER BY SOURCE_NAME");
+                if (objData.Rows.Count > 0)
+                {
+                    CustomTagList = objData;    
+                
+                }
+
+                CustomTagList = objData;
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
         private void generateGrdTable()
         {
             grdData.Columns.Add("COL_PHASE_INDEX");
@@ -79,24 +105,59 @@ namespace eVuMax.DataBroker.Summary.TripReport
             grdData.Columns.Add("COL_DIFF_W_BKCOLOR");
             grdData.Columns.Add("COL_DIFF_WO_BKCOLOR");
 
+            generateTagListTable();
+
+
+
 
         }
         
+        public void generateTagListTable()
+        {
+            try
+            {
 
+                tagList.Columns.Add("COL_SELECTION");
+                tagList.Columns.Add("COL_PHASE_INDEX");
+                tagList.Columns.Add("COL_PHASE_ID");
+                tagList.Columns.Add("COL_PHASE_NAME");
+                tagList.Columns.Add("COL_STEP_ID");
+                tagList.Columns.Add("COL_STEP_NAME");
+                tagList.Columns.Add("COL_EMPH_ID");
+                tagList.Columns.Add("COL_EMPH_NAME");
+                tagList.Columns.Add("COL_TIME_LOG");
+                tagList.Columns.Add("COL_TIME_LOG_ID");
+                tagList.Columns.Add("COL_START_DATE");
+                tagList.Columns.Add("COL_END_DATE");
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         private void Initialize(string paramWellID)
         {
             try
             {
+                loadCustomTagSourceData();//Nishant 29-01-2022
                 objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref objDataService, paramWellID);
                 if (objTimeLog is object)
                 {
                     depthUnit = objTimeLog.logCurves["DEPTH"].VuMaxUnitID;
                 }
 
-                objTripReportSettings = VuMaxDR.Data.Objects.TripReportSettings.getSettings(objDataService, WellID); //original
-                //objUserSettings.loadSettings(); PENDING
+                objTripReportSettings = VuMaxDR.Data.Objects.TripReportSettings.getSettings(objDataService, paramWellID); //original
+                objUserSettings.WellID = paramWellID;
+                objUserSettings.UserID = UserID;
+                objUserSettings.objDataService = objDataService;
+                objUserSettings.loadSettings(); //PENDING
 
-               // objUserSettings.copySettingsToVuMaxTripReportSettings(ref objTripReportSettings);
+              
+
+                objUserSettings.overWriteTripReportSettingsWithUserSettings(ref objTripReportSettings);
                 objReport.objTimeLog = objTimeLog;
                 objReport.objSettings = objTripReportSettings;
 
@@ -111,6 +172,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 colorTable.Add(5, "Brown");
 
                 generateGrdTable();
+
             }
             catch (Exception ex)
             {
@@ -118,13 +180,274 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 
             }
         }
-        public Broker.BrokerResponse generateTripReport(ref VuMaxDR.Data.DataService paramObjDataService, string paramWellID)
+
+        public DataTable loadTagListCustom(ref DataService paramObjDataService, string paramTagSourceID, string paramWellID)
+        {
+            try
+            {
+
+                Initialize(paramWellID);
+                generateGrdTable();
+                tagList.Rows.Clear();
+
+
+                // 'Display filtered list of tags ...
+
+                string sourceID = paramTagSourceID; // objTripReportSettings.TagSourceID; // objUserSettings.TagSourceID; // workaround pending 
+                Dictionary<int, clsPhaseTag> tripTypeTags = PhaseMapping.getList(paramObjDataService, AdvKPIProfile.TRIP);
+                string strSQL = "";
+                strSQL = " SELECT ";
+                strSQL += " A.TAG_INDEX,A.START_DATE,A.END_DATE,A.CATEGORY_ID,A.SUB_CATEGORY_ID,A.ACTIVITY_ID,C.CATEGORY_NAME,D.SUB_CATEGORY_NAME,E.ACTIVITY_NAME ";
+                strSQL += " FROM  ";
+                strSQL += " VMX_CUSTOM_TAG_LIST A ";
+                strSQL += " LEFT JOIN VMX_CUSTOM_TAG_CATEGORY_MASTER C ON (A.CATEGORY_ID=C.TAG_CATEGORY_ID AND A.SOURCE_ID=C.SOURCE_ID) ";
+                strSQL += " LEFT JOIN VMX_CUSTOM_TAG_SUB_CATEGORY_MASTER D ON (A.CATEGORY_ID=D.TAG_CATEGORY_ID AND A.SUB_CATEGORY_ID=D.TAG_SUB_CATEGORY_ID AND A.SOURCE_ID=D.SOURCE_ID) ";
+                strSQL += " LEFT JOIN VMX_CUSTOM_TAG_ACTIVITY_MASTER E ON (E.TAG_CATEGORY_ID=A.CATEGORY_ID AND E.TAG_SUB_CATEGORY_ID=A.SUB_CATEGORY_ID AND E.TAG_ACTIVITY_ID=A.ACTIVITY_ID AND A.SOURCE_ID=E.SOURCE_ID) ";
+                strSQL += " WHERE A.WELL_ID='" + WellID + "' AND A.SOURCE_ID='" + sourceID + "' ORDER BY START_DATE ";
+                DataTable objData = paramObjDataService.getTable(strSQL);
+                foreach (DataRow objRow in objData.Rows)
+                {
+                    string PhaseID = DataService.checkNull(objRow["CATEGORY_ID"], "").ToString();
+                    string PhaseName = DataService.checkNull(objRow["CATEGORY_NAME"], "").ToString();
+                    string StepID = DataService.checkNull(objRow["SUB_CATEGORY_ID"], "").ToString();
+                    string StepName = DataService.checkNull(objRow["SUB_CATEGORY_NAME"], "").ToString();
+                    string EmphID = DataService.checkNull(objRow["ACTIVITY_ID"], "").ToString();
+                    string EmphName = DataService.checkNull(objRow["ACTIVITY_NAME"], "").ToString();
+                    double PhaseIndex = Convert.ToInt32( DataService.checkNull(objRow["TAG_INDEX"], 0));
+                    DateTime TagStartDate = Convert.ToDateTime( DataService.checkNull(objRow["START_DATE"], new DateTime()));
+                    DateTime TagEndDate = Convert.ToDateTime( DataService.checkNull(objRow["END_DATE"], new DateTime()));
+                    if (objWell.wellDateFormat == VuMaxDR.Data.Objects. Well.wDateFormatUTC)
+                    {
+                        TagStartDate = utilFunctionsDO.convertUTCToWellTimeZone(TagStartDate, objWell);
+                        TagEndDate = utilFunctionsDO.convertUTCToWellTimeZone(TagEndDate, objWell);
+                    }
+                    else
+                    {
+                        TagStartDate = utilFunctionsDO.convertLocalToWellTimeZone(TagStartDate, objWell);
+                        TagEndDate = utilFunctionsDO.convertLocalToWellTimeZone(TagEndDate, objWell);
+                    }
+
+
+
+                    // 'Check if this tag is Trip tag
+                    bool Found = false;
+                    foreach (clsPhaseTag objTagType in tripTypeTags.Values)
+                    {
+                        if (objTagType.PhaseID == PhaseID & objTagType.StepID == StepID & objTagType.EmphID == EmphID)
+                        {
+                            Found = true;
+                            break;
+                        }
+                    }
+
+                    if (Found)
+                    {
+                        DateTime StartDate = Convert.ToDateTime( DataService.checkNull(objRow["START_DATE"], new DateTime()));
+                        DateTime EndDate =Convert.ToDateTime( DataService.checkNull(objRow["END_DATE"], new DateTime()));
+                        string TimeLogID = "";
+                        string TimeLogName = "";
+
+
+                        // 'Find the right time log
+                        foreach (Wellbore objWellbore in objWell.wellbores.Values)
+                        {
+                            foreach (TimeLog objTimeLog in objWellbore.timeLogs.Values)
+                            {
+                                if (!objTimeLog.RemarksLog)
+                                {
+                                    var tStartDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref objDataService));
+                                    var tEndDate = DateTime.FromOADate(objTimeLog.getLastIndex(ref objDataService));
+                                    if (StartDate > tStartDate & EndDate < tEndDate)
+                                    {
+
+                                        // 'This is the right time log ...
+
+                                        TimeLogID = objWellbore.ObjectID + "~" + objTimeLog.ObjectID;
+                                        TimeLogName = objTimeLog.nameLog;
+                                        goto ContinueAhead;
+                                    }
+                                }
+                            }
+                        }
+
+                    ContinueAhead:
+                        tagList.Rows.Add();
+                        int rowIndex = tagList.Rows.Count - 1;
+                 
+
+                        tagList.Rows[rowIndex]["COL_SELECTION"] = true;
+                        tagList.Rows[rowIndex]["COL_PHASE_INDEX"] = PhaseIndex;
+                        tagList.Rows[rowIndex]["COL_PHASE_ID"] = PhaseID;
+                        tagList.Rows[rowIndex]["COL_PHASE_NAME"] = PhaseName;
+                        tagList.Rows[rowIndex]["COL_STEP_ID"] = StepID;
+                        tagList.Rows[rowIndex]["COL_STEP_NAME"] = StepName;
+                        tagList.Rows[rowIndex]["COL_EMPH_ID"] = EmphID;
+                        tagList.Rows[rowIndex]["COL_EMPH_NAME"] = EmphName;
+                        tagList.Rows[rowIndex]["COL_TIME_LOG_ID"] = TimeLogID;
+                        tagList.Rows[rowIndex]["COL_TIME_LOG"] = TimeLogName;
+                        tagList.Rows[rowIndex]["COL_START_DATE"] = TagStartDate.ToString("MMM-dd-yyyy HH:mm:ss");
+                        tagList.Rows[rowIndex]["COL_END_DATE"] = TagEndDate.ToString("MMM-dd-yyyy HH:mm:ss");
+                    }
+                }
+
+
+                // '//Get the list of exclusions 
+                Dictionary<int, int> list = objUserSettings.TripExclusionList; // TripReportSettings.getTripExclusionList(objDataService, WellID);
+
+                //if (objUserSettings.TripExclusionListStr.Length > 0) //Nishant 29-01-2022
+                //{
+                //    list.Clear();
+                //    foreach (string strPhaseIndex in objUserSettings.TripExclusionListStr)
+                //    {
+                //        list.Add(Convert.ToInt32(strPhaseIndex), Convert.ToInt32(strPhaseIndex));
+
+                //    }
+                //}
+
+                // '//Remove the selections of the excluded trips
+                foreach (int lnTagID in list.Keys)
+                {
+                    for (int i = 0; i <= tagList.Rows.Count - 1; i++)
+                    {
+                        int tagID = Convert.ToInt32( tagList.Rows[i]["COL_PHASE_INDEX"].ToString());
+                        if (tagID == lnTagID)
+                        {
+                            tagList.Rows[i]["COL_SELECTION"] = false;
+                        }
+                    }
+                }
+                return tagList;
+            }
+            catch (Exception ex)
+            {
+
+                return tagList;
+            }
+        }
+        public DataTable loadTagListDrilling()
+        {
+            try
+            {
+                tagList.Rows.Clear();
+                Dictionary<int, clsPhaseTag> tripTypeTags = PhaseMapping.getList(objDataService, AdvKPIProfile.TRIP);
+                DataTable objData = objDataService.getTable("SELECT A.PHASE_INDEX,A.START_DATE,A.END_DATE,A.PHASE_ID,A.STEP_ID,A.EMPH_ID,C.PHASE_NAME,D.STEP_NAME,E.EMPH_NAME FROM VMX_PHASE_LIST A LEFT JOIN VMX_PHASE_MASTER C ON (A.PHASE_ID=C.PHASE_ID) LEFT JOIN VMX_STEP_MASTER D ON (A.PHASE_ID=D.PHASE_ID AND A.STEP_ID=D.STEP_ID) LEFT JOIN VMX_EMPH_MASTER E ON (E.PHASE_ID=A.PHASE_ID AND E.STEP_ID=A.STEP_ID AND E.EMPH_ID=A.EMPH_ID) WHERE A.WELL_ID='" + WellID + "' ORDER BY START_DATE");
+                foreach (DataRow objRow in objData.Rows)
+                {
+                    string PhaseID = Convert.ToString(DataService.checkNull(objRow["PHASE_ID"], ""));
+                    string PhaseName = DataService.checkNull(objRow["PHASE_NAME"], "").ToString();
+                    string StepID = DataService.checkNull(objRow["STEP_ID"], "").ToString();
+                    string StepName = DataService.checkNull(objRow["STEP_NAME"], "").ToString();
+                    string EmphID = DataService.checkNull(objRow["EMPH_ID"], "").ToString();
+                    string EmphName = DataService.checkNull(objRow["EMPH_NAME"], "").ToString();
+                    double PhaseIndex = Convert.ToInt32(DataService.checkNull(objRow["PHASE_INDEX"], 0));
+                    DateTime TagStartDate = Convert.ToDateTime(DataService.checkNull(objRow["START_DATE"], new DateTime()));
+                    DateTime TagEndDate = Convert.ToDateTime( DataService.checkNull(objRow["END_DATE"], new DateTime()));
+                    if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
+                    {
+                        TagStartDate = utilFunctionsDO.convertUTCToWellTimeZone(TagStartDate, objWell);
+                        TagEndDate = utilFunctionsDO.convertUTCToWellTimeZone(TagEndDate, objWell);
+                    }
+                    else
+                    {
+                        TagStartDate = utilFunctionsDO.convertLocalToWellTimeZone(TagStartDate, objWell);
+                        TagEndDate = utilFunctionsDO.convertLocalToWellTimeZone(TagEndDate, objWell);
+                    }
+
+
+
+                    // 'Check if this tag is Trip tag
+                    bool Found = false;
+                    foreach (clsPhaseTag objTagType in tripTypeTags.Values)
+                    {
+                        if (objTagType.PhaseID == PhaseID & objTagType.StepID == StepID & objTagType.EmphID == EmphID)
+                        {
+                            Found = true;
+                            break;
+                        }
+                    }
+
+                    if (Found)
+                    {
+                        DateTime StartDate = Convert.ToDateTime( DataService.checkNull(objRow["START_DATE"], new DateTime()));
+                        DateTime EndDate = Convert.ToDateTime( DataService.checkNull(objRow["END_DATE"], new DateTime()));
+                        string TimeLogID = "";
+                        string TimeLogName = "";
+
+
+                        // 'Find the right time log
+                        foreach (Wellbore objWellbore in objWell.wellbores.Values)
+                        {
+                            foreach (TimeLog objTimeLog in objWellbore.timeLogs.Values)
+                            {
+                                if (!objTimeLog.RemarksLog)
+                                {
+                                    var tStartDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref objDataService));
+                                    var tEndDate = DateTime.FromOADate(objTimeLog.getLastIndex(ref objDataService));
+                                    if (StartDate > tStartDate & EndDate < tEndDate)
+                                    {
+
+                                        // 'This is the right time log ...
+
+                                        TimeLogID = objWellbore.ObjectID + "~" + objTimeLog.ObjectID;
+                                        TimeLogName = objTimeLog.nameLog;
+                                        goto ContinueAhead;
+                                    }
+                                }
+                            }
+                        }
+
+                    ContinueAhead:
+                        tagList.Rows.Add();
+                        int rowIndex = tagList.Rows.Count - 1;
+                        tagList.Rows[rowIndex]["COL_SELECTION"] = true;
+                        tagList.Rows[rowIndex]["COL_PHASE_INDEX"] = PhaseIndex;
+                        tagList.Rows[rowIndex]["COL_PHASE_ID"] = PhaseID;
+                        tagList.Rows[rowIndex]["COL_PHASE_NAME"] = PhaseName;
+                        tagList.Rows[rowIndex]["COL_STEP_ID"] = StepID;
+                        tagList.Rows[rowIndex]["COL_STEP_NAME"] = StepName;
+                        tagList.Rows[rowIndex]["COL_EMPH_ID"] = EmphID;
+                        tagList.Rows[rowIndex]["COL_EMPH_NAME"] = EmphName;
+                        tagList.Rows[rowIndex]["COL_TIME_LOG_ID"] = TimeLogID;
+                        tagList.Rows[rowIndex]["COL_TIME_LOG"] = TimeLogName;
+                        tagList.Rows[rowIndex]["COL_START_DATE"] = TagStartDate.ToString("MMM-dd-yyyy HH:mm:ss");
+                        tagList.Rows[rowIndex]["COL_END_DATE"] = TagEndDate.ToString("MMM-dd-yyyy HH:mm:ss");
+                    }
+                }
+
+
+                // '//Get the list of exclusions 
+                Dictionary<int, int> list = objUserSettings.TripExclusionList; // TripReportSettings.getTripExclusionList(ref objDataService, WellID);
+
+                // '//Remove the selections of the excluded trips
+                foreach (int lnTagID in list.Keys)
+                {
+                    for (int i = 0; i <= tagList.Rows.Count - 1; i++)
+                    {
+                        int tagID = Convert.ToInt32( tagList.Rows[i]["COL_PHASE_INDEX"].ToString());
+                        if (tagID == lnTagID)
+                        {
+                            tagList.Rows[i]["COL_SELECTION"] = false;
+                        }
+                    }
+                }
+                return tagList;
+            }
+            catch (Exception ex)
+            {
+
+                return tagList;
+            }
+
+        }
+
+
+        public Broker.BrokerResponse generateTripReport(ref VuMaxDR.Data.DataService paramObjDataService, string paramWellID, string paramUserID)
         {
             try
             {
                 objDataService = new VuMaxDR.Data.DataService(paramWellID);
                 objDataService = paramObjDataService;
-
+                UserID = paramUserID;
                 Initialize(paramWellID);
                 WellID = paramWellID;
                
@@ -134,8 +457,8 @@ namespace eVuMax.DataBroker.Summary.TripReport
 
                 
                 var exList = new Dictionary<int, int>();
-                exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
-                //exList = objUserSettings.TripExclusionList;//Nishant PENDING
+                //exList = VuMaxDR.Data.Objects.TripReportSettings.getTripExclusionList(objDataService, WellID);
+                exList = objUserSettings.TripExclusionList;//Nishant PENDING checking
                 tripData = new Dictionary<int, TripInfo>();
                 TripTags = new Dictionary<int, clsPhaseTag>();
                 TripTypeTags = PhaseMapping.getList(objDataService, AdvKPIProfile.TRIP);
@@ -143,6 +466,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 if (!objTripReportSettings.UseCustomTags)
                 {
                     objData = objDataService.getTable("SELECT A.IS_OPEN,A.PHASE_INDEX,A.START_DATE,A.END_DATE,A.PHASE_ID,A.STEP_ID,A.EMPH_ID,C.PHASE_NAME,D.STEP_NAME,E.EMPH_NAME FROM VMX_PHASE_LIST A LEFT JOIN VMX_PHASE_MASTER C ON (A.PHASE_ID=C.PHASE_ID) LEFT JOIN VMX_STEP_MASTER D ON (A.PHASE_ID=D.PHASE_ID AND A.STEP_ID=D.STEP_ID) LEFT JOIN VMX_EMPH_MASTER E ON (E.PHASE_ID=A.PHASE_ID AND E.STEP_ID=A.STEP_ID AND E.EMPH_ID=A.EMPH_ID) WHERE A.WELL_ID='" + WellID + "' ORDER BY START_DATE");
+                    //loadTagListDrilling();
                 }
                 else
                 {
@@ -156,6 +480,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                     strSQL += " LEFT JOIN VMX_CUSTOM_TAG_ACTIVITY_MASTER E ON (E.TAG_CATEGORY_ID=A.CATEGORY_ID AND E.TAG_SUB_CATEGORY_ID=A.SUB_CATEGORY_ID AND E.TAG_ACTIVITY_ID=A.ACTIVITY_ID AND A.SOURCE_ID=E.SOURCE_ID) ";
                     strSQL += " WHERE A.WELL_ID='" + WellID + "' AND A.SOURCE_ID='" + objTripReportSettings.TagSourceID + "' ORDER BY START_DATE ";
                     objData = objDataService.getTable(strSQL);
+                    //loadTagListCustom(ref objDataService, objTripReportSettings.TagSourceID,WellID);
                 }
 
                 foreach (DataRow objRow in objData.Rows)
@@ -239,6 +564,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
 
 
                 objResponse.RequestSuccessfull = true;
+                objDataService = null;
                 objResponse.Response = JsonConvert.SerializeObject(this);
 
                 return objResponse;
@@ -803,8 +1129,10 @@ namespace eVuMax.DataBroker.Summary.TripReport
             try
             {
                 Broker.BrokerResponse objResponse = objRequest.createResponseObject();
-                Initialize(paramWellID);
-                generateTripReport(ref paramObjDataService, paramWellID);
+                //objDataService = paramObjDataService;
+                //Initialize(paramWellID);
+                generateTripReport(ref paramObjDataService, paramWellID, UserID);
+                objDataService = paramObjDataService;
 
                 SingleTripStats objSingleTripStat = new SingleTripStats();
 

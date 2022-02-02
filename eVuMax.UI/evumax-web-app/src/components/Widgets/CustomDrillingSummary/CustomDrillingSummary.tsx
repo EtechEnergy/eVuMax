@@ -53,19 +53,24 @@ export class CustomDrillingSummary extends Component<IProps>  {
     this.updateWarnings = props.updateWarnings;
     this.parentRef = props.parentRef;
     //this.objDataSelector = props.objDataSelector;
-
     this.objChart = new Chart(this.parentRef, "SummaryChart");
+    //this.onResize = this.onResize.bind(this.loadSummary); //bind function once.
+      // This binding is necessary to make `this` work in the callback
+      //this.loadSummary = this.loadSummary.bind(this);
 
-
+         // This binding is necessary to make `this` work in the callback
+    this.loadSummary = this.loadSummary.bind(this);
+    
   }
-
-  state = {
+  
+    state = {
     warningMsg: [],
     isRealTime: false as boolean,
     objDataSelector: this.props.objDataSelector,
+    showOffsetWell: true
   };
 
-  showOffsetWell: boolean = true;
+  
   objSummaryAxisList: any = [];
   WellName: string = "";
   objData: any = "";
@@ -96,26 +101,40 @@ export class CustomDrillingSummary extends Component<IProps>  {
   // }, [showOffsetWell, dataSelector]);
 
 
+
   async componentDidMount() {
     try {
-      
+      // window.addEventListener('resize', this.loadSummary.bind(this), false);
       this.loadSummary();
 
       //RealTime 
       let isRealtimeRunning = sessionStorage.getItem("realCustomDrillingSummary");
       if (isRealtimeRunning == "true") {
         await this.setState({ isRealTime: !this.state.isRealTime });
-        this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
+        this.intervalID = setInterval(this.loadSummary.bind(this), 10000);
       }
       //==============
 
-      window.addEventListener("resize", this.loadSummary);
+      // //window.addEventListener("resize", this.loadSummary);
+      return () => {
+        document.removeEventListener('resize', this.loadSummary.bind(this));
+      };
+     
+      
 
     } catch (error) {
 
     }
   }
 
+  
+
+  // componentWillUnmount(): void {
+  //   alert("unomunt");
+  //   //window.removeEventListener("resize", this.loadSummary);
+  //   // you need to unbind the same listener that was binded.
+  //   window.removeEventListener('resize', this.loadSummary);
+  // }
 
   //Step-1
   loadSummary = () => {
@@ -176,9 +195,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
       objParameter = new BrokerParameter("refreshHrs", this.state.objDataSelector.refreshHrs.toString());
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("showOffsetWell", this.showOffsetWell.toString());
+      objParameter = new BrokerParameter("showOffsetWell", this.state.showOffsetWell.toString());
       objBrokerRequest.Parameters.push(objParameter);
-
+      
 
       
       //gdSummary Plot ID: 308-656-954-204-796
@@ -922,11 +941,12 @@ export class CustomDrillingSummary extends Component<IProps>  {
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
     if (this.state.isRealTime) {
-      this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
+      this.intervalID = setInterval(this.loadSummary.bind(this), 10000);
     } else {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
+      
       this.loadSummary();
     }
 
@@ -1433,9 +1453,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
     }
 
   };
-  handleChange = () => {
-    //setShowOffsetWell(!showOffsetWell);
-    this.showOffsetWell = !this.showOffsetWell;
+  handleChange = async () => {
+    await this.setState({showOffsetWell : !this.state.showOffsetWell})
+    this.loadSummary();
   }
 
 
@@ -1444,21 +1464,10 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
 
-    // //Added condition on 02-02-2022
-    // if (this.state.isRealTime){
-    //    this.state.objDataSelector.needForceReload = false;
-    //    this.state.objDataSelector.selectedval = "2";
-  
-    // }
-
-    // if (this.state.isRealTime){
-    //   this.state.objDataSelector.needForceReload = false;
-    // }
-
     if (this.state.isRealTime) {
       //Added condition on 02-02-2022
       this.state.objDataSelector.needForceReload = false;
-      this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
+      this.intervalID = setInterval(this.loadSummary.bind(this), 10000);
     } else {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
@@ -1470,9 +1479,6 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
 
   render() {
-
-
-
     return (
       <div>
 
@@ -1486,9 +1492,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
           <div className="col-lg-2">
             <div>
-              <input type="checkbox" id="offsetWell" name="chkOffsetWell" value="true" checked={this.showOffsetWell} onChange={this.handleChange} /> Show OffsetWell
+              <input type="checkbox" id="offsetWell" name="chkOffsetWell" value="true" checked={this.state.showOffsetWell} onChange={this.handleChange} /> Show OffsetWell
 
-              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+              <label className=" mr-1 ml-5">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
             </div>
 
 

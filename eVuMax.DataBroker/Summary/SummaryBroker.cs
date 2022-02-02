@@ -159,6 +159,14 @@ namespace eVuMax.DataBroker.Summary
 
                 }
 
+                if (paramRequest.Broker == Global.TripReportBroker)
+                {
+
+                    TripReport.TripReportMgr objTripRptMgr = new TripReport.TripReportMgr();
+                    return objTripRptMgr.performTask(paramRequest);
+
+                }
+
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";

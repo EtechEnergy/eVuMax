@@ -13,6 +13,7 @@ import * as d3 from "d3";
 
 import { formatNumber, parseDate } from "@telerik/kendo-intl";
 import { faListAlt, faSearchMinus } from "@fortawesome/free-solid-svg-icons";
+import * as utilFunc from "../../../utilFunctions/utilFunctions";
 
 
 
@@ -24,7 +25,7 @@ import {
 } from "../../../eVuMaxObjects/Chart/DataSeries";
 import "@progress/kendo-react-layout";
 import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
-import { Button, NumericTextBox, TabStrip, TabStripTab, TimePicker } from "@progress/kendo-react-all";
+import { Window, Button, NumericTextBox, TabStrip, TabStripTab, TimePicker, DropDownList } from "@progress/kendo-react-all";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import { confirmAlert } from "react-confirm-alert";
 import * as util from "../../../utilFunctions/utilFunctions";
@@ -32,6 +33,8 @@ import "./TripReportCss.css";
 import { lab } from "d3";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Checkbox } from "@progress/kendo-react-inputs";
+import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
+import { TripReportSettings } from "./TripReportSettings";
 
 
 
@@ -74,7 +77,13 @@ export default class DrlgStandPlot extends React.Component {
         objGridData: [] as any,
         selectedTab: 0,
         SingleTripReportData: {} as any,
-        currentPhaseIndex: 0
+        currentPhaseIndex: 0,
+        showTagListDialog: false,
+        customTagList: [] as comboData[],
+        selectedCustomTag: new comboData(),
+        grdTags: [] as any,
+        UseCustomTags: false,
+        objUserSettings: new TripReportSettings()
     }
 
     componentWillUnmount() {
@@ -350,8 +359,7 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChart3BarTripConn.MarginBottom = 0; //40;
             this.ST_objChart3BarTripConn.MarginTop = 0; //10;
             this.ST_objChart3BarTripConn.MarginRight = 0; // 10;
-
-
+            
 
             this.ST_objChart3BarTripConn.initialize();
             this.ST_objChart3BarTripConn.reDraw();
@@ -549,7 +557,7 @@ export default class DrlgStandPlot extends React.Component {
 
             }
 
-            
+
             this.objChart1.reDraw();
             this.plotAvgConnBarChart();
 
@@ -1051,6 +1059,11 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChart3BarTripConn.MarginRight = 0; // 10;
 
 
+            
+            this.ST_objChart3BarTripConn.onAfterSeriesDraw.subscribe((e, i) => {
+                this.onAfterDrawSeries(e, i);
+              });
+
             // Dim arrConn() As TripConn = listConn.Values.ToArray
 
             // ''Array.Sort(arrConn)
@@ -1202,10 +1215,11 @@ export default class DrlgStandPlot extends React.Component {
     }
 
 
+ 
     loadTripReport = () => {
         try {
 
-            Util.StatusInfo("Getting data from the server  ");
+            Util.StatusInfo("Getting data from the server...");
             objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Summary.Manager";
             objBrokerRequest.Broker = "TripReportBroker";
@@ -1214,6 +1228,9 @@ export default class DrlgStandPlot extends React.Component {
 
 
             objParameter = new BrokerParameter("WellID", this.WellID);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            objParameter = new BrokerParameter("UserID", _gMod._userId);
             objBrokerRequest.Parameters.push(objParameter);
             this.AxiosSource = axios.CancelToken.source();
             axios
@@ -1248,6 +1265,36 @@ export default class DrlgStandPlot extends React.Component {
 
 
                     if (objData_ != "" || objData_ != undefined) {
+
+                        let customTagList: comboData[] = [];
+
+                        for (let index = 0; index < objData_.CustomTagList.length; index++) {
+                            const element = objData_.CustomTagList[index];
+                            let objItem: comboData = new comboData(element.SOURCE_NAME, element.SOURCE_ID);
+                            customTagList.push(objItem);
+                        }
+                        if (customTagList.length > 0) {
+                            for (let index = 0; index < customTagList.length; index++) {
+                                let objItem = customTagList[index];
+
+                                if (objItem.id == objData_.objUserSettings.TagSourceID) {
+                                    this.setState({
+                                        selectedCustomTag: objItem,
+                                    });
+                                    break;
+                                }
+                            }
+
+                            objData_.objUserSettings.TripExclusionList = Object.values(objData_.objUserSettings.TripExclusionList);
+
+                            this.setState({
+                                customTagList: customTagList,
+                                grdTags: utilFunc.CopyObject(objData_.tagList),
+                                objUserSettings: utilFunc.CopyObject(objData_.objUserSettings)
+                            });
+                        }
+
+
                         this.setState({
                             objPlotData: objData_,
                             objGridData: objData_.grdData,
@@ -1274,7 +1321,7 @@ export default class DrlgStandPlot extends React.Component {
                         });
                     }
 
-                    Util.StatusSuccess("Data successfully retrived  ");
+                    Util.StatusSuccess("Data successfully retrived.Preparing Plot...");
                     Util.StatusReady();
 
                 })
@@ -1302,6 +1349,8 @@ export default class DrlgStandPlot extends React.Component {
 
         }
     }
+
+
 
 
     handleTabSelection = (e: any) => {
@@ -1372,6 +1421,9 @@ export default class DrlgStandPlot extends React.Component {
             objParameter = new BrokerParameter("phaseIndexID", PhaseIndex.toString());
             objBrokerRequest.Parameters.push(objParameter);
 
+            objParameter = new BrokerParameter("UserID", _gMod._userId.toString());
+            objBrokerRequest.Parameters.push(objParameter);
+
 
             this.AxiosSource = axios.CancelToken.source();
             axios
@@ -1406,9 +1458,10 @@ export default class DrlgStandPlot extends React.Component {
 
 
                     if (objData_ != "" || objData_ != undefined) {
-
+                        
                         this.setState({
-                            SingleTripReportData: objData_
+                            SingleTripReportData: objData_,
+                            selectedTab:3
                         });
 
 
@@ -1463,6 +1516,395 @@ export default class DrlgStandPlot extends React.Component {
         }
     }
 
+    loadSelectionTagList = () => {
+        try {
+
+
+            // this.setState({
+            //     showTagListDialog: false
+            // });
+            objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "Summary.Manager";
+            objBrokerRequest.Broker = "TripReportBroker";
+            objBrokerRequest.Function = "getTagSelectionList";
+
+
+
+            objParameter = new BrokerParameter("WellID", this.WellID);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            debugger;
+            let objUserSettings = utilFunc.CopyObject(this.state.objUserSettings);
+            objUserSettings.WellID = this.WellID;
+            objUserSettings.UserID = _gMod._userId;
+            objUserSettings.TripExclusionList = utilFunc.convertMapToDictionaryJSON(objUserSettings.TripExclusionList, undefined, true);
+            objUserSettings.TagSourceID = '';// this.state.UseCustomTags; //pending
+            objParameter = new BrokerParameter("UserSettings", JSON.stringify(objUserSettings));
+            objBrokerRequest.Parameters.push(objParameter);
+
+
+            this.AxiosSource = axios.CancelToken.source();
+            axios
+                .get(_gMod._getData, {
+                    cancelToken: this.AxiosSource.token,
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+                .then((res) => {
+
+                    let warnings: string = "";
+                    if (res.data.RequestSuccessfull == false) {
+                        warnings = res.data.Warnings;
+                        if (warnings.trim() != "") {
+                            let warningList = [];
+                            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                            this.setState({
+                                warningMsg: warningList
+                            });
+                        } else {
+                            this.setState({
+                                warningMsg: []
+                            });
+                        }
+                        return;
+                    }
+                    let objData_: any = JSON.parse(res.data.Response);
+                    console.log("tag Selection List", objData_);
+
+
+                    if (objData_ != "" || objData_ != undefined) {
+
+                        this.setState({
+                            grdTags: utilFunc.CopyObject(objData_),
+                        });
+
+                    } else {
+                        warnings += "No Data Available";
+                    }
+
+
+                    //Warnings Notifications
+                    // warnings = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    } else {
+                        this.setState({
+                            warningMsg: []
+                        });
+                    }
+
+                    this.setState({
+                        showTagListDialog: true,
+                    });
+
+                    Util.StatusReady();
+
+                })
+                .catch((error) => {
+
+                    //Util.StatusError(error.message);
+                    Util.StatusReady();
+                    if (error.response) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        // this.errors(error.response.message);
+                    } else if (error.request) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("error.request");
+                    } else {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("Error", error);
+                    }
+                    // return <CustomeNotifications Key="success" Icon={false} />
+                    console.log("rejected");
+                    this.setState({ isProcess: false });
+                });
+
+        } catch (error) {
+
+        }
+    }
+    chkCustomTag_Clicked = (checked: any) => {
+        try {
+            debugger;
+            this.setState({ UseCustomTags: checked });
+            if (checked == false) {
+                this.loadSelectionTagList();
+            }
+
+        } catch (error) {
+
+        }
+    }
+
+    handleSettingsChange = (event: any, field?: string) => {
+        try {
+            debugger;
+            let value = event.value;
+            const name = field;
+            let edited = utilFunc.CopyObject(this.state.objUserSettings);
+            edited[field] = value;
+            this.setState({
+                objUserSettings: edited
+            });
+
+
+
+        } catch (error) {
+
+        }
+    }
+
+    saveUserSettingsTags = (byPassExclList?: boolean) => {
+        try {
+            debugger;
+            let tagList = this.state.grdTags;
+            let localUserSettings: TripReportSettings = new TripReportSettings();// this.state.objUserSettings;
+            localUserSettings = utilFunc.CopyObject(this.state.objUserSettings);
+
+            if (byPassExclList == false || byPassExclList == undefined) {
+                localUserSettings.TripExclusionListStr = [];
+                localUserSettings.TripExclusionList = [];
+            }
+
+
+            for (let index = 0; index < tagList.length; index++) {
+                const objRow = tagList[index];
+                if (objRow.COL_SELECTION == false || objRow.COL_SELECTION == 'False' || objRow.COL_SELECTION == 'false') {
+
+                    localUserSettings.UseCustomTags = this.state.UseCustomTags;
+                    localUserSettings.TagSourceID = this.state.selectedCustomTag.id.toString();
+                    localUserSettings.TripExclusionList.push(Number(objRow.COL_PHASE_INDEX));
+                    //localUserSettings.TripExclusionListStr.push(objRow.COL_PHASE_INDEX);
+
+                }
+
+            }
+
+            localUserSettings.TripExclusionList = utilFunc.convertMapToDictionaryJSON(localUserSettings.TripExclusionList, undefined, true);
+
+            //send usersetting to serve to save it in DB
+
+
+            let objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "Summary.Manager";
+            objBrokerRequest.Broker = "TripReportBroker";
+            objBrokerRequest.Function = "SaveUserSettings";
+
+
+            localUserSettings.WellID = this.WellID;
+            localUserSettings.UserID = _gMod._userId;
+            objParameter = new BrokerParameter("UserSettings", JSON.stringify(localUserSettings));//this.state.objDrlgStandUserSettings
+            objBrokerRequest.Parameters.push(objParameter);
+            this.AxiosSource = axios.CancelToken.source();
+
+
+            axios
+                .get(_gMod._performTask, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+
+                .then(async (res) => {
+                    Util.StatusSuccess("Data successfully retrived.Preparing Plot   ");
+
+                    await this.setState({
+                        selected: 0,
+                        showTagListDialog: false
+                    });
+                    //reload all the connections
+
+
+                    this.loadTripReport();
+                })
+                .catch((error) => {
+                    Util.StatusError(error.message);
+                    Util.StatusReady();
+
+                    if (error.response) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        // this.errors(error.response.message);
+                    } else if (error.request) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("error.request");
+                    } else {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("Error", error);
+                    }
+                    // return <CustomeNotifications Key="success" Icon={false}  />
+                    console.log("rejected");
+                });
+
+
+
+
+
+
+            this.setState({
+                objUserSettings: localUserSettings,
+                showTagListDialog: false
+            });
+
+
+        } catch (error) {
+
+        }
+    }
+    handleChangeDropDown = (event: any, field?: string) => {
+        //Clear TagSelected
+        debugger;
+        this.setState({
+            selectedTag: [],
+        });
+
+
+        let value = event.value;
+        const name = field;
+
+
+        this.setState({
+            selectedCustomTag: value,
+        });
+
+        //load customTag List
+
+        let objBrokerRequest = new BrokerRequest();
+        objBrokerRequest.Module = "Summary.Manager";
+        objBrokerRequest.Broker = "TripReportBroker";
+        objBrokerRequest.Function = "getTagSelectionList";
+
+
+
+        objParameter = new BrokerParameter("WellID", this.WellID);
+        objBrokerRequest.Parameters.push(objParameter);
+
+        let objLocalUserSettings: TripReportSettings = utilFunc.CopyObject(this.state.objUserSettings);
+        objLocalUserSettings.UseCustomTags = true;
+        objLocalUserSettings.TagSourceID = value.id;
+        objLocalUserSettings.WellID = this.WellID;
+
+        objLocalUserSettings.TripExclusionList = utilFunc.convertMapToDictionaryJSON(objLocalUserSettings.TripExclusionList, undefined, true);
+
+        objParameter = new BrokerParameter("UserSettings", JSON.stringify(objLocalUserSettings));
+        objBrokerRequest.Parameters.push(objParameter);
+
+        this.AxiosSource = axios.CancelToken.source();
+
+        axios
+            .get(_gMod._getData, {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json;charset=UTF-8",
+                },
+                params: { paramRequest: JSON.stringify(objBrokerRequest) },
+            })
+            .then((res) => {
+
+                const objDataTags = JSON.parse(res.data.Response);
+                debugger;
+                if (objDataTags.length == 0) {
+                    this.setState({
+                        grdTags: []
+                    });
+                    return;
+                }
+
+                this.setState({
+                    grdTags: objDataTags
+                });
+
+
+
+            })
+            .catch((error) => {
+
+                if (error.response) {
+                    // return <CustomeNotifications Key="success" Icon={false}  />
+                    // this.errors(error.response.message);
+                } else if (error.request) {
+                    // return <CustomeNotifications Key="success" Icon={false}  />
+                    console.log("error.request");
+                } else {
+                    // return <CustomeNotifications Key="success" Icon={false}  />
+                    console.log("Error", error);
+                }
+                // return <CustomeNotifications Key="success" Icon={false}  />
+                console.log("rejected");
+            });
+        return;
+        if (field == "TagSourceID") {
+            // value = event.value.id;
+            // edited["TagSourceID"] = value;
+
+
+
+
+        }
+        // edited[field] = value;
+        // this.setState({
+        //     objTripAnalyzerSelection: edited,
+        // });
+    };
+
+    onGrdTagSelectionItemChange = (e: any) => {
+        try {
+            debugger;
+            e.dataItem[e.field] = e.value;
+
+            let edited = utilFunc.CopyObject(this.state.grdTags);
+            edited[e.field] = e.value.toString();
+
+            let selectedTag = [];
+
+
+            this.setState({
+                grdTags: utilFunc.CopyObject(edited)
+            });
+
+        } catch (error) {
+
+        }
+    }
+
+
+    onAfterDrawSeries = (e: ChartEventArgs, i: number) => {
+        try {
+            
+          d3.select(".tripBar_benchmark").remove();
+            debugger;
+          let lnBenchMarkConn =this.state.objUserSettings.BenchmarkTime;
+                
+          if (lnBenchMarkConn > 0) {
+            let x1 = this.ST_objChart3BarTripConn.__chartRect.left;
+            let x2 = this.ST_objChart3BarTripConn.__chartRect.right;
+            let y1 = this.ST_objChart3BarTripConn.leftAxis().ScaleRef(lnBenchMarkConn);
+            let y2 = y1 + 4;
+    
+            this.ST_objChart3BarTripConn.SVGRef.append("g")
+              .attr("class", "tripBar_benchmark")
+              .append("rect")
+              .attr("id", "tripBar_benchmark")
+              .attr("x", x1)
+              .attr("y", y1)
+              .attr("width", x2 - x1)
+              .attr("height", y2 - y1)
+              .style("fill", "red");
+              
+          }
+    
+            
+    
+        } catch (error) { }
+      };
 
     render() {
 
@@ -1502,7 +1944,7 @@ export default class DrlgStandPlot extends React.Component {
                 <div className="row">
                     <div className="col-lg-12">
                         <div className="float-right">
-                            <button type="button" onClick={() => {
+                            <button  className="btn-custom btn-custom-primary ml-1" type="button" onClick={() => {
                                 if (this.state.showSingleTripReport) {
                                     this.setState({ selectedTab: 3 });
                                 } else {
@@ -1520,8 +1962,16 @@ export default class DrlgStandPlot extends React.Component {
                                     return;
                                 }
 
-                            }} className="btn-custom btn-custom-primary ml-1">
+                            }}>
                                 Show Single Trip Report</button>
+
+                            <button className="btn-custom btn-custom-primary ml-1" type="button" onClick={() => {
+                                debugger;
+                                console.log("grdTags", this.state.grdTags);
+                                this.loadSelectionTagList();
+                            }} > Trips Selection</button>
+
+
                         </div>
 
                     </div>
@@ -1945,203 +2395,7 @@ export default class DrlgStandPlot extends React.Component {
                     </TabStripTab>
 
 
-                   {false && <TabStripTab title="Settings">
-                        <div className="row" style={{ width: "50vw" }} >
-                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Connection Time</h6>
-                                <div className="group-inline">
-                                    <div className="form-group">
-                                        <label className="summaryLabelHeader-longTripReport">
-                                            Min.Connection Time
-                                        </label>
-                                        <label className="ml-2" id="txtPositiveFlow">
-                                            <NumericTextBox
-                                                format="n2"
-                                                width="80px"
-                                                className="mr-2"
-                                            //value={this.state.DrlgBenchMark}
-                                            //   onChange={(event) => {
-                                            //     this.disableRealTime();
-                                            //     this.setState({
-                                            //       DrlgBenchMark: event.target.value,
-                                            //     });
-                                            //   }}
-                                            />
-                                            (Min.)
-                                        </label>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="summaryLabelHeader-longTripReport">
-                                            Max.Connection Time
-                                        </label>
-                                        <label className="ml-2" id="txtPositiveFlow">
-                                            <NumericTextBox
-                                                format="n2"
-                                                width="80px"
-                                                className="mr-2"
-                                            //value={this.state.DrlgBenchMark}
-                                            //   onChange={(event) => {
-                                            //     this.disableRealTime();
-                                            //     this.setState({
-                                            //       DrlgBenchMark: event.target.value,
-                                            //     });
-                                            //   }}
-                                            />
-                                            (Min.)
-                                        </label>
-                                    </div>
 
-                                    <div className="form-group">
-                                        <Checkbox
-                                            className="mr-2"
-                                            label={"Remove Fill-up Time"}
-                                        //checked={this.state.ShowComments}
-                                        // onChange={(event) => {
-                                        //   this.setState({ ShowComments: event.value });
-                                        // }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Surface</h6>
-                                <div className="group-inline">
-                                    <div className="form-group">
-                                        <label className="summaryLabelHeader-SmallTripReport">
-                                            Surface Depth
-                                        </label>
-                                        <label className="ml-2" id="txtPositiveFlow">
-                                            <NumericTextBox
-                                                format="n2"
-                                                width="80px"
-                                                className="mr-2"
-                                            //value={this.state.DrlgBenchMark}
-                                            //   onChange={(event) => {
-                                            //     this.disableRealTime();
-                                            //     this.setState({
-                                            //       DrlgBenchMark: event.target.value,
-                                            //     });
-                                            //   }}
-                                            />
-                                            Ft
-                                        </label>
-                                    </div>
-
-
-
-                                </div>
-                            </div>
-
-
-                        </div>
-                        <div className="row mt-5" style={{ width: "50vw" }} >
-                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Benchmarking</h6>
-                                <div className="group-inline">
-                                    <div className="form-group">
-                                        <label className="summaryLabelHeader-longTripReport">
-                                            Benchmark Conn. Time
-                                        </label>
-                                        <label className="ml-2" id="txtPositiveFlow">
-                                            <NumericTextBox
-                                                format="n2"
-                                                width="80px"
-                                                className="mr-2"
-                                            //value={this.state.DrlgBenchMark}
-                                            //   onChange={(event) => {
-                                            //     this.disableRealTime();
-                                            //     this.setState({
-                                            //       DrlgBenchMark: event.target.value,
-                                            //     });
-                                            //   }}
-                                            />
-                                            (Min.)
-                                        </label>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="summaryLabelHeader-longTripReport">
-                                            Trip Speed with connections
-                                        </label>
-                                        <label className="ml-2" id="txtPositiveFlow">
-                                            <NumericTextBox
-                                                format="n2"
-                                                width="80px"
-                                                className="mr-2"
-                                            //value={this.state.DrlgBenchMark}
-                                            //   onChange={(event) => {
-                                            //     this.disableRealTime();
-                                            //     this.setState({
-                                            //       DrlgBenchMark: event.target.value,
-                                            //     });
-                                            //   }}
-                                            />
-                                            ft/hr
-                                        </label>
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="summaryLabelHeader-longTripReport">
-                                            Trip Speed w/o connections
-                                        </label>
-                                        <label className="ml-2" id="txtPositiveFlow">
-                                            <NumericTextBox
-                                                format="n2"
-                                                width="80px"
-                                                className="mr-2"
-                                            //value={this.state.DrlgBenchMark}
-                                            //   onChange={(event) => {
-                                            //     this.disableRealTime();
-                                            //     this.setState({
-                                            //       DrlgBenchMark: event.target.value,
-                                            //     });
-                                            //   }}
-                                            />
-                                            ft/hr
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Continuous Trip Speed</h6>
-                                <div className="group-inline">
-                                    <div className="form-group">
-                                        <label className="summaryLabelHeader-SmallTripReport">
-                                            Depth Interval
-                                        </label>
-                                        <label className="ml-2" id="txtPositiveFlow">
-                                            <NumericTextBox
-                                                format="n2"
-                                                width="80px"
-                                                className="mr-2"
-                                            //value={this.state.DrlgBenchMark}
-                                            //   onChange={(event) => {
-                                            //     this.disableRealTime();
-                                            //     this.setState({
-                                            //       DrlgBenchMark: event.target.value,
-                                            //     });
-                                            //   }}
-                                            />
-                                            Ft
-                                        </label>
-                                    </div>
-                                    <div className="form-group">
-                                        <Checkbox
-                                            className="mr-2"
-                                            label={"Include Pipe Movement"}
-                                        //checked={this.state.ShowComments}
-                                        // onChange={(event) => {
-                                        //   this.setState({ ShowComments: event.value });
-                                        // }}
-                                        />
-                                    </div>
-
-
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </TabStripTab> }
                     {this.state.showSingleTripReport && <TabStripTab title="Single Trip Report">
                         <div
                             style={{
@@ -2380,7 +2634,389 @@ export default class DrlgStandPlot extends React.Component {
 
 
                     </TabStripTab>}
+                    {true && <TabStripTab title="Settings">
+                        <div className="row" style={{ width: "50vw" }} >
+
+                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+
+                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Connection Time</h6>
+                                <div className="group-inline">
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Min.Connection Time
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                                value={this.state.objUserSettings.MinConnTime}
+                                                onChange={(e: any) => { this.handleSettingsChange(e, "MinConnTime") }}
+
+                                            />
+                                            (Min.)
+                                        </label>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Max.Connection Time
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                                value={this.state.objUserSettings.MaxConnTime}
+                                                onChange={(e: any) => { this.handleSettingsChange(e, "MaxConnTime") }}
+                                            />
+                                            (Min.)
+                                        </label>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <Checkbox
+                                            className="mr-2"
+                                            label={"Remove Fill-up Time"}
+                                            checked={this.state.objUserSettings.RemoveFillupTime}
+                                            //value={this.state.objUserSettings.MaxConnTime}
+                                            onChange={(e: any) => { this.handleSettingsChange(e, "RemoveFillupTime") }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Surface</h6>
+                                <div className="group-inline">
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-SmallTripReport">
+                                            Surface Depth
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                                value={this.state.objUserSettings.SurfaceDepthInterval}
+                                                onChange={(e: any) => { this.handleSettingsChange(e, "SurfaceDepthInterval") }}
+
+                                            />
+                                            Ft
+                                        </label>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div className="row mt-5" style={{ width: "50vw" }} >
+                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Benchmarking</h6>
+                                <div className="group-inline">
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Benchmark Conn. Time
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                                value={this.state.objUserSettings.BenchmarkTime}
+                                                onChange={(e: any) => { this.handleSettingsChange(e, "BenchmarkTime") }}
+                                            />
+                                            (Min.)
+                                        </label>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Trip Speed with connections
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                                value={this.state.objUserSettings.BenchmarkSpeedWithConn}
+                                                onChange={(e: any) => { this.handleSettingsChange(e, "BenchmarkSpeedWithConn") }}
+                                            />
+                                            ft/hr
+                                        </label>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-longTripReport">
+                                            Trip Speed w/o connections
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                                value={this.state.objUserSettings.BenchmarkSpeedWOConn}
+                                                onChange={(e: any) => { this.handleSettingsChange(e, "BenchmarkSpeedWOConn") }}
+                                            />
+                                            ft/hr
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <h6 style={{ display: "flex", justifyContent: "start" }} className="summaryGroupHeaderTripReport">Continuous Trip Speed</h6>
+                                <div className="group-inline">
+                                    <div className="form-group">
+                                        <label className="summaryLabelHeader-SmallTripReport">
+                                            Depth Interval
+                                        </label>
+                                        <label className="ml-2" id="txtPositiveFlow">
+                                            <NumericTextBox
+                                                format="n2"
+                                                width="80px"
+                                                className="mr-2"
+                                                value={this.state.objUserSettings.DepthInterval}
+                                                onChange={(e: any) => { this.handleSettingsChange(e, "DepthInterval") }}
+                                            />
+                                            Ft
+                                        </label>
+                                    </div>
+                                    <div className="form-group">
+                                        <Checkbox
+                                            className="mr-2"
+                                            label={"Include Pipe Movement"}
+                                            checked={this.state.objUserSettings.IncludePipeMovement}
+                                            //value={this.state.objUserSettings.IncludePipeMovement}
+                                            onChange={(e: any) => { this.handleSettingsChange(e, "IncludePipeMovement") }}
+                                        />
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+
+
+                            <button
+                                onClick={() => { this.saveUserSettingsTags(true) }}
+                                className="btn-custom btn-custom-primary ml-1 mr-1 mt-5"
+                            >
+                                Save & Apply
+                            </button>
+
+                        </div>
+                    </TabStripTab>}
                 </TabStrip>
+                {this.state.showTagListDialog && <Window
+                    title={"Tag Selection"}
+                    onClose={() => {
+                        debugger;
+                        this.setState({
+                            grdTags: this.state.objPlotData.tagList,
+                            showTagListDialog: false,
+                        });
+                    }}
+                    modal={true}
+                    height={500}
+                    width={950}
+
+                >
+
+                    <div className="mr-5" style={{ height: "100px", }}>
+                        <div className="row ml-2">
+                            <div className="col-lg-2 offset-md-10">
+                                <button
+                                    style={{ height: "30px", width: "115px" }}
+                                    onClick={() => { this.saveUserSettingsTags() }}
+                                    className="btn-custom btn-custom-primary ml-1 mr-1"
+                                >
+                                    Save & Apply
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="row ml-3 mt-2 mb-3">
+                            <div className="col-lg-6" style={{ display: "flex", alignItems: "end" }}>
+                                <Checkbox
+                                    id="chkUseCustomTags"
+                                    name="UseCustomTags"
+                                    label="Use Custom Tag"
+                                    checked={this.state.UseCustomTags}
+                                    value={this.state.UseCustomTags}
+                                    onChange={(e) => this.chkCustomTag_Clicked(e.value)}
+                                />
+                            </div>
+                            <div className="col-lg-6">
+                                {this.state.UseCustomTags && (
+                                    <DropDownList
+                                        name="TagSourceID"
+                                        label="Custom Tags"
+                                        data={this.state.customTagList}
+                                        textField="text"
+                                        dataItemKey="id"
+                                        value={this.state.selectedCustomTag}
+                                        onChange={(e) =>
+                                            this.handleChangeDropDown(e, "TagSourceID")
+                                        }
+                                    />
+                                )}
+                            </div>
+                        </div>
+
+
+                        <div className="row ml-5">
+                            <div className="col-12">
+                                <Grid
+                                    onItemChange={this.onGrdTagSelectionItemChange}
+                                    style={{}}
+                                    data={this.state.grdTags}
+                                    resizable={true}
+                                    scrollable={"scrollable"}
+
+                                >
+
+                                    <Column
+                                        field="COL_SELECTION"
+                                        headerClassName="text-center"
+                                        className="text-center"
+                                        title="Select"
+                                        width="90px"
+                                        editable={true}
+                                        cell={(props) => {
+                                            return (
+                                                <td className="text-center">
+                                                    <Checkbox
+                                                        name="chkSelect"
+                                                        checked={props.dataItem[props.field].toString().toUpperCase() === 'TRUE' ? true : false}
+                                                        value={props.dataItem[props.field]}
+                                                        onChange={(e) => {
+                                                            props.onChange({
+                                                                dataItem: props.dataItem,
+                                                                dataIndex: props.dataIndex,
+                                                                field: props.field,
+                                                                syntheticEvent: e.syntheticEvent,
+                                                                value: e.value,
+                                                            });
+                                                        }}
+                                                    />
+                                                </td>
+                                            );
+                                        }}
+                                    />
+
+
+                                    {false && (
+                                        <Column
+                                            field="COL_PHASE_INDEX"
+                                            headerClassName="text-center"
+                                            className="text-left"
+                                            title="Phase ID"
+                                            width="90px"
+                                            editable={false}
+                                        />
+                                    )}
+                                    {false && (<Column
+                                        field="COL_PHASE_ID"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="Phase Name"
+                                        width="150px"
+                                        editable={false}
+                                    />)}
+
+                                    <Column
+                                        field="COL_PHASE_NAME"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="Phase Name"
+                                        width="90px"
+                                        editable={false}
+                                    />
+
+                                    {false && (<Column
+                                        field="COL_STEP_ID"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="Step Id"
+                                        width="150px"
+                                        editable={false}
+                                    />)}
+
+
+                                    <Column
+                                        field="COL_STEP_NAME"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="Step Name"
+                                        width="90px"
+                                        editable={false}
+                                    />
+
+                                    {false && (<Column
+                                        field="COL_EMPH_ID"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="Emph Id"
+                                        width="150px"
+                                        editable={false}
+                                    />)}
+
+
+                                    <Column
+                                        field="COL_EMPH_NAME"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="Emph. Name"
+                                        width="90px"
+                                        editable={false}
+                                    />
+
+                                    {false && (
+                                        <Column
+                                            field="COL_TIME_LOG_ID"
+                                            headerClassName="text-center"
+                                            className="text-left"
+                                            title="TimeLog Id"
+                                            width="90px"
+                                            editable={false}
+                                        />
+                                    )}
+
+
+                                    <Column
+                                        field="COL_TIME_LOG"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="TimeLog Name"
+                                        width="110px"
+                                        editable={false}
+                                    />
+
+
+                                    <Column
+                                        field="COL_START_DATE"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="Start Date"
+                                        width="150px"
+                                        editable={false}
+                                    />
+                                    <Column
+                                        field="COL_END_DATE"
+                                        headerClassName="text-center"
+                                        className="text-left"
+                                        title="End Date"
+                                        width="150px"
+                                        editable={false}
+                                    />
+
+                                </Grid>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </Window>}
             </>
         )
     }

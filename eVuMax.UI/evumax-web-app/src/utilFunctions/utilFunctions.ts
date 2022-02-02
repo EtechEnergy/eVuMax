@@ -17,7 +17,8 @@ export function setComboValue(paramComboBox: any, paramValue: string) {
   } catch (error) { }
 }
 
-export function convertMapToDictionaryJSON(paramValue: any, keyField?: string) {
+
+export function convertMapToDictionaryJSON(paramValue: any, keyField?: string, keyAsValue?:boolean) {
   try {
     //Below code is to convert Map to c# dictionary object
     let jsonObject: any = {};
@@ -25,7 +26,12 @@ export function convertMapToDictionaryJSON(paramValue: any, keyField?: string) {
       if (keyField !== undefined) {
         jsonObject[value[keyField]] = value;
       } else {
-        jsonObject[key] = value;
+        if(keyAsValue==true){
+          jsonObject[value] = value;
+        }else{
+          jsonObject[key] = value;
+        }
+        
       }
     });
     return jsonObject;

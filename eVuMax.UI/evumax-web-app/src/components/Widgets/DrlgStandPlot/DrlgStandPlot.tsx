@@ -250,6 +250,9 @@ export default class DrlgStandPlot extends React.Component {
 
         await this.setState({ realTime: !this.state.realTime });
         if (this.state.realTime) {
+                  //Added on 02-02-2022
+                  this.state.objDataSelector.needForceReload = false;
+
             let objUserDataSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
             objUserDataSettings.SelectionType = sPlotSelectionType.ByHours;
             let objDataSelector_: DataSelector_ = this.state.objDataSelector;
@@ -414,6 +417,7 @@ export default class DrlgStandPlot extends React.Component {
             });
             let chartData = connPoints;
 
+            debugger;
             //Fill up the data for data series
             for (let i = 0; i < chartData.length; i++) {
                 let objStandPoint = new ChartData();
@@ -857,7 +861,7 @@ export default class DrlgStandPlot extends React.Component {
                     onSelect={this.handleTabSelection}
                     keepTabsMounted={true}
                 >
-                    <TabStripTab title="Drilling Connections Summary">
+                    <TabStripTab title="Drilling Stand Plot">
                         <div>
                             <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.realTime} />
                             <div className="form-inline eVumaxPanelChart_ mb-5" style={{

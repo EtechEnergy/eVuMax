@@ -19,7 +19,8 @@ export class TripReportSettings {
     public objDataService: any = {};
     public Warnings: string = "";
     public taglist:string[] = [];
-    //public customTagID: strin
+    public TripExclusionList:any[] =[];
+    public TripExclusionListStr:any[] = [];
 
     
 }
