@@ -1141,31 +1141,16 @@ export class ROPSummaryPlot extends Component {
     this.setState({ selected: e.selected });
   };
 
-  // selectionChanged = (
-  //   pselectedval: string,
-  //   pfromDate: Date,
-  //   ptoDate: Date,
-  //   pfromDepth: number,
-  //   ptoDepth: number
-  // ) => {
-  //   try {
-  //     // this.setState({ selectionType: pselectedval });
-  //     this.selectionType = pselectedval;
-  //     this.fromDate = pfromDate;
-  //     this.toDate = ptoDate;
-  //     this.fromDepth = pfromDepth;
-  //     this.toDepth = ptoDepth;
-  //     //this.forceUpdate();
-
-  //     this.loadConnections();
-  //   } catch (error) { }
-  // };
 
   ////Nishant
-  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshStatus: boolean = false) => {
 
     //alert("new dataSelector Data");
-    let realtimeStatus: boolean = paramRefreshHrs;
+    let realtimeStatus: boolean = paramRefreshStatus;
+
+
+    //Added on 02-02-2022
+    paramDataSelector.needForceReload = true;
 
     await this.setState({
       objDataSelector: paramDataSelector,
@@ -1195,6 +1180,8 @@ export class ROPSummaryPlot extends Component {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
+       //Added on 02-02-2022
+       this.state.objDataSelector.needForceReload = false;
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
       this.AxiosSource.cancel();
@@ -1575,7 +1562,7 @@ export class ROPSummaryPlot extends Component {
 
           <div className="col-lg-9">
             <div style={{ width: "100%" }}>
-           
+
 
 
               <div className="container">
@@ -1599,16 +1586,16 @@ export class ROPSummaryPlot extends Component {
                   </div>
                 </div>
 
-                
-                
+
+
               </div>
 
-              
-              
-             <DataSelector  objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
-             
-            
-            
+
+
+              <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+
+
+
 
               <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
             </div>

@@ -149,9 +149,12 @@ export class DrillingSummary extends Component {
   }
 
   ////Nishant
-  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
-    //alert("Drilling Summary --> SelectionChanged");
-    let realtimeStatus: boolean = paramRefreshHrs;
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshStatus: boolean = false) => {
+    
+    let realtimeStatus: boolean = paramRefreshStatus;
+
+    //Added on 02-02-2022
+    paramDataSelector.needForceReload= true;
 
     await this.setState({
       objDataSelector: paramDataSelector,
@@ -1177,6 +1180,8 @@ export class DrillingSummary extends Component {
     //alert("DrillingSummary -->" + this.selectionType.toString() + " - " + this.state.isRealTime);
 
     if (this.state.isRealTime) {
+      //Added on 02-02-2022
+      this.state.objDataSelector.needForceReload = false;
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
     } else {
       await this.AxiosSource.cancel();

@@ -549,7 +549,7 @@ export default class DrlgStandPlot extends React.Component {
 
             }
 
-            debugger;
+            
             this.objChart1.reDraw();
             this.plotAvgConnBarChart();
 

@@ -614,10 +614,14 @@ class DrlgConnSummary2 extends Component {
   // };
 
   ////Nishant
-  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshStatus: boolean = false) => {
 
 
-    let realtimeStatus: boolean = paramRefreshHrs;
+    let realtimeStatus: boolean = paramRefreshStatus;
+    
+    //Added on 02-02-2022
+    paramDataSelector.needForceReload= true;
+
     await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
@@ -657,12 +661,14 @@ class DrlgConnSummary2 extends Component {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
+       //Added on 02-02-2022
+       this.state.objDataSelector.needForceReload = false;
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      this.loadConnections();
+      //this.loadConnections();
     }
     sessionStorage.setItem("realTimeDrlgConnSummary2", this.state.isRealTime.toString());
   };

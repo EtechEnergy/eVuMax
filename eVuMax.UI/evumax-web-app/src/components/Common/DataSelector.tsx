@@ -91,7 +91,6 @@ class DataSelector extends Component<IProps> {
       //Prepare chart object
       //initialize chart
       
-
       this.objChart = new Chart(this, "SelectorChart");
       this.objChart.ContainerId = "selector_chart";
       this.objChart.isZoomByRect = false; //No need to zoom
@@ -152,6 +151,7 @@ class DataSelector extends Component<IProps> {
 
 
       let objDataSelector: DataSelector_ = new DataSelector_();
+      
       objDataSelector = this.props.objDataSelector;
       //alert("Received --" + this.props.objDataSelector.fromDate);
       objDataSelector.fromDate = null;

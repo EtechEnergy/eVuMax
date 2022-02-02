@@ -19,11 +19,26 @@ export default class DataSelectorInfo extends Component<IProps>  {
 
     componentDidUpdate() {
         try {
-          //   alert("info update -"+this.props.objDataSelector.selectedval + " " + this.props.isRealTime);
+          //  alert("info update -"+this.props.objDataSelector.selectedval + " " + this.props.isRealTime);
+
+     //Added on 02-02-2022
+     
+        
+     if (!this.props.objDataSelector.needForceReload)
+     {
+         
+         console.log(this.props.objDataSelector.needForceReload);
+         return;
+     }
+
+    // alert(this.props.objDataSelector.needForceReload);
+            debugger;
             this.selectionType = this.props.objDataSelector.selectedval;
             this.dataSelectorPeriod = ""
             this.needForceReload= this.props.objDataSelector.needForceReload;
 
+       
+            
             if (this.props.isRealTime) {
                 this.dataSelectorPeriod = "Last " + this.props.objDataSelector.refreshHrs.toString() + " Hrs.";
             }

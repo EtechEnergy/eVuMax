@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+//import React, { Component, useEffect, useState } from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import { BrokerParameter, BrokerRequest, Util } from "../../../Models/eVuMax";
 import GlobalMod from "../../../objects/global";
@@ -17,53 +18,123 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import * as d3 from "d3";
-import { Checkbox } from "@progress/kendo-react-inputs";
+import { Checkbox, Switch } from "@progress/kendo-react-inputs";
 
 let _gMod = new GlobalMod();
 
-export default function CustomDrillingSummary({ ...props }: any) {
 
-  let objChart: Chart = new Chart(props.parentRef, "SummaryChart");
-  const [dataSelector, setDataSeletor] = useState(props.objDataSelector);
-  const [showOffsetWell, setShowOffsetWell] = useState(true);
+interface IProps {
+  PlotID: string;
+  showListPanel: any;
+  WellID: string;
+  PlotName: string;
+  updateWarnings: any;
+  parentRef: any;
+  objDataSelector: any;
 
-  let objSummaryAxisList: any = [];
-  let WellName: string = "";
-  let objData: any = "";
-  let topAxisCount: number = 0;
+}
 
-  useEffect(() => {
+export class CustomDrillingSummary extends Component<IProps>  {
+  intervalID: NodeJS.Timeout | undefined;
+  objChart: Chart;
+  //objDataSelector: any;
+  WellID: string;
+  PlotID: string;
+  parentRef: any;
+  PlotName: string;
+  showListPanel: any;
+  updateWarnings: any;
+  constructor(props: any) {
+    super(props);
+    this.PlotID = props.PlotID;
+    this.showListPanel = props.showListPanel;
+    this.WellID = props.WellID;
+    this.PlotName = props.PlotName;
+    this.updateWarnings = props.updateWarnings;
+    this.parentRef = props.parentRef;
+    //this.objDataSelector = props.objDataSelector;
 
-    window.addEventListener("resize", loadSummary);
+    this.objChart = new Chart(this.parentRef, "SummaryChart");
 
-    loadSummary();
 
-    return () => {
-      window.removeEventListener("resize", loadSummary);
+  }
+
+  state = {
+    warningMsg: [],
+    isRealTime: false as boolean,
+    objDataSelector: this.props.objDataSelector,
+  };
+
+  showOffsetWell: boolean = true;
+  objSummaryAxisList: any = [];
+  WellName: string = "";
+  objData: any = "";
+  topAxisCount: number = 0;
+
+  selectionType: string = "-1"; //"-1 Default, 0= DateRange and 1 = Depth Range"
+  fromDate: Date = null;
+  toDate: Date = null;
+  fromDepth: number = 0;
+  toDepth: number = 0;
+  Warnings: string = ""; //Nishant 27/08/2021
+  refreshHrs: number = 24;
+
+
+  //Cancel all Axios Request
+  AxiosSource = axios.CancelToken.source();
+  AxiosConfig = { cancelToken: this.AxiosSource.token };
+
+  // useEffect(() => {
+
+  //   window.addEventListener("resize", loadSummary);
+
+  //   loadSummary();
+
+  //   return () => {
+  //     window.removeEventListener("resize", loadSummary);
+  //   }
+  // }, [showOffsetWell, dataSelector]);
+
+
+  async componentDidMount() {
+    try {
+      
+      this.loadSummary();
+
+      //RealTime 
+      let isRealtimeRunning = sessionStorage.getItem("realCustomDrillingSummary");
+      if (isRealtimeRunning == "true") {
+        await this.setState({ isRealTime: !this.state.isRealTime });
+        this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
+      }
+      //==============
+
+      window.addEventListener("resize", this.loadSummary);
+
+    } catch (error) {
+
     }
-  }, [showOffsetWell]);
-
+  }
 
 
   //Step-1
-  const loadSummary = () => {
+  loadSummary = () => {
     try {
-
+      
       //Axios call API Function with PlotID
+      //  alert("Load summary" + props.objDataSelector.selectedval + " - " + this.paramDataSelector.WellID);
 
       let objBrokerRequest = new BrokerRequest();
-
-      //alert(props.objDataSelector.selectedval);
 
       objBrokerRequest.Module = "GenericDrillingSummary.Manager";
       objBrokerRequest.Broker = "GenericDrillingSummary";
       objBrokerRequest.Function = "generateGDSummary"; //"generateGDSummary";
 
 
-      let objParameter = new BrokerParameter("wellID", props.WellID); // // "f3205325-4ddb-4996-b700-f04d6773a051"
+      let objParameter = new BrokerParameter("wellID", this.WellID); // // "f3205325-4ddb-4996-b700-f04d6773a051"
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("PlotID", props.PlotID); //Hookload Comparison //"925-206-171-592-399"
+      objParameter = new BrokerParameter("PlotID", this.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
       objParameter = new BrokerParameter("UserID", _gMod._userId);
       //alert(_gMod._userId);
@@ -76,36 +147,40 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
       //props.objDataSelector
       ////Load DataSelector 
-      objParameter = new BrokerParameter("SelectionType", props.objDataSelector.selectedval);
+      //objParameter = new BrokerParameter("SelectionType", props.objDataSelector.selectedval);
+      objParameter = new BrokerParameter("SelectionType", this.state.objDataSelector.selectedval);
 
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("FromDate", utilFunc.formateDate(props.objDataSelector.fromDateS));
+      //objParameter = new BrokerParameter("FromDate", utilFunc.formateDate(props.objDataSelector.fromDateS));
+      objParameter = new BrokerParameter("FromDate", utilFunc.formateDate(this.state.objDataSelector.fromDate));
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("ToDate", utilFunc.formateDate(props.objDataSelector.toDateS));
+      //objParameter = new BrokerParameter("ToDate", utilFunc.formateDate(props.objDataSelector.toDateS));
+      objParameter = new BrokerParameter("ToDate", utilFunc.formateDate(this.state.objDataSelector.toDate));
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("FromDepth", props.objDataSelector.fromDepth.toString());
+      objParameter = new BrokerParameter("FromDepth", this.state.objDataSelector.fromDepth.toString());
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("ToDepth", props.objDataSelector.toDepth.toString());
+      objParameter = new BrokerParameter("ToDepth", this.state.objDataSelector.toDepth.toString());
       objBrokerRequest.Parameters.push(objParameter);
 
       objParameter = new BrokerParameter("SideTrackKey", "-999");
       objBrokerRequest.Parameters.push(objParameter);
 
       //objParameter = new BrokerParameter("isRealTime", props.objDataSelector.isRealTime.toString());
-      objParameter = new BrokerParameter("isRealTime", "false");
+      objParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("refreshHrs", props.objDataSelector.refreshHrs.toString());
+      objParameter = new BrokerParameter("refreshHrs", this.state.objDataSelector.refreshHrs.toString());
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter = new BrokerParameter("showOffsetWell", showOffsetWell.toString());
+      objParameter = new BrokerParameter("showOffsetWell", this.showOffsetWell.toString());
       objBrokerRequest.Parameters.push(objParameter);
 
 
+      
       //gdSummary Plot ID: 308-656-954-204-796
       //Well ID:
       //User ID:
@@ -120,13 +195,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
           },
         })
         .then((res) => {
-
+          
           if (res.data.RequestSuccessfull == true) {
-            const objData_ = JSON.parse(res.data.Response);
+            let objData_ = JSON.parse(res.data.Response);
 
             console.log(objData_);
-
-
 
             let warnings: string = res.data.Warnings;
             // warnings = "Test Warning";
@@ -138,12 +211,15 @@ export default function CustomDrillingSummary({ ...props }: any) {
                 "timestamp": new Date(Date.now()).getTime()
               });
 
-              props.updateWarnings(warningList);
+              //PENDING WORK
+              //          this.props.updateWarnings(warningList);
 
             }
-            WellName = res.data.Category;
-            objData = objData_;
-            generateReport();
+            this.WellName = res.data.Category;
+            this.objData = objData_;
+
+
+            this.generateReport();
             Util.StatusSuccess("Data successfully retrived");
             Util.StatusReady();
           } else {
@@ -173,48 +249,48 @@ export default function CustomDrillingSummary({ ...props }: any) {
   };
 
   //Step-2
-  const initializeChart = () => {
+  initializeChart = () => {
     try {
+      
+      this.objChart = new Chart(this.parentRef, "chart1");
+      this.objChart.ContainerId = "SummaryChart";
 
-      objChart = new Chart(props.parentRef, "chart1");
-      objChart.ContainerId = "SummaryChart";
-
-      objChart.onAfterSeriesDraw.subscribe((e, i) => {
-        onAfterSeriesDraw(e, i);
+      this.objChart.onAfterSeriesDraw.subscribe((e, i) => {
+        this.onAfterSeriesDraw(e, i);
       });
 
-      objChart.onBeforeSeriesDraw.subscribe((e, i) => {
-        onBeforeSeriesDraw(e, i);
+      this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
+        this.onBeforeSeriesDraw(e, i);
       });
 
 
-      objChart.DataSeries.clear();
-      objChart.Axes.clear();
-      objChart.createDefaultAxes();
-      objChart.updateChart();
+      this.objChart.DataSeries.clear();
+      this.objChart.Axes.clear();
+      this.objChart.createDefaultAxes();
+      this.objChart.updateChart();
 
-      objChart.leftAxis().AutoScale = true;
+      this.objChart.leftAxis().AutoScale = true;
 
-      objChart.leftAxis().Inverted = false;
-      objChart.leftAxis().ShowLabels = true;
-      objChart.leftAxis().ShowTitle = false;
-      objChart.leftAxis().Title = "";
-      objChart.leftAxis().Visible = true;
+      this.objChart.leftAxis().Inverted = false;
+      this.objChart.leftAxis().ShowLabels = true;
+      this.objChart.leftAxis().ShowTitle = false;
+      this.objChart.leftAxis().Title = "";
+      this.objChart.leftAxis().Visible = true;
 
-      objChart.bottomAxis().AutoScale = true;
-      objChart.bottomAxis().IsDateTime = false;
-      objChart.bottomAxis().bandScale = false; //wip
-      objChart.bottomAxis().Title = "Depth / Date Time";
-      objChart.bottomAxis().ShowLabels = true;
-      objChart.bottomAxis().ShowTitle = false;
-      objChart.bottomAxis().LabelAngel = 90;
-      objChart.bottomAxis().ShowSelector = false;
-      objChart.bottomAxis().Visible = true;
-      objChart.bottomAxis().PaddingMax = 0; //wip
+      this.objChart.bottomAxis().AutoScale = true;
+      this.objChart.bottomAxis().IsDateTime = false;
+      this.objChart.bottomAxis().bandScale = false; //wip
+      this.objChart.bottomAxis().Title = "Depth / Date Time";
+      this.objChart.bottomAxis().ShowLabels = true;
+      this.objChart.bottomAxis().ShowTitle = false;
+      this.objChart.bottomAxis().LabelAngel = 90;
+      this.objChart.bottomAxis().ShowSelector = false;
+      this.objChart.bottomAxis().Visible = true;
+      this.objChart.bottomAxis().PaddingMax = 0; //wip
 
 
-      objChart.rightAxis().Visible = false;
-      objChart.rightAxis().ShowLabels = false;
+      this.objChart.rightAxis().Visible = false;
+      this.objChart.rightAxis().ShowLabels = false;
 
 
       // objChart.MarginLeft = 10;
@@ -222,31 +298,28 @@ export default function CustomDrillingSummary({ ...props }: any) {
       // objChart.MarginTop = 0;
       // objChart.MarginRight = 100;
 
-      objChart.initialize();
+      this.objChart.initialize();
 
-      objChart.reDraw();
+      this.objChart.reDraw();
 
     } catch (error) {
 
     }
   }
 
-  const getOrdersAxisListByPosition = (paramAxisPosition: number) => {
+  getOrdersAxisListByPosition = (paramAxisPosition: number) => {
 
     let arrAxis: any = [];
     try {
       let list = [];
-      for (let index = 0; index < objSummaryAxisList.length; index++) {
-        const objAxis = objSummaryAxisList[index];
+      for (let index = 0; index < this.objSummaryAxisList.length; index++) {
+        let objAxis = this.objSummaryAxisList[index];
 
 
         if (objAxis.AxisPosition == paramAxisPosition) {
           list.push(objAxis);
         }
 
-        // if (list.length > 0) {
-        //   arrAxis = list.sort((a, b) => (a.DisplayOrder < b.DisplayOrder) ? -1 : 1);
-        // }
 
       }
       if (list.length > 0) {
@@ -261,7 +334,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
   }
 
 
-  const setAxisPerColumnAndRow = (axisList: any): number => {
+  setAxisPerColumnAndRow = (axisList: any): number => {
     try {
       let totalRighAxis: number = 0;
       let totalLeftAxis: number = 0;
@@ -319,16 +392,16 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
       if (totalRighAxis >= totalLeftAxis) {
-        objChart.axisPerColumn = totalRighAxis;
+        this.objChart.axisPerColumn = totalRighAxis;
       } else {
-        objChart.axisPerColumn = totalLeftAxis;
+        this.objChart.axisPerColumn = totalLeftAxis;
       }
 
 
       if (totalBottomAxis >= totalTopAxis) {
-        objChart.axisPerRow = totalBottomAxis
+        this.objChart.axisPerRow = totalBottomAxis
       } else {
-        objChart.axisPerRow = totalTopAxis;
+        this.objChart.axisPerRow = totalTopAxis;
       }
 
 
@@ -341,40 +414,40 @@ export default function CustomDrillingSummary({ ...props }: any) {
     }
   }
 
-  const generateReport = () => {
+  generateReport = () => {
     try {
 
 
 
-      initializeChart();
+      this.initializeChart();
 
       //Generate Plot using state objGDSummary object
       // console.log("objData", objData);
-      if (objData.Axis != null || objData.Axis != undefined) {
-        objSummaryAxisList = Object.values(objData.Axis);
+      if (this.objData.Axis != null || this.objData.Axis != undefined) {
+        this.objSummaryAxisList = Object.values(this.objData.Axis);
 
 
-        setAxisPerColumnAndRow(objSummaryAxisList);
-        
+        this.setAxisPerColumnAndRow(this.objSummaryAxisList);
+
         //prath on 27-Jan-2022 wip
-        if (objChart.axisPerColumn > 1) {
-          objChart.ZoomOnAxies = zoomOnAxies.x;
+        if (this.objChart.axisPerColumn > 1) {
+          this.objChart.ZoomOnAxies = zoomOnAxies.x;
         }
 
-        if (objChart.axisPerRow > 1) {
-          objChart.ZoomOnAxies = zoomOnAxies.y;
+        if (this.objChart.axisPerRow > 1) {
+          this.objChart.ZoomOnAxies = zoomOnAxies.y;
         }
 
-        objChart.Axes.clear();
-        objChart.DataSeries.clear();
+        this.objChart.Axes.clear();
+        this.objChart.DataSeries.clear();
 
-        objChart.MarginLeft = 10;
-        objChart.MarginBottom = 10;
-        objChart.MarginTop = 10;
-        objChart.MarginRight = 90;
+        this.objChart.MarginLeft = 10;
+        this.objChart.MarginBottom = 10;
+        this.objChart.MarginTop = 10;
+        this.objChart.MarginRight = 90;
 
-        let axisList = Object.values(objData.Axis);
-        axisList = getOrdersAxisListByPosition(0);//Left
+        let axisList = Object.values(this.objData.Axis);
+        axisList = this.getOrdersAxisListByPosition(0);//Left
 
 
 
@@ -417,14 +490,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
           //prath on 27-Jan-2022 wip
-          if (objChart.axisPerColumn > 1) {
-            //alert("xxx");
+          if (this.objChart.axisPerColumn > 1) {
             objAxis.isAllowZooming = false;
             objAxis.isAllowScrolling = false;
           }
           //===============
 
-          objChart.Axes.set(objAxis.Id, objAxis);
+          this.objChart.Axes.set(objAxis.Id, objAxis);
 
 
           //*************************************************** */
@@ -432,7 +504,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         //// 0-left, 1-bottom, 2-right, 3-top
-        axisList = getOrdersAxisListByPosition(2);//Right
+        axisList = this.getOrdersAxisListByPosition(2);//Right
         for (let index = 0; index < axisList.length; index++) {
 
           let objSummaryAxis: any = axisList[index];
@@ -464,14 +536,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
           //prath on 27-Jan-2022 wip
-          if (objChart.axisPerColumn > 1) {
-            //alert("xxx");
+          if (this.objChart.axisPerColumn > 1) {
             objAxis.isAllowZooming = false;
             objAxis.isAllowScrolling = false;
           }
           //===============
 
-          objChart.Axes.set(objAxis.Id, objAxis);
+          this.objChart.Axes.set(objAxis.Id, objAxis);
           //*************************************************** */
 
           //// 0-left, 1-bottom, 2-right, 3-top
@@ -481,7 +552,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
         }
 
         //// 0-left, 1-bottom, 2-right, 3-top
-        axisList = getOrdersAxisListByPosition(1);//bottom
+        axisList = this.getOrdersAxisListByPosition(1);//bottom
         for (let index = 0; index < axisList.length; index++) {
 
           let objSummaryAxis: any = axisList[index];
@@ -516,10 +587,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
           objAxis.PaddingMax = 2;
-          objChart.Axes.set(objAxis.Id, objAxis);
+          this.objChart.Axes.set(objAxis.Id, objAxis);
           //prath on 27-Jan-2022 wip
-          if (objChart.axisPerRow > 1) {
-            //alert("xxx");
+          if (this.objChart.axisPerRow > 1) {
             objAxis.isAllowZooming = false;
             objAxis.isAllowScrolling = false;
           }
@@ -531,7 +601,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         //// 0-left, 1-bottom, 2-right, 3-top
-        axisList = getOrdersAxisListByPosition(3);//Top
+        axisList = this.getOrdersAxisListByPosition(3);//Top
         for (let index = 0; index < axisList.length; index++) {
 
 
@@ -569,10 +639,9 @@ export default function CustomDrillingSummary({ ...props }: any) {
           objAxis.ShowSelector = false;
           objAxis.Visible = true;
           objAxis.Inverted = objSummaryAxis.Inverted;
-          objChart.Axes.set(objAxis.Id, objAxis);
+          this.objChart.Axes.set(objAxis.Id, objAxis);
           //prath on 27-Jan-2022 wip
-          if (objChart.axisPerRow > 1) {
-            //alert("xxx");
+          if (this.objChart.axisPerRow > 1) {
             objAxis.isAllowZooming = false;
             objAxis.isAllowScrolling = false;
           }
@@ -580,11 +649,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
           //*************************************************** */
         }
 
-        topAxisCount = axisList.length;
+        this.topAxisCount = axisList.length;
 
 
         //Load Series
-        let SeriesList = Object.values(objData.dataSeries);
+        let SeriesList = Object.values(this.objData.dataSeries);
 
 
 
@@ -593,7 +662,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-          const objDataSeries: any = SeriesList[index];
+          let objDataSeries: any = SeriesList[index];
 
           let objSeries = new DataSeries();
           objSeries.Id = objDataSeries.SeriesID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');// objDataSeries.SeriesID;
@@ -692,10 +761,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
               if (objSeries.Type == dataSeriesType.Bar) {
                 objVal.x = i + 1;
 
-                let objBottomAxes = objChart.getAxisByID(objSeries.XAxisId);
+                let objBottomAxes = this.objChart.getAxisByID(objSeries.XAxisId);
                 objBottomAxes.bandScale = true;
                 if (objDataSeries.labelBuffer != null) {
-                  objChart.Axes.get(objSeries.XAxisId).Labels.push(objDataSeries.labelBuffer[i]);
+                  this.objChart.Axes.get(objSeries.XAxisId).Labels.push(objDataSeries.labelBuffer[i]);
                 }
 
               } else {
@@ -711,20 +780,20 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
             if (objDataSeries.ColorPointsAsColumn) {
 
-              formatSeries(objSeries, objDataSeries); //Nishant
+              this.formatSeries(objSeries, objDataSeries); //Nishant
             }
             if (objDataSeries.Visible) {
-              objChart.DataSeries.set(objSeries.Id, objSeries);
+              this.objChart.DataSeries.set(objSeries.Id, objSeries);
             }
 
           }
         }
 
 
-        objChart.initialize();
-        
+        this.objChart.initialize();
 
-        objChart.reDraw();
+
+        this.objChart.reDraw();
 
       }
 
@@ -824,15 +893,42 @@ export default function CustomDrillingSummary({ ...props }: any) {
   };
 
 
-  const onselectionchange = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
 
-    let realtimeStatus: boolean = false;// paramRefreshHrs;
-    props.objDataSelector = paramDataSelector;
+    //   let realtimeStatus: boolean = false;// paramRefreshHrs;
+    //   this.objDataSelector = paramDataSelector;
+    //   paramDataSelector.needForceReload = true;
+
+    //   //await setDataSeletor(paramDataSelector);
+    // this.setState({ objDataSelector  : paramDataSelector})
+
+    // loadSummary();
+
+    debugger;
+
+    let realtimeStatus: boolean = paramRefreshHrs;
     paramDataSelector.needForceReload = true;
-    await setDataSeletor(paramDataSelector);
-    loadSummary();
+    
+    await this.setState({
+      objDataSelector: paramDataSelector,
+      isRealTime: realtimeStatus
+    });
 
-    //paramDataSelector.needForceReload=true;
+    debugger;
+    this.selectionType = paramDataSelector.selectedval;
+    this.fromDate = paramDataSelector.fromDate;
+    this.toDate = paramDataSelector.toDate;
+    this.fromDepth = paramDataSelector.fromDepth;
+    this.toDepth = paramDataSelector.toDepth;
+    this.refreshHrs = paramDataSelector.refreshHrs;
+    if (this.state.isRealTime) {
+      this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
+    } else {
+      this.AxiosSource.cancel();
+      await clearInterval(this.intervalID);
+      this.intervalID = null;
+      this.loadSummary();
+    }
 
 
 
@@ -841,7 +937,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
   //Nishant to Plot Heat Map for Point Series
-  const formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
+  formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
     try {
 
       if (paramDataSeries.ColorPointsAsColumn) {
@@ -863,37 +959,42 @@ export default function CustomDrillingSummary({ ...props }: any) {
   //********************* */
 
 
-  const onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
+  onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
 
     // //Formation Tops
-    d3.selectAll(".formationTop-" + objChart.Id).remove();
-    d3.selectAll(".formationTopText-" + objChart.Id).remove();
+    d3.selectAll(".formationTop-" + this.objChart.Id).remove();
+    d3.selectAll(".formationTopText-" + this.objChart.Id).remove();
 
-    let objFormationTops: any = Object.values(objData.allFormationTopsInfo);
+    let objFormationTops: any = Object.values(this.objData.allFormationTopsInfo);
 
 
-    if (objData.PlotOrientation == 0) {//Horizontal
+    if (this.objData.PlotOrientation == 0) {//Horizontal
       //Bottom axes
-      let arrBottomAxes: Axis[] = Array.from(objChart.Axes.values()).filter(
+      let arrBottomAxes: Axis[] = Array.from(this.objChart.Axes.values()).filter(
         (x) => x.Position == axisPosition.bottom
       );
 
 
-      if (objFormationTops.length > 0 && objData.ShowTops) {
+      if (objFormationTops.length > 0 && this.objData.ShowTops) {
 
         for (let index = 0; index < objFormationTops.length; index++) {
           const depth = objFormationTops[index].Depth;
 
-          if (depth > arrBottomAxes[0].ScaleRef.domain()[1]) {
-            break;
+          // if (depth > arrBottomAxes[0].ScaleRef.domain()[1]) {
+          //   break;
+          // }
+
+          if (depth > arrBottomAxes[0].ScaleRef.domain()[1] || depth < arrBottomAxes[0].ScaleRef.domain()[0]) {
+            continue;
           }
+
           let x1 = arrBottomAxes[0].ScaleRef(depth);
           let x2 = x1;
-          let y1 = objChart.__chartRect.top;
-          let y2 = objChart.__chartRect.bottom;
+          let y1 = this.objChart.__chartRect.top;
+          let y2 = this.objChart.__chartRect.bottom;
 
-          let formationTop = objChart.SVGRef.append("g")
-            .attr("class", "formationTop-" + objChart.Id)
+          let formationTop = this.objChart.SVGRef.append("g")
+            .attr("class", "formationTop-" + this.objChart.Id)
             .append("line")
             .attr("id", "line-1")
             .attr("x1", x1)
@@ -903,8 +1004,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
             .style("fill", objFormationTops[index].TopColor)
             .style("stroke", objFormationTops[index].TopColor);
 
-          objChart.SVGRef.append("g")
-            .attr("class", "formationTopText-" + objChart.Id)
+          this.objChart.SVGRef.append("g")
+            .attr("class", "formationTopText-" + this.objChart.Id)
             .attr(
               "transform",
               "translate(" + (x1 + 9) + "," + (y2 - 20) + ") rotate(-90)"
@@ -920,25 +1021,36 @@ export default function CustomDrillingSummary({ ...props }: any) {
     } else {
 
       //Left axes
-      let arrLeftAxes: Axis[] = Array.from(objChart.Axes.values()).filter(
+      let arrLeftAxes: Axis[] = Array.from(this.objChart.Axes.values()).filter(
         (x) => x.Position == axisPosition.left
       );
 
 
-      if (objFormationTops.length > 0 && objData.ShowTops) {
+      if (objFormationTops.length > 0 && this.objData.ShowTops) {
 
         for (let index = 0; index < objFormationTops.length; index++) {
           const depth = objFormationTops[index].Depth;
 
 
           if (arrLeftAxes[0].Inverted) {
-            if (depth > arrLeftAxes[0].ScaleRef.domain()[1]) {
-              break;
+            // if (depth > arrLeftAxes[0].ScaleRef.domain()[1]) {
+            //   break;
+            // }
+
+
+            if (depth > arrLeftAxes[0].ScaleRef.domain()[1] || depth < arrLeftAxes[0].ScaleRef.domain()[0]) {
+              continue;
             }
+
           } else {
-            if (depth > arrLeftAxes[0].ScaleRef.domain()[0]) {
-              break;
+            // if (depth > arrLeftAxes[0].ScaleRef.domain()[0]) {
+            //   break;
+            // }
+
+            if (depth > arrLeftAxes[0].ScaleRef.domain()[0] || depth < arrLeftAxes[0].ScaleRef.domain()[1]) {
+              continue;
             }
+
           }
 
 
@@ -946,11 +1058,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
           let y1 = arrLeftAxes[0].ScaleRef(depth);
           let y2 = y1;
 
-          let x1 = objChart.__chartRect.left;
-          let x2 = objChart.__chartRect.right;
+          let x1 = this.objChart.__chartRect.left;
+          let x2 = this.objChart.__chartRect.right;
 
-          let formationTop = objChart.SVGRef.append("g")
-            .attr("class", "formationTop-" + objChart.Id)
+          let formationTop = this.objChart.SVGRef.append("g")
+            .attr("class", "formationTop-" + this.objChart.Id)
             .append("line")
             .attr("id", "line-1")
             .attr("x1", x1)
@@ -962,15 +1074,15 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
 
-          let SeriesList = Object.values(objData.dataSeries);
+          let SeriesList = Object.values(this.objData.dataSeries);
           for (let i = 0; i < SeriesList.length; i++) {
             const objSeries: any = SeriesList[i];
 
             let mnemonicX = objSeries.XColumnID;
-            let objXAxis = objChart.getAxisByID(mnemonicX);
+            let objXAxis = this.objChart.getAxisByID(mnemonicX);
 
-            objChart.SVGRef.append("g")
-              .attr("class", "formationTopText-" + objChart.Id)
+            this.objChart.SVGRef.append("g")
+              .attr("class", "formationTopText-" + this.objChart.Id)
               .attr(
                 "transform",
                 //"translate(" + (x1 + 2) + "," + (y2 - 20) + ") rotate(0)"
@@ -1011,7 +1123,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
     d3.selectAll(".HeatMap").remove();
     d3.selectAll(".ColorAxisLineText").remove();
 
-    if (objData.ShowColorAxis == false) {
+    if (this.objData.ShowColorAxis == false) {
       return;
     }
 
@@ -1019,14 +1131,14 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
     let Intervals: number = 10;
-    let x1_: number = objChart.Width - 80;
+    let x1_: number = this.objChart.Width - 80;
     let x2_: number = (x1_ + 10);
-    // let y1_: number = ((topAxisCount * 35) + objChart.MarginTop);
-    // let y2_: number = (objChart.Height - objChart.MarginBottom);
+    // let y1_: number = ((topAxisCount * 35) + this.objChart.MarginTop);
+    // let y2_: number = (this.objChart.Height - this.objChart.MarginBottom);
 
-    let y1_: number = objChart.__chartRect.top + 5;
-    let y2_: number = objChart.__chartRect.bottom - 5;
-    // let y2_: number = (objChart.Height - objChart.MarginBottom);
+    let y1_: number = this.objChart.__chartRect.top + 5;
+    let y2_: number = this.objChart.__chartRect.bottom - 5;
+    // let y2_: number = (this.objChart.Height - this.objChart.MarginBottom);
     let TotalHeight: number = (y2_ - y1_) - 10;
     let SectionHeight: number = (TotalHeight / Intervals);
     let rStartY: number = y1_;
@@ -1034,7 +1146,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
     for (let j = Intervals; j > 0; j--) {
       try {
 
-        objChart.SVGRef.append("g")
+        this.objChart.SVGRef.append("g")
           .append('rect')
           .attr("class", "HeatMap") //custom axis title from base color  01-10-2020
           .attr('x', x1_)
@@ -1042,13 +1154,13 @@ export default function CustomDrillingSummary({ ...props }: any) {
           .attr('width', (x2_ - x1_))
           .attr('height', SectionHeight)
           .attr('stroke', 'black')
-          .attr('fill', objData.IntervalColors[j]);
+          .attr('fill', this.objData.IntervalColors[j]);
 
 
-        let val = (objData.IntervalList[j].maxValue).toFixed(0);
+        let val = (this.objData.IntervalList[j].maxValue).toFixed(0);
 
 
-        objChart.SVGRef.append("g").append("text")
+        this.objChart.SVGRef.append("g").append("text")
           .attr("x", x2_ + 2)
           .attr("y", rStartY + 2)
           .attr("class", "heatmapText")
@@ -1060,11 +1172,11 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
         if (j == 1) {
-          objChart.SVGRef.append("g").append("text")
+          this.objChart.SVGRef.append("g").append("text")
             .attr("x", x2_ + 2)
             .attr("y", (rStartY + SectionHeight))
             .attr("class", "heatmapText")
-            .text((objData.IntervalList[j].minValue).toFixed(0));
+            .text((this.objData.IntervalList[j].minValue).toFixed(0));
         }
 
 
@@ -1077,15 +1189,15 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
 
     }
-    let x1: number = objChart.Width - 20;  //80
-    let y1: number = objChart.__chartRect.top + (objChart.__chartRect.height) / 2;
+    let x1: number = this.objChart.Width - 20;  //80
+    let y1: number = this.objChart.__chartRect.top + (this.objChart.__chartRect.height) / 2;
 
     //HeatMap Memonic Text
-    objChart.SVGRef.append("g").append("text")
+    this.objChart.SVGRef.append("g").append("text")
       .attr("class", "heatmapText")
       .attr("transform", "translate(" + x1 + "," + y1 + ") rotate(-90)")
       //.attr("style", "stroke-dasharray:0;font-family:arial;font-size:1vw")
-      .text(objData.ColorAxisMnemonic);
+      .text(this.objData.ColorAxisMnemonic);
     //******************** */
 
 
@@ -1094,7 +1206,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
 
   };
 
-  const onBeforeSeriesDraw = (e: ChartEventArgs, i: number) => {
+  onBeforeSeriesDraw = (e: ChartEventArgs, i: number) => {
     try {
 
 
@@ -1111,8 +1223,8 @@ export default function CustomDrillingSummary({ ...props }: any) {
       //objCRMColor
       //RoadMapTransparency
 
-      for (let key of objChart.DataSeries.keys()) {
-        let objSeries: DataSeries = objChart.DataSeries.get(key);
+      for (let key of this.objChart.DataSeries.keys()) {
+        let objSeries: DataSeries = this.objChart.DataSeries.get(key);
 
         if (objSeries.ShowRoadMap && (objSeries.RoadmapDepth != null && objSeries.RoadmapMin != null && objSeries.RoadmapMax != null)) {
           let x0 = 0;
@@ -1123,7 +1235,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
           let currentDepth = 0;
           let prevDepth = 0;
 
-          if (objData.PlotOrientation == 0) {//horizontal
+          if (this.objData.PlotOrientation == 0) {//horizontal
             d3.selectAll(".RoadMap-" + objSeries.YAxisId).remove();
 
             for (let i = 0; i < objSeries.RoadmapDepth.length; i++) {
@@ -1137,10 +1249,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
               }
 
               let mnemonicY = objSeries.YAxisId;
-              let objYAxis: Axis = objChart.getAxisByID(mnemonicY);
+              let objYAxis: Axis = this.objChart.getAxisByID(mnemonicY);
 
               let mnemonicX = objSeries.XAxisId;
-              let objXAxis = objChart.getAxisByID(mnemonicX);
+              let objXAxis = this.objChart.getAxisByID(mnemonicX);
 
               if (objXAxis.Inverted) {
                 x1 = objXAxis.ScaleRef(prevDepth);
@@ -1151,22 +1263,22 @@ export default function CustomDrillingSummary({ ...props }: any) {
               }
 
 
-              if (x0 > objChart.__chartRect.right) {
-                x0 = objChart.__chartRect.right;
+              if (x0 > this.objChart.__chartRect.right) {
+                x0 = this.objChart.__chartRect.right;
               }
 
-              if (x0 < objChart.__chartRect.left) {
-                x0 = objChart.__chartRect.left;
-              }
-
-
-              if (x1 > objChart.__chartRect.right) {
-                x1 = objChart.__chartRect.right;
+              if (x0 < this.objChart.__chartRect.left) {
+                x0 = this.objChart.__chartRect.left;
               }
 
 
-              if (x1 < objChart.__chartRect.left) {
-                x1 = objChart.__chartRect.left;
+              if (x1 > this.objChart.__chartRect.right) {
+                x1 = this.objChart.__chartRect.right;
+              }
+
+
+              if (x1 < this.objChart.__chartRect.left) {
+                x1 = this.objChart.__chartRect.left;
               }
 
 
@@ -1199,7 +1311,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
               //-------- END NEW CODE
 
 
-              objChart.SVGRect.append("g")
+              this.objChart.SVGRect.append("g")
                 .attr("class", "RoadMap-" + mnemonicY)
                 .attr("id", "RoadMapId-" + mnemonicY + i.toString())
                 .append("rect")
@@ -1229,10 +1341,10 @@ export default function CustomDrillingSummary({ ...props }: any) {
               }
 
               let mnemonicY = objSeries.YAxisId;
-              let objYAxis: Axis = objChart.getAxisByID(mnemonicY);
+              let objYAxis: Axis = this.objChart.getAxisByID(mnemonicY);
 
               let mnemonicX = objSeries.XAxisId;
-              let objXAxis = objChart.getAxisByID(mnemonicX);
+              let objXAxis = this.objChart.getAxisByID(mnemonicX);
 
 
 
@@ -1246,22 +1358,22 @@ export default function CustomDrillingSummary({ ...props }: any) {
               }
 
 
-              if (y0 > objChart.__chartRect.bottom) {
-                y0 = objChart.__chartRect.bottom;
+              if (y0 > this.objChart.__chartRect.bottom) {
+                y0 = this.objChart.__chartRect.bottom;
               }
 
-              if (y0 < objChart.__chartRect.top) {
-                y0 = objChart.__chartRect.top;
-              }
-
-
-              if (y1 > objChart.__chartRect.bottom) {
-                y1 = objChart.__chartRect.bottom;
+              if (y0 < this.objChart.__chartRect.top) {
+                y0 = this.objChart.__chartRect.top;
               }
 
 
-              if (y1 < objChart.__chartRect.top) {
-                y1 = objChart.__chartRect.top;
+              if (y1 > this.objChart.__chartRect.bottom) {
+                y1 = this.objChart.__chartRect.bottom;
+              }
+
+
+              if (y1 < this.objChart.__chartRect.top) {
+                y1 = this.objChart.__chartRect.top;
               }
 
 
@@ -1292,7 +1404,7 @@ export default function CustomDrillingSummary({ ...props }: any) {
                 x1 = objXAxis.StartPos;
               }
 
-              objChart.SVGRect.append("g")
+              this.objChart.SVGRect.append("g")
                 .attr("class", "RoadMap-" + mnemonicY)
                 .attr("id", "RoadMapId-" + mnemonicY + i.toString())
                 .append("rect")
@@ -1321,75 +1433,115 @@ export default function CustomDrillingSummary({ ...props }: any) {
     }
 
   };
-  const handleChange = () => {
-    setShowOffsetWell(!showOffsetWell);
+  handleChange = () => {
+    //setShowOffsetWell(!showOffsetWell);
+    this.showOffsetWell = !this.showOffsetWell;
   }
 
-  return (
-    <div>
 
-      <div className="" style={{ display: "inline-flex", justifyContent: "space-between", width: "92vw", }}>
-        <div className="col-lg-2">
-          <div className="flex-item" >
-            <label>{props.PlotName} </label>
+
+  handleToggleSwitch = async () => {
+
+    await this.setState({ isRealTime: !this.state.isRealTime });
+
+    // //Added condition on 02-02-2022
+    // if (this.state.isRealTime){
+    //    this.state.objDataSelector.needForceReload = false;
+    //    this.state.objDataSelector.selectedval = "2";
+  
+    // }
+
+    // if (this.state.isRealTime){
+    //   this.state.objDataSelector.needForceReload = false;
+    // }
+
+    if (this.state.isRealTime) {
+      //Added condition on 02-02-2022
+      this.state.objDataSelector.needForceReload = false;
+      this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
+    } else {
+      this.AxiosSource.cancel();
+      await clearInterval(this.intervalID);
+      this.intervalID = null;
+      //this.loadConnections();
+    }
+    sessionStorage.setItem("realCustomDrillingSummary", this.state.isRealTime.toString());
+  };
+
+
+  render() {
+
+
+
+    return (
+      <div>
+
+        <div className="" style={{ display: "inline-flex", justifyContent: "space-between", width: "92vw", }}>
+          <div className="col-lg-2">
+            <div className="flex-item" >
+              <label>{this.PlotName} </label>
+            </div>
           </div>
+
+
+          <div className="col-lg-2">
+            <div>
+              <input type="checkbox" id="offsetWell" name="chkOffsetWell" value="true" checked={this.showOffsetWell} onChange={this.handleChange} /> Show OffsetWell
+
+              <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
+            </div>
+
+
+
+          </div><div className="col-lg-2">
+            <label className=" ml-5 mr-1" onClick={() => { this.loadSummary(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
+            <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { this.loadSummary() }} />
+          </div>
+
+          <div className="col-lg-4">
+            <div className="flex-item">
+              <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={this.state.isRealTime} />
+            </div>
+          </div>
+
+
+
+          <div className="col-lg-1">
+            <div className="flex-item">
+              <Button onClick={this.showListPanel}>Close</Button>
+            </div>
+          </div>
+
         </div>
 
-
-        <div className="col-lg-2">
-          <div>
-            <input type="checkbox" id="offsetWell" name="chkOffsetWell" value="true" checked={showOffsetWell} onChange={handleChange} /> Show OffsetWell
-          </div>
-
-        </div><div className="col-lg-2">
-          <label className=" ml-5 mr-1" onClick={() => { loadSummary(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
-          <FontAwesomeIcon icon={faSearchMinus} size="lg" onClick={() => { loadSummary() }} />
+        <div
+          id="SummaryChart"
+          style={{
+            width: "100%",
+            height: "calc(65vh)",
+            backgroundColor: "transparent",
+            // float: "right",
+            marginLeft: "10px",
+          }}
+        ></div>
+        <div
+          id="SummaryChart_legend"
+          style={{
+            textAlign: "center",
+            height: "40px",
+            width: "100%",
+            backgroundColor: "transparent",
+            display: "inline-block",
+            paddingBottom: '10px',
+            fontSize: '81.25% !important',
+            lineHeight: 1.5,
+            fontWeight: 'bold'
+          }}
+        />
+        <div className="Data">
+          <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
         </div>
-
-        <div className="col-lg-4">
-          <div className="flex-item">
-            <DataSelectorInfo objDataSelector={dataSelector} isRealTime={false} />
-          </div>
-        </div>
-
-
-
-        <div className="col-lg-1">
-          <div className="flex-item">
-            <Button onClick={props.showListPanel}>Close</Button>
-          </div>
-        </div>
-
       </div>
-
-      <div
-        id="SummaryChart"
-        style={{
-          width: "100%",
-          height: "calc(65vh)",
-          backgroundColor: "transparent",
-          // float: "right",
-          marginLeft: "10px",
-        }}
-      ></div>
-      <div
-        id="SummaryChart_legend"
-        style={{
-          textAlign: "center",
-          height: "40px",
-          width: "100%",
-          backgroundColor: "transparent",
-          display: "inline-block",
-          paddingBottom: '10px',
-          fontSize: '81.25% !important',
-          lineHeight: 1.5,
-          fontWeight: 'bold'
-        }}
-      />
-      <div className="Data">
-        <DataSelector objDataSelector={props.objDataSelector} wellID={props.WellID} selectionChanged={onselectionchange} ></DataSelector>
-      </div>
-    </div>
-  );
-
+    );
+  }
 }

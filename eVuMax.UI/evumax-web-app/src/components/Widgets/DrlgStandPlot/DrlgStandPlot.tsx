@@ -166,7 +166,10 @@ export default class DrlgStandPlot extends React.Component {
 
 
         let realtimeStatus: boolean = paramRefreshHrs;
-        
+
+        //Added on 02-02-2022
+        paramDataSelector.needForceReload = true;
+
 
         await this.setState({
             objDataSelector: paramDataSelector,
@@ -194,14 +197,14 @@ export default class DrlgStandPlot extends React.Component {
         this.saveSettings();
 
         if (this.state.realTime) {
-         
+
             this.intervalID = setInterval(this.loadDrlgStandPlotData.bind(this), 15000);
         } else {
 
             this.AxiosSource.cancel();
             await clearInterval(this.intervalID);
             this.intervalID = null;
-           // this.loadDrlgStandPlotData();
+            // this.loadDrlgStandPlotData();
         }
 
 
@@ -209,37 +212,37 @@ export default class DrlgStandPlot extends React.Component {
 
     formatDateHHMMSS = (FromDate: string, ToDate: string) => {
 
-      
-        
+
+
         // let hrs : number  =parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asHours().toString());
 
         // let min :number =  parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asMinutes().toString());
-                           
+
         //  min = min - (hrs*60);
         //  let ss :number = parseInt(moment.duration(moment(new Date(ToDate)).diff(moment(new Date(FromDate)))).asSeconds().toString());
-        
+
         //   ss = ss - (hrs*60*60) - (min*60);
 
 
 
-        let now  = ToDate;
-let then = FromDate;
-let diff = moment.duration(moment(now).diff(moment(then)));
-return "["+ diff.hours().toString().trim()+":"+  diff.minutes().toString().trim() + ":" + diff.seconds().toString().trim() +"]";
+        let now = ToDate;
+        let then = FromDate;
+        let diff = moment.duration(moment(now).diff(moment(then)));
+        return "[" + diff.hours().toString().trim() + ":" + diff.minutes().toString().trim() + ":" + diff.seconds().toString().trim() + "]";
 
-// let days = parseInt(diff.asDays()); //84
+        // let days = parseInt(diff.asDays()); //84
 
-// var hours = parseInt(diff.asHours()); //2039 hours, but it gives total hours in given miliseconds which is not expacted.
+        // var hours = parseInt(diff.asHours()); //2039 hours, but it gives total hours in given miliseconds which is not expacted.
 
-// hours = hours - days*24;  // 23 hours
+        // hours = hours - days*24;  // 23 hours
 
-// var minutes = parseInt(diff.asMinutes()); //122360 minutes,but it gives total minutes in given miliseconds which is not expacted.
+        // var minutes = parseInt(diff.asMinutes()); //122360 minutes,but it gives total minutes in given miliseconds which is not expacted.
 
-// minutes = minutes - (days*24*60 + hours*60); //20 minutes.
-        
-         //return "["+hrs+" : "+ min + " : " + ss +"]";
+        // minutes = minutes - (days*24*60 + hours*60); //20 minutes.
 
-      
+        //return "["+hrs+" : "+ min + " : " + ss +"]";
+
+
 
     }
 
@@ -398,7 +401,7 @@ return "["+ diff.hours().toString().trim()+":"+  diff.minutes().toString().trim(
             objBar.XAxisId = this.objChart.bottomAxis().Id;
             objBar.YAxisId = this.objChart.leftAxis().Id;
             //objBar.ColorEach = true;
-            if (this.state.objDrlgStandUserSettings.HighlightDayNight == true){
+            if (this.state.objDrlgStandUserSettings.HighlightDayNight == true) {
                 objBar.ColorEach = true;
             }
 
@@ -410,7 +413,7 @@ return "["+ diff.hours().toString().trim()+":"+  diff.minutes().toString().trim(
                 return a.Depth - b.Depth;
             });
             let chartData = connPoints;
-            
+
             //Fill up the data for data series
             for (let i = 0; i < chartData.length; i++) {
                 let objStandPoint = new ChartData();
@@ -419,7 +422,7 @@ return "["+ diff.hours().toString().trim()+":"+  diff.minutes().toString().trim(
                 standTime = moment.duration(moment(chartData[i]["ToDate"]).diff(moment(chartData[i]["FromDate"]))).asHours();
                 // standTime = Math.round(((standTime / 60) / 60));
                 objStandPoint.y = Number(standTime.toFixed(2)); //Math.round(standTime);
-                
+
                 if (this.state.objDrlgStandUserSettings.HighlightDayNight == true) {
                     if (chartData[i].DayNightStatus == 1) {
                         objStandPoint.color = "Yellow";
@@ -1198,7 +1201,7 @@ return "["+ diff.hours().toString().trim()+":"+  diff.minutes().toString().trim(
                                         <td className="text-right" style={{}}>
                                             <span>
                                                 {" "}
-                                                {this.formatDateHHMMSS(props.dataItem.FromDate,props.dataItem.ToDate)}
+                                                {this.formatDateHHMMSS(props.dataItem.FromDate, props.dataItem.ToDate)}
                                                 {/* {Number(moment.duration(moment(new Date(props.dataItem.ToDate)).diff(moment(new Date(props.dataItem.FromDate)))).asHours()).toFixed(0) + ":" +
                                                     Number(moment.duration(moment(new Date(props.dataItem.ToDate)).diff(moment(new Date(props.dataItem.FromDate)))).asMinutes()).toFixed(0) + ":" +
                                                     Number(moment.duration(moment(new Date(props.dataItem.ToDate)).diff(moment(new Date(props.dataItem.FromDate)))).asSeconds()).toFixed(0) + ":"

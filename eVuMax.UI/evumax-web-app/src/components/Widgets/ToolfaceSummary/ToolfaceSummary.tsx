@@ -226,6 +226,10 @@ class ToolfaceSummary extends Component {
 
     let realtimeStatus: boolean = paramRefreshHrs;
 
+
+    //Added on 02-02-2022
+    paramDataSelector.needForceReload = true;
+
     await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
@@ -445,6 +449,8 @@ class ToolfaceSummary extends Component {
   disableRealTime = () => {
     try {
       if (this.state.isRealTime) {
+        //Added on 02-02-2022
+        this.state.objDataSelector.needForceReload = false;
         this.setState({
           isRealTime: false //prath 10-Oct-20201
         });
@@ -732,10 +738,10 @@ class ToolfaceSummary extends Component {
 
   onAfterSeriesDraw = (e: ChartEventArgs, i: number) => {
     try {
-      
+
       d3.selectAll(".formationTop-" + this.objChart.Id).remove();
       d3.selectAll(".formationTopText-" + this.objChart.Id).remove();
-      
+
       let tripOutlineData = [];
       let tripOutArr = [];
 
@@ -2979,8 +2985,8 @@ class ToolfaceSummary extends Component {
 
             <div style={{ padding: "20px" }}>
 
-                <div className="Data">
-              <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+              <div className="Data">
+                <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
               </div>
               <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
 

@@ -469,37 +469,16 @@ class TripConnSummary extends Component {
     this.setState({ selected: e.selected });
   };
 
-  // selectionChanged = (
-  //   pselectedval: string,
-  //   pfromDate: Date,
-  //   ptoDate: Date,
-  //   pfromDepth: number,
-  //   ptoDepth: number
-  // ) => {
-  //   try {
-  //     this.selectionType = pselectedval;
-  //     this.fromDate = pfromDate;
-  //     this.toDate = ptoDate;
-  //     this.fromDepth = pfromDepth;
-  //     this.toDepth = ptoDepth;
-
-  //     // console.log(
-  //     //   "From Date " +
-  //     //   moment(this.fromDate).format("d-MMM-yyyy HH:mm:ss") +
-  //     //   " To Date " +
-  //     //   moment(this.toDate).format("d-MMM-yyyy HH:mm:ss")
-  //     // );
-
-  //     this.loadConnections();
-  //   } catch (error) { }
-  // };
 
   ////Nishant
-  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshStatus: boolean = false) => {
 
     //alert("TripConnection Summary --> SelectionChanged");
-    
-    let realtimeStatus: boolean = paramRefreshHrs;
+
+    let realtimeStatus: boolean = paramRefreshStatus;
+
+    //Added on 02-02-2022
+    paramDataSelector.needForceReload = true;
 
     await this.setState({
       objDataSelector: paramDataSelector,
@@ -761,6 +740,8 @@ class TripConnSummary extends Component {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
     if (this.state.isRealTime) {
+      //Added on 02-02-2022
+      this.state.objDataSelector.needForceReload = false;
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
       this.AxiosSource.cancel();
@@ -968,8 +949,8 @@ class TripConnSummary extends Component {
             ></div>
 
 
-<div className="Data">
-            <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+            <div className="Data">
+              <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
             </div>
           </TabStripTab>
           <TabStripTab title="Numeric Summary">
@@ -1598,7 +1579,7 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Labels = [];
 
       //Fill up the data for data series
-      this.objChart.isNightConnection=false;
+      this.objChart.isNightConnection = false;
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
 
@@ -1613,13 +1594,13 @@ class TripConnSummary extends Component {
 
         objSTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
 
-     
+
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00e676";
           } else {
             objSTSPoint.color = "black"; //"#bcbab8";
-            this.objChart.isNightConnection=true;
+            this.objChart.isNightConnection = true;
           }
         }
 

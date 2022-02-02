@@ -220,11 +220,14 @@ class DrlgConnSummary extends Component {
   };
 
 
-  selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
+  selectionChanged = async (paramDataSelector: DataSelector_, paramRefresStatus: boolean = false) => {
     //alert(paramRefreshHrs);
+    
 
-    let realtimeStatus: boolean = paramRefreshHrs;
-    //alert(paramDataSelector.selectedval);
+    let realtimeStatus: boolean = paramRefresStatus;
+    //Added on 02-02-2022
+    paramDataSelector.needForceReload = true;
+
 
     await this.setState({
       objDataSelector: paramDataSelector,
@@ -796,7 +799,12 @@ class DrlgConnSummary extends Component {
   handleToggleSwitch = async () => {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
+
+    
+
     if (this.state.isRealTime) {
+      //Added 1 line on 02-02-2022
+      this.state.objDataSelector.needForceReload = false;
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);
     } else {
 

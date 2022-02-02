@@ -3,7 +3,10 @@ import { faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
 import React, { Component } from "react";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-all";
-import CustomDrillingSummary from "../CustomDrillingSummary/CustomDrillingSummary";
+//import CustomDrillingSummary from "../CustomDrillingSummary/CustomDrillingSummary";
+import { CustomDrillingSummary } from "./CustomDrillingSummary";
+
+
 import BrokerRequest from "../../../broker/BrokerRequest";
 import BrokerParameter from "../../../broker/BrokerParameter";
 import axios from "axios";
@@ -40,11 +43,9 @@ export default class customDrlgSummaryViewer extends Component {
 
   componentDidMount() {
     try {
-
-      
-
       this.loadSummaryList();
       console.log(this.state.objDataSelector)
+
 
     } catch (error) {
 
@@ -81,8 +82,6 @@ export default class customDrlgSummaryViewer extends Component {
       //gdSummary Plot ID: 308-656-954-204-796
       //Well ID:
       //User ID:
-
-
 
 
       axios
@@ -178,7 +177,7 @@ export default class customDrlgSummaryViewer extends Component {
         runReport: false,
         warningMsg: []
       });
-     
+
     } catch (error) { }
   };
 
@@ -196,14 +195,14 @@ export default class customDrlgSummaryViewer extends Component {
     }
   }
 
-updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
-  await this.setState({
-    objDataSelector: paramDataSelector,
-   
-  });
-}
+  updateDataSelectorInfo = async (paramDataSelector: DataSelector_) => {
+    await this.setState({
+      objDataSelector: paramDataSelector,
+
+    });
+  }
   selectionChanged_ = async (paramDataSelector: DataSelector_, paramRefreshHrs: boolean = false) => {
- 
+
     let realtimeStatus: boolean = paramRefreshHrs;
     await this.setState({
       objDataSelector: paramDataSelector,
@@ -273,11 +272,11 @@ updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
 
             <Grid
               style={{
-                height: "750px", width:"auto"
+                height: "750px", width: "auto"
               }}
               //data={this.state.grdData}
               selectedField="selected"
-             // resizable ={true}
+              // resizable ={true}
               data={this.state.grdData != null ? (this.state.grdData.map((item: any) =>
                 ({ ...item, selected: item.TEMPLATE_ID === this.state.currentPlotID })
               )) : null}
@@ -289,10 +288,10 @@ updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
               <GridColumn
                 field="TEMPLATE_NAME"
                 title="Plot Name"
-               //width="490px"
-//                width="100%"
-               // resizable={true}
-                              />
+              //width="490px"
+              //                width="100%"
+              // resizable={true}
+              />
               {false && <GridColumn field="TEMPLATE_ID" width="80px" title="Plot Id" />}
               <GridColumn
                 width="50px"
@@ -321,16 +320,11 @@ updateDataSelectorInfo=async (paramDataSelector: DataSelector_)=>{
               {/* <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={false} ></DataSelectorInfo> */}
               {this.state.runReport && (
                 <>
-                  
-                  <CustomDrillingSummary
-                    PlotID={this.state.currentPlotID}
-                    showListPanel={this.showListPanel}
-                    WellID={this.WellID}
-                    PlotName={this.state.currentRow.TEMPLATE_NAME}
-                    updateWarnings={this.updateWarnings}
-                    parentRef={this}
-                    objDataSelector={this.state.objDataSelector}
-                  ></CustomDrillingSummary>
+
+
+
+                  <CustomDrillingSummary PlotID={this.state.currentPlotID} showListPanel={this.showListPanel} WellID={this.WellID} PlotName={this.state.currentRow.TEMPLATE_NAME} updateWarnings={this.updateWarnings} parentRef={this} objDataSelector={this.state.objDataSelector} ></CustomDrillingSummary>
+
 
 
                   {/* <div className="Data">
