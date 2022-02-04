@@ -602,6 +602,8 @@ class ToolfaceSummary extends Component {
     this.AxiosSource.cancel();
     clearInterval(this.intervalID);
     this.intervalID = null;
+    window.removeEventListener('resize', this.displayData);
+    
   }
   //==============
 

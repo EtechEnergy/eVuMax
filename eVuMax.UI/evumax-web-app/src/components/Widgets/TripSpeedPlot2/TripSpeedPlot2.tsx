@@ -58,6 +58,7 @@ export class TripSpeedPlot2 extends Component {
 
   componentWillUnmount() {
     this.AxiosSource.cancel();
+    window.removeEventListener('resize', this.refreshChart);
   }
   //==============
 

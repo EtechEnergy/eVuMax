@@ -108,7 +108,7 @@ class TripConnSummary extends Component {
     clearInterval(this.intervalID);
     this.intervalID = null;
 
-
+    window.removeEventListener('resize', this.refreshChart);
   }
   //==============
   componentWillUpdate() {

@@ -250,8 +250,8 @@ export default class DrlgStandPlot extends React.Component {
 
         await this.setState({ realTime: !this.state.realTime });
         if (this.state.realTime) {
-                  //Added on 02-02-2022
-                  this.state.objDataSelector.needForceReload = false;
+            //Added on 02-02-2022
+            this.state.objDataSelector.needForceReload = false;
 
             let objUserDataSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
             objUserDataSettings.SelectionType = sPlotSelectionType.ByHours;
@@ -345,6 +345,58 @@ export default class DrlgStandPlot extends React.Component {
         this.objChart.bottomAxis().ShowTitle = true;
         this.objChart.bottomAxis().Visible = true;
 
+        // let objRigStateList = Object.values(this.state.objPlotData.objRigSate.rigStates);
+
+
+        // //sort array on depth
+        // let connPoints: any = Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
+        // connPoints.sort(function (a, b) {
+        //     return a.Depth - b.Depth;
+        // });
+        // let chartData = connPoints;
+
+        
+        // //Create series for each rig state
+        // for (let i = 0; i < chartData.RigStates.length; i++) {
+        //     let objSeries = new DataSeries();
+        //   objSeries.Id = this.objSummaryData.rigStates[i]["RIG_STATE"].toString();
+        //     objSeries.Stacked = true;
+        //     //objSeries.Title =                this.objSummaryData.rigStates[i]["RIG_STATE_NAME"].toString();
+        //     objSeries.Type = dataSeriesType.Bar;
+        //    objSeries.Color = this.objSummaryData.rigStates[i]["COLOR"].toString();
+        //     objSeries.XAxisId = this.objChart.bottomAxis().Id;
+        //     objSeries.YAxisId = this.objChart.leftAxis().Id;
+        //     this.objChart.DataSeries.set(objSeries.Id, objSeries);
+        // }
+
+        // //Fill up the data for each series
+        // for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
+        //     let arrRigStates: string[] = this.objSummaryData.rigStateData[i][
+        //         "TIMES"
+        //     ]
+        //         .toString()
+        //         .split(",");
+
+        //     for (let j = 0; j < this.objSummaryData.rigStates.length; j++) {
+        //         let lnRigState: number =
+        //             this.objSummaryData.rigStates[j]["RIG_STATE"];
+
+        //         //Find the series with this rig state
+        //         let objSeries: DataSeries = this.objChart.DataSeries.get(
+        //             lnRigState.toString()
+        //         );
+
+        //         if (objSeries != undefined) {
+        //             let objDataPoint = new ChartData();
+        //             objDataPoint.x = this.objSummaryData.rigStateData[i]["DEPTH"];
+        //             objDataPoint.y = Number.parseFloat(arrRigStates[j]);
+        //             objDataPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
+        //             objSeries.Data.push(objDataPoint);
+        //         }
+        //     }
+        // }
+
+
 
     }
 
@@ -417,7 +469,7 @@ export default class DrlgStandPlot extends React.Component {
             });
             let chartData = connPoints;
 
-            debugger;
+            
             //Fill up the data for data series
             for (let i = 0; i < chartData.length; i++) {
                 let objStandPoint = new ChartData();

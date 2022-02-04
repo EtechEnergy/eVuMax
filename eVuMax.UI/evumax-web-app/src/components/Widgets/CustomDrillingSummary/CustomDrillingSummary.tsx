@@ -19,6 +19,7 @@ import { faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import * as d3 from "d3";
 import { Checkbox, Switch } from "@progress/kendo-react-inputs";
+import $ from "jquery";
 
 let _gMod = new GlobalMod();
 
@@ -52,25 +53,17 @@ export class CustomDrillingSummary extends Component<IProps>  {
     this.PlotName = props.PlotName;
     this.updateWarnings = props.updateWarnings;
     this.parentRef = props.parentRef;
-    //this.objDataSelector = props.objDataSelector;
-    this.objChart = new Chart(this.parentRef, "SummaryChart");
-    //this.onResize = this.onResize.bind(this.loadSummary); //bind function once.
-      // This binding is necessary to make `this` work in the callback
-      //this.loadSummary = this.loadSummary.bind(this);
-
-         // This binding is necessary to make `this` work in the callback
-    this.loadSummary = this.loadSummary.bind(this);
-    
+    //    this.loadSummary = this.loadSummary.bind(this);
   }
-  
-    state = {
+
+  state = {
     warningMsg: [],
     isRealTime: false as boolean,
     objDataSelector: this.props.objDataSelector,
     showOffsetWell: true
   };
 
-  
+
   objSummaryAxisList: any = [];
   WellName: string = "";
   objData: any = "";
@@ -83,7 +76,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
   toDepth: number = 0;
   Warnings: string = ""; //Nishant 27/08/2021
   refreshHrs: number = 24;
-
+  randNumber = Number(Math.random() * 1000).toFixed(0);
 
   //Cancel all Axios Request
   AxiosSource = axios.CancelToken.source();
@@ -104,45 +97,37 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
   async componentDidMount() {
     try {
-      // window.addEventListener('resize', this.loadSummary.bind(this), false);
+      window.addEventListener('resize', this.loadSummary);
+
       this.loadSummary();
 
       //RealTime 
       let isRealtimeRunning = sessionStorage.getItem("realCustomDrillingSummary");
       if (isRealtimeRunning == "true") {
         await this.setState({ isRealTime: !this.state.isRealTime });
-        this.intervalID = setInterval(this.loadSummary.bind(this), 10000);
+        this.intervalID = setInterval(this.loadSummary.bind(this), 8000);
       }
-      //==============
-
-      // //window.addEventListener("resize", this.loadSummary);
-      return () => {
-        document.removeEventListener('resize', this.loadSummary.bind(this));
-      };
-     
-      
-
     } catch (error) {
 
     }
   }
 
-  
 
-  // componentWillUnmount(): void {
-  //   alert("unomunt");
-  //   //window.removeEventListener("resize", this.loadSummary);
-  //   // you need to unbind the same listener that was binded.
-  //   window.removeEventListener('resize', this.loadSummary);
-  // }
+  componentWillUnmount(): void {
+    window.removeEventListener('resize', this.loadSummary);
+
+    this.AxiosSource.cancel();
+    clearInterval(this.intervalID);
+    this.intervalID = null;
+
+  }
 
   //Step-1
   loadSummary = () => {
     try {
-      
+
       //Axios call API Function with PlotID
       //  alert("Load summary" + props.objDataSelector.selectedval + " - " + this.paramDataSelector.WellID);
-
       let objBrokerRequest = new BrokerRequest();
 
       objBrokerRequest.Module = "GenericDrillingSummary.Manager";
@@ -156,26 +141,16 @@ export class CustomDrillingSummary extends Component<IProps>  {
       objParameter = new BrokerParameter("PlotID", this.PlotID); //Hookload Comparison //"925-206-171-592-399"
       objBrokerRequest.Parameters.push(objParameter);
       objParameter = new BrokerParameter("UserID", _gMod._userId);
-      //alert(_gMod._userId);
 
-      //PRATH\PRATH
-      // objParameter = new BrokerParameter("UserID", "PRATH\\PRATH");
-      // alert("User Name Hard Coaded");
 
       objBrokerRequest.Parameters.push(objParameter);
-
-      //props.objDataSelector
-      ////Load DataSelector 
-      //objParameter = new BrokerParameter("SelectionType", props.objDataSelector.selectedval);
       objParameter = new BrokerParameter("SelectionType", this.state.objDataSelector.selectedval);
 
       objBrokerRequest.Parameters.push(objParameter);
 
-      //objParameter = new BrokerParameter("FromDate", utilFunc.formateDate(props.objDataSelector.fromDateS));
       objParameter = new BrokerParameter("FromDate", utilFunc.formateDate(this.state.objDataSelector.fromDate));
       objBrokerRequest.Parameters.push(objParameter);
 
-      //objParameter = new BrokerParameter("ToDate", utilFunc.formateDate(props.objDataSelector.toDateS));
       objParameter = new BrokerParameter("ToDate", utilFunc.formateDate(this.state.objDataSelector.toDate));
       objBrokerRequest.Parameters.push(objParameter);
 
@@ -188,7 +163,6 @@ export class CustomDrillingSummary extends Component<IProps>  {
       objParameter = new BrokerParameter("SideTrackKey", "-999");
       objBrokerRequest.Parameters.push(objParameter);
 
-      //objParameter = new BrokerParameter("isRealTime", props.objDataSelector.isRealTime.toString());
       objParameter = new BrokerParameter("isRealTime", this.state.isRealTime.toString());
       objBrokerRequest.Parameters.push(objParameter);
 
@@ -197,12 +171,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
       objParameter = new BrokerParameter("showOffsetWell", this.state.showOffsetWell.toString());
       objBrokerRequest.Parameters.push(objParameter);
-      
 
-      
-      //gdSummary Plot ID: 308-656-954-204-796
-      //Well ID:
-      //User ID:
       axios
         .get(_gMod._getData, {
           headers: {
@@ -214,7 +183,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           },
         })
         .then((res) => {
-          
+
           if (res.data.RequestSuccessfull == true) {
             let objData_ = JSON.parse(res.data.Response);
 
@@ -231,7 +200,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
               });
 
               //PENDING WORK
-              //          this.props.updateWarnings(warningList);
+              this.props.updateWarnings(warningList);
 
             }
             this.WellName = res.data.Category;
@@ -270,9 +239,11 @@ export class CustomDrillingSummary extends Component<IProps>  {
   //Step-2
   initializeChart = () => {
     try {
-      
-      this.objChart = new Chart(this.parentRef, "chart1");
-      this.objChart.ContainerId = "SummaryChart";
+
+      this.objChart = new Chart(this, "chart1" + Number(Math.random() * 1000).toFixed(0));
+      this.objChart.ContainerId = "SummaryChart" + this.randNumber;
+
+
 
       this.objChart.onAfterSeriesDraw.subscribe((e, i) => {
         this.onAfterSeriesDraw(e, i);
@@ -481,14 +452,18 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objAxis.DisplayOrder = index;
           objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
 
+
           objAxis.AutoScale = true; // as in toolface objSummaryAxis.Automatic;
           objAxis.Position = axisPosition.left;
+          debugger;
 
           objAxis.IsDateTime = false;
           objAxis.bandScale = false; //as in Toolface
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.Title = objSummaryAxis.AxisTitle;
 
+          //alert(objAxis.Id +  " Auto Scale- " + objAxis.AutoScale + " Min -"  + objSummaryAxis.MinValue + " Max -"+ objSummaryAxis.MaxValue); 
+          //FUCK
           objAxis.ShowLabels = true;
           objAxis.ShowTitle = true;
           objAxis.EndPos = objSummaryAxis.EndPosition;
@@ -687,7 +662,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objSeries.Id = objDataSeries.SeriesID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');// objDataSeries.SeriesID;
           objSeries.Name = objDataSeries.SeriesName;
 
-
+          //alert(objSeries.Name);
           objSeries.XAxisId = objDataSeries.XColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
           objSeries.YAxisId = objDataSeries.YColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
 
@@ -768,12 +743,46 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
 
           //Populate the data series with this data
+          debugger;
           objSeries.Data.length = 0;
+    //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
 
+          //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+          let xMin = 0;
+          let xMax = 0;
+          let yMin = 0;
+          let yMax = 0;
+          let autoScaleX = true;
+          let autoScaleY = true;
+          if (this.objChart.Axes.get(objSeries.XAxisId).AutoScale == false) {
+            xMin = this.objChart.Axes.get(objSeries.XAxisId).Min;
+            xMax = this.objChart.Axes.get(objSeries.XAxisId).Max;
+            autoScaleX = false;
+          }
+          if (this.objChart.Axes.get(objSeries.YAxisId).AutoScale == false) {
+            yMin = this.objChart.Axes.get(objSeries.YAxisId).Min;
+            yMax = this.objChart.Axes.get(objSeries.YAxisId).Max;
+            autoScaleY = false;
+          }
+          //==========================================
+          
 
           if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
 
             for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
+
+              //prath 04-Feb-2022  (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+              if (objSeries.Type != dataSeriesType.Bar){
+                if (autoScaleX== false &&  !(objDataSeries.xDataBuffer[i] >= xMin && objDataSeries.xDataBuffer[i] <= xMax)){
+                  continue;
+                }
+
+                if (autoScaleY== false && !(objDataSeries.yDataBuffer[i] >= yMin && objDataSeries.yDataBuffer[i] <= yMax)){
+                  continue;
+                }
+              }
+              //========
+
 
               let objVal: ChartData = new ChartData();
 
@@ -811,7 +820,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
         this.objChart.initialize();
 
-
+        debugger;
         this.objChart.reDraw();
 
       }
@@ -923,17 +932,17 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
     // loadSummary();
 
-    debugger;
+
 
     let realtimeStatus: boolean = paramRefreshHrs;
     paramDataSelector.needForceReload = true;
-    
+
     await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
     });
 
-    debugger;
+
     this.selectionType = paramDataSelector.selectedval;
     this.fromDate = paramDataSelector.fromDate;
     this.toDate = paramDataSelector.toDate;
@@ -941,12 +950,12 @@ export class CustomDrillingSummary extends Component<IProps>  {
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
     if (this.state.isRealTime) {
-      this.intervalID = setInterval(this.loadSummary.bind(this), 10000);
+      this.intervalID = setInterval(this.loadSummary.bind(this), 8000);
     } else {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      
+
       this.loadSummary();
     }
 
@@ -1246,6 +1255,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
       for (let key of this.objChart.DataSeries.keys()) {
         let objSeries: DataSeries = this.objChart.DataSeries.get(key);
 
+
         if (objSeries.ShowRoadMap && (objSeries.RoadmapDepth != null && objSeries.RoadmapMin != null && objSeries.RoadmapMax != null)) {
           let x0 = 0;
           let x1 = 0;
@@ -1454,7 +1464,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
   };
   handleChange = async () => {
-    await this.setState({showOffsetWell : !this.state.showOffsetWell})
+    await this.setState({ showOffsetWell: !this.state.showOffsetWell })
     this.loadSummary();
   }
 
@@ -1467,7 +1477,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
     if (this.state.isRealTime) {
       //Added condition on 02-02-2022
       this.state.objDataSelector.needForceReload = false;
-      this.intervalID = setInterval(this.loadSummary.bind(this), 10000);
+      this.intervalID = setInterval(this.loadSummary.bind(this), 8000);
     } else {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
@@ -1477,6 +1487,20 @@ export class CustomDrillingSummary extends Component<IProps>  {
     sessionStorage.setItem("realCustomDrillingSummary", this.state.isRealTime.toString());
   };
 
+
+  closeEvent = async () => {
+    try {
+
+      this.AxiosSource.cancel();
+      await clearInterval(this.intervalID);
+      this.intervalID = null;
+
+      this.showListPanel();
+    } catch (error) {
+
+    }
+
+  }
 
   render() {
     return (
@@ -1514,14 +1538,14 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
           <div className="col-lg-1">
             <div className="flex-item">
-              <Button onClick={this.showListPanel}>Close</Button>
+              <Button onClick={this.closeEvent}>Close</Button>
             </div>
           </div>
 
         </div>
 
         <div
-          id="SummaryChart"
+          id={"SummaryChart" + this.randNumber}
           style={{
             width: "100%",
             height: "calc(65vh)",

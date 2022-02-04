@@ -1866,7 +1866,7 @@ export class Axis {
               objRange.Max = objRange.Max + (paddingNumber * this.PaddingMax) / 100;
               return objRange;
             }
-
+            
             return objRange;
           }
         }

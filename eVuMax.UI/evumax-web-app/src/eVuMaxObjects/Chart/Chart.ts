@@ -516,7 +516,7 @@ export class Chart {
       //Assuming that all the data have been inserted into all data series,
       //this function will re-calculate everything
         
-        
+      
 
       for (let key of this.Axes.keys()) {
         // if (key == "SelectorChart-bottom") {
@@ -525,9 +525,6 @@ export class Chart {
         //alert(key);
 
         let objAxis: Axis = this.Axes.get(key);
-        //console.log(objAxis.Id);
-        
-
         objAxis.updateAxis();
 
       }
@@ -2004,9 +2001,11 @@ export class Chart {
       $(".dashed_" + this.Id).remove();
       $("#rect" + this.Id).remove();
 
+      $("#rect" + this.Id).empty();  //04-Feb-2022
+
 
       //prath on 25-Jan-2022
-      $("#ClipingArea-" + this.Id).remove();
+      //$("#ClipingArea-" + this.Id).remove();      //It effect Road map because we are drawing road map before draw series - So no need to remove Cliping Area
 
       if (!isNaN(this.__chartRect.width)) {
         this.SVGRef.append("rect")

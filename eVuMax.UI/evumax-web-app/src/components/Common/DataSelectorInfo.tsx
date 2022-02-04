@@ -32,7 +32,7 @@ export default class DataSelectorInfo extends Component<IProps>  {
      }
 
     // alert(this.props.objDataSelector.needForceReload);
-            debugger;
+            
             this.selectionType = this.props.objDataSelector.selectedval;
             this.dataSelectorPeriod = ""
             this.needForceReload= this.props.objDataSelector.needForceReload;

@@ -91,6 +91,7 @@ export default class DrlgStandPlot extends React.Component {
         this.AxiosSource.cancel();
         clearInterval(this.intervalID);
         this.intervalID = null;
+        window.removeEventListener('resize', this.refreshChart);
     }
 
 
@@ -759,6 +760,7 @@ export default class DrlgStandPlot extends React.Component {
                 sectionCounter = sectionCounter + 1;
 
 
+                
 
                 // ''Add data to the series
                 for (let index1 = 0; index1 < arrData.length; index1++) {
@@ -1533,7 +1535,7 @@ export default class DrlgStandPlot extends React.Component {
             objParameter = new BrokerParameter("WellID", this.WellID);
             objBrokerRequest.Parameters.push(objParameter);
 
-            debugger;
+            
             let objUserSettings = utilFunc.CopyObject(this.state.objUserSettings);
             objUserSettings.WellID = this.WellID;
             objUserSettings.UserID = _gMod._userId;
@@ -1632,7 +1634,7 @@ export default class DrlgStandPlot extends React.Component {
     }
     chkCustomTag_Clicked = (checked: any) => {
         try {
-            debugger;
+            
             this.setState({ UseCustomTags: checked });
             if (checked == false) {
                 this.loadSelectionTagList();
@@ -1645,7 +1647,7 @@ export default class DrlgStandPlot extends React.Component {
 
     handleSettingsChange = (event: any, field?: string) => {
         try {
-            debugger;
+            
             let value = event.value;
             const name = field;
             let edited = utilFunc.CopyObject(this.state.objUserSettings);
@@ -1663,7 +1665,7 @@ export default class DrlgStandPlot extends React.Component {
 
     saveUserSettingsTags = (byPassExclList?: boolean) => {
         try {
-            debugger;
+            
             let tagList = this.state.grdTags;
             let localUserSettings: TripReportSettings = new TripReportSettings();// this.state.objUserSettings;
             localUserSettings = utilFunc.CopyObject(this.state.objUserSettings);
@@ -1761,7 +1763,7 @@ export default class DrlgStandPlot extends React.Component {
     }
     handleChangeDropDown = (event: any, field?: string) => {
         //Clear TagSelected
-        debugger;
+        
         this.setState({
             selectedTag: [],
         });
@@ -1810,7 +1812,7 @@ export default class DrlgStandPlot extends React.Component {
             .then((res) => {
 
                 const objDataTags = JSON.parse(res.data.Response);
-                debugger;
+                
                 if (objDataTags.length == 0) {
                     this.setState({
                         grdTags: []
@@ -1857,7 +1859,7 @@ export default class DrlgStandPlot extends React.Component {
 
     onGrdTagSelectionItemChange = (e: any) => {
         try {
-            debugger;
+            
             e.dataItem[e.field] = e.value;
 
             let edited = utilFunc.CopyObject(this.state.grdTags);
@@ -1880,7 +1882,7 @@ export default class DrlgStandPlot extends React.Component {
         try {
             
           d3.select(".tripBar_benchmark").remove();
-            debugger;
+            
           let lnBenchMarkConn =this.state.objUserSettings.BenchmarkTime;
                 
           if (lnBenchMarkConn > 0) {
@@ -1966,7 +1968,7 @@ export default class DrlgStandPlot extends React.Component {
                                 Show Single Trip Report</button>
 
                             <button className="btn-custom btn-custom-primary ml-1" type="button" onClick={() => {
-                                debugger;
+                                
                                 console.log("grdTags", this.state.grdTags);
                                 this.loadSelectionTagList();
                             }} > Trips Selection</button>
@@ -2028,7 +2030,7 @@ export default class DrlgStandPlot extends React.Component {
                                     width={80}
                                     cell={(props) => (
                                         <td style={{ backgroundColor: props.dataItem.COL_SECTION_BKCOLOR }} className="summaryLabelTripReport">
-                                            <span>
+                                            <span style={{color:"black"}}>
                                                 {" "}
                                                 {props.dataItem.COL_SECTION}{" "}
                                             </span>
@@ -2043,7 +2045,7 @@ export default class DrlgStandPlot extends React.Component {
                                     width={100}
                                     cell={(props) => (
                                         <td style={{ backgroundColor: props.dataItem.COL_RUN_BKCOLOR }} className="summaryLabelTripReport">
-                                            <span>
+                                            <span style={{color:"black"}}>
                                                 {" "}
                                                 {props.dataItem.COL_RUN}{" "}
                                             </span>
@@ -2810,7 +2812,7 @@ export default class DrlgStandPlot extends React.Component {
                 {this.state.showTagListDialog && <Window
                     title={"Tag Selection"}
                     onClose={() => {
-                        debugger;
+                        
                         this.setState({
                             grdTags: this.state.objPlotData.tagList,
                             showTagListDialog: false,

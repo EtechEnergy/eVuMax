@@ -141,6 +141,8 @@ class DrlgConnSummary extends Component {
     this.AxiosSource.cancel();
     clearInterval(this.intervalID);
     this.intervalID = null;
+
+    window.removeEventListener('resize', this.refreshChart);
   }
 
 

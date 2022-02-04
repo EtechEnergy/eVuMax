@@ -102,6 +102,8 @@ export class DrillingSummary extends Component {
     this.AxiosSource.cancel();
     clearInterval(this.intervalID);
     this.intervalID = null;
+
+    window.removeEventListener('resize', this.refreshChart);
   }
 
 
@@ -1246,7 +1248,7 @@ export class DrillingSummary extends Component {
   loadDrlgSummary = () => {
     try {
 
-      //alert("loadDrlgSumm");
+      
       Util.StatusInfo("Getting data from server   ");
       this.setState({
         isProcess: true,
