@@ -32,6 +32,7 @@ import GlobalMod from "../../objects/global";
 import { Util } from "../../Models/eVuMax";
 import DataSelector_ from "./DataSelector_";
 import * as utilFunc from '../../utilFunctions/utilFunctions';
+import { Checkbox, Switch } from "@progress/kendo-react-inputs";
 
 let _gMod = new GlobalMod();
 
@@ -70,7 +71,8 @@ class DataSelector extends Component<IProps> {
     selectedval: "-1",
     objDataSelector: this.props.objDataSelector,
     Warning: "",
-    showWarning: false
+    showWarning: false,
+    MatchDepthByFormationTops: false
   };
   //=========================
 
@@ -90,7 +92,7 @@ class DataSelector extends Component<IProps> {
 
       //Prepare chart object
       //initialize chart
-      
+
       this.objChart = new Chart(this, "SelectorChart");
       this.objChart.ContainerId = "selector_chart";
       this.objChart.isZoomByRect = false; //No need to zoom
@@ -151,7 +153,7 @@ class DataSelector extends Component<IProps> {
 
 
       let objDataSelector: DataSelector_ = new DataSelector_();
-      
+
       objDataSelector = this.props.objDataSelector;
       //alert("Received --" + this.props.objDataSelector.fromDate);
       objDataSelector.fromDate = null;
@@ -190,7 +192,7 @@ class DataSelector extends Component<IProps> {
   //   pApplyRefreshHrs?: boolean
   // ) => {
   //   try {
-  
+
   //     this.setState({
   //       selectedval: ptype,
   //       fromDate: pfromdate,
@@ -209,7 +211,7 @@ class DataSelector extends Component<IProps> {
   //   } catch (error) { }
   // };
 
-  selectorChanged = async (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pApplyRefreshHrs?: boolean) => {
+  selectorChanged =  (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pMatchDepthByFormationTops?: boolean) => {
     try {
 
 
@@ -222,9 +224,10 @@ class DataSelector extends Component<IProps> {
       objDataSelector.refreshHrs = this.state.objDataSelector.refreshHrs;
       objDataSelector.fromDateS = new Date(pfromdate);
       objDataSelector.toDateS = new Date(ptodate);
+      objDataSelector.MatchDepthByFormationTops= pMatchDepthByFormationTops;
 
 
-      await this.setState({ objDataSelector: objDataSelector })
+      this.setState({ objDataSelector: objDataSelector })
 
       //this.objChart.setSelectorDateRange(this.state.objDataSelector.fromDate, this.state.objDataSelector.toDate);
       // if (pApplyRefreshHrs == true) {
@@ -319,6 +322,7 @@ class DataSelector extends Component<IProps> {
 
 
   handleChange = (event: any, field: string) => {
+    
 
     const value = event.value;
     const name = field; // target.props ? target.props.name : target.name;
@@ -327,11 +331,16 @@ class DataSelector extends Component<IProps> {
 
     edited[field] = value;
 
+    //edited["MatchDepthByFormationTops"] = this.state.MatchDepthByFormationTops;
+    
     this.setState({
       objDataSelector: edited
     });
 
   };
+
+
+
   render() {
 
     return (
@@ -379,7 +388,7 @@ class DataSelector extends Component<IProps> {
               </div>
             </div>
 
-{/* 
+            {/* 
             <div
               id="tab3"
               className="non-selected"
@@ -458,30 +467,42 @@ class DataSelector extends Component<IProps> {
                 />
 
                 <RadioButton
-                      name="selectionby"
-                      value="2"
-                      checked={this.state.objDataSelector.selectedval === "2"}
-                      label="Select Data Last Hrs"
+                  name="selectionby"
+                  value="2"
+                  checked={this.state.objDataSelector.selectedval === "2"}
+                  label="Select Data Last Hrs"
 
-                      onChange={(e) => this.handleChange(e, "selectedval")}
-                    />
+                  onChange={(e) => this.handleChange(e, "selectedval")}
+                />
 
-<button
-                      type="button"
-                      onClick={() => {
-                        this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
-                          , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth);
-                        this.setState({
-                          showSettings: false
-                        });
+                <Checkbox
+                  id={"MatchDepthByFormationTops"}
+                  className="col-lg-4 col-xl-3 col-md-4 col-sm-4"
+                  value={this.state.MatchDepthByFormationTops}
+                  onChange={(e) => this.handleChange(e, "MatchDepthByFormationTops")}
+                  label="Match Depth By Formation Tops"
+                />
 
-                      }
-                      }
-                      className="btn-custom btn-custom-primary ml-5 mr-1"
-                    >
-                      Apply
-                    </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    this.selectorChanged(this.state.objDataSelector.selectedval, this.state.objDataSelector.fromDate
+                      , this.state.objDataSelector.toDate, this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth, this.state.objDataSelector.MatchDepthByFormationTops);
+                    this.setState({
+                      showSettings: false
+                    });
+
+                  }
+                  }
+                  className="btn-custom btn-custom-primary ml-5 mr-1"
+                >
+                  Apply
+                </button>
+
               </div>
+
+
             </div>
 
             <div className="row mt-2">
@@ -579,11 +600,11 @@ class DataSelector extends Component<IProps> {
                 )}
 
 
-{this.state.objDataSelector.selectedval == "2" ? (<Label className="mr-3" >Last</Label>) : ("")}
-                    {this.state.objDataSelector.selectedval == "2" ? (<ComboBox style={{ width: "100px" }} data={[1, 3, 12, 24, 48]} allowCustom={true}
-                      value={this.state.objDataSelector.refreshHrs}
-                      onChange={(e) => this.handleChange(e, "refreshHrs")} />) : ("")}
-                    {this.state.objDataSelector.selectedval == "2" ? (<Label className="mr-3 ml-3" >Hrs</Label>) : ("")}
+                {this.state.objDataSelector.selectedval == "2" ? (<Label className="mr-3" >Last</Label>) : ("")}
+                {this.state.objDataSelector.selectedval == "2" ? (<ComboBox style={{ width: "100px" }} data={[1, 3, 12, 24, 48]} allowCustom={true}
+                  value={this.state.objDataSelector.refreshHrs}
+                  onChange={(e) => this.handleChange(e, "refreshHrs")} />) : ("")}
+                {this.state.objDataSelector.selectedval == "2" ? (<Label className="mr-3 ml-3" >Hrs</Label>) : ("")}
 
                 {/* <button
                   type="button"

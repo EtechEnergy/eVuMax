@@ -79,7 +79,7 @@ export class ROPSummaryPlot extends Component {
   Warnings: string = ""; //Nishant 27/08/2021
   refreshHrs: number = 24;
   chartFamily: Chart[] = []; //12-11-2021 prath for Group Charts for Multi Chart Zoom/Scroll
-
+  MatchDepthByFormationTops : boolean =true;
   //Cancel all Axios Request
   AxiosSource = axios.CancelToken.source();
   AxiosConfig = { cancelToken: this.AxiosSource.token };
@@ -1030,6 +1030,10 @@ export class ROPSummaryPlot extends Component {
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
 
+      
+      let objParameter = new BrokerParameter("MatchDepthByFormationTops", this.state.objDataSelector.MatchDepthByFormationTops.toString());
+      objBrokerRequest.Parameters.push(objParameter);
+      
       this.AxiosSource = axios.CancelToken.source();
       axios
         .get(_gMod._getData, {
@@ -1164,7 +1168,7 @@ export class ROPSummaryPlot extends Component {
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
-
+    this.MatchDepthByFormationTops = paramDataSelector.MatchDepthByFormationTops;
 
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadConnections.bind(this), 15000);

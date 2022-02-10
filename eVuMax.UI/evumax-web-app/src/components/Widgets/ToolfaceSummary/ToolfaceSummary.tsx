@@ -68,6 +68,7 @@ import DataSelectorInfo from "../../Common/DataSelectorInfo";
 
 
 
+
 let _gMod = new GlobalMod();
 
 // LOG_TYPE=1 THEN 'Time Log' WHEN LOG_TYPE=2 THEN 'Depth Log'
@@ -1563,7 +1564,7 @@ class ToolfaceSummary extends Component {
       objBrokerRequest.Broker = "Toolface";
       objBrokerRequest.Function = "ToolfaceSummary";
 
-      let paramuserid: BrokerParameter = new BrokerParameter("UserId", "admin");
+      let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
       objBrokerRequest.Parameters.push(paramuserid);
 
       let paramwellId: BrokerParameter = new BrokerParameter(
@@ -1658,6 +1659,7 @@ class ToolfaceSummary extends Component {
           if (this.objToolfaceData.MTFData == null) {
             this.objToolfaceData.MTFData = [];
           }
+          debugger;
           if (this.objToolfaceData.adnlChannelsData == null) {
             this.objToolfaceData.adnlChannelsData = [];
           }
@@ -1946,6 +1948,7 @@ class ToolfaceSummary extends Component {
   };
 
   Channel_handleSelected = (item: any) => {
+    debugger;
     const data = this.state.adnlChannels.map((channels) => {
       if (channels.Mnemonic === item.Mnemonic) {
         channels.selected = !channels.selected;
@@ -3911,6 +3914,7 @@ class ToolfaceSummary extends Component {
     this.objUserSettings.ActualDLS = this.state.ActualDLS;
     this.objUserSettings.PlanTVD = this.state.PlanTVD;
     this.objUserSettings.ActualTVD = this.state.ActualTVD;
+    
     this.objUserSettings.adnlChannels = this.state.adnlChannels;
 
     // Settings
@@ -3943,7 +3947,7 @@ class ToolfaceSummary extends Component {
       objBrokerRequest.Broker = "Toolface";
       objBrokerRequest.Function = "SaveUserSettings";
 
-      let paramuserid: BrokerParameter = new BrokerParameter("UserId", "admin");
+      let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
       objBrokerRequest.Parameters.push(paramuserid);
 
       let paramwellId: BrokerParameter = new BrokerParameter(

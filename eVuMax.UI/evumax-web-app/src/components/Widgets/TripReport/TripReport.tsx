@@ -25,7 +25,7 @@ import {
 } from "../../../eVuMaxObjects/Chart/DataSeries";
 import "@progress/kendo-react-layout";
 import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
-import { Window, Button, NumericTextBox, TabStrip, TabStripTab, TimePicker, DropDownList } from "@progress/kendo-react-all";
+import { Window, Button, NumericTextBox, TabStrip, TabStripTab, TimePicker, DropDownList, DropDownButton, ListView, ListViewHeader, Scale } from "@progress/kendo-react-all";
 import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import { confirmAlert } from "react-confirm-alert";
 import * as util from "../../../utilFunctions/utilFunctions";
@@ -35,6 +35,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Checkbox } from "@progress/kendo-react-inputs";
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 import { TripReportSettings } from "./TripReportSettings";
+import { ITEM_SELECTION_ACTION } from "@progress/kendo-react-scheduler/dist/npm/Scheduler";
+import { exit } from "process";
+import { vAlign } from "@progress/kendo-drawing";
 
 
 
@@ -55,8 +58,9 @@ export default class DrlgStandPlot extends React.Component {
     ST_objChartTripSpeed: Chart;
     ST_objChart2_Pie: Chart;
     ST_objChart3BarTripConn: Chart;
+    _selectedScale: any;
 
-
+    CustomItems = ['Axis Scale', 'Axis Customiszation', 'Table Customiszation'];
     //  objLogger: ClientLogger = new ClientLogger("DrlgStandPlot", _gMod._userId);
 
 
@@ -83,7 +87,16 @@ export default class DrlgStandPlot extends React.Component {
         selectedCustomTag: new comboData(),
         grdTags: [] as any,
         UseCustomTags: false,
-        objUserSettings: new TripReportSettings()
+        objUserSettings: new TripReportSettings(),
+
+
+        showAxisScale: false,
+
+        AutoScale: false,
+        scaleList: [] as any,
+        MinValue: 0,
+        MaxValue: 0,
+        Inverted: false
     }
 
     componentWillUnmount() {
@@ -252,7 +265,7 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart4.bottomAxis().bandScale = true; //prath
             this.objChart4.bottomAxis().Min = 100;
             this.objChart4.bottomAxis().Max = 200;
-            this.objChart4.bottomAxis().Title = "Speed with Connection (" + this.state.objPlotData.depthUnit + "/Hr.)";
+            this.objChart4.bottomAxis().Title = "Speed w/o Connection (" + this.state.objPlotData.depthUnit + "/Hr.)";
             this.objChart4.bottomAxis().ShowLabels = true;
             this.objChart4.bottomAxis().ShowTitle = true;
             this.objChart4.bottomAxis().LabelAngel = 90;
@@ -360,7 +373,7 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChart3BarTripConn.MarginBottom = 0; //40;
             this.ST_objChart3BarTripConn.MarginTop = 0; //10;
             this.ST_objChart3BarTripConn.MarginRight = 0; // 10;
-            
+
 
             this.ST_objChart3BarTripConn.initialize();
             this.ST_objChart3BarTripConn.reDraw();
@@ -541,6 +554,26 @@ export default class DrlgStandPlot extends React.Component {
             objAvgConnTime.PointStyle = pointStyle.Circle;
             objAvgConnTime.PointSize = 7;
 
+            // Update Customize Scale 10-Feb-2022
+            let xAxis = this.objChart1.getAxisByID(objAvgConnTime.XAxisId);
+
+            let plotScaleList = Object.values(this.state.objUserSettings.objPlotScaleList);
+            let foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "AVG_TIME1_TRIPS");
+            let xScaleAttr = plotScaleList[foundIndex];
+
+            xAxis.AutoScale = xScaleAttr.AutoScale;
+            xAxis.Inverted = xScaleAttr.Inverted;
+            xAxis.setMinMax(xScaleAttr.MinValue, xScaleAttr.MaxValue);
+
+            let yAxis = this.objChart1.getAxisByID(objAvgConnTime.YAxisId);
+            foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "AVG_TIME1_TIME");
+            let yScaleAttr = plotScaleList[foundIndex];
+
+            yAxis.AutoScale = yScaleAttr.AutoScale;
+            yAxis.Inverted = yScaleAttr.Inverted;
+            yAxis.setMinMax(yScaleAttr.MinValue, yScaleAttr.MaxValue);
+            //===================
+
             this.objChart1.DataSeries.set(objAvgConnTime.Id, objAvgConnTime);
             //Populate data in objAvgConnTime
 
@@ -598,7 +631,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart2.bottomAxis().Visible = true;
 
 
-
             // this.objChart.rightAxis().Visible = true;
 
             this.objChart2.MarginLeft = 0; //10;
@@ -633,6 +665,32 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.Color = this.getColorForBar(sectionCounter);
                 objSeries.XAxisId = this.objChart2.bottomAxis().Id;
                 objSeries.YAxisId = this.objChart2.leftAxis().Id;
+
+
+
+
+                // Update Customize Scale 10-Feb-2022
+                let xAxis = this.objChart2.getAxisByID(objSeries.XAxisId);
+
+                let plotScaleList = Object.values(this.state.objUserSettings.objPlotScaleList);
+                let foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "AVG_TIME2_TRIPS");
+                let xScaleAttr = plotScaleList[foundIndex];
+
+                xAxis.AutoScale = xScaleAttr.AutoScale;
+                xAxis.Inverted = xScaleAttr.Inverted;
+                xAxis.setMinMax(xScaleAttr.MinValue, xScaleAttr.MaxValue);
+
+
+                let yAxis = this.objChart2.getAxisByID(objSeries.YAxisId);
+                foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "AVG_TIME2_TIME");
+                let yScaleAttr = plotScaleList[foundIndex];
+
+                yAxis.AutoScale = yScaleAttr.AutoScale;
+                yAxis.Inverted = yScaleAttr.Inverted;
+                yAxis.setMinMax(yScaleAttr.MinValue, yScaleAttr.MaxValue);
+                //===================
+
+
                 objSeries.ShowInLegend = true;
                 this.objChart2.DataSeries.set(objSeries.Id, objSeries);
                 sectionCounter = sectionCounter + 1;
@@ -725,6 +783,7 @@ export default class DrlgStandPlot extends React.Component {
 
             this.objChart3.reDraw();
 
+
             let uniqueSections: any = [];
             let arrData: any = Object.values(this.state.objPlotData.tripData);
 
@@ -750,6 +809,28 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.Color = this.getColorForBar(sectionCounter);
                 objSeries.XAxisId = this.objChart3.bottomAxis().Id;
                 objSeries.YAxisId = this.objChart3.leftAxis().Id;
+
+                // Update Customize Scale 10-Feb-2022
+                let xAxis = this.objChart3.getAxisByID(objSeries.XAxisId);
+
+                let plotScaleList = Object.values(this.state.objUserSettings.objPlotScaleList);
+                let foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "CONT_WITH_SPEED");
+                let xScaleAttr = plotScaleList[foundIndex];
+
+                xAxis.AutoScale = xScaleAttr.AutoScale;
+                xAxis.Inverted = xScaleAttr.Inverted;
+                xAxis.setMinMax(xScaleAttr.MinValue, xScaleAttr.MaxValue);
+
+                let yAxis = this.objChart3.getAxisByID(objSeries.YAxisId);
+                foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "CONT_WITH_DEPTH");
+                let yScaleAttr = plotScaleList[foundIndex];
+
+                yAxis.AutoScale = yScaleAttr.AutoScale;
+                yAxis.Inverted = yScaleAttr.Inverted;
+                yAxis.setMinMax(yScaleAttr.MinValue, yScaleAttr.MaxValue);
+                //===================
+
+
                 objSeries.ShowInLegend = true;
                 objSeries.PointStyle = pointStyle.Diamond;
                 objSeries.PointSize = 7;
@@ -759,8 +840,6 @@ export default class DrlgStandPlot extends React.Component {
                 this.objChart3.DataSeries.set(objSeries.Id, objSeries);
                 sectionCounter = sectionCounter + 1;
 
-
-                
 
                 // ''Add data to the series
                 for (let index1 = 0; index1 < arrData.length; index1++) {
@@ -779,9 +858,6 @@ export default class DrlgStandPlot extends React.Component {
                     }
                 }
             }
-
-
-
 
 
             this.objChart3.reDraw();
@@ -806,7 +882,7 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart4.bottomAxis().bandScale = false;
             this.objChart4.bottomAxis().Min = 100;
             this.objChart4.bottomAxis().Max = 200;
-            this.objChart4.bottomAxis().Title = "Speed with Connection (" + this.state.objPlotData.depthUnit + "/Hr.)";
+            this.objChart4.bottomAxis().Title = "Speed w/o Connection (" + this.state.objPlotData.depthUnit + "/Hr.)";
             this.objChart4.bottomAxis().ShowLabels = true;
             this.objChart4.bottomAxis().ShowTitle = true;
             this.objChart4.bottomAxis().LabelAngel = 0;
@@ -849,6 +925,30 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.Color = this.getColorForBar(sectionCounter);
                 objSeries.XAxisId = this.objChart4.bottomAxis().Id;
                 objSeries.YAxisId = this.objChart4.leftAxis().Id;
+
+
+
+                // Update Customize Scale 10-Feb-2022
+                let xAxis = this.objChart4.getAxisByID(objSeries.XAxisId);
+
+                let plotScaleList = Object.values(this.state.objUserSettings.objPlotScaleList);
+                let foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "CONT_WO_SPEED");
+                let xScaleAttr = plotScaleList[foundIndex];
+
+                xAxis.AutoScale = xScaleAttr.AutoScale;
+                xAxis.Inverted = xScaleAttr.Inverted;
+                xAxis.setMinMax(xScaleAttr.MinValue, xScaleAttr.MaxValue);
+
+                let yAxis = this.objChart4.getAxisByID(objSeries.YAxisId);
+                foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "CONT_WO_DEPTH");
+                let yScaleAttr = plotScaleList[foundIndex];
+
+                yAxis.AutoScale = yScaleAttr.AutoScale;
+                yAxis.Inverted = yScaleAttr.Inverted;
+                yAxis.setMinMax(yScaleAttr.MinValue, yScaleAttr.MaxValue);
+                //===================
+
+
                 objSeries.ShowInLegend = true;
                 objSeries.PointStyle = pointStyle.Diamond;
                 objSeries.PointWidth = 10;
@@ -996,6 +1096,30 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.Name = "Speed with Connection";
                 objSeries.XAxisId = this.ST_objChartTripSpeed.bottomAxis().Id;
                 objSeries.YAxisId = this.ST_objChartTripSpeed.leftAxis().Id;
+
+                debugger;
+
+                // Update Customize Scale 10-Feb-2022
+                let xAxis = this.ST_objChartTripSpeed.getAxisByID(objSeries.XAxisId);
+
+                let plotScaleList = Object.values(this.state.objUserSettings.objPlotScaleList);
+                let foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "ST_CONT_SPEED");
+                let xScaleAttr = plotScaleList[foundIndex];
+
+                xAxis.AutoScale = xScaleAttr.AutoScale;
+                xAxis.Inverted = xScaleAttr.Inverted;
+                xAxis.setMinMax(xScaleAttr.MinValue, xScaleAttr.MaxValue);
+
+                let yAxis = this.ST_objChartTripSpeed.getAxisByID(objSeries.YAxisId);
+                foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "ST_CONT_DEPTH");
+                let yScaleAttr = plotScaleList[foundIndex];
+
+                yAxis.AutoScale = yScaleAttr.AutoScale;
+                yAxis.Inverted = yScaleAttr.Inverted;
+                yAxis.setMinMax(yScaleAttr.MinValue, yScaleAttr.MaxValue);
+                //===================
+
+
                 objSeries.Type = dataSeriesType.Line;
                 objSeries.LineWidth = 3;
 
@@ -1061,28 +1185,10 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChart3BarTripConn.MarginRight = 0; // 10;
 
 
-            
+
             this.ST_objChart3BarTripConn.onAfterSeriesDraw.subscribe((e, i) => {
                 this.onAfterDrawSeries(e, i);
-              });
-
-            // Dim arrConn() As TripConn = listConn.Values.ToArray
-
-            // ''Array.Sort(arrConn)
-
-            // For i As Integer = 0 To arrConn.Length - 1
-
-            //     Dim objItem As TripConn = arrConn(i)
-
-            //     Bar1.Add((objItem.Time / 60), Math.Round(objItem.Depth).ToString)
-
-            //     If objItem.DayNight = "D" Then
-            //         Bar1.Colors(Bar1.Count - 1) = Color.Orange
-            //     Else
-            //         Bar1.Colors(Bar1.Count - 1) = Color.Black
-            //     End If
-
-            // Next
+            });
 
             let objSeries = new DataSeries();
             objSeries.Id = "STSBar";
@@ -1093,6 +1199,29 @@ export default class DrlgStandPlot extends React.Component {
             objSeries.ColorEach = true;
             objSeries.XAxisId = this.ST_objChart3BarTripConn.bottomAxis().Id;
             objSeries.YAxisId = this.ST_objChart3BarTripConn.leftAxis().Id;
+
+
+            // Update Customize Scale 10-Feb-2022
+            let xAxis = this.ST_objChart3BarTripConn.getAxisByID(objSeries.XAxisId);
+
+            let plotScaleList = Object.values(this.state.objUserSettings.objPlotScaleList);
+            let foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "ST_CONT_SPEED");
+            let xScaleAttr = plotScaleList[foundIndex];
+
+            xAxis.AutoScale = xScaleAttr.AutoScale;
+            xAxis.Inverted = xScaleAttr.Inverted;
+            xAxis.setMinMax(xScaleAttr.MinValue, xScaleAttr.MaxValue);
+
+            let yAxis = this.ST_objChart3BarTripConn.getAxisByID(objSeries.YAxisId);
+            foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "ST_CONN_TIME");
+            let yScaleAttr = plotScaleList[foundIndex];
+
+            yAxis.AutoScale = yScaleAttr.AutoScale;
+            yAxis.Inverted = yScaleAttr.Inverted;
+            yAxis.setMinMax(yScaleAttr.MinValue, yScaleAttr.MaxValue);
+            //===================
+
+
             objSeries.LineWidth = 3;
             objSeries.CurveStyle = curveStyle.normal;
 
@@ -1217,7 +1346,7 @@ export default class DrlgStandPlot extends React.Component {
     }
 
 
- 
+
     loadTripReport = () => {
         try {
 
@@ -1296,6 +1425,7 @@ export default class DrlgStandPlot extends React.Component {
                             });
                         }
 
+                        console.log("objUserSettings", this.state.objUserSettings);
 
                         this.setState({
                             objPlotData: objData_,
@@ -1352,6 +1482,118 @@ export default class DrlgStandPlot extends React.Component {
         }
     }
 
+
+
+    getAxisScale = () => {
+        try {
+
+            this.setState({
+                showAxisScale: true
+            });
+            return;
+
+            Util.StatusInfo("Getting AXis Scale from the server...");
+            objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "Summary.Manager";
+            objBrokerRequest.Broker = "TripReportBroker";
+            objBrokerRequest.Function = "getAxisScale";
+
+
+            objParameter = new BrokerParameter("WellID", this.WellID);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            objParameter = new BrokerParameter("UserID", _gMod._userId);
+            objBrokerRequest.Parameters.push(objParameter);
+            this.AxiosSource = axios.CancelToken.source();
+            axios
+                .get(_gMod._getData, {
+                    cancelToken: this.AxiosSource.token,
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+                .then((res) => {
+                    //////alert("abc");
+
+                    let warnings: string = "";
+                    if (res.data.RequestSuccessfull == false) {
+                        warnings = res.data.Warnings;
+                        if (warnings.trim() != "") {
+                            let warningList = [];
+                            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                            this.setState({
+                                warningMsg: warningList
+                            });
+                        } else {
+                            this.setState({
+                                warningMsg: []
+                            });
+                        }
+                        return;
+                    }
+                    let objData_: any = JSON.parse(res.data.Response);
+
+
+
+                    if (objData_ != "" || objData_ != undefined) {
+
+
+                        this.setState({
+                            scaleList: Object.values(objData_), showAxisScale: true
+                        });
+
+
+
+                        //this.refreshChart();
+                    } else {
+                        warnings += "No Data Available";
+                    }
+
+
+                    //Warnings Notifications
+                    // warnings = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    } else {
+                        this.setState({
+                            warningMsg: []
+                        });
+                    }
+
+                    Util.StatusSuccess("Data successfully retrived.Preparing Plot...");
+                    Util.StatusReady();
+
+                })
+                .catch((error) => {
+
+                    //Util.StatusError(error.message);
+                    Util.StatusReady();
+                    if (error.response) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        // this.errors(error.response.message);
+                    } else if (error.request) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("error.request");
+                    } else {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("Error", error);
+                    }
+                    // return <CustomeNotifications Key="success" Icon={false} />
+                    console.log("rejected");
+                    this.setState({ isProcess: false });
+                });
+
+
+        } catch (error) {
+
+        }
+    }
 
 
 
@@ -1460,10 +1702,10 @@ export default class DrlgStandPlot extends React.Component {
 
 
                     if (objData_ != "" || objData_ != undefined) {
-                        
+
                         this.setState({
                             SingleTripReportData: objData_,
-                            selectedTab:3
+                            selectedTab: 3
                         });
 
 
@@ -1535,7 +1777,7 @@ export default class DrlgStandPlot extends React.Component {
             objParameter = new BrokerParameter("WellID", this.WellID);
             objBrokerRequest.Parameters.push(objParameter);
 
-            
+
             let objUserSettings = utilFunc.CopyObject(this.state.objUserSettings);
             objUserSettings.WellID = this.WellID;
             objUserSettings.UserID = _gMod._userId;
@@ -1634,7 +1876,7 @@ export default class DrlgStandPlot extends React.Component {
     }
     chkCustomTag_Clicked = (checked: any) => {
         try {
-            
+
             this.setState({ UseCustomTags: checked });
             if (checked == false) {
                 this.loadSelectionTagList();
@@ -1647,7 +1889,7 @@ export default class DrlgStandPlot extends React.Component {
 
     handleSettingsChange = (event: any, field?: string) => {
         try {
-            
+
             let value = event.value;
             const name = field;
             let edited = utilFunc.CopyObject(this.state.objUserSettings);
@@ -1663,9 +1905,45 @@ export default class DrlgStandPlot extends React.Component {
         }
     }
 
+
+    handleScaleChange = (event: any, field: string) => {
+        try {
+
+            let value = event.value;
+
+            let arrPlotScaleList = Object.values(this.state.objUserSettings.objPlotScaleList);
+            arrPlotScaleList.map(async (scale) => {
+
+                if (scale.AxisID == this._selectedScale.AxisID) {
+                    this._selectedScale[field] = value;
+                    return;
+                }
+
+            });
+
+            switch (field) {
+                case "AutoScale":
+                    this.setState({ "AutoScale": value });
+                    break;
+                case "MinValue":
+                    this.setState({ "MinValue": value });
+                    break;
+                case "MaxValue":
+                    this.setState({ "MaxValue": value });
+                    break;
+                case "Inverted":
+                    this.setState({ "Inverted": value });
+                    break;
+
+            }
+        } catch (error) {
+
+        }
+    };
+
     saveUserSettingsTags = (byPassExclList?: boolean) => {
         try {
-            
+
             let tagList = this.state.grdTags;
             let localUserSettings: TripReportSettings = new TripReportSettings();// this.state.objUserSettings;
             localUserSettings = utilFunc.CopyObject(this.state.objUserSettings);
@@ -1690,7 +1968,7 @@ export default class DrlgStandPlot extends React.Component {
             }
 
             localUserSettings.TripExclusionList = utilFunc.convertMapToDictionaryJSON(localUserSettings.TripExclusionList, undefined, true);
-
+            localUserSettings.objPlotScaleList = utilFunc.convertMapToDictionaryJSON(Object.values(localUserSettings.objPlotScaleList));
             //send usersetting to serve to save it in DB
 
 
@@ -1763,7 +2041,7 @@ export default class DrlgStandPlot extends React.Component {
     }
     handleChangeDropDown = (event: any, field?: string) => {
         //Clear TagSelected
-        
+
         this.setState({
             selectedTag: [],
         });
@@ -1812,7 +2090,7 @@ export default class DrlgStandPlot extends React.Component {
             .then((res) => {
 
                 const objDataTags = JSON.parse(res.data.Response);
-                
+
                 if (objDataTags.length == 0) {
                     this.setState({
                         grdTags: []
@@ -1859,7 +2137,7 @@ export default class DrlgStandPlot extends React.Component {
 
     onGrdTagSelectionItemChange = (e: any) => {
         try {
-            
+
             e.dataItem[e.field] = e.value;
 
             let edited = utilFunc.CopyObject(this.state.grdTags);
@@ -1880,34 +2158,235 @@ export default class DrlgStandPlot extends React.Component {
 
     onAfterDrawSeries = (e: ChartEventArgs, i: number) => {
         try {
-            
-          d3.select(".tripBar_benchmark").remove();
-            
-          let lnBenchMarkConn =this.state.objUserSettings.BenchmarkTime;
-                
-          if (lnBenchMarkConn > 0) {
-            let x1 = this.ST_objChart3BarTripConn.__chartRect.left;
-            let x2 = this.ST_objChart3BarTripConn.__chartRect.right;
-            let y1 = this.ST_objChart3BarTripConn.leftAxis().ScaleRef(lnBenchMarkConn);
-            let y2 = y1 + 4;
-    
-            this.ST_objChart3BarTripConn.SVGRef.append("g")
-              .attr("class", "tripBar_benchmark")
-              .append("rect")
-              .attr("id", "tripBar_benchmark")
-              .attr("x", x1)
-              .attr("y", y1)
-              .attr("width", x2 - x1)
-              .attr("height", y2 - y1)
-              .style("fill", "red");
-              
-          }
-    
-            
-    
-        } catch (error) { }
-      };
 
+            d3.select(".tripBar_benchmark").remove();
+
+            let lnBenchMarkConn = this.state.objUserSettings.BenchmarkTime;
+
+            if (lnBenchMarkConn > 0) {
+                let x1 = this.ST_objChart3BarTripConn.__chartRect.left;
+                let x2 = this.ST_objChart3BarTripConn.__chartRect.right;
+                let y1 = this.ST_objChart3BarTripConn.leftAxis().ScaleRef(lnBenchMarkConn);
+                let y2 = y1 + 4;
+
+                this.ST_objChart3BarTripConn.SVGRef.append("g")
+                    .attr("class", "tripBar_benchmark")
+                    .append("rect")
+                    .attr("id", "tripBar_benchmark")
+                    .attr("x", x1)
+                    .attr("y", y1)
+                    .attr("width", x2 - x1)
+                    .attr("height", y2 - y1)
+                    .style("fill", "red");
+
+            }
+
+
+
+        } catch (error) { }
+    };
+
+
+    handleCustomSelection = (e) => {
+        try {
+
+
+            switch (e.item) {
+                case 'Axis Scale':
+                    this.getAxisScale();
+                    break;
+                case 'Axis Customiszation':
+                    break;
+
+                case 'Table Customiszation':
+                    break;
+
+                default:
+                    break;
+            }
+        } catch (error) {
+
+        }
+    }
+
+
+    axisScaleHeader = () => {
+        try {
+            return (
+                <ListViewHeader
+                    style={{ fontSize: 14 }}
+                    className="pl-3 pb-1 pt-1 text-theme"
+                >
+                    Axis Scale
+                </ListViewHeader>
+            );
+
+        } catch (error) {
+
+        }
+    }
+
+    axisScaleItemSelected = (item: any) => {
+        try {
+
+
+            // const data = this.state.scaleList.map((scale) => {
+            //     if (scale.PlotID === item.PlotID && scale.AxisID == item.AxisID) {
+            //         scale.selected = !scale.selected;
+            //     } 
+            //     // else {
+            //     //     scale.selected = false;
+            //     // }
+            //     return scale;
+            // });
+            this._selectedScale = item;
+            this.setState({ AutoScale: item.AutoScale, MinValue: item.MinValue, MaxValue: item.MaxValue, Inverted: item.Inverted });
+
+        } catch (error) {
+
+        }
+    }
+
+    axisScaleDetail = (props: any) => {
+        try {
+
+
+            console.log("item", props.dataItem);
+            let item = props.dataItem;
+
+            let classNames = item.selected
+                ? "row  border-bottom align-middle k-state-selected k-listview-content-rows "
+                : "row  border-bottom align-middle k-listview-content-rows";
+
+            return (<div className={classNames} style={{ margin: 0 }}>
+                <div
+                    {...item}
+                    onClick={(e) => this.axisScaleItemSelected(item)}
+                    className="col-10   pl-3"
+                >
+                    <div className="text-theme pt-1" style={{ fontSize: 12 }}>
+                        {item.AxisName}
+                    </div>
+                </div>
+                {/* <div onClick={(e) => this.RemovePrimary_Click(item)}  className="col-2 ">
+                <span
+                      title="Remove Channel"
+                      className="float-right text-right pt-1 pr-1 listview-button"
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faTrash} />
+                    </span>
+                </div> */}
+            </div>);
+        } catch (error) {
+
+        }
+    };
+
+    scale_handleSelected = (item: any) => {
+        try {
+
+            alert("test");
+
+
+
+        } catch (error) {
+
+        }
+    }
+
+    // cmdOk_Click = () => {
+    //     try {
+
+    //         this.state.scaleList.map((scale) => {
+    //             if (scale.AxisID === this._selectedScale.AxisID) {
+    //                 scale.AutoScale = this.state.AutoScale;
+    //                 scale.MinValue = this.state.MinValue;
+    //                 scale.MaxValue = this.state.MaxValue;
+    //                 scale.Inverted = this.state.Inverted;
+    //             }
+    //         });
+
+
+
+    //         this.setState({ showAxisScale: false });
+
+
+    //         //Save Scale
+    //         try {
+    //             Util.StatusInfo("Getting data from the server  ");
+
+    //             let objBrokerRequest = new BrokerRequest();
+    //             objBrokerRequest.Module = "Summary.Manager";
+    //             objBrokerRequest.Broker = "TripReportBroker";
+    //             objBrokerRequest.Function = "saveScaleSettings";
+
+    //             let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
+    //             objBrokerRequest.Parameters.push(paramuserid);
+
+    //             let paramwellId: BrokerParameter = new BrokerParameter(
+    //                 "WellID",
+    //                 this.WellID
+    //             );
+    //             
+    //             objBrokerRequest.Parameters.push(paramwellId);
+    //             let scaleListDic = utilFunc.convertMapToDictionaryJSON(this.state.scaleList);
+
+
+    //             let paramSettingsData: BrokerParameter = new BrokerParameter(
+    //                 "ScaleSettingsData",
+    //                 JSON.stringify(scaleListDic)
+    //             );
+    //             objBrokerRequest.Parameters.push(paramSettingsData);
+
+
+    //             this.AxiosSource = axios.CancelToken.source();
+    //             axios
+    //                 .get(_gMod._performTask, {
+    //                     headers: {
+    //                         Accept: "application/json",
+    //                         "Content-Type": "application/json;charset=UTF-8",
+    //                     },
+    //                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
+    //                 })
+    //                 .then((res) => {
+    //                     alert("success");
+    //                     this.setState({ selected: 0 });
+    //                     //reload all the connections
+    //                     this.loadTripReport();
+    //                     Util.StatusSuccess("Data successfully retrived  ");
+    //                 })
+    //                 .catch((error) => {
+    //                     Util.StatusError(error.message);
+
+    //                     if (error.response) {
+    //                         // return <CustomeNotifications Key="success" Icon={false}  />
+    //                         // this.errors(error.response.message);
+    //                     } else if (error.request) {
+    //                         // return <CustomeNotifications Key="success" Icon={false}  />
+    //                         console.log("error.request");
+    //                     } else {
+    //                         // return <CustomeNotifications Key="success" Icon={false}  />
+    //                         console.log("Error", error);
+    //                     }
+    //                     // return <CustomeNotifications Key="success" Icon={false}  />
+    //                     console.log("rejected");
+    //                 });
+    //         } catch (error) { }
+
+
+    //     } catch (error) {
+
+    //     }
+    // }
+
+    scaleCancel = () => {
+        try {
+
+        } catch (error) {
+
+        }
+    }
     render() {
 
         return (
@@ -1946,7 +2425,7 @@ export default class DrlgStandPlot extends React.Component {
                 <div className="row">
                     <div className="col-lg-12">
                         <div className="float-right">
-                            <button  className="btn-custom btn-custom-primary ml-1" type="button" onClick={() => {
+                            <button className="btn-custom btn-custom-primary ml-1" type="button" onClick={() => {
                                 if (this.state.showSingleTripReport) {
                                     this.setState({ selectedTab: 3 });
                                 } else {
@@ -1968,18 +2447,18 @@ export default class DrlgStandPlot extends React.Component {
                                 Show Single Trip Report</button>
 
                             <button className="btn-custom btn-custom-primary ml-1" type="button" onClick={() => {
-                                
+
                                 console.log("grdTags", this.state.grdTags);
                                 this.loadSelectionTagList();
                             }} > Trips Selection</button>
 
 
+
+                            <DropDownButton items={this.CustomItems} text="Customize" onItemClick={this.handleCustomSelection} /> &nbsp;
                         </div>
 
                     </div>
                 </div>
-
-
 
 
                 <TabStrip
@@ -2030,7 +2509,7 @@ export default class DrlgStandPlot extends React.Component {
                                     width={80}
                                     cell={(props) => (
                                         <td style={{ backgroundColor: props.dataItem.COL_SECTION_BKCOLOR }} className="summaryLabelTripReport">
-                                            <span style={{color:"black"}}>
+                                            <span style={{ color: "black" }}>
                                                 {" "}
                                                 {props.dataItem.COL_SECTION}{" "}
                                             </span>
@@ -2045,7 +2524,7 @@ export default class DrlgStandPlot extends React.Component {
                                     width={100}
                                     cell={(props) => (
                                         <td style={{ backgroundColor: props.dataItem.COL_RUN_BKCOLOR }} className="summaryLabelTripReport">
-                                            <span style={{color:"black"}}>
+                                            <span style={{ color: "black" }}>
                                                 {" "}
                                                 {props.dataItem.COL_RUN}{" "}
                                             </span>
@@ -2812,7 +3291,7 @@ export default class DrlgStandPlot extends React.Component {
                 {this.state.showTagListDialog && <Window
                     title={"Tag Selection"}
                     onClose={() => {
-                        
+
                         this.setState({
                             grdTags: this.state.objPlotData.tagList,
                             showTagListDialog: false,
@@ -3019,6 +3498,148 @@ export default class DrlgStandPlot extends React.Component {
 
                     </div>
                 </Window>}
+
+
+                {
+
+
+                    this.state.showAxisScale && <Window
+                        title={"Axis Scale"}
+                        onClose={() => {
+                            this.setState({
+                                //grdTags: this.state.objPlotData.tagList,
+                                showAxisScale: false,
+                            });
+                        }}
+                        modal={true}
+                        height={500}
+                        width={850}
+                    >
+                        <div className='col k-pr-2'>
+
+                            <div className="container">
+                                <div className="row mt-5">
+                                    <div className="col-sm">
+                                        <ListView
+                                            //data={this.state.scaleList}
+                                            data={Object.values(this.state.objUserSettings.objPlotScaleList)}
+                                            style={{ width: "90%", height: "100%" }}
+                                            item={(props) => (
+                                                <this.axisScaleDetail
+                                                    {...props}
+                                                    handleSelected={this.scale_handleSelected}
+                                                />
+                                            )}
+
+                                            header={this.axisScaleHeader}
+                                        />
+                                    </div>
+                                    <div className="col-sm mt-2">
+
+
+                                        <div>
+                                            <label style={{ backgroundColor: "green", paddingLeft: "20px", fontSize: "18px", height: "42px", display: "flex", alignItems: "center" }}>
+                                                {this._selectedScale != undefined ? this._selectedScale.AxisName : "Select Scale from List"}
+                                            </label>
+                                        </div>
+
+                                        <div>
+                                            <Checkbox
+                                                name="autoScale"
+                                                label='Auto Scale'
+                                                checked={this.state.AutoScale}
+                                                onChange={(e) => { this.handleScaleChange(e, "AutoScale") }}
+                                            />
+                                        </div>
+                                        <div className="col-sm mt-2">
+                                            <label >
+                                                Min Value
+                                            </label>
+                                            <span style={{ paddingLeft: "15px" }}>
+                                                <NumericTextBox
+                                                    format="n2"
+                                                    width="80px"
+                                                    value={this.state.MinValue}
+                                                    onChange={(e) => { this.handleScaleChange(e, "MinValue") }}
+                                                //   onChange={(event) => {
+                                                //     this.setState({ scaleMin: event.target.value });
+                                                //   }}
+                                                />
+                                            </span>
+                                        </div>
+
+                                        <div className="col-sm mt-2">
+                                            <label className="">
+                                                Max Value
+                                            </label>
+                                            <span style={{ paddingLeft: "15px" }}>
+                                                <NumericTextBox
+                                                    format="n2"
+                                                    width="80px"
+                                                    value={this.state.MaxValue}
+                                                    //value={this.state.objUserSettings.objPlotScaleList.MaxValue}
+                                                    onChange={(e) => { this.handleScaleChange(e, "MaxValue") }}
+                                                // onChange={(event) => {
+                                                //     this.setState({ scaleMax: event.target.value });
+                                                //   }}
+                                                />
+                                            </span>
+                                        </div>
+
+
+
+                                        <div className="mt-2">
+                                            <Checkbox
+                                                name="inverted"
+                                                label='Inverted'
+                                                checked={this.state.Inverted}
+                                                onChange={(e) => { this.handleScaleChange(e, "Inverted") }}
+                                            // onChange={(event) => {
+                                            //     this.setState({Isinverted: event.value})}
+                                            // }
+                                            />
+                                        </div>
+
+                                        <div className="mt-5">
+                                            <Button
+                                                id="cmdOk"
+                                                onClick={() => {
+
+                                                    this.saveUserSettingsTags(true);
+                                                    this.setState({
+                                                        //grdTags: this.state.objPlotData.tagList,
+                                                        showAxisScale: false,
+                                                    });
+                                                    //this.cmdOk_Click();
+                                                }}
+                                            >
+                                                Ok
+                                            </Button>
+                                            <Button className="ml-3"
+                                                id="cmdCancel"
+                                                onClick={() => {
+                                                    // this.scaleCancel();
+                                                    this.setState({
+                                                        //grdTags: this.state.objPlotData.tagList,
+                                                        showAxisScale: false,
+                                                    });
+                                                }}
+                                            >
+                                                Close
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </Window>
+
+                }
             </>
         )
     }

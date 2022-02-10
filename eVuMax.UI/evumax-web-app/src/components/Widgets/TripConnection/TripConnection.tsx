@@ -269,7 +269,7 @@ class TripConnSummary extends Component {
             objBrokerRequest.Broker = "TripConn";
             objBrokerRequest.Function = "TripConnSummary";
 
-            let paramuserid: BrokerParameter = new BrokerParameter("UserId", "admin");
+            let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
             objBrokerRequest.Parameters.push(paramuserid);
 
             let paramwellId: BrokerParameter = new BrokerParameter(
@@ -363,7 +363,7 @@ class TripConnSummary extends Component {
             this.objUserSettings.TargetTime = this.state.TargetTime;
             this.objUserSettings.RigCost = this.state.RigCost;
 
-            let paramuserid: BrokerParameter = new BrokerParameter("UserId", "admin");
+            let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
             objBrokerRequest.Parameters.push(paramuserid);
 
             let paramwellId: BrokerParameter = new BrokerParameter(

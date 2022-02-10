@@ -55,7 +55,7 @@ class STDChannels extends PureComponent<IProps>{
       objBrokerRequest.Broker = "Common.Functions";
       objBrokerRequest.Function = "getTable";
 
-      let paramuserid: BrokerParameter = new BrokerParameter("UserId", "admin");
+      let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
       objBrokerRequest.Parameters.push(paramuserid);
 
       let SQL = "";

@@ -112,7 +112,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         public Dictionary<string, LogInfo> timeLogs = new Dictionary<string, LogInfo>();
 
         // '### 3.9.4 FIX ### Variable
-        public bool MatchDepthByFormationTops = true;
+        public bool MatchDepthByFormationTops = false;  //Changed by prath on 07-Feb-2022 as discussed with Niitin
 
         public bool ShowMainRotarySmoothCurve = false;
         public bool ShowMainSlideSmoothCurve = false;

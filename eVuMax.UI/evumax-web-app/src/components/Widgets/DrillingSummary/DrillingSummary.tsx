@@ -97,6 +97,7 @@ export class DrillingSummary extends Component {
   //Cancel all Axios Request
   AxiosSource = axios.CancelToken.source();
   AxiosConfig = { cancelToken: this.AxiosSource.token };
+  MatchDepthByFormationTops : boolean =true;
 
   componentWillUnmount() {
     this.AxiosSource.cancel();
@@ -168,6 +169,7 @@ export class DrillingSummary extends Component {
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
+    this.MatchDepthByFormationTops = paramDataSelector.MatchDepthByFormationTops;
 
     //alert(this.state.isRealTime);
 
@@ -1319,10 +1321,15 @@ export class DrillingSummary extends Component {
         "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
+    
+      let objParameter = new BrokerParameter("MatchDepthByFormationTops", this.state.objDataSelector.MatchDepthByFormationTops.toString());
+      objBrokerRequest.Parameters.push(objParameter);
 
       this.objLogger.SendLog("loadDrlgSummary BrokerParameters: " + JSON.stringify(objBrokerRequest.Parameters));
 
       //axios.get(endpointUrl, config).then((res) => {})
+
+      
 
       this.AxiosSource = axios.CancelToken.source();
       axios

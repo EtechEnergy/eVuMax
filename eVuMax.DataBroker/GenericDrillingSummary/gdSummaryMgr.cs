@@ -57,6 +57,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     double fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                     double toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
                     bool showOffsetWell = bool.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("showOffsetWell")).FirstOrDefault().ParamValue.ToString());
+                    bool MatchDepthByFormationTops = bool.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("MatchDepthByFormationTops")).FirstOrDefault().ParamValue.ToString());
                     string SideTrackKey = "-999";
 
 
@@ -134,7 +135,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     }
 
 
-                    objSummary.objDataSelection.showOffsetWell = showOffsetWell;    //Prath 10-Jan-2021
+                    objSummary.objDataSelection.showOffsetWell = showOffsetWell;    //Prath 10-Jan-2022
+                    objSummary.objDataSelection.MatchDepthByFormationTops = MatchDepthByFormationTops; // Prath 07-Feb-2022
 
                     //Save UserSettings to DB
                     UserSettings.UserSettingsMgr objSettingsMgr = new UserSettings.UserSettingsMgr(paramRequest.objDataService);

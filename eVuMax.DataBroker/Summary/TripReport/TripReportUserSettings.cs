@@ -35,6 +35,9 @@ namespace eVuMax.DataBroker.Summary.TripReport
         
         public string Warnings = "";
         public Dictionary<Int32, Int32> TripExclusionList = new Dictionary<Int32, Int32>();
+        public Dictionary<int, PlotAxisScale> objPlotScaleList = new Dictionary<int, PlotAxisScale>();
+
+
         //public string[] TripExclusionListStr; 
 
 
@@ -99,6 +102,172 @@ namespace eVuMax.DataBroker.Summary.TripReport
                     //    }
                     //}
                     TripExclusionList = objLocalSettings.TripExclusionList;
+                    if (objLocalSettings.objPlotScaleList == null || objLocalSettings.objPlotScaleList.Count==0)
+                    {
+                        if (!objDataService.IsRecordExist("SELECT AXIS_ID FROM VMX_AXIS_SCALES WHERE WELL_ID='" + WellID + "' AND PLOT_ID='" + PlotID +"'"))
+                        {
+                            //// '//First check if axis customization exist ... If not then create one
+                            Dictionary<string, PlotAxisScale> list = new Dictionary<string, PlotAxisScale>();
+
+                            PlotAxisScale objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisID = "AVG_TIME1_TIME";
+                            objDefaultAxis.AxisName = "Conn. Time Line Chart - Time";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(1, objDefaultAxis);
+
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Conn. Time Line Chart - Trips";
+                            objDefaultAxis.AxisID = "AVG_TIME1_TRIPS";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(2, objDefaultAxis);
+
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Conn. Time Bar Chart - Time";
+                            objDefaultAxis.AxisID = "AVG_TIME2_TIME";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(3, objDefaultAxis);
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Conn. Time Bar Chart - Trips";
+                            objDefaultAxis.AxisID = "AVG_TIME2_TRIPS";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(4, objDefaultAxis);
+
+                            
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Speed with Conn. - Depth";
+                            objDefaultAxis.AxisID = "CONT_WITH_DEPTH";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(5, objDefaultAxis);
+
+                            
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Speed with Conn. - Speed";
+                            objDefaultAxis.AxisID = "CONT_WITH_SPEED";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(6, objDefaultAxis);
+                            
+
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Speed w/o Conn. - Depth";
+                            objDefaultAxis.AxisID = "CONT_WO_DEPTH";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(7, objDefaultAxis);
+
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Speed w/o Conn. - Speed";
+                            objDefaultAxis.AxisID = "CONT_WO_SPEED";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(8, objDefaultAxis);
+
+
+
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Single Trip - Depth";
+                            objDefaultAxis.AxisID = "ST_CONT_DEPTH";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(9, objDefaultAxis);
+
+                            
+
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Single Trip - Speed";
+                            objDefaultAxis.AxisID = "ST_CONT_SPEED";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(10, objDefaultAxis);
+
+
+                            objDefaultAxis = new PlotAxisScale();
+                            objDefaultAxis.PlotID = PlotID;
+                            objDefaultAxis.AxisName = "Single Trip - Conn. Time";
+                            objDefaultAxis.AxisID = "ST_CONN_TIME";
+                            objDefaultAxis.AutoScale = true;
+                            objDefaultAxis.MinValue = 0;
+                            objDefaultAxis.MaxValue = 0;
+                            objDefaultAxis.Inverted = false;
+                            objPlotScaleList.Add(11, objDefaultAxis);
+
+                            
+                        }
+
+                        DataTable objData = objDataService.getTable("SELECT * FROM VMX_AXIS_SCALES WHERE WELL_ID='" + WellID + "' AND PLOT_ID='" + PlotID+"'");
+
+                        if (objData.Rows.Count > 0)
+                        {
+                            int counter = 1;
+                            foreach (DataRow objRow in objData.Rows)
+                            {
+                                PlotAxisScale objAxisScale = new PlotAxisScale();
+
+                                objAxisScale.AxisID = DataService.checkNull(objRow["AXIS_ID"],"").ToString();
+                                objAxisScale.AutoScale = Convert.ToBoolean(Global.Iif(Convert.ToInt32(objRow["AUTO_SCALE"]) == 1, true, false));
+                                objAxisScale.MinValue = Convert.ToDouble(DataService.checkNull(objRow["MIN_VALUE"], 0));
+                                objAxisScale.MaxValue = Convert.ToDouble(DataService.checkNull(objRow["MAX_VALUE"], 0));
+                                objAxisScale.Inverted = Convert.ToBoolean(Global.Iif(Convert.ToInt32(objRow["INVERTED"]) == 1, true, false));
+                                objAxisScale.PlotID = PlotID;
+                                objAxisScale.AxisName = getScaleName(objAxisScale.AxisID);
+                                objPlotScaleList.Add(counter, objAxisScale);
+                                counter++;
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        objPlotScaleList = objLocalSettings.objPlotScaleList;
+                    }
+                }
+                else
+                {
+                    //Pending
                 }
                 
 
@@ -108,6 +277,67 @@ namespace eVuMax.DataBroker.Summary.TripReport
             {
                 Warnings += ex.Message + ex.StackTrace;
 
+            }
+        }
+
+        public string getScaleName(string paramAxisID)
+        {
+            try
+            {
+                string ScaleName = "";
+
+                switch (paramAxisID)
+                {
+                    case "AVG_TIME1_TIME":
+                        ScaleName = "Conn. Time Line Chart - Time";
+                        break;
+                    case "AVG_TIME1_TRIPS":
+                        ScaleName = "Conn. Time Line Chart - Trips";
+                        break;
+                    case "AVG_TIME2_TIME":
+                        ScaleName = "Conn. Time Bar Chart - Time";
+                        break;
+                    case "AVG_TIME2_TRIPS":
+                        ScaleName = "Conn. Time Bar Chart - Trips";
+                        break;
+                    case "CONT_WITH_DEPTH":
+                        ScaleName = "Speed with Conn. - Depth";
+                        break;
+                    case "CONT_WITH_SPEED":
+                        ScaleName = "Speed with Conn. - Speed";
+                        break;
+                    case "CONT_WO_DEPTH":
+                        ScaleName = "Speed w/o Conn. - Depth";
+                        break;
+                    case "CONT_WO_SPEED":
+                        ScaleName = "Speed w/o Conn. - Speed";
+                        break;
+                 
+                    
+                    
+                    
+                    case "ST_CONN_TIME":
+                        ScaleName = "Single Trip - Conn. Time";
+                        break;
+
+
+                    case "ST_CONT_DEPTH":
+                        ScaleName = "Single Trip - Depth";
+                        break;
+                    case "ST_CONT_SPEED":
+                        ScaleName = "Single Trip - Speed";
+                        break;
+                    default:
+                        ScaleName = "undefined";
+                        break;
+                }
+
+                return ScaleName;
+            }
+            catch (Exception ex)
+            {
+
+                return "Error";
             }
         }
 
@@ -127,6 +357,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 objTripReportSettings.BenchmarkTime= BenchmarkTime;
                 objTripReportSettings.MaxConnTime= MaxConnTime;
                 objTripReportSettings.DepthInterval= DepthInterval;
+                
                 
             }
             catch (Exception ex)

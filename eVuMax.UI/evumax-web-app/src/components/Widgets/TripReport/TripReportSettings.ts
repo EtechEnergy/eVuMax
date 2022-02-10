@@ -21,6 +21,7 @@ export class TripReportSettings {
     public taglist:string[] = [];
     public TripExclusionList:any[] =[];
     public TripExclusionListStr:any[] = [];
-
+    public objPlotScaleList:any[] = [];
+    
     
 }

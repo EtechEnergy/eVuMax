@@ -74,6 +74,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
   toDate: Date = null;
   fromDepth: number = 0;
   toDepth: number = 0;
+  MatchDepthByFormationTops : boolean =true;
   Warnings: string = ""; //Nishant 27/08/2021
   refreshHrs: number = 24;
   randNumber = Number(Math.random() * 1000).toFixed(0);
@@ -105,7 +106,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
       let isRealtimeRunning = sessionStorage.getItem("realCustomDrillingSummary");
       if (isRealtimeRunning == "true") {
         await this.setState({ isRealTime: !this.state.isRealTime });
-        this.intervalID = setInterval(this.loadSummary.bind(this), 8000);
+        this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
       }
     } catch (error) {
 
@@ -171,6 +172,11 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
       objParameter = new BrokerParameter("showOffsetWell", this.state.showOffsetWell.toString());
       objBrokerRequest.Parameters.push(objParameter);
+
+      objParameter = new BrokerParameter("MatchDepthByFormationTops", this.state.objDataSelector.MatchDepthByFormationTops.toString());
+      objBrokerRequest.Parameters.push(objParameter);
+      
+      
 
       axios
         .get(_gMod._getData, {
@@ -455,7 +461,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
           objAxis.AutoScale = true; // as in toolface objSummaryAxis.Automatic;
           objAxis.Position = axisPosition.left;
-          debugger;
+          
 
           objAxis.IsDateTime = false;
           objAxis.bandScale = false; //as in Toolface
@@ -679,7 +685,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objSeries.RoadmapDepth = objDataSeries.roadmapDepth;
           objSeries.RoadmapMin = objDataSeries.roadmapMin;
           objSeries.RoadmapMax = objDataSeries.roadmapMax;
-
+          debugger;
 
 
           switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar
@@ -743,7 +749,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
 
           //Populate the data series with this data
-          debugger;
+          
           objSeries.Data.length = 0;
     //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
 
@@ -766,6 +772,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           }
           //==========================================
           
+          //alert( objSeries.Name + " ----> " + objDataSeries.xDataBuffer.length);
 
           if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
 
@@ -820,7 +827,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
         this.objChart.initialize();
 
-        debugger;
+        
         this.objChart.reDraw();
 
       }
@@ -932,8 +939,6 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
     // loadSummary();
 
-
-
     let realtimeStatus: boolean = paramRefreshHrs;
     paramDataSelector.needForceReload = true;
 
@@ -949,8 +954,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
     this.fromDepth = paramDataSelector.fromDepth;
     this.toDepth = paramDataSelector.toDepth;
     this.refreshHrs = paramDataSelector.refreshHrs;
+    this.MatchDepthByFormationTops = paramDataSelector.MatchDepthByFormationTops;
     if (this.state.isRealTime) {
-      this.intervalID = setInterval(this.loadSummary.bind(this), 8000);
+      this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
     } else {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
@@ -1477,7 +1483,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
     if (this.state.isRealTime) {
       //Added condition on 02-02-2022
       this.state.objDataSelector.needForceReload = false;
-      this.intervalID = setInterval(this.loadSummary.bind(this), 8000);
+      this.intervalID = setInterval(this.loadSummary.bind(this), 15000);
     } else {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);

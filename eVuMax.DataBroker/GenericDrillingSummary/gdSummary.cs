@@ -535,6 +535,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 // '#**** The Offset Well will always be filtered by Hole Depth because of DateTime differences ... ***
                 DataSelection objDataSelection = new DataSelection(wellID, objRequest);
 
+
+                 objDataSelection.MatchDepthByFormationTops  =  this.objDataSelection.MatchDepthByFormationTops;  //Prath on 07-Feb-2022 for MatchDepthByFormationTops setting from Frontend
+
                 if (objDataSelection.selectionType == DataSelection.sPlotSelectionType.FormationTops)
                 {
                     string strTopsFilter = objDataSelection.getTopsFilter(__WellID);

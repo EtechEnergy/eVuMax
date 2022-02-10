@@ -183,6 +183,7 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
                 int refreshHrs = 24;
                 isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
                 refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
+                bool MatchDepthByFormationTops = bool.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("MatchDepthByFormationTops")).FirstOrDefault().ParamValue.ToString());
 
                 if (isRealTime)
                 {
@@ -493,6 +494,10 @@ namespace eVuMax.DataBroker.Summary.ROPSummary
 
                  
                     objUserSetting = loadSettings(paramRequest);
+                    
+                    // Added following 1 line by prath on 07-Feb-2022
+                    objUserSetting.MatchDepthByFormationTops = bool.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("MatchDepthByFormationTops")).FirstOrDefault().ParamValue.ToString());
+
                     DataTable objData = Common.DownSample.downSampleByDepthEx(CData, "DEPTH", yMnemonic, 0, objUserSetting.NoOfDataPoints);
 
                     if (objData.Rows.Count > 0)

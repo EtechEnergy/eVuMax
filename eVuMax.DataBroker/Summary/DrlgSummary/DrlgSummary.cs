@@ -142,7 +142,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
                 fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
                 toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
-
+                bool MatchDepthByFormationTops = bool.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("MatchDepthByFormationTops")).FirstOrDefault().ParamValue.ToString());
+                //Prath added on 07-Feb-2022
+                this.MatchDepthByFormationTops = MatchDepthByFormationTops;
 
                 bool isRealTime = false;
                 int refreshHrs = 24;
