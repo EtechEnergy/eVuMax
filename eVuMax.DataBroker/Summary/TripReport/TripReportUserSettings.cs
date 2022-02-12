@@ -590,7 +590,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 string paramWellID = objUserSetting.WellID;
                 DataTable tagList = new DataTable();
 
-                tagList.Columns.Add("COL_SELECTION");
+                tagList.Columns.Add("COL_SELECTION", typeof(bool));
                 tagList.Columns.Add("COL_PHASE_INDEX");
                 tagList.Columns.Add("COL_PHASE_ID");
                 tagList.Columns.Add("COL_PHASE_NAME");

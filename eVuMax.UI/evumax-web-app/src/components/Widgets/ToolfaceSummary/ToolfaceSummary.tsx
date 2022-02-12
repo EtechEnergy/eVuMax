@@ -1409,6 +1409,7 @@ class ToolfaceSummary extends Component {
   displayData = async () => {
     try {
       this.objUserSettings = JSON.parse(this.objToolfaceData.userSettings);
+      
 
 
       let newGeoDrlgWindowData: any = Object.values(
@@ -1564,7 +1565,7 @@ class ToolfaceSummary extends Component {
       objBrokerRequest.Broker = "Toolface";
       objBrokerRequest.Function = "ToolfaceSummary";
 
-      let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
+      let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);//_gMod._userId
       objBrokerRequest.Parameters.push(paramuserid);
 
       let paramwellId: BrokerParameter = new BrokerParameter(
@@ -1659,11 +1660,11 @@ class ToolfaceSummary extends Component {
           if (this.objToolfaceData.MTFData == null) {
             this.objToolfaceData.MTFData = [];
           }
-          debugger;
+          
           if (this.objToolfaceData.adnlChannelsData == null) {
             this.objToolfaceData.adnlChannelsData = [];
           }
-
+          
 
 
           //Warnings Notifications
@@ -1948,7 +1949,7 @@ class ToolfaceSummary extends Component {
   };
 
   Channel_handleSelected = (item: any) => {
-    debugger;
+    
     const data = this.state.adnlChannels.map((channels) => {
       if (channels.Mnemonic === item.Mnemonic) {
         channels.selected = !channels.selected;
@@ -3947,7 +3948,7 @@ class ToolfaceSummary extends Component {
       objBrokerRequest.Broker = "Toolface";
       objBrokerRequest.Function = "SaveUserSettings";
 
-      let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
+      let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId); //_gMod._userId
       objBrokerRequest.Parameters.push(paramuserid);
 
       let paramwellId: BrokerParameter = new BrokerParameter(

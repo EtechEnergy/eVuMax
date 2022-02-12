@@ -15,8 +15,6 @@ import { formatNumber, parseDate } from "@telerik/kendo-intl";
 import { faListAlt, faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
 
-
-
 import moment from "moment";
 import {
     DataSeries,
@@ -38,14 +36,11 @@ import { TripReportSettings } from "./TripReportSettings";
 import { ITEM_SELECTION_ACTION } from "@progress/kendo-react-scheduler/dist/npm/Scheduler";
 import { exit } from "process";
 import { vAlign } from "@progress/kendo-drawing";
-
-
+import { ObjectFlags } from "typescript";
 
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
 let objParameter = new BrokerParameter("null", "null");
-
-
 
 export default class DrlgStandPlot extends React.Component {
 
@@ -60,8 +55,7 @@ export default class DrlgStandPlot extends React.Component {
     ST_objChart3BarTripConn: Chart;
     _selectedScale: any;
 
-    CustomItems = ['Axis Scale', 'Axis Customiszation', 'Table Customiszation'];
-    //  objLogger: ClientLogger = new ClientLogger("DrlgStandPlot", _gMod._userId);
+    CustomItems = ['Axis Scale'];
 
 
     constructor(props: any) {
@@ -69,10 +63,7 @@ export default class DrlgStandPlot extends React.Component {
         this.WellID = props.match.params.WellId;
     }
 
-
     AxiosSource = axios.CancelToken.source();
-
-
 
     state = {
         warningMsg: [],
@@ -152,14 +143,10 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart1.bottomAxis().IsDateTime = false;
             this.objChart1.bottomAxis().Visible = true;
 
-            // this.objChart.rightAxis().Visible = true;
-
             this.objChart1.MarginLeft = 0; //10;
             this.objChart1.MarginBottom = 0; //40;
             this.objChart1.MarginTop = 0; //10;
             this.objChart1.MarginRight = 0; // 10;
-
-
 
             this.objChart1.initialize();
             this.objChart1.reDraw();
@@ -196,8 +183,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart2.bottomAxis().IsDateTime = false;
             this.objChart2.bottomAxis().Visible = true;
 
-            // this.objChart.rightAxis().Visible = true;
-
             this.objChart2.MarginLeft = 0; //10;
             this.objChart2.MarginBottom = 0; //40;
             this.objChart2.MarginTop = 0; //10;
@@ -206,7 +191,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart2.initialize();
             this.objChart2.reDraw();
 
-            ////ContiTripSpeedWithConnChart
             this.objChart3 = new Chart(this, "TripReport3");
             this.objChart3.ContainerId = "ContiTripSpeedWithConnChart";
             this.objChart3.Title = "Continuous Tripping Speed with Connection";
@@ -232,8 +216,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart3.bottomAxis().ShowSelector = false;
             this.objChart3.bottomAxis().IsDateTime = false;
             this.objChart3.bottomAxis().Visible = true;
-
-            // this.objChart.rightAxis().Visible = true;
 
             this.objChart3.MarginLeft = 0; //10;
             this.objChart3.MarginBottom = 0; //40;
@@ -273,8 +255,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart4.bottomAxis().IsDateTime = false;
             this.objChart4.bottomAxis().Visible = true;
 
-            // this.objChart.rightAxis().Visible = true;
-
             this.objChart4.MarginLeft = 0; //10;
             this.objChart4.MarginBottom = 0; //40;
             this.objChart4.MarginTop = 0; //10;
@@ -289,7 +269,6 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChart2_Pie.ContainerId = "CurrentPie_Chart";
 
             //initialize chart Pie Chart
-
             this.ST_objChart2_Pie.MarginLeft = 0;
             this.ST_objChart2_Pie.MarginBottom = 0;
             this.ST_objChart2_Pie.MarginTop = 0;
@@ -297,8 +276,6 @@ export default class DrlgStandPlot extends React.Component {
 
             this.ST_objChart2_Pie.initialize();
             this.ST_objChart2_Pie.reDraw();
-
-
 
             ////ChartTripSpeed Chart
             this.ST_objChartTripSpeed = new Chart(this, "ChartTripSpeed1");
@@ -326,20 +303,13 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChartTripSpeed.bottomAxis().IsDateTime = false;
             this.ST_objChartTripSpeed.bottomAxis().Visible = true;
 
-
-
             this.ST_objChartTripSpeed.MarginLeft = 0; //10;
             this.ST_objChartTripSpeed.MarginBottom = 0; //40;
             this.ST_objChartTripSpeed.MarginTop = 0; //10;
             this.ST_objChartTripSpeed.MarginRight = 0; // 10;
 
-
-
             this.ST_objChartTripSpeed.initialize();
             this.ST_objChartTripSpeed.reDraw();
-
-
-
 
             ////Bar TripConn Chart
             this.ST_objChart3BarTripConn = new Chart(this, "ChartTripConnectionsBar1");
@@ -432,9 +402,6 @@ export default class DrlgStandPlot extends React.Component {
 
                             let y1 = this.objChart1.leftAxis().ScaleRef(sectionAvg);
                             let y2 = y1;
-
-
-
                             this.objChart1.SVGRect
                                 //.attr("transform", "translate(" + x1 + "," + y1 + ") ")    
 
@@ -446,12 +413,7 @@ export default class DrlgStandPlot extends React.Component {
                                 .attr("y1", y1)      // y position of the first end of the line
                                 .attr("x2", x2)     // x position of the second end of the line
                                 .attr("y2", y2);    // y position of the second end of the line
-
-
-
                         }
-
-
                         // '//Re-initialize the counters
                         startIndex = i;
                     }
@@ -460,14 +422,10 @@ export default class DrlgStandPlot extends React.Component {
                 RunningSection = arrData[i].PhaseName;
             }
 
-
-
             if (startIndex < arrData.length - 1) {
                 endIndex = arrData.length - 1;
 
                 if (Math.abs(startIndex - endIndex) > 0) {
-
-
                     let sectionAvg = 0;
                     let sumAvgTime = 0;
                     let counterAvgTime = 0;
@@ -488,7 +446,6 @@ export default class DrlgStandPlot extends React.Component {
                     let y2 = y1;
 
                     this.objChart1.SVGRect.append("g")
-                        //.attr("transform", "translate(" + x1 + "," + y1 + ") ")    
                         .append("line")
                         .attr("class", "avgTimeLine")
                         .attr("stroke", "red")
@@ -505,9 +462,6 @@ export default class DrlgStandPlot extends React.Component {
 
     }
 
-
-
-
     plotPage2Charts = () => {
 
         try {
@@ -515,8 +469,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart1.MarginTop = 20; //10;
             this.objChart1.initialize();
 
-
-            //Clear all the series
             this.objChart1.DataSeries.clear();
             this.objChart1.ShowLegend = false;
             this.objChart1.updateChart();
@@ -536,9 +488,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart1.bottomAxis().ShowTitle = true;
             this.objChart1.bottomAxis().Visible = true;
             this.objChart1.bottomAxis().PaddingMin = 10;
-
-            //this.objChart1.initialize();
-
 
             let objAvgConnTime = new DataSeries();
             objAvgConnTime.Id = "AvgConnTime";
@@ -591,7 +540,6 @@ export default class DrlgStandPlot extends React.Component {
 
             }
 
-
             this.objChart1.reDraw();
             this.plotAvgConnBarChart();
 
@@ -602,10 +550,6 @@ export default class DrlgStandPlot extends React.Component {
     plotAvgConnBarChart = () => {
         try {
 
-            //TripConnChart
-            //  this.objChart2 = new Chart(this, "TripReport");
-            //  this.objChart2.ContainerId = "TripConnChart";
-            //  this.objChart2.Title = "Tripping Connection Times";
             this.objChart2.updateChart();
 
             this.objChart2.leftAxis().AutoScale = true;
@@ -630,9 +574,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart2.bottomAxis().IsDateTime = false;
             this.objChart2.bottomAxis().Visible = true;
 
-
-            // this.objChart.rightAxis().Visible = true;
-
             this.objChart2.MarginLeft = 0; //10;
             this.objChart2.MarginBottom = 0; //40;
             this.objChart2.MarginTop = 10; //10;
@@ -651,7 +592,6 @@ export default class DrlgStandPlot extends React.Component {
                 }
             }
 
-
             let sectionCounter: number = 0;
             let tripCounter: number = 0;
             for (let index = 0; index < uniqueSections.length; index++) {
@@ -665,10 +605,6 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.Color = this.getColorForBar(sectionCounter);
                 objSeries.XAxisId = this.objChart2.bottomAxis().Id;
                 objSeries.YAxisId = this.objChart2.leftAxis().Id;
-
-
-
-
                 // Update Customize Scale 10-Feb-2022
                 let xAxis = this.objChart2.getAxisByID(objSeries.XAxisId);
 
@@ -679,7 +615,6 @@ export default class DrlgStandPlot extends React.Component {
                 xAxis.AutoScale = xScaleAttr.AutoScale;
                 xAxis.Inverted = xScaleAttr.Inverted;
                 xAxis.setMinMax(xScaleAttr.MinValue, xScaleAttr.MaxValue);
-
 
                 let yAxis = this.objChart2.getAxisByID(objSeries.YAxisId);
                 foundIndex = plotScaleList.findIndex((e: any) => e.AxisID.trim().toUpperCase() == "AVG_TIME2_TIME");
@@ -948,19 +883,12 @@ export default class DrlgStandPlot extends React.Component {
                 yAxis.setMinMax(yScaleAttr.MinValue, yScaleAttr.MaxValue);
                 //===================
 
-
                 objSeries.ShowInLegend = true;
                 objSeries.PointStyle = pointStyle.Diamond;
                 objSeries.PointWidth = 10;
                 objSeries.PointHeight = 10;
-                //objSeries.PointSize = 15;
-                //alert(objSeries.Id);
-                //console.log(arrData);
-
                 this.objChart4.DataSeries.set(objSeries.Id, objSeries);
                 sectionCounter = sectionCounter + 1;
-
-
 
                 // ''Add data to the series
                 for (let index1 = 0; index1 < arrData.length; index1++) {
@@ -975,8 +903,6 @@ export default class DrlgStandPlot extends React.Component {
                             objSeries.Data.push(objDataPoint);
                             console.log(objSeries.Id + " x=" + objDataPoint.x + " y=" + objDataPoint.y);
                         }
-
-
                     }
                 }
             }
@@ -994,7 +920,6 @@ export default class DrlgStandPlot extends React.Component {
     refreshChart = () => {
 
         //this.objChart.LegendPosition = 4; // 1 (left), 2 (right), 3 (top), 4 (bottom)
-
         if (this.state.selectedTab == 1) {
             this.plotPage2Charts();
         }
@@ -1013,13 +938,7 @@ export default class DrlgStandPlot extends React.Component {
 
     refreshContiTripSpeedChart = () => {
         try {
-            //objTripData.ContTripSpeedWOConn100.Values.ToArray        
-            //objTripData.ContTripSpeedWithConn100.Values.ToArray
-
-
             this.ST_objChartTripSpeed.updateChart();
-
-            ////ChartTripSpeed Chart
             this.ST_objChartTripSpeed = new Chart(this, "ChartTripSpeed1");
             this.ST_objChartTripSpeed.ContainerId = "ChartTripSpeed";
 
@@ -1045,21 +964,10 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChartTripSpeed.bottomAxis().IsDateTime = false;
             this.ST_objChartTripSpeed.bottomAxis().Visible = true;
 
-
-
             this.ST_objChartTripSpeed.MarginLeft = 0; //10;
             this.ST_objChartTripSpeed.MarginBottom = 0; //40;
             this.ST_objChartTripSpeed.MarginTop = 0; //10;
             this.ST_objChartTripSpeed.MarginRight = 0; // 10;
-
-
-
-            // this.ST_objChartTripSpeed.initialize();
-            // this.ST_objChartTripSpeed.reDraw();
-
-
-
-
 
             let objSeries: DataSeries = new DataSeries();
             objSeries.Id = "TripSpeedWOConnection";
@@ -1067,7 +975,6 @@ export default class DrlgStandPlot extends React.Component {
             objSeries.XAxisId = this.ST_objChartTripSpeed.bottomAxis().Id;
             objSeries.YAxisId = this.ST_objChartTripSpeed.leftAxis().Id;
             objSeries.Type = dataSeriesType.Line;
-
             objSeries.LineWidth = 3;
 
             objSeries.Title = "Speed W/o Connection";
@@ -1078,7 +985,6 @@ export default class DrlgStandPlot extends React.Component {
 
             //Populate the data series with this data
             objSeries.Data.slice(0, objSeries.Data.length);
-
             let plotData: any = Object.values(this.state.SingleTripReportData.arrSpeedWO);
 
             for (let i = 0; i < plotData.length; i++) {
@@ -1097,7 +1003,7 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.XAxisId = this.ST_objChartTripSpeed.bottomAxis().Id;
                 objSeries.YAxisId = this.ST_objChartTripSpeed.leftAxis().Id;
 
-                debugger;
+                
 
                 // Update Customize Scale 10-Feb-2022
                 let xAxis = this.ST_objChartTripSpeed.getAxisByID(objSeries.XAxisId);
@@ -1118,7 +1024,6 @@ export default class DrlgStandPlot extends React.Component {
                 yAxis.Inverted = yScaleAttr.Inverted;
                 yAxis.setMinMax(yScaleAttr.MinValue, yScaleAttr.MaxValue);
                 //===================
-
 
                 objSeries.Type = dataSeriesType.Line;
                 objSeries.LineWidth = 3;
@@ -1141,10 +1046,6 @@ export default class DrlgStandPlot extends React.Component {
             }
 
             this.ST_objChartTripSpeed.reDraw();
-
-
-
-
         } catch (error) {
 
         }
@@ -1417,6 +1318,7 @@ export default class DrlgStandPlot extends React.Component {
                             }
 
                             objData_.objUserSettings.TripExclusionList = Object.values(objData_.objUserSettings.TripExclusionList);
+                          
 
                             this.setState({
                                 customTagList: customTagList,
@@ -1816,10 +1718,11 @@ export default class DrlgStandPlot extends React.Component {
                         return;
                     }
                     let objData_: any = JSON.parse(res.data.Response);
-                    console.log("tag Selection List", objData_);
+                    
 
 
                     if (objData_ != "" || objData_ != undefined) {
+
 
                         this.setState({
                             grdTags: utilFunc.CopyObject(objData_),
@@ -2138,6 +2041,7 @@ export default class DrlgStandPlot extends React.Component {
     onGrdTagSelectionItemChange = (e: any) => {
         try {
 
+            
             e.dataItem[e.field] = e.value;
 
             let edited = utilFunc.CopyObject(this.state.grdTags);
@@ -2154,6 +2058,16 @@ export default class DrlgStandPlot extends React.Component {
 
         }
     }
+
+     //Nishant 26-05-2020
+  grid_headerSelectionChange = (event: any) => {
+    const checked = event.syntheticEvent.target.checked;
+    const data = this.state.grdTags.map((item: any) => {
+      item["COL_SELECTION"] = checked;
+      return item;
+    });
+    this.setState({ grdTags: data });
+  };
 
 
     onAfterDrawSeries = (e: ChartEventArgs, i: number) => {
@@ -2268,15 +2182,7 @@ export default class DrlgStandPlot extends React.Component {
                         {item.AxisName}
                     </div>
                 </div>
-                {/* <div onClick={(e) => this.RemovePrimary_Click(item)}  className="col-2 ">
-                <span
-                      title="Remove Channel"
-                      className="float-right text-right pt-1 pr-1 listview-button"
-                    >
-                      {" "}
-                      <FontAwesomeIcon icon={faTrash} />
-                    </span>
-                </div> */}
+    
             </div>);
         } catch (error) {
 
@@ -2295,98 +2201,8 @@ export default class DrlgStandPlot extends React.Component {
         }
     }
 
-    // cmdOk_Click = () => {
-    //     try {
 
-    //         this.state.scaleList.map((scale) => {
-    //             if (scale.AxisID === this._selectedScale.AxisID) {
-    //                 scale.AutoScale = this.state.AutoScale;
-    //                 scale.MinValue = this.state.MinValue;
-    //                 scale.MaxValue = this.state.MaxValue;
-    //                 scale.Inverted = this.state.Inverted;
-    //             }
-    //         });
-
-
-
-    //         this.setState({ showAxisScale: false });
-
-
-    //         //Save Scale
-    //         try {
-    //             Util.StatusInfo("Getting data from the server  ");
-
-    //             let objBrokerRequest = new BrokerRequest();
-    //             objBrokerRequest.Module = "Summary.Manager";
-    //             objBrokerRequest.Broker = "TripReportBroker";
-    //             objBrokerRequest.Function = "saveScaleSettings";
-
-    //             let paramuserid: BrokerParameter = new BrokerParameter("UserId", _gMod._userId);
-    //             objBrokerRequest.Parameters.push(paramuserid);
-
-    //             let paramwellId: BrokerParameter = new BrokerParameter(
-    //                 "WellID",
-    //                 this.WellID
-    //             );
-    //             
-    //             objBrokerRequest.Parameters.push(paramwellId);
-    //             let scaleListDic = utilFunc.convertMapToDictionaryJSON(this.state.scaleList);
-
-
-    //             let paramSettingsData: BrokerParameter = new BrokerParameter(
-    //                 "ScaleSettingsData",
-    //                 JSON.stringify(scaleListDic)
-    //             );
-    //             objBrokerRequest.Parameters.push(paramSettingsData);
-
-
-    //             this.AxiosSource = axios.CancelToken.source();
-    //             axios
-    //                 .get(_gMod._performTask, {
-    //                     headers: {
-    //                         Accept: "application/json",
-    //                         "Content-Type": "application/json;charset=UTF-8",
-    //                     },
-    //                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
-    //                 })
-    //                 .then((res) => {
-    //                     alert("success");
-    //                     this.setState({ selected: 0 });
-    //                     //reload all the connections
-    //                     this.loadTripReport();
-    //                     Util.StatusSuccess("Data successfully retrived  ");
-    //                 })
-    //                 .catch((error) => {
-    //                     Util.StatusError(error.message);
-
-    //                     if (error.response) {
-    //                         // return <CustomeNotifications Key="success" Icon={false}  />
-    //                         // this.errors(error.response.message);
-    //                     } else if (error.request) {
-    //                         // return <CustomeNotifications Key="success" Icon={false}  />
-    //                         console.log("error.request");
-    //                     } else {
-    //                         // return <CustomeNotifications Key="success" Icon={false}  />
-    //                         console.log("Error", error);
-    //                     }
-    //                     // return <CustomeNotifications Key="success" Icon={false}  />
-    //                     console.log("rejected");
-    //                 });
-    //         } catch (error) { }
-
-
-    //     } catch (error) {
-
-    //     }
-    // }
-
-    scaleCancel = () => {
-        try {
-
-        } catch (error) {
-
-        }
-    }
+    
     render() {
 
         return (
@@ -2454,7 +2270,7 @@ export default class DrlgStandPlot extends React.Component {
 
 
 
-                            <DropDownButton items={this.CustomItems} text="Customize" onItemClick={this.handleCustomSelection} /> &nbsp;
+                            <DropDownButton className="ml-2" items={this.CustomItems} text="Customize" onItemClick={this.handleCustomSelection} /> &nbsp;
                         </div>
 
                     </div>
@@ -3349,10 +3165,27 @@ export default class DrlgStandPlot extends React.Component {
                             <div className="col-12">
                                 <Grid
                                     onItemChange={this.onGrdTagSelectionItemChange}
-                                    style={{}}
+                                    
                                     data={this.state.grdTags}
                                     resizable={true}
                                     scrollable={"scrollable"}
+                                    onHeaderSelectionChange={this.grid_headerSelectionChange} //Nishant
+                                    selectedField="COL_SELECTION" //Nishant 
+                                    // onSelectionChange={(event:any)=>{
+                                        
+                                    
+                                    //     const checked = event.syntheticEvent.target.checked;
+                                        
+                                    //         const data = this.state.grdTags.map((item: any) => {
+                                    //           if (item["COL_PHASE_INDEX"] === event.dataItem.COL_PHASE_INDEX) {
+                                    //             item["COL_SELECTION"] = checked;
+                                    //           }
+                                    //           return item;
+                                    //         });
+                                    //         this.setState({ grdTags: data });
+                                          
+                                        
+                                    // }}
 
                                 >
 
@@ -3369,6 +3202,8 @@ export default class DrlgStandPlot extends React.Component {
                                                     <Checkbox
                                                         name="chkSelect"
                                                         checked={props.dataItem[props.field].toString().toUpperCase() === 'TRUE' ? true : false}
+                                                        
+                                                        
                                                         value={props.dataItem[props.field]}
                                                         onChange={(e) => {
                                                             props.onChange({
@@ -3521,22 +3356,19 @@ export default class DrlgStandPlot extends React.Component {
                                 <div className="row mt-5">
                                     <div className="col-sm">
                                         <ListView
-                                            //data={this.state.scaleList}
                                             data={Object.values(this.state.objUserSettings.objPlotScaleList)}
                                             style={{ width: "90%", height: "100%" }}
                                             item={(props) => (
                                                 <this.axisScaleDetail
                                                     {...props}
-                                                    handleSelected={this.scale_handleSelected}
+                                                    // handleSelected={this.scale_handleSelected}
                                                 />
                                             )}
 
                                             header={this.axisScaleHeader}
                                         />
                                     </div>
-                                    <div className="col-sm mt-2">
-
-
+                                   <div className="col-sm mt-2">
                                         <div>
                                             <label style={{ backgroundColor: "green", paddingLeft: "20px", fontSize: "18px", height: "42px", display: "flex", alignItems: "center" }}>
                                                 {this._selectedScale != undefined ? this._selectedScale.AxisName : "Select Scale from List"}
@@ -3607,10 +3439,8 @@ export default class DrlgStandPlot extends React.Component {
 
                                                     this.saveUserSettingsTags(true);
                                                     this.setState({
-                                                        //grdTags: this.state.objPlotData.tagList,
                                                         showAxisScale: false,
                                                     });
-                                                    //this.cmdOk_Click();
                                                 }}
                                             >
                                                 Ok
@@ -3618,9 +3448,7 @@ export default class DrlgStandPlot extends React.Component {
                                             <Button className="ml-3"
                                                 id="cmdCancel"
                                                 onClick={() => {
-                                                    // this.scaleCancel();
                                                     this.setState({
-                                                        //grdTags: this.state.objPlotData.tagList,
                                                         showAxisScale: false,
                                                     });
                                                 }}
@@ -3633,9 +3461,6 @@ export default class DrlgStandPlot extends React.Component {
                                 </div>
                             </div>
                         </div>
-
-
-
 
                     </Window>
 
