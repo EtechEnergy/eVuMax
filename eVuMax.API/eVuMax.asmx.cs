@@ -124,8 +124,13 @@ namespace eVuMax.API
                 else
                 {
 
-               
+
                     //Assign data service
+                    //Assign dataService with username, password and Servername. this can be used in creating localConnections in programs
+                    objDataService.UserName = __username;
+                    objDataService.Password = __password;
+                    objDataService.ServerName = __servername;
+
                     objRequest.objDataService = objDataService;
                     IBroker objBroker = BrokerFactory.createBroker(objRequest);
 
@@ -220,6 +225,11 @@ namespace eVuMax.API
                 }
 
                 //Assign data service
+                //Assign dataService with username, password and Servername. this can be used in creating localConnections in programs
+                objDataService.UserName = __username;
+                objDataService.Password = __password;
+                objDataService.ServerName = __servername;
+
                 objRequest.objDataService = objDataService;
 
                 IBroker objBroker = BrokerFactory.createBroker(objRequest);
