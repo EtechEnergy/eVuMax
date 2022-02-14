@@ -685,7 +685,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objSeries.RoadmapDepth = objDataSeries.roadmapDepth;
           objSeries.RoadmapMin = objDataSeries.roadmapMin;
           objSeries.RoadmapMax = objDataSeries.roadmapMax;
-          debugger;
+          
 
 
           switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar

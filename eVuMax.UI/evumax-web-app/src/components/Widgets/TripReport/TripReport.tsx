@@ -1003,7 +1003,7 @@ export default class DrlgStandPlot extends React.Component {
                 objSeries.XAxisId = this.ST_objChartTripSpeed.bottomAxis().Id;
                 objSeries.YAxisId = this.ST_objChartTripSpeed.leftAxis().Id;
 
-                
+
 
                 // Update Customize Scale 10-Feb-2022
                 let xAxis = this.ST_objChartTripSpeed.getAxisByID(objSeries.XAxisId);
@@ -1275,7 +1275,7 @@ export default class DrlgStandPlot extends React.Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-
+                    debugger;
                     let warnings: string = "";
                     if (res.data.RequestSuccessfull == false) {
                         warnings = res.data.Warnings;
@@ -1317,8 +1317,15 @@ export default class DrlgStandPlot extends React.Component {
                                 }
                             }
 
-                            objData_.objUserSettings.TripExclusionList = Object.values(objData_.objUserSettings.TripExclusionList);
-                          
+                            if (objData_.objUserSettings.TripExclusionList != null || objData_.objUserSettings.TripExclusionList !== undefined) {
+                                objData_.objUserSettings.TripExclusionList = [];
+                            }
+                            else {
+                                objData_.objUserSettings.TripExclusionList = Object.values(objData_.objUserSettings.TripExclusionList);
+                            }
+
+
+
 
                             this.setState({
                                 customTagList: customTagList,
@@ -1355,7 +1362,7 @@ export default class DrlgStandPlot extends React.Component {
                         });
                     }
 
-                    Util.StatusSuccess("Data successfully retrived.Preparing Plot...");
+                    Util.StatusSuccess("Data successfully retrived.Preparing Plot");
                     Util.StatusReady();
 
                 })
@@ -1374,6 +1381,7 @@ export default class DrlgStandPlot extends React.Component {
                         console.log("Error", error);
                     }
                     // return <CustomeNotifications Key="success" Icon={false} />
+                    console.log("Error", error);
                     console.log("rejected");
                     this.setState({ isProcess: false });
                 });
@@ -1718,7 +1726,7 @@ export default class DrlgStandPlot extends React.Component {
                         return;
                     }
                     let objData_: any = JSON.parse(res.data.Response);
-                    
+
 
 
                     if (objData_ != "" || objData_ != undefined) {
@@ -1901,7 +1909,7 @@ export default class DrlgStandPlot extends React.Component {
                     Util.StatusSuccess("Data successfully retrived.Preparing Plot   ");
 
                     await this.setState({
-                        selected: 0,
+                        selectedTab: 0,
                         showTagListDialog: false
                     });
                     //reload all the connections
@@ -2041,7 +2049,7 @@ export default class DrlgStandPlot extends React.Component {
     onGrdTagSelectionItemChange = (e: any) => {
         try {
 
-            
+
             e.dataItem[e.field] = e.value;
 
             let edited = utilFunc.CopyObject(this.state.grdTags);
@@ -2059,15 +2067,15 @@ export default class DrlgStandPlot extends React.Component {
         }
     }
 
-     //Nishant 26-05-2020
-  grid_headerSelectionChange = (event: any) => {
-    const checked = event.syntheticEvent.target.checked;
-    const data = this.state.grdTags.map((item: any) => {
-      item["COL_SELECTION"] = checked;
-      return item;
-    });
-    this.setState({ grdTags: data });
-  };
+    //Nishant 26-05-2020
+    grid_headerSelectionChange = (event: any) => {
+        const checked = event.syntheticEvent.target.checked;
+        const data = this.state.grdTags.map((item: any) => {
+            item["COL_SELECTION"] = checked;
+            return item;
+        });
+        this.setState({ grdTags: data });
+    };
 
 
     onAfterDrawSeries = (e: ChartEventArgs, i: number) => {
@@ -2182,7 +2190,7 @@ export default class DrlgStandPlot extends React.Component {
                         {item.AxisName}
                     </div>
                 </div>
-    
+
             </div>);
         } catch (error) {
 
@@ -2202,7 +2210,7 @@ export default class DrlgStandPlot extends React.Component {
     }
 
 
-    
+
     render() {
 
         return (
@@ -3165,27 +3173,27 @@ export default class DrlgStandPlot extends React.Component {
                             <div className="col-12">
                                 <Grid
                                     onItemChange={this.onGrdTagSelectionItemChange}
-                                    
+
                                     data={this.state.grdTags}
                                     resizable={true}
                                     scrollable={"scrollable"}
                                     onHeaderSelectionChange={this.grid_headerSelectionChange} //Nishant
                                     selectedField="COL_SELECTION" //Nishant 
-                                    // onSelectionChange={(event:any)=>{
-                                        
-                                    
-                                    //     const checked = event.syntheticEvent.target.checked;
-                                        
-                                    //         const data = this.state.grdTags.map((item: any) => {
-                                    //           if (item["COL_PHASE_INDEX"] === event.dataItem.COL_PHASE_INDEX) {
-                                    //             item["COL_SELECTION"] = checked;
-                                    //           }
-                                    //           return item;
-                                    //         });
-                                    //         this.setState({ grdTags: data });
-                                          
-                                        
-                                    // }}
+                                // onSelectionChange={(event:any)=>{
+
+
+                                //     const checked = event.syntheticEvent.target.checked;
+
+                                //         const data = this.state.grdTags.map((item: any) => {
+                                //           if (item["COL_PHASE_INDEX"] === event.dataItem.COL_PHASE_INDEX) {
+                                //             item["COL_SELECTION"] = checked;
+                                //           }
+                                //           return item;
+                                //         });
+                                //         this.setState({ grdTags: data });
+
+
+                                // }}
 
                                 >
 
@@ -3202,8 +3210,8 @@ export default class DrlgStandPlot extends React.Component {
                                                     <Checkbox
                                                         name="chkSelect"
                                                         checked={props.dataItem[props.field].toString().toUpperCase() === 'TRUE' ? true : false}
-                                                        
-                                                        
+
+
                                                         value={props.dataItem[props.field]}
                                                         onChange={(e) => {
                                                             props.onChange({
@@ -3361,14 +3369,14 @@ export default class DrlgStandPlot extends React.Component {
                                             item={(props) => (
                                                 <this.axisScaleDetail
                                                     {...props}
-                                                    // handleSelected={this.scale_handleSelected}
+                                                // handleSelected={this.scale_handleSelected}
                                                 />
                                             )}
 
                                             header={this.axisScaleHeader}
                                         />
                                     </div>
-                                   <div className="col-sm mt-2">
+                                    <div className="col-sm mt-2">
                                         <div>
                                             <label style={{ backgroundColor: "green", paddingLeft: "20px", fontSize: "18px", height: "42px", display: "flex", alignItems: "center" }}>
                                                 {this._selectedScale != undefined ? this._selectedScale.AxisName : "Select Scale from List"}

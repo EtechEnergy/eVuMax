@@ -473,6 +473,7 @@ export default class DrlgStandPlot extends React.Component {
             //Fill up the data for data series
             for (let i = 0; i < chartData.length; i++) {
                 let objStandPoint = new ChartData();
+                console.log("Rigsates",Object.values(chartData[i].RigStates));
                 objStandPoint.x = Math.round(chartData[i]["Depth"]);
                 let standTime: number = 0;
                 standTime = moment.duration(moment(chartData[i]["ToDate"]).diff(moment(chartData[i]["FromDate"]))).asHours();
@@ -703,6 +704,7 @@ export default class DrlgStandPlot extends React.Component {
 
                         });
                         console.log(objDataSelector);
+                        console.log(objData_)
 
                         this.refreshChart();
                     } else {
