@@ -35,6 +35,7 @@ import { faMoon, faSearchMinus, faSun } from "@fortawesome/free-solid-svg-icons"
 //import { ClientLogger } from "../../ClientLogger/ClientLogger";
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
 import { sPlotSelectionType } from "../CustomDrillingSummary/CustomDataSelector";
+import * as utilFunc from "../../../utilFunctions/utilFunctions";
 
 
 let _gMod = new GlobalMod();
@@ -345,58 +346,82 @@ export default class DrlgStandPlot extends React.Component {
         this.objChart.bottomAxis().ShowTitle = true;
         this.objChart.bottomAxis().Visible = true;
 
-        // let objRigStateList = Object.values(this.state.objPlotData.objRigSate.rigStates);
+        let objRigStateList: any = Object.values(this.state.objPlotData.objRigSate.rigStates);
 
 
-        // //sort array on depth
-        // let connPoints: any = Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
-        // connPoints.sort(function (a, b) {
-        //     return a.Depth - b.Depth;
-        // });
-        // let chartData = connPoints;
+        //sort array on depth
+        let connPoints: any = Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
+        connPoints.sort(function (a, b) {
+            return a.Depth - b.Depth;
+        });
+        let chartData = connPoints;
 
-        
         // //Create series for each rig state
-        // for (let i = 0; i < chartData.RigStates.length; i++) {
-        //     let objSeries = new DataSeries();
-        //   objSeries.Id = this.objSummaryData.rigStates[i]["RIG_STATE"].toString();
-        //     objSeries.Stacked = true;
-        //     //objSeries.Title =                this.objSummaryData.rigStates[i]["RIG_STATE_NAME"].toString();
-        //     objSeries.Type = dataSeriesType.Bar;
-        //    objSeries.Color = this.objSummaryData.rigStates[i]["COLOR"].toString();
-        //     objSeries.XAxisId = this.objChart.bottomAxis().Id;
-        //     objSeries.YAxisId = this.objChart.leftAxis().Id;
-        //     this.objChart.DataSeries.set(objSeries.Id, objSeries);
-        // }
+        for (let index = 0; index < chartData.length; index++) {
+            const rigStates: any = chartData[index].RigStates;
+            let KeyArr = Object.keys(rigStates);
+            for (let index2 = 0; index2 < KeyArr.length; index2++) {
+                let key = KeyArr[index2];
+
+                //Find the series with this rig state
+                let objSeries: DataSeries = this.objChart.DataSeries.get(key.toString());
+
+                //let objSeries = new DataSeries();
+                if (objSeries == undefined) {
+                    objSeries = new DataSeries();
+                    objSeries.Id = key
+                    objSeries.Stacked = true;
+                    objSeries.Type = dataSeriesType.Bar;
+                    objSeries.ColorEach = true;
+                    let foundIndex = objRigStateList.findIndex((el: any) => el.Number === Number.parseFloat(key));
+                    if (foundIndex > -1) {
+                        // Color: -16711936
+                        // Name: "Rotary Drill"
+                        // Number: 0
+                        
+                     
+                        objSeries.Color = utilFunc.intToColor(objRigStateList[foundIndex].Color);
+                        objSeries.Title = objRigStateList[foundIndex].Name
+                    }
+                    objSeries.XAxisId = this.objChart.bottomAxis().Id;
+                    objSeries.YAxisId = this.objChart.leftAxis().Id;
+                    this.objChart.DataSeries.set(objSeries.Id, objSeries);
+                }
+
+            }
+
+
+
+        }
+
+
 
         // //Fill up the data for each series
-        // for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
-        //     let arrRigStates: string[] = this.objSummaryData.rigStateData[i][
-        //         "TIMES"
-        //     ]
-        //         .toString()
-        //         .split(",");
+        let standTime: number=0;
+        for (let index = 0; index < chartData.length; index++) {
 
-        //     for (let j = 0; j < this.objSummaryData.rigStates.length; j++) {
-        //         let lnRigState: number =
-        //             this.objSummaryData.rigStates[j]["RIG_STATE"];
-
-        //         //Find the series with this rig state
-        //         let objSeries: DataSeries = this.objChart.DataSeries.get(
-        //             lnRigState.toString()
-        //         );
-
-        //         if (objSeries != undefined) {
-        //             let objDataPoint = new ChartData();
-        //             objDataPoint.x = this.objSummaryData.rigStateData[i]["DEPTH"];
-        //             objDataPoint.y = Number.parseFloat(arrRigStates[j]);
-        //             objDataPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
-        //             objSeries.Data.push(objDataPoint);
-        //         }
-        //     }
-        // }
-
-
+            ////Find the series with this rig state
+            const rigStates: any = chartData[index].RigStates;
+            let KeyArr = Object.keys(rigStates);
+            for (let index2 = 0; index2 < KeyArr.length; index2++) {
+                let key = KeyArr[index2];
+                //Find the series with this rig state
+                let objSeries: DataSeries = this.objChart.DataSeries.get(key.toString());
+                if (objSeries != undefined) {
+                    let objDataPoint = new ChartData();
+                    objDataPoint.x =Math.round(chartData[index].Depth);
+                    
+                    
+                    objDataPoint.y =  Number.parseFloat((rigStates[key]/60/60).toPrecision(3));
+                    objDataPoint.color = objSeries.Color;
+                    objDataPoint.label = "";
+                    
+                    objSeries.Data.push(objDataPoint);
+                    
+                }
+            }
+        }
+        this.objChart.reDraw();
 
     }
 
@@ -469,11 +494,15 @@ export default class DrlgStandPlot extends React.Component {
             });
             let chartData = connPoints;
 
-            
+
             //Fill up the data for data series
             for (let i = 0; i < chartData.length; i++) {
                 let objStandPoint = new ChartData();
-                console.log("Rigsates",Object.values(chartData[i].RigStates));
+
+                //rigStateKeys=Object.keys(chartData[i].RigStates)
+
+
+
                 objStandPoint.x = Math.round(chartData[i]["Depth"]);
                 let standTime: number = 0;
                 standTime = moment.duration(moment(chartData[i]["ToDate"]).diff(moment(chartData[i]["FromDate"]))).asHours();
@@ -510,7 +539,9 @@ export default class DrlgStandPlot extends React.Component {
     }
     refreshChart = () => {
 
-        this.objChart.LegendPosition = 4; // 1 (left), 2 (right), 3 (top), 4 (bottom)
+        //this.objChart.LegendPosition = 4; // 1 (left), 2 (right), 3 (top), 4 (bottom)
+
+        debugger;
 
         if (this.state.CurrentView == 0) {
             this.plotRegularChart();
@@ -940,25 +971,27 @@ export default class DrlgStandPlot extends React.Component {
                                     backgroundColor: "transparent",
                                 }}
                             >
-                                {/* <label style={{ marginRight: "20px" }}> View</label> */}
-                                {/* <RadioButton
+                                <label style={{ marginRight: "20px" }}> View</label>
+                                <RadioButton
                                     name="opgView"
                                     value={0}
                                     checked={this.state.CurrentView === 0}
                                     label="Standard"
-                                    onChange={() => {
-                                        this.setState({ CurrentView: 0 });
+                                    onChange={async () => {
+                                        await this.setState({ CurrentView: 0 });
+                                        this.refreshChart();
                                     }}
-                                /> */}
-                                {/* <RadioButton
+                                />
+                                <RadioButton
                                     name="opgView1"
                                     value={1}
                                     checked={this.state.CurrentView === 1}
                                     label="Rig State View"
-                                    onChange={() => {
-                                        this.setState({ CurrentView: 1 });
+                                    onChange={async () => {
+                                        await this.setState({ CurrentView: 1 });
+                                        this.refreshChart();
                                     }}
-                                /> */}
+                                />
 
                             </div>
                             {/* <div> */}
