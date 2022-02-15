@@ -17,17 +17,10 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         {
             try
             {
-
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 if (paramRequest.Function == generateDrlgStandPlot)
                 {
-                    //string wellID = "";
-                    //string UserID = "";
-                    //string plotID = "";
-
-                    //bool HighlightDayNight = false;
-                    //bool ShowExcludedStands = false;
-
+                  
                     DrlgStandUserSettings objStandUserSettings = new DrlgStandUserSettings();
                     string strStandSettings = "";
                     strStandSettings = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserSettings")).FirstOrDefault().ParamValue.ToString();
@@ -42,64 +35,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         }
                     }
 
-                    
-
-                    //string selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("SelectionType")).FirstOrDefault().ParamValue.ToString();
-                    //double fromDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDepth")).FirstOrDefault().ParamValue.ToString());
-                    //double toDepth = double.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDepth")).FirstOrDefault().ParamValue.ToString());
-
-
-
-                    //string SideTrackKey = "-999";
-
-
-                    //DateTime fromDate = DateTime.Now;
-                    //DateTime toDate = DateTime.Now;
-
-                    //try
-                    //{
-                    //    HighlightDayNight = Boolean.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("HighlightDayNight")).FirstOrDefault().ParamValue.ToString());
-                    //    ShowExcludedStands = Boolean.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ShowExcludedStands")).FirstOrDefault().ParamValue.ToString());
-                    //    fromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
-                    //    toDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
-
-
-                    //    //Convert date to UTC
-                    //    fromDate = fromDate.ToUniversalTime();
-                    //    toDate = toDate.ToUniversalTime();
-                    //}
-                    //catch (Exception)
-                    //{
-
-
-                    //}
-
-                    //bool isRealTime = false;
-                    //int refreshHrs = 24;
-                    //isRealTime = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isRealTime")).FirstOrDefault().ParamValue);
-                    //refreshHrs = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("refreshHrs")).FirstOrDefault().ParamValue);
-
-                    //if (isRealTime)
-                    //{
-                    //    selectionType = "2";
-                    //}
-                    //try
-                    //{
-                    //    wellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellID")).FirstOrDefault().ParamValue;
-                    //    UserID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue;
-                    //    plotID = paramRequest.Parameters.Where(x => x.ParamName.Contains("PlotID")).FirstOrDefault().ParamValue;
-                    //}
-                    //catch (Exception ex)
-                    //{
-
-                    //    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
-                    //    objBadResponse.RequestSuccessfull = false;
-                    //    objBadResponse.Errors = "Error in Generic Drilling Summary GetData. Some of the parameters are not corrrect." + ex.Message + ex.StackTrace;
-                    //    return objBadResponse;
-                    //}
-
-                    //paramRequest.objDataService.UserName = UserID;
-                    ////DrlgStandPlot objDrlgStandPlot = new DrlgStandPlot(paramRequest, wellID);
+            
                     DrlgStandPlot objDrlgStandPlot = new DrlgStandPlot();
                     paramRequest.objDataService.UserName = objStandUserSettings.UserID;
                     objDrlgStandPlot.objRequest = paramRequest;
@@ -125,32 +61,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         objDrlgStandPlot.objDataSelection.FromDepth= objStandUserSettings.FromDepth;
                         objDrlgStandPlot.objDataSelection.ToDepth= objStandUserSettings.ToDepth;
                         
-                        // objStandUserSettings = JsonConvert.DeserializeObject<DrlgStandUserSettings>(objSettings.settingData);
-
-                        //switch (objStandUserSettings.SelectionType)
-                        //{
-                        //    case eNumSelectionType.DefaultByHrs:
-                        //        //(eNumSelectionType)(-1):
-                        //        //objDrlgStandPlot.objDataSelection.selectionType = DataSelection.sPlotSelectionType.ByHours;
-                        //        //objDrlgStandPlot.objDataSelection.LastHours = 24;
-                        //        objDrlgStandPlot.objDataSelection.selectionType = DataSelection.sPlotSelectionType.ByHours;
-                        //        objDrlgStandPlot.objDataSelection.LastHours = objStandUserSettings.LastHrs;
-                        //        break;
-                        //    case eNumSelectionType.ByHrs: //1
-                        //        objDrlgStandPlot.objDataSelection.selectionType = DataSelection.sPlotSelectionType.ByHours;
-                        //        objDrlgStandPlot.objDataSelection.LastHours = objStandUserSettings.LastHrs;
-                        //        break;
-                        //    case eNumSelectionType.DateRange: // 0:
-                        //        objDrlgStandPlot.objDataSelection.selectionType = DataSelection.sPlotSelectionType.DateRange;
-                        //        objDrlgStandPlot.objDataSelection.FromDate = objStandUserSettings.FromDate;
-                        //        objDrlgStandPlot.objDataSelection.ToDate = objStandUserSettings.ToDate;
-                        //        break;
-                        //    case eNumSelectionType.DepthRange: // 3:
-                        //        objDrlgStandPlot.objDataSelection.selectionType = DataSelection.sPlotSelectionType.DepthRange;
-                        //        objDrlgStandPlot.objDataSelection.FromDepth = objStandUserSettings.FromDepth;
-                        //        objDrlgStandPlot.objDataSelection.ToDepth = objStandUserSettings.ToDepth;
-                        //        break;
-                        //}
+                    
 
                         if (objStandUserSettings.RealTime)
                         {
@@ -178,20 +89,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         objStandUserSettings.LastHrs = objDrlgStandPlot.objDataSelection.LastHours;
                         objStandUserSettings.SelectionType = (sPlotSelectionType) objDrlgStandPlot.objDataSelection.selectionType;
 
-                        //switch (objDrlgStandPlot.objDataSelection.selectionType)
-                        //{
-                        //    case DataSelection.sPlotSelectionType.ByHours:
-                        //        //objStandUserSettings.SelectionType = eNumSelectionType.DefaultByHrs;
-                        //        objStandUserSettings.SelectionType = sPlotSelectionType.ByHours;
-                        //        break;
-                            
-                        //    case DataSelection.sPlotSelectionType.DateRange:
-                        //        objStandUserSettings.SelectionType = sPlotSelectionType.DateRange;
-                        //        break;
-                        //    case DataSelection.sPlotSelectionType.DepthRange: 
-                        //        objStandUserSettings.SelectionType = sPlotSelectionType.DepthRange;
-                        //        break;
-                        //}
+                   
                         //Saving React side UserSetting to eVuMax into UserSetting table.
                         objSettings.UserId = objStandUserSettings.UserID;
                         objSettings.settingData = JsonConvert.SerializeObject(objStandUserSettings);

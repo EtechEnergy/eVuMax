@@ -25,31 +25,31 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
     }
     public class DrlgStandUserSettings
     {
+        public string UserID = "";
+        public string WellID = "";
         public bool HighlightDayNight = false;
         public DateTime dtDayTimeFrom = new DateTime();
         public DateTime dtDayTimeTo = new DateTime();
-        //public string dtDayTimeFrom = "6:00";
-        //public string dtDayTimeTo = "18:00";
         public bool RealTime = false;
         public int LastHrs = 24;
-
         public bool ShowExcludedStands = false;
         public bool ShowRigStateView = false;
-        //public eNumSelectionType SelectionType = eNumSelectionType.DefaultByHrs;
+        public bool ShowComments = false;
         public sPlotSelectionType SelectionType = sPlotSelectionType.ByHours;
-
-        public string UserID = "";
-        public string WellID = "";
-
         public DateTime FromDate = new DateTime();
         public DateTime ToDate = new DateTime();
         public double FromDepth = 0;
         public double ToDepth = 0;
-        public bool ShowComments = false;
-    
 
 
-        
+
+        //public string dtDayTimeFrom = "6:00";
+        //public string dtDayTimeTo = "18:00";
+        //public eNumSelectionType SelectionType = eNumSelectionType.DefaultByHrs;
+
+
+
+
 
     }
 }

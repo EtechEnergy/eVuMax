@@ -96,17 +96,17 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 //ProcessStatus = 1;
                 __localTimeLog = objTimeLog;
                 connectionPoints.Clear();
-               
-                //if (objADSettings.IsADActive)
-                //{
-                //    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
-                //}
-                //else
-                //{
-                //    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true);
-                //}
 
-                //objLocalConn.OpenConnection(objRequest.objDataService.UserName, objRequest.objDataService.Password, objRequest.objDataService.ServerName);
+                if (objADSettings.IsADActive)
+                {
+                    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
+                }
+                else
+                {
+                    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true);
+                }
+
+                objLocalConn.OpenConnection(objRequest.objDataService.UserName, objRequest.objDataService.Password, objRequest.objDataService.ServerName);
                 if (objTimeLog is null)
                 {
                  //   ProcessStatus = 0;
