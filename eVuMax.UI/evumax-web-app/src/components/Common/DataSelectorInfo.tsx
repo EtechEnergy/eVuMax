@@ -22,9 +22,14 @@ export default class DataSelectorInfo extends Component<IProps>  {
           //  alert("info update -"+this.props.objDataSelector.selectedval + " " + this.props.isRealTime);
 
      //Added on 02-02-2022
-     
+     //alert("Info " + this.props.objDataSelector.selectedval);
         
-     if (!this.props.objDataSelector.needForceReload)
+     if (this.props.objDataSelector.selectedval=="0"){
+         debugger;
+        //alert(this.props.objDataSelector.needForceReload + " - " + this.props.objDataSelector.fromDate + " - " + this.props.objDataSelector.toDate);
+     }
+
+     if (!this.props.objDataSelector.needForceReload ||this.props.objDataSelector.fromDate==null  ||this.props.objDataSelector.toDate==null)
      {
          
          console.log(this.props.objDataSelector.needForceReload);

@@ -137,6 +137,7 @@
     <Compile Include="Summary\DrlgStand\StandPoint.cs" />
     <Compile Include="Summary\DrlgSummary\DrlgSummary.cs" />
     <Compile Include="Summary\DrlgSummary\DrlgSummaryData.cs" />
+    <Compile Include="Summary\getStandComment.cs" />
     <Compile Include="Summary\ROPSummary\DepthMatchingInfo.cs" />
     <Compile Include="Summary\ROPSummary\ROPSummary.cs" />
     <Compile Include="Summary\ROPSummary\ROPSummaryData.cs" />

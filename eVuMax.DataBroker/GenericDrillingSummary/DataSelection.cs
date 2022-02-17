@@ -150,7 +150,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         //public string userName = "";
         public bool showOffsetWell = false;  //prath 10-Jan-2021
 
-        private VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
+        public VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
 
         public DataSelection()
         {
@@ -2266,6 +2266,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             try
             {
                 objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref objDataService, paramWellID);
+                this.objWell = VuMaxDR.Data.Objects.Well.loadObject(ref objRequest.objDataService, paramWellID, ref LastError);
 
 
                 if (selectionType == sPlotSelectionType.FormationTops)

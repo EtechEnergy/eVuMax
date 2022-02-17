@@ -69,6 +69,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         public double fromDepth;
         public double toDepth;
         
+        
         public StandLogProcessor objStandProcessor = new StandLogProcessor();
         #endregion
 
@@ -162,7 +163,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             {
 
               
-
+                
                 
 
                 this.WellID = paramWellID;
@@ -219,7 +220,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
                 Broker.BrokerResponse objResponse = objRequest.createResponseObject();
                 string paramPlotName = "Drilling Stand Plot";
+                
                 objDataSelection.WellID = WellID;
+                objDataSelection.objWell = objWell;
                 //objDataSelection.loadDataSelection(MyPlotID);
                 objDataSelection.getRange3(ref fromDate, ref toDate, ref fromDepth, ref toDepth, ref ChartTitle, ref paramPlotName, WellID, ref objRequest.objDataService);
                 
@@ -234,8 +237,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                                 KPIDrilingConnections objConnection = KPIDrilingConnections.createKPIDrlgConnection(ref objRequest.objDataService, WellID, objItem);
                                 if (objConnection is object)
                                 {
-                                    objConnection.UserComment = ConnectionLabel.getComment(WellID,ref objRequest.objDataService, objItem.Depth);
-                                    KPIDrilingConnections.addToDatabase(ref objRequest.objDataService, objConnection);
+                            objConnection.UserComment = ConnectionLabel.getComment(WellID,ref objRequest.objDataService, objItem.Depth);
+                            
+                            KPIDrilingConnections.addToDatabase(ref objRequest.objDataService, objConnection);
                                 }
                             }
                         }
@@ -863,7 +867,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
         }
 
-
+   
 
     }//Class
 }//NameSpace
