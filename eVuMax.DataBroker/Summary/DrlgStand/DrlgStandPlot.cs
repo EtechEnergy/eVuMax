@@ -90,14 +90,91 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         public DrlgStandUserSettings objUserSettings = new DrlgStandUserSettings();
 
         VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
-        //public DrlgStandPlot(Broker.BrokerRequest paramRequest, string paramWellID)
-        //{
-        //    this.WellID = paramWellID;
-        //    this.objRequest = paramRequest;
-        //    this.objDataSelection.objRequest = paramRequest;
-        //    objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref objRequest.objDataService, paramWellID);
-        //}
+        //Nishant 17-02-2022
+        public DataTable grdConnection = new DataTable();
+        public DrlgStandPlot()
+        {
+            try
+            {
+                grdConnection.Columns.Clear();
+                grdConnection.Columns.Add("Key");
+                grdConnection.Columns.Add("Depth");
+                grdConnection.Columns.Add("FromDate");
+                grdConnection.Columns.Add("ToDate");
+                grdConnection.Columns.Add("DayNightStatus");
+                grdConnection.Columns.Add("ROP");
+                grdConnection.Columns.Add("RotaryROP");
+                grdConnection.Columns.Add("SlideROP");
+                //grdConnection.Columns.Add("OffsetDayNightStatus");
+                //grdConnection.Columns.Add("OffsetROP");
+                //grdConnection.Columns.Add("OffsetRotaryROP");
+                //grdConnection.Columns.Add("OffsetSlideROP");
+                //grdConnection.Columns.Add("OffsetTime");
+                grdConnection.Columns.Add("Comments");
+                grdConnection.Columns.Add("TimeHH");
+                //grdConnection.Columns.Add("OffsetTimeHH"); //Not in use in Vumax
+                
 
+
+            }
+            catch (Exception ex)
+            {
+
+                
+            }
+        }
+
+        private void refreshConnectionTable()
+        {
+            try
+            {
+
+                grdConnection.Rows.Clear();
+                if (objStandProcessor.connectionPoints.Count > 0)
+                {
+                    //grdConnection.Rows.Add(objStandProcessor.connectionPoints.Count);
+                    StandPoint[] arrItems = objStandProcessor.connectionPoints.Values.ToArray();
+                    Array.Sort(arrItems);
+                    int rowIndex = 0;
+                    for (int i = 0; i <= arrItems.Length - 1; i++)
+                    {
+                        DataRow row = grdConnection.NewRow();
+                        grdConnection.Rows.Add(row);
+                        StandPoint objItem = arrItems[i];
+                        string comment = ConnectionLabel.getStandComment(WellID,ref objRequest.objDataService, objItem.Depth);
+                        grdConnection.Rows[rowIndex]["Depth"] = Math.Round(objItem.Depth, 2);
+                        grdConnection.Rows[rowIndex]["Key"]= objItem.FromDate.ToString("dd-MMM-yyyy HH:mm:ss");
+                        grdConnection.Rows[rowIndex]["Comments"] = comment;
+                        grdConnection.Rows[rowIndex]["FromDate"] = objItem.FromDate.ToString("dd-MMM-yyyy HH:mm:ss");
+                        grdConnection.Rows[rowIndex]["ToDate"] = objItem.ToDate.ToString("dd-MMM-yyyy HH:mm:ss");
+                        if (objItem.DayNightStatus == (StandPoint.cnDayNightTime) ConnectionLogPoint.cnDayNightTime.DayTime)
+                        {
+                            grdConnection.Rows[rowIndex]["DayNightStatus"] = "Day";
+                        }
+                        else
+                        {
+                            grdConnection.Rows[rowIndex]["DayNightStatus"] = "Night";
+                        }
+
+                       // long timeDiff = objItem.FromDate - objItem.ToDate; //DateDiff(DateInterval.Second, objItem.FromDate, objItem.ToDate);
+                        TimeSpan objTimeSpan = objItem.FromDate - objItem.ToDate;
+                        
+                        
+                        grdConnection.Rows[rowIndex]["TimeHH"] = "[" + objTimeSpan.Hours.ToString() + ":" + objTimeSpan.Minutes.ToString() + ":" + objTimeSpan.Seconds.ToString() + "]";
+                        grdConnection.Rows[rowIndex]["ROP"] = Math.Round(objItem.ROP, 2);
+                        grdConnection.Rows[rowIndex]["RotaryROP"] = Math.Round(objItem.RotaryROP, 2);
+                        grdConnection.Rows[rowIndex]["SlideROP"] = Math.Round(objItem.SlideROP, 2);
+                        rowIndex += 1;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                
+            }
+        }
 
         public void populateExclList()
         {
@@ -163,8 +240,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             {
 
               
-                
-                
+                            
 
                 this.WellID = paramWellID;
                 this.objRequest = paramRequest;
@@ -621,6 +697,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
 
                 //////***************************************
+                refreshConnectionTable();
 
 
                 objResponse.RequestSuccessfull = true;
