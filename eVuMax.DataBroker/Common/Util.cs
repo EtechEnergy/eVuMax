@@ -17,6 +17,8 @@ namespace eVuMax.DataBroker.Common
         /// </summary>
         /// <param name="pValue">String</param>
         /// <returns></returns>
+        Random objRandom = new Random();
+
         public static string checkQuote(string pValue)
         {
             try
@@ -365,8 +367,33 @@ namespace eVuMax.DataBroker.Common
 
 
 
-    }
+        public static string getObjectID()
+        {
+            try
+            {
+                Random objRandom = new Random();
 
+                string part1;
+                string part2;
+                string part3;
+                string part4;
+                string part5;
+                string objectID;
+                part1 = objRandom.Next(100, 999).ToString();
+                part2 = objRandom.Next(100, 999).ToString();
+                part3 = objRandom.Next(100, 999).ToString();
+                part4 = objRandom.Next(100, 999).ToString();
+                part5 = objRandom.Next(100, 999).ToString();
+                objectID = part1 + "-" + part2 + "-" + part3 + "-" + part4 + "-" + part5;
+                return objectID;
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+
+    }
 
 
     //public static DateTime convertWellTimeZoneToUTC(DateTime paramDate)

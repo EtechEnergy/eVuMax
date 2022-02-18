@@ -488,6 +488,7 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart1.bottomAxis().ShowTitle = true;
             this.objChart1.bottomAxis().Visible = true;
             this.objChart1.bottomAxis().PaddingMin = 10;
+            
 
             let objAvgConnTime = new DataSeries();
             objAvgConnTime.Id = "AvgConnTime";
@@ -951,7 +952,7 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChartTripSpeed.leftAxis().Title = "Depth (" + this.state.objPlotData.depthUnit + ")";
             this.ST_objChartTripSpeed.leftAxis().DisplayOrder = 1;
             this.ST_objChartTripSpeed.leftAxis().Visible = true;
-
+            
             this.ST_objChartTripSpeed.bottomAxis().AutoScale = true;
             this.ST_objChartTripSpeed.bottomAxis().bandScale = false;
             this.ST_objChartTripSpeed.bottomAxis().Min = 100;
@@ -963,6 +964,8 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChartTripSpeed.bottomAxis().ShowSelector = false;
             this.ST_objChartTripSpeed.bottomAxis().IsDateTime = false;
             this.ST_objChartTripSpeed.bottomAxis().Visible = true;
+            
+            
 
             this.ST_objChartTripSpeed.MarginLeft = 0; //10;
             this.ST_objChartTripSpeed.MarginBottom = 0; //40;
@@ -1335,13 +1338,13 @@ export default class DrlgStandPlot extends React.Component {
                         }
 
                         console.log("objUserSettings", this.state.objUserSettings);
-
+                        debugger;
                         this.setState({
                             objPlotData: objData_,
                             objGridData: objData_.grdData,
                         });
 
-
+                        console.log("prath load trip report - " +  objData_.grdData );
                         this.refreshChart();
                     } else {
                         warnings += "No Data Available";
@@ -2212,6 +2215,7 @@ export default class DrlgStandPlot extends React.Component {
 
 
     render() {
+        
 
         return (
             <>

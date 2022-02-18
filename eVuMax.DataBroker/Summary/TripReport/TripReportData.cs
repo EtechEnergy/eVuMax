@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -544,8 +545,9 @@ namespace eVuMax.DataBroker.Summary.TripReport
                     {
                         objItem.EndDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref objDataService));
                     }
-
-                    Dictionary<string, TripInfo> list = objReport.calculateTripInfo(ref objDataService, Convert.ToInt32(objItem.PhaseIndex),  objItem.PhaseID, objItem.StepID, objItem.EmphID, objItem.StartDate, objItem.EndDate, objItem.phaseName, objItem.stepName, objItem.emphName);
+                    //Change 1 line
+                    //  Dictionary<string, TripInfo> list = objReport.calculateTripInfo(ref objDataService, Convert.ToInt32(objItem.PhaseIndex),  objItem.PhaseID, objItem.StepID, objItem.EmphID, objItem.StartDate, objItem.EndDate, objItem.phaseName, objItem.stepName, objItem.emphName);
+                        Dictionary<string, TripInfo> list = calculateTripInfo(ref objDataService, Convert.ToInt32(objItem.PhaseIndex), objItem.PhaseID, objItem.StepID, objItem.EmphID, objItem.StartDate, objItem.EndDate, objItem.phaseName, objItem.stepName, objItem.emphName);
 
                     // '//Add it to the data ...
                     foreach (TripInfo objTripData in list.Values)
@@ -612,11 +614,11 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 string RunningSection = "";
                 string RunningRun = "";
                 var subset = new Dictionary<string, TripInfo>();
-                double sectionAvgTime = 0d;
-                double sectionBestTime = 0d;
-                double sectionDiff = 0d;
-                double sectionSpeedWithConn = 0d;
-                double sectionSpeedWOConn = 0d;
+                double sectionAvgTime = 0;
+                double sectionBestTime = 0;
+                double sectionDiff = 0;
+                double sectionSpeedWithConn = 0;
+                double sectionSpeedWOConn = 0;
 
                 // '//Add Heading ...
                 grdData.Rows.Add();
@@ -817,6 +819,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 grdData.Rows[rowIndex]["COL_START_DATE_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                 grdData.Rows[rowIndex]["COL_TOTAL_TIME"] = "Diff.";
                 grdData.Rows[rowIndex]["COL_TOTAL_TIME_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
+                
                 grdData.Rows[rowIndex]["COL_OFF_TO_ON_BTM_TIME"] = "Speed w/ conn.";
                 grdData.Rows[rowIndex]["COL_OFF_TO_ON_BTM_TIME_BKCOLOR"] = "LightGray";// Color.LightGray.ToString();
                 grdData.Rows[rowIndex]["COL_SPEED_WITH_CONN"] = "Speed w/o conn.";
@@ -845,8 +848,8 @@ namespace eVuMax.DataBroker.Summary.TripReport
                     return;
                 }
 
-                paramAvgTime = 0d;
-                double sumTime = 0d;
+                paramAvgTime = 0;
+                double sumTime = 0;
                 foreach (TripInfo objItem in paramList.Values)
                 {
                     if (objItem.AvgConnTime > 0)
@@ -855,13 +858,13 @@ namespace eVuMax.DataBroker.Summary.TripReport
                     }
                 }
 
-                if (sumTime > 0d & paramList.Count > 0)
+                if (sumTime > 0 & paramList.Count > 0)
                 {
                     paramAvgTime = Math.Round(sumTime / paramList.Count, 2);
                 }
 
-                double minTime = 0d;
-                double maxTime = 0d;
+                double minTime = 0;
+                double maxTime = 0;
                 foreach (TripInfo objItem in paramList.Values)
                 {
                     if (objItem.AvgConnTime > maxTime & objItem.AvgConnTime > 0)
@@ -880,24 +883,24 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 }
 
                 paramBestTime = minTime;
-                if (paramBestTime == 0d)
+                if (paramBestTime == 0)
                 {
                     bool halt = true;
                 }
 
                 paramDiff = objReport.objSettings.BenchmarkTime - paramAvgTime;
-                double sumSpeed = 0d;
+                double sumSpeed = 0;
                 foreach (TripInfo objItem in paramList.Values)
                     sumSpeed = sumSpeed + objItem.TripSpeedWithConn;
-                if (sumSpeed > 0d)
+                if (sumSpeed > 0)
                 {
                     paramSpeedWithConn = Math.Round(sumSpeed / paramList.Count, 2);
                 }
 
-                sumSpeed = 0d;
+                sumSpeed = 0;
                 foreach (TripInfo objItem in paramList.Values)
                     sumSpeed = sumSpeed + objItem.TripSpeedWOConn;
-                if (sumSpeed > 0d)
+                if (sumSpeed > 0)
                 {
                     paramSpeedWOConn = Math.Round(sumSpeed / paramList.Count, 2);
                 }
@@ -984,10 +987,10 @@ namespace eVuMax.DataBroker.Summary.TripReport
                             // '//Find Next Drilling Date
                             DateTime NextDrillingDate = objReport.getNextDrillingDateTime(ref objDataService, objTimeLog, arrTags[i].EndDate);
                             DateTime PrevDrillingDate = objReport.getPrevDrillingDateTime(ref objDataService, objTimeLog, arrTags[i].StartDate);
-                            if (NextDrillingDate != new DateTime() & NextDrillingDate != DateTime.FromOADate(0d) & PrevDrillingDate != new DateTime() & PrevDrillingDate != DateTime.FromOADate(0d))
+                            if (NextDrillingDate != new DateTime() & NextDrillingDate != DateTime.FromOADate(0) & PrevDrillingDate != new DateTime() & PrevDrillingDate != DateTime.FromOADate(0))
                             {
                                 //long TotalSeconds = Math.Abs(DateAndTime.DateDiff(DateInterval.Second, PrevDrillingDate, NextDrillingDate));
-                                long TotalSeconds = Convert.ToInt64(Math.Abs((NextDrillingDate - PrevDrillingDate).TotalSeconds));
+                                double TotalSeconds = Convert.ToInt64(Math.Abs((NextDrillingDate - PrevDrillingDate).TotalSeconds));
                                 
 
 
@@ -1006,7 +1009,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
 
                                 if (Found)
                                 {
-                                    objTripData.OffToOnBottomTime = Math.Round(TotalSeconds / 60d / 60d, 2);
+                                    objTripData.OffToOnBottomTime = Math.Round(Convert.ToDouble( TotalSeconds) / 60 / 60, 2);
                                     double totalFootage = objReport.getFootage(ref objDataService, objTimeLog, PrevDrillingDate, NextDrillingDate);
                                     if (totalFootage > 0 & TotalSeconds > 0)
                                     {
@@ -1182,7 +1185,7 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 objSingleTripStat.lblBestTime = Math.Round(bestTime, 2);
                 double Diff = Math.Round(objTripReportSettings.BenchmarkTime - objTripData.AvgConnTime, 2);
                 objSingleTripStat.lblDiff= Diff.ToString();
-                if (Diff >= 0d)
+                if (Diff >= 0)
                 {
                     objSingleTripStat.lblDiffBackColor = Color.Transparent.ToString();
                 }
@@ -1277,7 +1280,1497 @@ namespace eVuMax.DataBroker.Summary.TripReport
             }
         }
 
+        //PRATH
+        public Dictionary<string, TripInfo> calculateTripInfo(ref DataService objDataService, int paramTagID, string paramPhaseID, string paramStepID, string paramEmphID, DateTime paramTripStartDate, DateTime paramTripEndDate, string paramPhaseName, string paramStepName, string paramEmphName)
+        {
+            try
+            {
+                var listTripInfo = new Dictionary<string, TripInfo>();
 
+                // '//Check if we need to split the trip in In & Out or just In or Out ...
+                // '//Find the Min. Depth of the trip
+
+
+                double minDepth = 0;
+                var minDepthDateTime = paramTripStartDate;
+                DataTable objData = objDataService.getTable("SELECT TOP 1 DEPTH,DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + paramTripStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramTripEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY DEPTH");
+                if (objData.Rows.Count > 0)
+                {
+                    minDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+                    minDepthDateTime =Convert.ToDateTime( DataService.checkNull(objData.Rows[0]["DATETIME"], new DateTime()));
+                }
+
+                double TripEndingDepth = 0;
+                DateTime TripEndingDateTime;
+
+                // '//We have mid point ... check if there is depth increase after the mid point
+                objData = objDataService.getTable("SELECT TOP 1 DEPTH,DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + minDepthDateTime.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramTripEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY DEPTH DESC");
+                if (objData.Rows.Count > 0)
+                {
+                    TripEndingDepth =Convert.ToDouble( DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+                }
+
+                TripEndingDateTime = paramTripEndDate;
+                double TripStartingDepth = 0;
+                var TripStartingDateTime = paramTripStartDate;
+
+                // '//Get the depth at start of the trip
+                objData = objDataService.getTable("SELECT TOP 1 DEPTH,DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + paramTripStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramTripEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY DATETIME");
+                if (objData.Rows.Count > 0)
+                {
+                    TripStartingDepth =Convert.ToDouble( DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+                }
+
+                bool TripInFound = false;
+                bool TripOutFound = false;
+
+                // '//Now check the span of the trip
+                double DEPTH_THRESHOLD = 10;
+                double MidPointOnwardDepthRange = Math.Abs(TripEndingDepth - minDepth);
+                double TripDepthRange = Math.Abs(TripStartingDepth - TripEndingDepth);
+                double DiffPercent = MidPointOnwardDepthRange * 100 / TripDepthRange;
+
+                // '//Check if Trip Tag is spanning towards Trip In
+                if (DiffPercent >= DEPTH_THRESHOLD)
+                {
+                    TripInFound = true;
+                }
+
+                double StartToMidDepthRange = Math.Abs(TripStartingDepth - minDepth);
+                DiffPercent = StartToMidDepthRange * 100 / TripDepthRange;
+                if (DiffPercent >= DEPTH_THRESHOLD)
+                {
+                    TripOutFound = true;
+                }
+
+                DateTime dataStartDate;
+                DateTime dataEndDate;
+
+                // '//Deliver the list according to Trip Type.. Saggrigate the data based on Trip Directions
+
+                // '//(1) Trip  Out
+                if (TripOutFound)
+                {
+                    if (TripInFound)
+                    {
+                        dataStartDate = TripStartingDateTime;
+                        dataEndDate = minDepthDateTime;
+                    }
+                    else
+                    {
+                        dataStartDate = TripStartingDateTime;
+                        dataEndDate = TripEndingDateTime;
+                    }
+
+                    // '//****************** Get the info for Trip Out **********************************//
+                    var objTripInfo = new TripInfo();
+                    objTripInfo.TripIndexID = paramTagID;
+                    objTripInfo.Direction = TripInfo.tripDirection.TripOut;
+                    objTripInfo.EntryID = Util.getObjectID();
+                    objTripInfo.PhaseID = paramPhaseID;
+                    objTripInfo.StepID = paramStepID;
+                    objTripInfo.EmphID = paramEmphID;
+                    objTripInfo.PhaseName = paramPhaseName;
+                    objTripInfo.StepName = paramStepName;
+                    objTripInfo.EmphName = paramEmphName;
+                    objTripInfo.TripStartDate = dataStartDate;
+                    objTripInfo.TripEndDate = dataEndDate;
+                    //objTripInfo.TotalTripTime = Math.Round(Math.Abs( DateAndTime.DateDiff(DateInterval.Second, dataStartDate, dataEndDate) / 60 / 60), 2);
+                    objTripInfo.TotalTripTime = Math.Round(Math.Abs(((dataEndDate - dataStartDate).TotalSeconds / 60) / 60), 2);
+                   
+
+                    double TimeOnSurface = calcSurfaceTime(ref objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate);
+                    objTripInfo.TimeOnSurface = Math.Round(TimeOnSurface / 60 / 60, 2);
+                    if (TripInFound)
+                    {
+
+                        // 'prath Ticket 486
+                        // objTripInfo.TripSpeedWithConn = calcTripSpeedWithConnections(objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate)
+                        objTripInfo.TripSpeedWithConn = calcTripSpeedWithConnections(ref objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 1);
+                        // '-------------------
+                        objTripInfo.TripSpeedWOConn = calcTripSpeedWithoutConnections(objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 0);
+                    }
+                    else
+                    {
+                        // 'prath Ticket 486
+                        // objTripInfo.TripSpeedWithConn = calcTripSpeedWithConnections(objDataService, objTimeLog.__dataTableName, paramTripStartDate, paramTripEndDate)
+                        objTripInfo.TripSpeedWithConn = calcTripSpeedWithConnections(ref objDataService, objTimeLog.__dataTableName, paramTripStartDate, paramTripEndDate, 0);
+                        // '-----------
+                        objTripInfo.TripSpeedWOConn = calcTripSpeedWithoutConnections(objDataService, objTimeLog.__dataTableName, paramTripStartDate, paramTripEndDate, 0);
+                    }
+
+
+                    // If TripInFound Then
+
+                    // objTripInfo.TripSpeedWithConn = calcTripSpeedWithConnections(objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate)
+                    // objTripInfo.TripSpeedWOConn = calcTripSpeedWithoutConnections(objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 0)
+
+                    // Else
+
+                    // objTripInfo.TripSpeedWithConn = calcTripSpeedWithConnections(objDataService, objTimeLog.__dataTableName, paramTripStartDate, paramTripEndDate)
+                    // objTripInfo.TripSpeedWOConn = calcTripSpeedWithoutConnections(objDataService, objTimeLog.__dataTableName, paramTripStartDate, paramTripEndDate, 0)
+
+
+                    // End If
+
+
+                    objTripInfo.AvgConnTime = calculateAvgTripConnTime(ref objDataService, dataStartDate, dataEndDate);
+                    objTripInfo.AvgDayTime = calculateAvgTripConnTimeDayNight(ref objDataService, dataStartDate, dataEndDate, 0);
+                    objTripInfo.AvgNightTime = calculateAvgTripConnTimeDayNight(ref objDataService, dataStartDate, dataEndDate, 1);
+                    objTripInfo.TargetTime = objTripReportSettings.BenchmarkTime;
+                    objTripInfo.DeltaTargetTime = objTripInfo.TargetTime - objTripInfo.AvgConnTime;
+                    objTripInfo.DeltaSpeedWConn = objTripReportSettings.BenchmarkSpeedWithConn - objTripInfo.TripSpeedWithConn;
+                    objTripInfo.DeltaSpeedWOConn = objTripReportSettings.BenchmarkSpeedWOConn - objTripInfo.TripSpeedWOConn;
+                    objTripInfo.ConnectionCount = getNoOfConnections(ref objDataService, dataStartDate, dataEndDate);
+                    objTripInfo.HoleDepth = getTripHoleDepth(ref objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate);
+                    calculateContTripSpeedWithConnection(ref objDataService,ref objTripInfo.ContTripSpeedWithConn, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 0);
+                    calculateContTripSpeedWOConnection(ref objDataService,ref  objTripInfo.ContTripSpeedWOConn, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 1);
+                    calculateContTripSpeedWithConnection100(ref objDataService, ref objTripInfo.ContTripSpeedWithConn100, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 0);
+                    calculateContTripSpeedWOConnection100(ref objDataService, ref objTripInfo.ContTripSpeedWOConn100, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 1);
+
+
+
+                    // '****** Calculate Avg. Trip speeds *****************************************************
+                    // Dim sum As Double = 0
+
+                    // For Each objItem As ContTripSpeedInfo In objTripInfo.ContTripSpeedWithConn100.Values
+
+                    // sum = sum + objItem.Speed
+
+                    // Next
+
+                    // If sum > 0 And objTripInfo.ContTripSpeedWithConn100.Count > 0 Then
+
+                    // objTripInfo.TripSpeedWithConn = Math.Round(sum / objTripInfo.ContTripSpeedWithConn100.Count, 2)
+
+                    // End If
+
+
+                    // sum = 0
+
+                    // For Each objItem As ContTripSpeedInfo In objTripInfo.ContTripSpeedWOConn100.Values
+
+                    // sum = sum + objItem.Speed
+
+                    // Next
+
+                    // If sum > 0 And objTripInfo.ContTripSpeedWOConn100.Count > 0 Then
+
+                    // objTripInfo.TripSpeedWOConn = Math.Round(sum / objTripInfo.ContTripSpeedWOConn100.Count, 2)
+
+                    // End If
+                    // '***************************************************************************************
+
+
+
+                    // '//******************************************************************************//
+
+                    listTripInfo.Add(objTripInfo.EntryID, objTripInfo);
+                }
+
+
+
+
+                // '//(2) Trip In
+                if (TripInFound)
+                {
+                    if (TripOutFound)
+                    {
+                        dataStartDate = minDepthDateTime;
+                    }
+                    else
+                    {
+                        dataStartDate = TripStartingDateTime;
+                    }
+
+                    dataEndDate = TripEndingDateTime;
+
+
+                    // '//******************* Get the infor for Trip In *********************************//
+                    var objTripInfo = new TripInfo();
+                    objTripInfo.TripIndexID = paramTagID;
+                    objTripInfo.Direction = TripInfo.tripDirection.TripIn;
+                    objTripInfo.EntryID = Util.getObjectID();
+                    objTripInfo.PhaseID = paramPhaseID;
+                    objTripInfo.StepID = paramStepID;
+                    objTripInfo.EmphID = paramEmphID;
+                    objTripInfo.PhaseName = paramPhaseName;
+                    objTripInfo.StepName = paramStepName;
+                    objTripInfo.EmphName = paramEmphName;
+                    objTripInfo.TripStartDate = dataStartDate;
+                    objTripInfo.TripEndDate = dataEndDate;
+                    //objTripInfo.TotalTripTime = Math.Round(Math.Abs(DateAndTime.DateDiff(DateInterval.Second, dataStartDate, dataEndDate) / 60 / 60), 2);
+                    objTripInfo.TotalTripTime = Math.Round(Math.Abs((dataEndDate-dataStartDate).TotalSeconds / 60 / 60), 2);
+
+                    double TimeOnSurface = calcSurfaceTime(ref objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate);
+                    objTripInfo.TimeOnSurface = Math.Round(TimeOnSurface / 60 / 60, 2);
+                    if (TripOutFound)
+                    {
+                        objTripInfo.TripSpeedWithConn = calcTripSpeedWithConnections(ref objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 0);
+                        objTripInfo.TripSpeedWOConn = calcTripSpeedWithoutConnections(objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 1);
+                    }
+                    else
+                    {
+                        objTripInfo.TripSpeedWithConn = calcTripSpeedWithConnections(ref objDataService, objTimeLog.__dataTableName, paramTripStartDate, paramTripEndDate, 1);
+                        objTripInfo.TripSpeedWOConn = calcTripSpeedWithoutConnections(objDataService, objTimeLog.__dataTableName, paramTripStartDate, paramTripEndDate, 1);
+                    }
+
+                    objTripInfo.AvgConnTime = calculateAvgTripConnTime(ref objDataService, dataStartDate, dataEndDate);
+                    objTripInfo.AvgDayTime = calculateAvgTripConnTimeDayNight(ref objDataService, dataStartDate, dataEndDate, 0);
+                    objTripInfo.AvgNightTime = calculateAvgTripConnTimeDayNight(ref objDataService, dataStartDate, dataEndDate, 1);
+                    objTripInfo.TargetTime = objTripReportSettings.BenchmarkTime;
+                    objTripInfo.DeltaTargetTime = objTripInfo.TargetTime - objTripInfo.AvgConnTime;
+                    objTripInfo.DeltaSpeedWConn = objTripReportSettings.BenchmarkSpeedWithConn - objTripInfo.TripSpeedWithConn;
+                    objTripInfo.DeltaSpeedWOConn = objTripReportSettings.BenchmarkSpeedWOConn - objTripInfo.TripSpeedWOConn;
+                    objTripInfo.ConnectionCount = getNoOfConnections(ref objDataService, dataStartDate, dataEndDate);
+                    objTripInfo.HoleDepth = getTripHoleDepth(ref objDataService, objTimeLog.__dataTableName, dataStartDate, dataEndDate);
+                    calculateContTripSpeedWithConnection(ref objDataService,ref objTripInfo.ContTripSpeedWithConn, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 1);
+                    calculateContTripSpeedWOConnection(ref objDataService,ref objTripInfo.ContTripSpeedWOConn, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 0);
+                    calculateContTripSpeedWithConnection100(ref objDataService,ref objTripInfo.ContTripSpeedWithConn100, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 1);
+                    calculateContTripSpeedWOConnection100(ref objDataService,ref objTripInfo.ContTripSpeedWOConn100, objTimeLog.__dataTableName, dataStartDate, dataEndDate, 0);
+
+
+                    // '****** Calculate Avg. Trip speeds *****************************************************
+                    // Dim sum As Double = 0
+
+                    // For Each objItem As ContTripSpeedInfo In objTripInfo.ContTripSpeedWithConn100.Values
+
+                    // sum = sum + objItem.Speed
+
+                    // Next
+
+                    // If sum > 0 And objTripInfo.ContTripSpeedWithConn100.Count > 0 Then
+
+                    // objTripInfo.TripSpeedWithConn = Math.Round(sum / objTripInfo.ContTripSpeedWithConn100.Count, 2)
+
+                    // End If
+
+
+                    // sum = 0
+
+                    // For Each objItem As ContTripSpeedInfo In objTripInfo.ContTripSpeedWOConn100.Values
+
+                    // sum = sum + objItem.Speed
+
+                    // Next
+
+                    // If sum > 0 And objTripInfo.ContTripSpeedWOConn100.Count > 0 Then
+
+                    // objTripInfo.TripSpeedWOConn = Math.Round(sum / objTripInfo.ContTripSpeedWOConn100.Count, 2)
+
+                    // End If
+                    // '***************************************************************************************
+
+
+
+                    // '//******************************************************************************//
+
+                    listTripInfo.Add(objTripInfo.EntryID, objTripInfo);
+                }
+
+                return listTripInfo;
+            }
+            catch (Exception ex)
+            {
+                return new Dictionary<string, TripInfo>();
+            }
+        }
+
+        private double calcSurfaceTime(ref DataService objDataService, string dataTableName, DateTime paramFromDate, DateTime paramToDate)
+        {
+            try
+            {
+                double minDepth = 0;
+                string strSQL = "";
+
+                           // 'Use Set Depth to Set Depth instead of window ...
+                strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DEPTH>=" + "0" + " AND DEPTH<=" + objTripReportSettings.SurfaceDepthInterval.ToString() + " AND DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "'";
+
+
+                double surfaceTime =Convert.ToDouble(objDataService.getValueFromDatabase(strSQL));
+
+                return surfaceTime;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        private double calcTripSpeedWithConnections(ref DataService objDataService, string dataTableName, DateTime paramFromDate, DateTime paramToDate, int paramDirection)
+        {
+            try
+            {
+                double TotalFootage = 0;
+                string strSQL = "";
+
+                double minDepth = 0;
+                double maxDepth = 0;
+
+                // '(1) Find the Depth Range ...
+                strSQL = "SELECT MAX(DEPTH) AS MAX_DEPTH,MIN(DEPTH) AS MIN_DEPTH FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0  ";
+
+                DataTable objData = objDataService.getTable(strSQL);
+
+                if (objData.Rows.Count > 0)
+                {
+                    minDepth =Convert.ToDouble( DataService.checkNull(objData.Rows[0]["MIN_DEPTH"], 0));
+                    maxDepth =Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MAX_DEPTH"], 0));
+                }
+
+                TotalFootage = maxDepth - minDepth;
+
+                if (TotalFootage > 0)
+                {
+                }
+                else
+                    // 'No depth movement ... return zero ...
+                    return 0;
+
+
+                double hkldCutOff = 0;
+                double pumpCutOff = 0;
+
+                // 'Check if fill up time is removed ...
+                if (objTripReportSettings.RemoveFillupTime)
+                {
+                    DataTable objRigStateSetup = objDataService.getTable("SELECT HOOKLOAD_CUTOFF,PUMP_PRESSURE_CUTOFF FROM VMX_WELL_RIGSTATE_SETUP WHERE WELL_ID='" + objTimeLog.WellID + "'");
+
+                    if (objRigStateSetup.Rows.Count > 0)
+                    {
+                        hkldCutOff =Convert.ToDouble( DataService.checkNull(objRigStateSetup.Rows[0]["HOOKLOAD_CUTOFF"], 0));
+                        pumpCutOff =Convert.ToDouble( DataService.checkNull(objRigStateSetup.Rows[0]["PUMP_PRESSURE_CUTOFF"], 0));
+                    }
+                }
+
+                DateTime lnFromDate = paramFromDate;
+                DateTime lnToDate = paramToDate;
+
+                //double TotalRigStateTime = Math.Abs(DateTime.DateDiff(DateInterval.Second, lnFromDate, lnToDate));
+                int TotalRigStateTime =Convert.ToInt32(Math.Abs((lnToDate - lnFromDate).TotalSeconds));
+
+
+                // 'prath added Ticket 486
+                if (paramDirection == 1)
+                {
+                    // 'trip in
+
+                    if (objTripReportSettings.IncludePipeMovement)
+                        strSQL = "SELECT SUM(TIME_DURATION) AS SUMTIME FROM " + dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (2,6,27) ";
+                    else
+                        strSQL = "SELECT SUM(TIME_DURATION) AS SUMTIME FROM " + dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (2,6) ";
+                }
+                else
+                    // 'trip out
+                    if (objTripReportSettings.IncludePipeMovement)
+                    strSQL = "SELECT SUM(TIME_DURATION) AS SUMTIME FROM " + dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (2,10,27) ";
+                else
+                    strSQL = "SELECT SUM(TIME_DURATION) AS SUMTIME FROM " + dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (2,10) ";
+                // '------------
+                var Condition = "";
+
+
+                if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                {
+                    Condition = " AND HKLD<" + hkldCutOff.ToString() + " AND SPPA<=" + pumpCutOff.ToString();
+                    strSQL += Condition;
+                }
+
+                objData = objDataService.getTable(strSQL);
+
+                int TotalTripInTime =Convert.ToInt32(DataService.checkNull(objData.Rows[0]["SUMTIME"], 0));
+
+                TimeSpan objTimeSpan1 = new TimeSpan(0, 0, TotalRigStateTime);
+                TimeSpan objTimeSpan2 = new TimeSpan(0, 0, TotalTripInTime);
+
+                double TripPercent = Math.Round(Convert.ToDouble((TotalTripInTime * 100)) / TotalRigStateTime, 2);
+
+                double TripSpeed = 0;
+
+                if (TotalTripInTime > 0 & TotalFootage > 0)
+                {
+                    // 'Continue ...
+                    TripSpeed = Math.Round((TotalFootage / ( (Convert.ToDouble(TotalTripInTime) / 60) / 60)), 2);
+
+                    return TripSpeed;
+                }
+                else
+                    return 0;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        private double calcTripSpeedWithoutConnections(DataService objDataService, string dataTableName, DateTime paramFromDate, DateTime paramToDate, int paramDirection)
+        {
+            try
+            {
+                double TotalFootage = 0;
+                string strSQL = "";
+                double minDepth = 0;
+                double maxDepth = 0;
+
+                // '(1) Find the Depth Range ...
+                strSQL = "SELECT MAX(DEPTH) AS MAX_DEPTH,MIN(DEPTH) AS MIN_DEPTH FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0  ";
+                DataTable objData = objDataService.getTable(strSQL);
+                if (objData.Rows.Count > 0)
+                {
+                    minDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MIN_DEPTH"], 0));
+                    maxDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["MAX_DEPTH"], 0));
+                }
+
+                TotalFootage = maxDepth - minDepth;
+                if (TotalFootage > 0)
+                {
+                }
+                // 'Continue processing ...
+                else
+                {
+                    // 'No depth movement ... return zero ...
+                    return 0;
+                }
+
+                var lnFromDate = paramFromDate;
+                var lnToDate = paramToDate;
+                //double TotalRigStateTime = Math.Abs(DateAndTime.DateDiff(DateInterval.Second, lnFromDate, lnToDate));
+                double TotalRigStateTime = Math.Abs((lnToDate - lnFromDate).TotalSeconds);
+                if (paramDirection == 1)
+                {
+                    strSQL = "SELECT SUM(TIME_DURATION) AS SUMTIME FROM " + dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (6,4) ";
+                }
+                else
+                {
+                    strSQL = "SELECT SUM(TIME_DURATION) AS SUMTIME FROM " + dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (8,10) ";
+                }
+
+                objData = objDataService.getTable(strSQL);
+                double TotalTripInTime =Convert.ToDouble(DataService.checkNull(objData.Rows[0]["SUMTIME"], 0));
+                var objTimeSpan1 = new TimeSpan(0, 0, (int)Math.Round(TotalRigStateTime));
+                var objTimeSpan2 = new TimeSpan(0, 0, (int)Math.Round(TotalTripInTime));
+                double TripPercent = Math.Round(TotalTripInTime * 100 / TotalRigStateTime, 2);
+                double TripSpeed = 0;
+                if (TotalTripInTime > 0 & TotalFootage > 0)
+                {
+                    // 'Continue ...
+                    TripSpeed = Math.Round(TotalFootage / (TotalTripInTime / 60 / 60), 2);
+                    return TripSpeed;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        private double calculateAvgTripConnTime(ref DataService objDataService, DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                double MaxTime = 5d;
+                double MinTime = 1d;
+
+
+                // 'Fetch all the connection that falls into this date range ...
+
+                var _exclusionList = new Dictionary<double, double>();
+                _exclusionList.Clear();
+                DataTable objExData = objDataService.getTable("SELECT * FROM VMX_TRIP_CONN_INFO WHERE WELL_ID='" + objTimeLog.WellID + "'");
+                foreach (DataRow objRow in objExData.Rows)
+                {
+                    double lnDepth = Math.Round(Convert.ToDouble(DataService.checkNull(objRow["DEPTH"], 0)), 2);
+                    if (!_exclusionList.ContainsKey(lnDepth))
+                    {
+                        _exclusionList.Add(_exclusionList.Count + 1, lnDepth);
+                    }
+                }
+
+                string strSQL = "";
+                strSQL = "SELECT * FROM VMX_AKPI_TRIP_CONNECTIONS WHERE WELL_ID='" + objTimeLog.WellID + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "'";
+                DataTable objData = objDataService.getTable(strSQL);
+                double connCount = 0;
+                double totalConnTime = 0;
+                foreach (DataRow objRow in objData.Rows)
+                {
+                    double lnDepth =Math.Round(Convert.ToDouble(  DataService.checkNull(objRow["DEPTH"], 0)), 2);
+                    if (!_exclusionList.ContainsKey(lnDepth))
+                    {
+                        double lnSlipsToSlips = Convert.ToDouble(DataService.checkNull(objRow["SLIPS_TO_SLIPS"], 0));
+                        double totalTime = lnSlipsToSlips;
+                        double totalTimeMin = Math.Round(totalTime / 60, 2);
+
+                        // '//Even filter the connections based on Min. and Max. Time ... taking defaults ...
+                        if (totalTimeMin >= MinTime & totalTimeMin <= MaxTime)
+                        {
+                            totalConnTime = totalConnTime + totalTime;
+                            connCount += 1d;
+                        }
+                    }
+                }
+
+                double AvgTime = 0;
+                if (totalConnTime > 0 & connCount > 0)
+                {
+                    AvgTime = totalConnTime / connCount;
+                    AvgTime = Math.Round(AvgTime / 60, 2); // 'Convert to minutes
+                }
+
+                return AvgTime;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+        private double calculateAvgTripConnTimeDayNight(ref DataService objDataService, DateTime fromDate, DateTime toDate, int paramDayNight)
+        {
+            try
+            {
+                double MaxTime = 5d;
+                double MinTime = 1d;
+
+
+                // 'Fetch all the connection that falls into this date range ...
+
+                var _exclusionList = new Dictionary<double, double>();
+                _exclusionList.Clear();
+                DataTable objExData = objDataService.getTable("SELECT * FROM VMX_TRIP_CONN_INFO WHERE WELL_ID='" + objTimeLog.WellID + "'");
+                foreach (DataRow objRow in objExData.Rows)
+                {
+                    double lnDepth = Math.Round(Convert.ToDouble( DataService.checkNull(objRow["DEPTH"], 0)), 2);
+                    if (!_exclusionList.ContainsKey(lnDepth))
+                    {
+                        _exclusionList.Add(_exclusionList.Count + 1, lnDepth);
+                    }
+                }
+
+                string strSQL = "";
+                strSQL = "SELECT * FROM VMX_AKPI_TRIP_CONNECTIONS WHERE WELL_ID='" + objTimeLog.WellID + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ";
+                if (paramDayNight == 0) // 'Day
+                {
+                    strSQL = strSQL + " AND TIME='D'";
+                }
+                else
+                {
+                    strSQL = strSQL + " AND TIME='N'";
+                }
+
+                DataTable objData = objDataService.getTable(strSQL);
+                double connCount = 0;
+                double totalConnTime = 0;
+                foreach (DataRow objRow in objData.Rows)
+                {
+                    double lnDepth = Convert.ToDouble( Math.Round(Convert.ToDouble( DataService.checkNull(objRow["DEPTH"], 0)), 2));
+                    if (!_exclusionList.ContainsKey(lnDepth))
+                    {
+                        double lnSlipsToSlips = Convert.ToDouble( DataService.checkNull(objRow["SLIPS_TO_SLIPS"], 0));
+                        double totalTime = lnSlipsToSlips;
+                        double totalTimeMin = Math.Round(totalTime / 60, 2);
+
+                        // '//Even filter the connections based on Min. and Max. Time ... taking defaults ...
+                        if (totalTimeMin >= MinTime & totalTimeMin <= MaxTime)
+                        {
+                            totalConnTime = totalConnTime + totalTime;
+                            connCount += 1d;
+                        }
+                    }
+                }
+
+                double AvgTime = 0;
+                if (totalConnTime > 0 & connCount > 0)
+                {
+                    AvgTime = totalConnTime / connCount;
+                    AvgTime = Math.Round(AvgTime / 60, 2); // 'Convert to minutes
+                }
+
+                return AvgTime;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+
+        private double getNoOfConnections(ref DataService objDataService, DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                double MaxTime = 5;
+                double MinTime = 1;
+                if (objTripReportSettings.MinConnTime > 0)
+                {
+                    MinTime = objTripReportSettings.MinConnTime;
+                }
+
+                if (objTripReportSettings.MaxConnTime > 0)
+                {
+                    MaxTime = objTripReportSettings.MaxConnTime;
+                }
+
+                // 'Fetch all the connection that falls into this date range ...
+
+                var _exclusionList = new Dictionary<double, double>();
+                _exclusionList.Clear();
+                DataTable objExData = objDataService.getTable("SELECT * FROM VMX_TRIP_CONN_INFO WHERE WELL_ID='" + objTimeLog.WellID + "'");
+                foreach (DataRow objRow in objExData.Rows)
+                {
+                    double lnDepth = Math.Round(Convert.ToDouble(DataService.checkNull(objRow["DEPTH"], 0)), 2);
+                    
+                    if (!_exclusionList.ContainsKey(lnDepth))
+                    {
+                        _exclusionList.Add(_exclusionList.Count + 1, lnDepth);
+                    }
+                }
+
+                string strSQL = "";
+                strSQL = "SELECT * FROM VMX_AKPI_TRIP_CONNECTIONS WHERE WELL_ID='" + objTimeLog.WellID + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "'";
+                DataTable objData = objDataService.getTable(strSQL);
+                double connCount = 0;
+                double totalConnTime = 0;
+                foreach (DataRow objRow in objData.Rows)
+                {
+                    double lnDepth = Math.Round(Convert.ToDouble(DataService.checkNull(objRow["DEPTH"], 0)), 2);
+                    if (!_exclusionList.ContainsKey(lnDepth))
+                    {
+                        double lnSlipsToSlips = Convert.ToDouble( DataService.checkNull(objRow["SLIPS_TO_SLIPS"], 0));
+                        double totalTime = lnSlipsToSlips;
+                        double totalTimeMin = Math.Round(totalTime / 60, 2);
+
+                        // '//Even filter the connections based on Min. and Max. Time ... taking defaults ...
+                        if (totalTimeMin >= MinTime & totalTimeMin <= MaxTime)
+                        {
+                            totalConnTime = totalConnTime + totalTime;
+                            connCount += 1d;
+                        }
+                    }
+                }
+
+                return connCount;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        private double getTripHoleDepth(ref DataService objDataService, string dataTableName, DateTime paramFromDate, DateTime paramToDate)
+        {
+            try
+            {
+                double HoleDepth = 0;
+                string strSQL = "";
+
+                // '//Find out min. depth in the trip
+                strSQL = "SELECT MAX(HDTH) FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "'";
+                HoleDepth = Convert.ToDouble(objDataService.getValueFromDatabase(strSQL));
+                return HoleDepth;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+
+        private void calculateContTripSpeedWithConnection(ref DataService objDataService, ref Dictionary<int, ContTripSpeedInfo> paramSpeedInfo, string dataTableName, DateTime paramFromDate, DateTime paramToDate, int paramDirection)
+        {
+            try
+            {
+                DataTable objData = objDataService.getTable("SELECT DATETIME,DEPTH,TIME_DURATION,RIG_STATE,HKLD,SPPA FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND (RIG_STATE IS NOT NULL) ORDER BY DATETIME");
+                bool startRecorded = false;
+                double startDepth = 0;
+                int startIndex = 0;
+                double SumTime = 0;
+
+
+                //Collection<string> list  = new Collection<string>();
+                
+                Collection<double> xData = new Collection<double>();
+                Collection<double> yData = new Collection<double>();
+
+                
+                double hkldCutOff = 0;
+                double pumpCutOff = 0;
+
+                // 'Check if fill up time is removed ...
+                DataTable objRigStateSetup = objDataService.getTable("SELECT HOOKLOAD_CUTOFF,PUMP_PRESSURE_CUTOFF FROM VMX_WELL_RIGSTATE_SETUP WHERE WELL_ID='" + objTimeLog.WellID + "'");
+                if (objRigStateSetup.Rows.Count > 0)
+                {
+                    hkldCutOff =Convert.ToDouble(DataService.checkNull(objRigStateSetup.Rows[0]["HOOKLOAD_CUTOFF"], 0));
+                    pumpCutOff =Convert.ToDouble(DataService.checkNull(objRigStateSetup.Rows[0]["PUMP_PRESSURE_CUTOFF"], 0));
+                }
+
+                if (paramDirection == 0)
+                {
+                    double lastDepth = Convert.ToDouble( DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+                    for (int i = 0, loopTo = objData.Rows.Count - 1; i <= loopTo; i++)
+                    {
+                        double lnDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+                        if (lnDepth <= lastDepth)
+                        {
+                            // 'Continue ahead  with calculation ...
+                            bool halt = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        lastDepth = lnDepth;
+                        double lnTimeDuration = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["TIME_DURATION"], 0));
+                        int lnRigState = Convert.ToInt32(DataService.checkNull(objData.Rows[i]["RIG_STATE"], 0));
+                        double lnHkld = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["HKLD"], 0));
+                        double lnSPPA = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["SPPA"], 0));
+                        if (startRecorded)
+                        {
+                            double Footage = Math.Abs(lnDepth - startDepth);
+                            if (Footage >= objTripReportSettings.DepthInterval)
+                            {
+                                if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                                {
+                                    if (lnHkld < hkldCutOff & lnSPPA <= pumpCutOff)
+                                    {
+                                        SumTime = SumTime + lnTimeDuration;
+                                    }
+                                }
+                                else
+                                {
+                                    SumTime = SumTime + lnTimeDuration;
+                                }
+
+                                double TripSpeed = 0;
+                                if (Footage >= 0 & SumTime >= 0)
+                                {
+                                    TripSpeed = Math.Round(Footage / (SumTime / 60 / 60), 2);
+                                }
+
+                                if (double.IsInfinity(TripSpeed))
+                                {
+                                    TripSpeed = 0;
+                                }
+
+                                xData.Add(TripSpeed);
+                                yData.Add(lnDepth);
+
+                                // 'startRecorded = False
+                                startDepth = lnDepth;
+                                startIndex = i;
+                                SumTime = 0;
+                            }
+                            else if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                            {
+                                if (lnHkld < hkldCutOff & lnSPPA <= pumpCutOff)
+                                {
+                                    SumTime = SumTime + lnTimeDuration;
+                                }
+                            }
+                            else
+                            {
+                                SumTime = SumTime + lnTimeDuration;
+                            }
+                        }
+                        else
+                        {
+                            startRecorded = true;
+                            startDepth = lnDepth;
+                            startIndex = i;
+                            SumTime = 0;
+                        }
+                    }
+                }
+
+                if (paramDirection == 1)
+                {
+                    double lastDepth =Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+                    for (int i = 0, loopTo1 = objData.Rows.Count - 1; i <= loopTo1; i++)
+                    {
+                        double lnDepth =Convert.ToDouble( DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+                        if (lnDepth >= lastDepth)
+                        {
+                            // 'Continue ahead  with calculation ...
+                            bool halt = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                      
+
+                        double lnTimeDuration = Convert.ToDouble( DataService.checkNull(objData.Rows[i]["TIME_DURATION"], 0)) ;
+                        int lnRigState =Convert.ToInt32( DataService.checkNull(objData.Rows[i]["RIG_STATE"], 0));
+                        double lnHkld = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["HKLD"], 0));
+                        double lnSPPA = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["SPPA"], 0));
+                        if (startRecorded)
+                        {
+                            double Footage = Math.Abs(lnDepth - startDepth);
+                            if (Footage >= objTripReportSettings.DepthInterval)
+                            {
+                                if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                                {
+                                    if (lnHkld < hkldCutOff & lnSPPA <= pumpCutOff)
+                                    {
+                                        SumTime = SumTime + lnTimeDuration;
+                                    }
+                                }
+                                else
+                                {
+                                    SumTime = SumTime + lnTimeDuration;
+                                }
+
+                                double TripSpeed = 0;
+                                if (Footage >= 0 & SumTime >= 0)
+                                {
+                                    TripSpeed = Math.Round(Footage / (SumTime / 60 / 60), 2);
+                                }
+
+                                if (double.IsInfinity(TripSpeed))
+                                {
+                                    TripSpeed = 0;
+                                }
+
+                                xData.Add(TripSpeed);
+                                yData.Add(lnDepth);
+
+                                // 'startRecorded = False
+                                startDepth = lnDepth;
+                                startIndex = i;
+                                SumTime = 0;
+                            }
+                            else if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                            {
+                                if (lnHkld < hkldCutOff & lnSPPA <= pumpCutOff)
+                                {
+                                    SumTime = SumTime + lnTimeDuration;
+                                }
+                            }
+                            else
+                            {
+                                SumTime = SumTime + lnTimeDuration;
+                            }
+                        }
+                        else
+                        {
+                            startRecorded = true;
+                            startDepth = lnDepth;
+                            startIndex = i;
+                            SumTime = 0;
+                        }
+                    }
+                }
+
+                paramSpeedInfo = new Dictionary<int, ContTripSpeedInfo>();
+                if (xData.Count > 0 & yData.Count > 0)
+                {
+                    for (int i = 1, loopTo2 = xData.Count; i <= loopTo2; i++)
+                        paramSpeedInfo.Add(i, new ContTripSpeedInfo(yData[i], xData[i]));
+                }
+
+                bool halt3 = true;
+            }
+            catch (Exception ex)
+            {
+                bool halt = true;
+            }
+        }
+
+
+        private void calculateContTripSpeedWOConnection(ref DataService objDataService, ref Dictionary<int, ContTripSpeedInfo> paramSpeedInfo, string dataTableName, DateTime paramFromDate, DateTime paramToDate, int paramDirection)
+        {
+            try
+            {
+                DataTable objData = objDataService.getTable("SELECT DATETIME,DEPTH,TIME_DURATION,RIG_STATE FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND (RIG_STATE IS NOT NULL) ORDER BY DATETIME");
+
+                if (objData.Rows.Count == 0)
+                    return;
+
+
+                bool startRecorded = false;
+                double startDepth = 0;
+                int startIndex = 0;
+                double SumTime = 0;
+
+                Collection<double> xData = new Collection<double>();
+                Collection<double> yData = new Collection<double>();
+
+
+                if (paramDirection == 0)
+                {
+                    double lastDepth =Convert.ToDouble( DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+
+                    for (int i = 0; i <= objData.Rows.Count - 1; i++)
+                    {
+                        double lnDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+
+                        if (lnDepth >= lastDepth) { 
+                            // 'Continue ahead  with calculation ...
+                            bool halt = true;
+                        }
+                        else { 
+                            continue;
+                        }
+
+                        lastDepth = lnDepth;
+
+                        double lnTimeDuration =Convert.ToDouble(DataService.checkNull(objData.Rows[i]["TIME_DURATION"], 0));
+                        int lnRigState = Convert.ToInt32(DataService.checkNull(objData.Rows[i]["RIG_STATE"], 0));
+                        DateTime dtDateTime = Convert.ToDateTime(DataService.checkNull(objData.Rows[i]["DATETIME"], ""));
+
+
+                        if (startRecorded)
+                        {
+                            double Footage = Math.Abs(lnDepth - startDepth);
+
+                            if (Footage >= objTripReportSettings.DepthInterval)
+                            {
+
+                                // 'We also need to include the current time ...
+                                if (paramDirection == 0)
+                                {
+                                    if (lnRigState == 6 | lnRigState == 4)
+                                        SumTime = SumTime + lnTimeDuration;
+                                }
+                                else if (lnRigState == 10 | lnRigState == 8)
+                                    SumTime = SumTime + lnTimeDuration;
+
+                                double TripSpeed = 0;
+
+                                if (Footage > 0 & SumTime > 0)
+                                    TripSpeed = Math.Round(Footage / ((SumTime / 60) / 60), 2);
+
+                                if (double.IsInfinity(TripSpeed))
+                                    TripSpeed = 0;
+
+                                xData.Add(TripSpeed);
+                                yData.Add(lnDepth);
+
+                                // 'Instead of re-initializing start tag ... re-initialize start ddepth 
+                                // 'startRecorded = False
+                                startDepth = lnDepth;
+                                SumTime = 0;
+                                startIndex = i;
+                            }
+                            else if (paramDirection == 0)
+                            {
+                                if (lnRigState == 6 | lnRigState == 4)
+                                    SumTime = SumTime + lnTimeDuration;
+                            }
+                            else if (lnRigState == 10 | lnRigState == 8)
+                                SumTime = SumTime + lnTimeDuration;
+                        }
+                        else
+                        {
+                            startRecorded = true;
+                            startDepth = lnDepth;
+                            startIndex = i;
+                            SumTime = 0;
+                        }
+                    }
+                }
+
+
+
+
+                if (paramDirection == 1)
+                {
+                    double lastDepth =Convert.ToDouble( DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+
+                    for (int i = 0; i <= objData.Rows.Count - 1; i++)
+                    {
+                        double lnDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+
+                        if (lnDepth <= lastDepth)
+                        {
+                        }
+                        else
+                            continue;
+
+
+                        lastDepth = lnDepth;
+
+                        double lnTimeDuration =Convert.ToDouble( DataService.checkNull(objData.Rows[i]["TIME_DURATION"], 0));
+                        int lnRigState = Convert.ToInt32( DataService.checkNull(objData.Rows[i]["RIG_STATE"], 0));
+                        DateTime dtDateTime =Convert.ToDateTime(DataService.checkNull(objData.Rows[i]["DATETIME"], ""));
+
+
+                        if (dtDateTime >= DateTime.Parse("14-Apr-2014 05:13:30")) { 
+                            bool halt = true;
+                        }
+
+                        if (startRecorded)
+                        {
+                            double Footage = Math.Abs(lnDepth - startDepth);
+
+                            if (Footage >= objTripReportSettings.DepthInterval)
+                            {
+
+                                // 'We also need to include the current time ...
+                                if (paramDirection == 0)
+                                {
+                                    if (lnRigState == 6 | lnRigState == 4)
+                                        SumTime = SumTime + lnTimeDuration;
+                                }
+                                else if (lnRigState == 10 | lnRigState == 8)
+                                    SumTime = SumTime + lnTimeDuration;
+
+                                double TripSpeed = 0;
+
+                                if (Footage > 0 & SumTime > 0)
+                                    TripSpeed = Math.Round(Footage / ((SumTime / 60) / 60), 2);
+
+                                if (double.IsInfinity(TripSpeed))
+                                    TripSpeed = 0;
+
+
+                                // 'Dim strLine As String = ""
+                                // 'strLine = dtDateTime.ToString("dd-MMM-yyyy HH:mm:ss") + "," + lnDepth.ToString + "," + SumTime.ToString + "," + Footage.ToString + "," + TripSpeed.ToString
+                                // 'objFile.WriteLine(strLine)
+
+                                xData.Add(TripSpeed);
+                                yData.Add(lnDepth);
+
+
+                                // 'Instead of re-initializing start tag ... re-initialize start ddepth 
+                                // 'startRecorded = False
+                                startDepth = lnDepth;
+                                SumTime = 0;
+                                startIndex = i;
+                            }
+                            else if (paramDirection == 0)
+                            {
+                                if (lnRigState == 6 | lnRigState == 4)
+                                    SumTime = SumTime + lnTimeDuration;
+                            }
+                            else if (lnRigState == 10 | lnRigState == 8)
+                                SumTime = SumTime + lnTimeDuration;
+                        }
+                        else
+                        {
+                            startRecorded = true;
+                            startDepth = lnDepth;
+                            startIndex = i;
+                            SumTime = 0;
+                        }
+                    }
+                }
+
+
+
+
+                paramSpeedInfo = new Dictionary<int, ContTripSpeedInfo>();
+
+                if (xData.Count > 0 & yData.Count > 0)
+                {
+                    if (xData.Count > 0 & yData.Count > 0)
+                    {
+                        for (int i = 1; i <= xData.Count; i++)
+
+                            paramSpeedInfo.Add(i, new ContTripSpeedInfo(yData[i], xData[i]));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void calculateContTripSpeedWithConnection100(ref DataService objDataService, ref Dictionary<int, ContTripSpeedInfo> paramSpeedInfo, string dataTableName, DateTime paramFromDate, DateTime paramToDate, int paramDirection)
+        {
+            try
+            {
+                DataTable objData = objDataService.getTable("SELECT DATETIME,DEPTH,TIME_DURATION,RIG_STATE,HKLD,SPPA FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND (RIG_STATE IS NOT NULL) ORDER BY DATETIME");
+
+                bool startRecorded = false;
+                double startDepth = 0;
+                int startIndex = 0;
+                double SumTime = 0;
+
+                Collection<double> xData = new Collection< double >();
+                Collection<double> yData = new Collection< double >();
+
+
+                double hkldCutOff = 0;
+                double pumpCutOff = 0;
+
+                // 'Check if fill up time is removed ...
+                DataTable objRigStateSetup = objDataService.getTable("SELECT HOOKLOAD_CUTOFF,PUMP_PRESSURE_CUTOFF FROM VMX_WELL_RIGSTATE_SETUP WHERE WELL_ID='" + objTimeLog.WellID + "'");
+
+                if (objRigStateSetup.Rows.Count > 0)
+                {
+                    hkldCutOff = Convert.ToDouble( DataService.checkNull(objRigStateSetup.Rows[0]["HOOKLOAD_CUTOFF"], 0));
+                    pumpCutOff = Convert.ToDouble(DataService.checkNull(objRigStateSetup.Rows[0]["PUMP_PRESSURE_CUTOFF"], 0));
+                }
+
+
+                if (paramDirection == 0)
+                {
+                    double lastDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+
+                    for (int i = 0; i <= objData.Rows.Count - 1; i++)
+                    {
+                        double lnDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+
+                        if (lnDepth <= lastDepth) {
+                            // 'Continue ahead  with calculation ...
+                            bool halt = true;
+                        }
+                        else {
+                            continue;
+                        }
+
+                        lastDepth = lnDepth;
+
+                        double lnTimeDuration = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["TIME_DURATION"], 0));
+                        int lnRigState = Convert.ToInt32(DataService.checkNull(objData.Rows[i]["RIG_STATE"], 0));
+                        double lnHkld = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["HKLD"], 0));
+                        double lnSPPA = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["SPPA"], 0));
+
+
+                        if (startRecorded)
+                        {
+                            double Footage = Math.Abs(lnDepth - startDepth);
+
+                            if (Footage >= 100)
+                            {
+                                if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                                {
+                                    if (lnHkld < hkldCutOff & lnSPPA <= pumpCutOff)
+                                        SumTime = SumTime + lnTimeDuration;
+                                }
+                                else
+                                    SumTime = SumTime + lnTimeDuration;
+
+
+                                double TripSpeed = 0;
+
+                                if (Footage >= 0 & SumTime >= 0)
+                                    TripSpeed = Math.Round(Footage / ((SumTime / 60) / 60), 2);
+
+                                if (double.IsInfinity(TripSpeed))
+                                    TripSpeed = 0;
+
+
+                                xData.Add(TripSpeed);
+                                yData.Add(lnDepth);
+
+                                // 'startRecorded = False
+                                startDepth = lnDepth;
+                                startIndex = i;
+                                SumTime = 0;
+                            }
+                            else if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                            {
+                                if (lnHkld < hkldCutOff & lnSPPA <= pumpCutOff)
+                                    SumTime = SumTime + lnTimeDuration;
+                            }
+                            else
+                                SumTime = SumTime + lnTimeDuration;
+                        }
+                        else
+                        {
+                            startRecorded = true;
+                            startDepth = lnDepth;
+                            startIndex = i;
+                            SumTime = 0;
+                        }
+                    }
+                }
+
+
+                if (paramDirection == 1)
+                {
+                    double lastDepth =Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+
+                    for (int i = 0; i <= objData.Rows.Count - 1; i++)
+                    {
+                        double lnDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+
+                        if (lnDepth >= lastDepth) {
+                            // 'Continue ahead  with calculation ...
+                            bool halt = true; }
+                        else {
+                            continue;
+                        }
+                        double lnTimeDuration = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["TIME_DURATION"], 0));
+                        int lnRigState = Convert.ToInt32(DataService.checkNull(objData.Rows[i]["RIG_STATE"], 0));
+                        double lnHkld = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["HKLD"], 0));
+                        double lnSPPA = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["SPPA"], 0));
+
+
+                        if (startRecorded)
+                        {
+                            double Footage = Math.Abs(lnDepth - startDepth);
+
+                            if (Footage >= 100)
+                            {
+                                if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                                {
+                                    if (lnHkld < hkldCutOff & lnSPPA <= pumpCutOff)
+                                        SumTime = SumTime + lnTimeDuration;
+                                }
+                                else
+                                    SumTime = SumTime + lnTimeDuration;
+
+
+                                double TripSpeed = 0;
+
+                                if (Footage >= 0 & SumTime >= 0)
+                                    TripSpeed = Math.Round(Footage / ((SumTime / 60) / 60), 2);
+
+                                if (double.IsInfinity(TripSpeed))
+                                    TripSpeed = 0;
+
+
+                                xData.Add(TripSpeed);
+                                yData.Add(lnDepth);
+
+                                // 'startRecorded = False
+                                startDepth = lnDepth;
+                                startIndex = i;
+                                SumTime = 0;
+                            }
+                            else if (objTripReportSettings.RemoveFillupTime & hkldCutOff > 0)
+                            {
+                                if (lnHkld < hkldCutOff & lnSPPA <= pumpCutOff)
+                                    SumTime = SumTime + lnTimeDuration;
+                            }
+                            else
+                                SumTime = SumTime + lnTimeDuration;
+                        }
+                        else
+                        {
+                            startRecorded = true;
+                            startDepth = lnDepth;
+                            startIndex = i;
+                            SumTime = 0;
+                        }
+                    }
+                }
+
+
+
+
+                paramSpeedInfo = new Dictionary<int, ContTripSpeedInfo>();
+
+                if (xData.Count > 0 & yData.Count > 0)
+                {
+                    for (int i = 1; i <= xData.Count; i++)
+
+                        paramSpeedInfo.Add(i, new ContTripSpeedInfo(yData[i], xData[i]));
+                }
+
+
+                bool halt3 = true;
+            }
+            catch (Exception ex)
+            {
+                bool halt = true;
+            }
+        }
+
+        private void calculateContTripSpeedWOConnection100(ref DataService objDataService, ref Dictionary<int, ContTripSpeedInfo> paramSpeedInfo, string dataTableName, DateTime paramFromDate, DateTime paramToDate, int paramDirection)
+        {
+            try
+            {
+                DataTable objData = objDataService.getTable("SELECT DATETIME,DEPTH,TIME_DURATION,RIG_STATE FROM " + dataTableName + " WHERE DATETIME>='" + paramFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND (RIG_STATE IS NOT NULL) ORDER BY DATETIME");
+
+                if (objData.Rows.Count == 0)
+                    return;
+
+
+                bool startRecorded = false;
+                double startDepth = 0;
+                int startIndex = 0;
+                double SumTime = 0;
+
+                Collection<double> xData = new Collection<double>();
+                Collection<double> yData = new Collection<double>();
+
+
+                if (paramDirection == 0)
+                {
+                    double lastDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+
+                    for (int i = 0; i <= objData.Rows.Count - 1; i++)
+                    {
+                        double lnDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+
+                        if (lnDepth >= lastDepth) {
+                            // 'Continue ahead  with calculation ...
+                            bool halt = true; }
+                        else {
+                            continue;
+                        }
+
+                        lastDepth = lnDepth;
+
+                        double lnTimeDuration = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["TIME_DURATION"], 0));
+                        int lnRigState = Convert.ToInt32(DataService.checkNull(objData.Rows[i]["RIG_STATE"], 0));
+                        DateTime dtDateTime = Convert.ToDateTime( DataService.checkNull(objData.Rows[i]["DATETIME"], ""));
+
+
+                        if (startRecorded)
+                        {
+                            double Footage = Math.Abs(lnDepth - startDepth);
+
+                            if (Footage >= 100)
+                            {
+
+                                // 'We also need to include the current time ...
+                                if (paramDirection == 0)
+                                {
+                                    if (lnRigState == 6 | lnRigState == 4)
+                                        SumTime = SumTime + lnTimeDuration;
+                                }
+                                else if (lnRigState == 10 | lnRigState == 8)
+                                    SumTime = SumTime + lnTimeDuration;
+
+                                double TripSpeed = 0;
+
+                                if (Footage > 0 & SumTime > 0)
+                                    TripSpeed = Math.Round(Footage / ((SumTime / 60) / 60), 2);
+
+                                if (double.IsInfinity(TripSpeed))
+                                    TripSpeed = 0;
+
+                                xData.Add(TripSpeed);
+                                yData.Add(lnDepth);
+
+                                // 'Instead of re-initializing start tag ... re-initialize start ddepth 
+                                // 'startRecorded = False
+                                startDepth = lnDepth;
+                                SumTime = 0;
+                                startIndex = i;
+                            }
+                            else if (paramDirection == 0)
+                            {
+                                if (lnRigState == 6 | lnRigState == 4)
+                                    SumTime = SumTime + lnTimeDuration;
+                            }
+                            else if (lnRigState == 10 | lnRigState == 8)
+                                SumTime = SumTime + lnTimeDuration;
+                        }
+                        else
+                        {
+                            startRecorded = true;
+                            startDepth = lnDepth;
+                            startIndex = i;
+                            SumTime = 0;
+                        }
+                    }
+                }
+
+
+
+
+                if (paramDirection == 1)
+                {
+                    double lastDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[0]["DEPTH"], 0));
+
+                    for (int i = 0; i <= objData.Rows.Count - 1; i++)
+                    {
+                        double lnDepth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["DEPTH"], 0));
+
+                        if (lnDepth <= lastDepth)
+                        {
+                        }
+                        else
+                            continue;
+
+
+                        lastDepth = lnDepth;
+
+                        double lnTimeDuration = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["TIME_DURATION"], 0));
+                        int lnRigState = Convert.ToInt32(DataService.checkNull(objData.Rows[i]["RIG_STATE"], 0));
+                        DateTime dtDateTime = Convert.ToDateTime(DataService.checkNull(objData.Rows[i]["DATETIME"], ""));
+
+
+                        if (dtDateTime >= DateTime.Parse("14-Apr-2014 05:13:30")) { 
+                            bool halt = true;
+                        }
+                        if (startRecorded)
+                        {
+                            double Footage = Math.Abs(lnDepth - startDepth);
+
+                            if (Footage >= 100)
+                            {
+
+                                // 'We also need to include the current time ...
+                                if (paramDirection == 0)
+                                {
+                                    if (lnRigState == 6 | lnRigState == 4)
+                                        SumTime = SumTime + lnTimeDuration;
+                                }
+                                else if (lnRigState == 10 | lnRigState == 8)
+                                    SumTime = SumTime + lnTimeDuration;
+
+                                double TripSpeed = 0;
+
+                                if (Footage > 0 & SumTime > 0)
+                                    TripSpeed = Math.Round(Footage / ((SumTime / 60) / 60), 2);
+
+                                if (double.IsInfinity(TripSpeed))
+                                    TripSpeed = 0;
+
+
+                                // 'Dim strLine As String = ""
+                                // 'strLine = dtDateTime.ToString("dd-MMM-yyyy HH:mm:ss") + "," + lnDepth.ToString + "," + SumTime.ToString + "," + Footage.ToString + "," + TripSpeed.ToString
+                                // 'objFile.WriteLine(strLine)
+
+                                xData.Add(TripSpeed);
+                                yData.Add(lnDepth);
+
+
+                                // 'Instead of re-initializing start tag ... re-initialize start ddepth 
+                                // 'startRecorded = False
+                                startDepth = lnDepth;
+                                SumTime = 0;
+                                startIndex = i;
+                            }
+                            else if (paramDirection == 0)
+                            {
+                                if (lnRigState == 6 | lnRigState == 4)
+                                    SumTime = SumTime + lnTimeDuration;
+                            }
+                            else if (lnRigState == 10 | lnRigState == 8)
+                                SumTime = SumTime + lnTimeDuration;
+                        }
+                        else
+                        {
+                            startRecorded = true;
+                            startDepth = lnDepth;
+                            startIndex = i;
+                            SumTime = 0;
+                        }
+                    }
+                }
+
+
+
+
+                paramSpeedInfo = new Dictionary<int, ContTripSpeedInfo>();
+
+                if (xData.Count > 0 & yData.Count > 0)
+                {
+                    if (xData.Count > 0 & yData.Count > 0)
+                    {
+                        for (int i = 1; i <= xData.Count; i++)
+
+                            paramSpeedInfo.Add(i, new ContTripSpeedInfo(yData[i], xData[i]));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        //====
 
     }//Class
 }//Namespace
