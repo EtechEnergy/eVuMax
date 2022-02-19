@@ -74,7 +74,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         fromDate = fromDate.ToUniversalTime();
                         toDate = toDate.ToUniversalTime();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
 
 

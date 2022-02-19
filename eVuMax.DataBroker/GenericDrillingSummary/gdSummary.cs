@@ -2300,9 +2300,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 paramObjSummary.objMnemonicMappingMgr.loadMappings(ref paramObjSummary.objRequest.objDataService);
                 paramObjSummary.objDataSelection.WellID = paramObjSummary.wellID;
                 paramObjSummary.objDataSelection.getRange2(ref paramObjSummary.fromDate, ref paramObjSummary.toDate, ref paramObjSummary.fromDepth, ref paramObjSummary.toDepth, ref paramObjSummary.ChartTitle, paramObjSummary);
-               //Below is commented cos User will change the data from DataSelector (Client Side)
-               //Save is pending in UserSettings
-                 paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+                //paramObjSummary.objDataSelection.getRange2(ref paramObjSummary.objDataSelection.FromDate, ref paramObjSummary.objDataSelection.ToDate, ref paramObjSummary.objDataSelection.FromDepth, ref paramObjSummary.objDataSelection.ToDepth, ref paramObjSummary.ChartTitle, paramObjSummary);
+                //Below is commented cos User will change the data from DataSelector (Client Side)
+                //Save is pending in UserSettings
+                paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
 
                 
 
@@ -2347,7 +2348,11 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
 
                 ////Initialize Data Selection by default last 24 hours and create default series...
-                paramObjSummary.objDataSelection.loadInitialData(paramObjSummary);
+                ///
+                // Comment 1 line below - Change on 18-Feb-2022 to control (Date problem) - Prath & Nishant
+               // paramObjSummary.objDataSelection.loadInitialData(paramObjSummary);
+
+
                 //Based on the data sources... copy series to the local list
 
                 //paramObjSummary.addMissingOffsetSeries(ref paramObjSummary.objRequest.objDataService);

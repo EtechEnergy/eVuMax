@@ -25,7 +25,6 @@ export default class DataSelectorInfo extends Component<IProps>  {
      //alert("Info " + this.props.objDataSelector.selectedval);
         
      if (this.props.objDataSelector.selectedval=="0"){
-         debugger;
         //alert(this.props.objDataSelector.needForceReload + " - " + this.props.objDataSelector.fromDate + " - " + this.props.objDataSelector.toDate);
      }
 

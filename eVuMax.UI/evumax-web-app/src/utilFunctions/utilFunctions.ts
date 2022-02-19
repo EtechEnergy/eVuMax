@@ -1,3 +1,4 @@
+import DropDownBase from "@progress/kendo-react-dropdowns/dist/npm/common/DropDownBase";
 import history from "../history/history";
 
 export function CopyObject(paramObject: any) {
@@ -87,7 +88,9 @@ export function appendLeadingZeroes(n) {
 //prath 01-10-2020
 export function formateDate(paramDate: Date) {
   try {
-    let day = paramDate.getDate();
+    
+    let mDate = new Date(paramDate);
+    let day = mDate.getDate();
     let mlist = [
       "Jan",
       "Feb",
@@ -102,11 +105,17 @@ export function formateDate(paramDate: Date) {
       "Nov",
       "Dec",
     ];
-    let month = mlist[paramDate.getMonth()];
-    let year = paramDate.getFullYear();
-    let hour = paramDate.getHours();
-    let minute = paramDate.getMinutes();
-    let seconds = paramDate.getSeconds();
+    // let month = mlist[paramDate.getMonth()];
+    // let year = paramDate.getFullYear();
+    // let hour = paramDate.getHours();
+    // let minute = paramDate.getMinutes();
+    // let seconds = paramDate.getSeconds();
+
+    let month = mlist[mDate.getMonth()];
+    let year = mDate.getFullYear();
+    let hour = mDate.getHours();
+    let minute = mDate.getMinutes();
+    let seconds = mDate.getSeconds();
 
     let strDate =
       day +
@@ -123,6 +132,7 @@ export function formateDate(paramDate: Date) {
 
     return strDate;
   } catch (error) {
+    alert(error);
     return "";
   }
 }

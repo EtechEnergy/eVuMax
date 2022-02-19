@@ -124,7 +124,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
   }
 
   //Step-1
-  loadSummary = () => {
+  loadSummary = async () => {
     try {
 
       //Axios call API Function with PlotID
@@ -150,6 +150,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
       objBrokerRequest.Parameters.push(objParameter);
 
       objParameter = new BrokerParameter("FromDate", utilFunc.formateDate(this.state.objDataSelector.fromDate));
+      
       objBrokerRequest.Parameters.push(objParameter);
 
       objParameter = new BrokerParameter("ToDate", utilFunc.formateDate(this.state.objDataSelector.toDate));
@@ -177,8 +178,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
       objBrokerRequest.Parameters.push(objParameter);
       
       
+      debugger;
 
-      axios
+      await    axios
         .get(_gMod._getData, {
           headers: {
             Accept: "application/json",
@@ -188,9 +190,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
             paramRequest: JSON.stringify(objBrokerRequest)
           },
         })
-        .then((res) => {
+     .then((res) => {
 
-          if (res.data.RequestSuccessfull == true) {
+       if (res.data.RequestSuccessfull == true) {
             let objData_ = JSON.parse(res.data.Response);
 
             console.log(objData_);
@@ -211,6 +213,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
             }
             this.WellName = res.data.Category;
             this.objData = objData_;
+            debugger;
 
 
             this.generateReport();
@@ -655,7 +658,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
         //Load Series
         let SeriesList = Object.values(this.objData.dataSeries);
 
-
+        debugger;
 
 
         for (let index = 0; index < SeriesList.length; index++) {
@@ -942,6 +945,11 @@ export class CustomDrillingSummary extends Component<IProps>  {
     let realtimeStatus: boolean = paramRefreshHrs;
     paramDataSelector.needForceReload = true;
 
+    //workAround
+    if(paramDataSelector.MatchDepthByFormationTops == undefined){
+      paramDataSelector.MatchDepthByFormationTops = false;
+    }
+
     await this.setState({
       objDataSelector: paramDataSelector,
       isRealTime: realtimeStatus
@@ -961,7 +969,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-
+debugger;
       this.loadSummary();
     }
 

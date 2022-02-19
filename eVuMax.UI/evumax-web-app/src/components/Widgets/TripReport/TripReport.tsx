@@ -1278,7 +1278,7 @@ export default class DrlgStandPlot extends React.Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let warnings: string = "";
                     if (res.data.RequestSuccessfull == false) {
                         warnings = res.data.Warnings;
@@ -1338,7 +1338,7 @@ export default class DrlgStandPlot extends React.Component {
                         }
 
                         console.log("objUserSettings", this.state.objUserSettings);
-                        debugger;
+                        
                         this.setState({
                             objPlotData: objData_,
                             objGridData: objData_.grdData,

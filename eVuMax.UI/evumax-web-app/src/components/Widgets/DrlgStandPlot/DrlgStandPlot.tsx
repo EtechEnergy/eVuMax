@@ -416,7 +416,7 @@ export default class DrlgStandPlot extends React.Component {
 
                     objDataPoint.y = Number.parseFloat((rigStates[key] / 60 / 60).toPrecision(3));
                     objDataPoint.color = objSeries.Color;
-                    
+
                     let Comments: string = "";
                     let grdConnection_: any = Object.values(this.state.objPlotData.grdConnection);
                     debugger;
@@ -500,9 +500,9 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart.DataSeries.set(objBar.Id, objBar);
 
             //sort array on depth
-            
+
             //let connPoints: any =   Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
-            let connPoints: any =   Object.values(this.state.objPlotData.grdConnection);
+            let connPoints: any = Object.values(this.state.objPlotData.grdConnection);
             connPoints.sort(function (a, b) {
                 return a.Depth - b.Depth;
             });
@@ -523,11 +523,11 @@ export default class DrlgStandPlot extends React.Component {
                 standTime = moment.duration(moment(chartData[i]["ToDate"]).diff(moment(chartData[i]["FromDate"]))).asHours();
                 // standTime = Math.round(((standTime / 60) / 60));
                 objStandPoint.y = Number(standTime.toFixed(2)); //Math.round(standTime);
-                objStandPoint.label = chartData[i]["Comments"]; 
+                objStandPoint.label = chartData[i]["Comments"];
 
                 if (this.state.objDrlgStandUserSettings.HighlightDayNight == true) {
                     //if (chartData[i].DayNightStatus == 1) {
-                        if (chartData[i].DayNightStatus == "Day") {
+                    if (chartData[i].DayNightStatus == "Day") {
                         objStandPoint.color = "Yellow";
                         //yellow
                     } else {
@@ -655,15 +655,33 @@ export default class DrlgStandPlot extends React.Component {
                     }
                     let objData_ = JSON.parse(res.data.Response);
                     console.log("PlotData", objData_);
-
+                    debugger;
                     if (objData_ != "" || objData_ != undefined) {
                         let grdData: any;
                         if (objData_.objStandProcessor != undefined || objData_.objStandProcessor != "") {
                             if (objData_.objStandProcessor.connectionPoints != undefined) {
                                 grdData = Object.values(objData_.objStandProcessor.connectionPoints);
 
+                                //prath
+                                
+                                let grdConnection_: any = Object.values(objData_.grdConnection);
+                                grdData.forEach(element => {
+                                    
+                                        let foundIndex = grdConnection_.findIndex((el: any) => Math.round(Number.parseFloat(el.Depth)) === Math.round(element.Depth));
+                                        if (foundIndex > -1) {
+                                            element.Comments = grdConnection_[foundIndex].Comments;
+                                        }
+                                        else{
+                                            element.Comments ="";
+                                        }
+                                    
+                                });
+                                //===
+
+
 
                             }
+                            debugger;
 
                             if (Object.values(objData_.objStandProcessor.connectionPoints).length == 0) {
                                 warnings += "No Connections found";
@@ -1350,7 +1368,7 @@ export default class DrlgStandPlot extends React.Component {
                                 /> */}
                                 <Column
                                     //headerClassName="text-center"
-                                    className="summaryLabel3"
+                                    className="summaryLabelHeader"
                                     field="Comments"
                                     title="Comments"
                                     width="100px"

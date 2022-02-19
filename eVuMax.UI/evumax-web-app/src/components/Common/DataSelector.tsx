@@ -328,7 +328,7 @@ class DataSelector extends Component<IProps> {
     const name = field; // target.props ? target.props.name : target.name;
     let edited: any = utilFunc.CopyObject(this.state.objDataSelector);
 
-
+    
     edited[field] = value;
 
     //edited["MatchDepthByFormationTops"] = this.state.MatchDepthByFormationTops;
