@@ -41,6 +41,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         public double FromDepth = 0;
         public double ToDepth = 0;
 
+        public bool StandPlot_ShowOffset = false; //Prath 19-Feb-2022
+        public double StandPlot_ComparisonWindow = 50; //Prath 19-Feb-2022
+        
 
 
         //public string dtDayTimeFrom = "6:00";

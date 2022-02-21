@@ -23,7 +23,7 @@ import {
     dataSeriesType,
 } from "../../../eVuMaxObjects/Chart/DataSeries";
 import "@progress/kendo-react-layout";
-import { MaskedTextBox, Checkbox, Switch, RadioButton, SwitchChangeEvent } from "@progress/kendo-react-inputs";
+import { MaskedTextBox, Checkbox, Switch, RadioButton, SwitchChangeEvent, NumericTextBox } from "@progress/kendo-react-inputs";
 import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
 import { Button, TabStrip, TabStripTab, TimePicker } from "@progress/kendo-react-all";
 
@@ -419,7 +419,7 @@ export default class DrlgStandPlot extends React.Component {
 
                     let Comments: string = "";
                     let grdConnection_: any = Object.values(this.state.objPlotData.grdConnection);
-                    debugger;
+
                     let foundIndex = grdConnection_.findIndex((el: any) => Math.round(Number.parseFloat(el.Depth)) === Math.round(chartData[index].Depth));
                     if (foundIndex > -1) {
                         Comments = grdConnection_[foundIndex].Comments;
@@ -464,11 +464,12 @@ export default class DrlgStandPlot extends React.Component {
 
 
             //Add new serieses
+
             let objOffsetWellBar = new DataSeries();
 
             objOffsetWellBar.Id = "OffsetWellBar1";
-            objOffsetWellBar.Stacked = true;
-            objOffsetWellBar.Title = "Time (Hrs)";
+            objOffsetWellBar.Stacked = false;
+            objOffsetWellBar.Title = "Offset Time (Hrs)";
             objOffsetWellBar.Type = dataSeriesType.Bar;
             objOffsetWellBar.Color = "Blue"; //#1089ff
             objOffsetWellBar.XAxisId = this.objChart.bottomAxis().Id;
@@ -477,16 +478,17 @@ export default class DrlgStandPlot extends React.Component {
 
 
             //Nishant for Offset Well
+            //alert(this.state.objPlotData.objDataSelection.StandPlot_ShowOffset);
+
             if (this.state.objPlotData.objDataSelection.StandPlot_ShowOffset) {
                 objOffsetWellBar.ColorEach = false;
-
                 this.objChart.DataSeries.set(objOffsetWellBar.Id, objOffsetWellBar);
             }
 
 
             let objBar = new DataSeries();
             objBar.Id = "Bar1";
-            objBar.Stacked = true;
+            objBar.Stacked = false;
             objBar.Title = "Time (Hrs)";
             objBar.Type = dataSeriesType.Bar;
             objBar.Color = "#00E5FF"; //#1089ff
@@ -501,14 +503,14 @@ export default class DrlgStandPlot extends React.Component {
 
             //sort array on depth
 
-            //let connPoints: any =   Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
-            let connPoints: any = Object.values(this.state.objPlotData.grdConnection);
+            let connPoints: any = Object.values(this.state.objPlotData.objStandProcessor.connectionPoints);
+            // let connPoints: any = Object.values(this.state.objPlotData.grdConnection);
             connPoints.sort(function (a, b) {
                 return a.Depth - b.Depth;
             });
             let chartData = connPoints;
 
-            debugger;
+
 
             //Fill up the data for data series
             for (let i = 0; i < chartData.length; i++) {
@@ -523,7 +525,23 @@ export default class DrlgStandPlot extends React.Component {
                 standTime = moment.duration(moment(chartData[i]["ToDate"]).diff(moment(chartData[i]["FromDate"]))).asHours();
                 // standTime = Math.round(((standTime / 60) / 60));
                 objStandPoint.y = Number(standTime.toFixed(2)); //Math.round(standTime);
-                objStandPoint.label = chartData[i]["Comments"];
+
+                //objStandPoint.label = chartData[i]["Comments"];
+
+                //
+                debugger;
+                let grdConnection_: any = Object.values(this.state.objPlotData.grdConnection);
+                let foundIndex = grdConnection_.findIndex((el: any) => Math.round(Number.parseFloat(el.Depth)) === Math.round(objStandPoint.x));
+                if (foundIndex > -1) {
+                    objStandPoint.label = grdConnection_[foundIndex].Comments;
+                }
+                else {
+                    objStandPoint.label = "";
+                }
+                //
+
+
+
 
                 if (this.state.objDrlgStandUserSettings.HighlightDayNight == true) {
                     //if (chartData[i].DayNightStatus == 1) {
@@ -538,15 +556,18 @@ export default class DrlgStandPlot extends React.Component {
                 }
                 objBar.Data.push(objStandPoint);
 
-                // objOffsetWellBar.Data.push()
 
-                // let objOffsetStandPoint = new ChartData();
-                // objOffsetStandPoint.x = Math.round(chartData[i]["Depth"]);
-                // objOffsetStandPoint.y = Math.round(chartData[i]["OffsetTime"]);
+                if (this.state.objPlotData.objDataSelection.StandPlot_ShowOffset) {
+                    objStandPoint = new ChartData();
+                    objStandPoint.x = Math.round(chartData[i]["Depth"]);
 
-                // objBar.Data.push(objOffsetStandPoint);
+                    if (chartData[i].OffsetTime > 0) {
+                        objStandPoint.y = eval((chartData[i].OffsetTime / 60).toFixed(2));
+                    }
 
-                //
+                    objOffsetWellBar.Data.push(objStandPoint);
+                }
+
             }
 
             this.objChart.reDraw();
@@ -558,7 +579,7 @@ export default class DrlgStandPlot extends React.Component {
 
         //this.objChart.LegendPosition = 4; // 1 (left), 2 (right), 3 (top), 4 (bottom)
 
-        debugger;
+
 
         if (this.state.CurrentView == 0) {
             this.plotRegularChart();
@@ -576,7 +597,8 @@ export default class DrlgStandPlot extends React.Component {
     loadDrlgStandPlotData = async () => {
         try {
 
-            Util.StatusInfo("Getting data from the server  ");
+            
+            Util.StatusInfo("Getting data from the server, Please wait");
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Summary.Manager";
             objBrokerRequest.Broker = "DrlgStandPlot";
@@ -595,7 +617,8 @@ export default class DrlgStandPlot extends React.Component {
 
             objUserSettings.FromDepth = this.state.objDataSelector.fromDepth;
             objUserSettings.ToDepth = this.state.objDataSelector.toDepth;
-
+            objUserSettings.StandPlot_ComparisonWindow = this.state.objDrlgStandUserSettings.StandPlot_ComparisonWindow; //prath 19-Feb-2022
+            objUserSettings.StandPlot_ShowOffset = this.state.objDrlgStandUserSettings.StandPlot_ShowOffset;; //prath 19-Feb-2022
 
 
             switch (this.state.objDataSelector.selectedval) ////"-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
@@ -636,7 +659,7 @@ export default class DrlgStandPlot extends React.Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then(async (res) => {
-
+                    Util.StatusInfo("Data successfully retrived. Preparing to Plot");
                     let warnings: string = "";
                     if (res.data.RequestSuccessfull == false) {
                         warnings = res.data.Warnings;
@@ -655,7 +678,7 @@ export default class DrlgStandPlot extends React.Component {
                     }
                     let objData_ = JSON.parse(res.data.Response);
                     console.log("PlotData", objData_);
-                    debugger;
+
                     if (objData_ != "" || objData_ != undefined) {
                         let grdData: any;
                         if (objData_.objStandProcessor != undefined || objData_.objStandProcessor != "") {
@@ -665,23 +688,30 @@ export default class DrlgStandPlot extends React.Component {
                                 //prath
                                 
                                 let grdConnection_: any = Object.values(objData_.grdConnection);
+
                                 grdData.forEach(element => {
-                                    
-                                        let foundIndex = grdConnection_.findIndex((el: any) => Math.round(Number.parseFloat(el.Depth)) === Math.round(element.Depth));
-                                        if (foundIndex > -1) {
-                                            element.Comments = grdConnection_[foundIndex].Comments;
-                                        }
-                                        else{
-                                            element.Comments ="";
-                                        }
-                                    
+
+                                    let foundIndex = grdConnection_.findIndex((el: any) => Math.round(Number.parseFloat(el.Depth)) === Math.round(element.Depth));
+                                    if (foundIndex > -1) {
+                                        element.Comments = grdConnection_[foundIndex].Comments;
+                                    }
+                                    else {
+                                        element.Comments = "";
+                                    }
+
                                 });
+
+                                //update comments in connection
+
+
+
                                 //===
 
 
 
+
                             }
-                            debugger;
+
 
                             if (Object.values(objData_.objStandProcessor.connectionPoints).length == 0) {
                                 warnings += "No Connections found";
@@ -725,6 +755,8 @@ export default class DrlgStandPlot extends React.Component {
                         objDataSelector_.toDepth = objData_.objUserSettings.ToDepth;
                         objDataSelector_.needForceReload = true;
 
+
+
                         // objData_.selectionType are:
                         // ByHours = 0,
                         // DateRange = 1,
@@ -741,12 +773,12 @@ export default class DrlgStandPlot extends React.Component {
                         //     DepthRange = 3
                         // }
 
-                        // debugger;
+                        // 
                         // alert(objData_.objUserSettings.SelectionType);
-                        // debugger;
+                        // 
                         // alert(objDataSelector_.fromDate);
                         // alert(objDataSelector_.toDate);
-                        // debugger;
+                        // 
                         switch (objData_.objUserSettings.SelectionType) {
                             case 1:
                                 //objDataSelector.selectedval = "-1" //-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
@@ -780,7 +812,8 @@ export default class DrlgStandPlot extends React.Component {
                             ConnCount: grdData.length,
                             objDrlgStandUserSettings: objData_.objUserSettings,
                             objDataSelector: objDataSelector_,
-                            refreshDataSelector: true
+                            refreshDataSelector: true,
+
 
                         });
                         console.log(objDataSelector_);
@@ -843,7 +876,7 @@ export default class DrlgStandPlot extends React.Component {
     saveSettings = () => {
         try {
 
-            //Util.StatusInfo("Getting data from the server  ");
+            Util.StatusInfo("Saving data to the server, Please wait");
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Summary.Manager";
             objBrokerRequest.Broker = "DrlgStandPlot";
@@ -871,7 +904,11 @@ export default class DrlgStandPlot extends React.Component {
             objUserSettings.dtDayTimeFrom = this.state.objDrlgStandUserSettings.dtDayTimeFrom;
             objUserSettings.dtDayTimeTo = this.state.objDrlgStandUserSettings.dtDayTimeTo;
             objUserSettings.HighlightDayNight = this.state.objDrlgStandUserSettings.HighlightDayNight;
-            //alert(objUserSettings.ShowComments);
+
+
+            objUserSettings.StandPlot_ShowOffset = this.state.objDrlgStandUserSettings.StandPlot_ShowOffset;
+            objUserSettings.StandPlot_ComparisonWindow = this.state.objDrlgStandUserSettings.StandPlot_ComparisonWindow;
+            //alert("Save setting :-" + this.state.objDrlgStandUserSettings.StandPlot_ShowOffset);
 
 
             switch (this.state.objDataSelector.selectedval) ////"-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
@@ -913,10 +950,11 @@ export default class DrlgStandPlot extends React.Component {
                 })
 
                 .then((res) => {
-                    Util.StatusSuccess("Data successfully retrived  ");
+                    Util.StatusInfo("Data successfully retrived,Preparing to plot");
 
                     this.setState({ selected: 0 });
                     //reload all the connections
+                   
 
                     this.loadDrlgStandPlotData();
                 })
@@ -1072,6 +1110,7 @@ export default class DrlgStandPlot extends React.Component {
                                     textAlign: "center",
                                     height: "40px",
                                     //width: "calc(100vw - 130px)",
+                                    width: "100%",
                                     backgroundColor: "transparent",
                                     display: "inline-block",
                                 }}
@@ -1558,6 +1597,41 @@ export default class DrlgStandPlot extends React.Component {
                             </Button>
                         </div>
 
+                        <div>
+
+                            <Checkbox
+                                className="mr-5 ml-5"
+                                label={"Show Offset Well"}
+                                checked={this.state.objDrlgStandUserSettings.StandPlot_ShowOffset}
+                                onChange={(event) => {
+                                    this.disableRealTime();
+                                    let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
+                                    objUserSettings.StandPlot_ShowOffset = event.value;
+                                    
+                                    this.setState({ objDrlgStandUserSettings: objUserSettings });
+                                }}
+                            />
+
+                            <span style={{ marginLeft: "40px" }}>
+                                <NumericTextBox
+                                    format="n2"
+                                    width="80px"
+                                    value={Number(this.state.objDrlgStandUserSettings.StandPlot_ComparisonWindow)}
+                                    onChange={(event) => {
+                                        this.disableRealTime();
+                                        let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
+                                        objUserSettings.StandPlot_ComparisonWindow = event.value;
+                                        this.setState({
+                                            objDrlgStandUserSettings: objUserSettings,
+                                        });
+                                    }}
+                                />
+
+
+                                <label className="ml-3"> Comparision Window</label>
+
+                            </span>
+                        </div>
                     </TabStripTab>
                 </TabStrip>
             </>

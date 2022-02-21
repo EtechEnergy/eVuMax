@@ -60,8 +60,16 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         objDrlgStandPlot.objDataSelection.ToDate = objStandUserSettings.ToDate;
                         objDrlgStandPlot.objDataSelection.FromDepth= objStandUserSettings.FromDepth;
                         objDrlgStandPlot.objDataSelection.ToDepth= objStandUserSettings.ToDepth;
-                        
-                    
+
+                        objDrlgStandPlot.objDataSelection.StandPlot_ComparisonWindow = objStandUserSettings.StandPlot_ComparisonWindow;
+                        objDrlgStandPlot.objDataSelection.StandPlot_ShowOffset = objStandUserSettings.StandPlot_ShowOffset;
+
+
+
+
+
+
+
 
                         if (objStandUserSettings.RealTime)
                         {
@@ -85,6 +93,10 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         objStandUserSettings.ToDate = objDrlgStandPlot.objDataSelection.ToDate;
                         objStandUserSettings.FromDepth = objDrlgStandPlot.objDataSelection.FromDepth;
                         objStandUserSettings.ToDepth = objDrlgStandPlot.objDataSelection.ToDepth;
+
+
+                        objStandUserSettings.StandPlot_ComparisonWindow = objDrlgStandPlot.objDataSelection.StandPlot_ComparisonWindow;
+                        objStandUserSettings.StandPlot_ShowOffset = objDrlgStandPlot.objDataSelection.StandPlot_ShowOffset;
 
                         objStandUserSettings.LastHrs = objDrlgStandPlot.objDataSelection.LastHours;
                         objStandUserSettings.SelectionType = (sPlotSelectionType) objDrlgStandPlot.objDataSelection.selectionType;

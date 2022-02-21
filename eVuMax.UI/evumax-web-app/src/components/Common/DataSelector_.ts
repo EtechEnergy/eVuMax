@@ -16,4 +16,5 @@ export default class DataSelector_ {
     trajList:[];
     NoOfDataPoints:number =6;
      needForceReload : boolean = false; // for control hooks in DataSelectorInfo
+    
 }

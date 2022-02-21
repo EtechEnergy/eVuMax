@@ -178,8 +178,6 @@ export class CustomDrillingSummary extends Component<IProps>  {
       objBrokerRequest.Parameters.push(objParameter);
       
       
-      debugger;
-
       await    axios
         .get(_gMod._getData, {
           headers: {
@@ -213,7 +211,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
             }
             this.WellName = res.data.Category;
             this.objData = objData_;
-            debugger;
+            
 
 
             this.generateReport();
@@ -658,7 +656,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
         //Load Series
         let SeriesList = Object.values(this.objData.dataSeries);
 
-        debugger;
+        
 
 
         for (let index = 0; index < SeriesList.length; index++) {
@@ -969,7 +967,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-debugger;
+
       this.loadSummary();
     }
 

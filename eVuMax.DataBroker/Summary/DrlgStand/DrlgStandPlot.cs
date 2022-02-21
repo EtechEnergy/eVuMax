@@ -83,6 +83,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         string warnings = "";
 
         DateTime dtDayTimeFrom = new DateTime();
+
         DateTime dtDayTimeTo = new DateTime();
         bool HighlightDayNight = false;
 
@@ -307,6 +308,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         if (objConnList.Rows.Count > 0)
                         {
                     ConnectionLogProcessor objProcessor = new ConnectionLogProcessor(ref objRequest, WellID);
+                    
+                                        
                     objProcessor.ProcessPoints(ref objTimeLog, fromDate, toDate);
                             foreach (ConnectionLogPoint objItem in objProcessor.connectionPoints.Values)
                             {
@@ -324,7 +327,10 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         objStandProcessor.DayTimeHoursFrom = dtDayTimeFrom;
                         objStandProcessor.DayTimeHoursTo = dtDayTimeTo;
                         objStandProcessor.ShowOffsetWells = objDataSelection.StandPlot_ShowOffset;
-                        objStandProcessor.DepthComparisonWindow = objDataSelection.StandPlot_ComparisonWindow;
+                objStandProcessor.ShowOffsetWells = objDataSelection.StandPlot_ShowOffset;
+
+
+                objStandProcessor.DepthComparisonWindow = objDataSelection.StandPlot_ComparisonWindow;
                         objStandProcessor.ProcessPoints(ref objTimeLog, fromDate, toDate);
                         AvgROP = 0;
                         AvgRotaryROP = 0;

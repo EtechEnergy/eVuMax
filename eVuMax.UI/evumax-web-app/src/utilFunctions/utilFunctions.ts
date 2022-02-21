@@ -158,6 +158,7 @@ export function getWidgetList() {
       { id: "customDrlgSummaryViewer", name: "Custom Drilling Summary", isFav: false },
       { id: "DrlgStandPlot", name: "Drilling Stand Plot", isFav: false },
       { id: "TripReport", name: "Trip Report", isFav: false },
+      { id: "TDPlots", name: "TDPlots Report", isFav: false },
     ];
 
     return WidgetList;
@@ -216,6 +217,11 @@ export function launchWidget(interfaceID: string, wellID: string) {
     if (interfaceID === "TripReport") {
       history.push("TripReport/" + wellID);
     }
+
+    if (interfaceID === "TDPlots") {
+      history.push("TDPlots/" + wellID);
+    }
+
   } catch (error) { }
 }
 

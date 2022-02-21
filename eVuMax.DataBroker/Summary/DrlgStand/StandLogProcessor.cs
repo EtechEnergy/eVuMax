@@ -16,7 +16,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         //public int ProcessStatus = 0;
         public DateTime DayTimeHoursFrom;
         public DateTime DayTimeHoursTo;
-        public bool ShowOffsetWells = false;
+        public bool ShowOffsetWells = true;
         public double DepthComparisonWindow = 50d;
         private TimeLog __localTimeLog;
         private DataService objLocalConn;

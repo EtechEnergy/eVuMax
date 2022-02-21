@@ -25,6 +25,7 @@ import ChangePassword from "../components/login/changePassword";
 import customDrlgSummaryViewer from "../components/Widgets/CustomDrillingSummary/customDrlgSummaryViewer";
 import DrlgStandPlot from "../components/Widgets/DrlgStandPlot/DrlgStandPlot";
 import TripReport from "../components/Widgets/TripReport/TripReport";
+import  TDPlots from "../components/Widgets/TDPlots/TDPlots";
 
 
 
@@ -222,6 +223,13 @@ const dashbordRoutes = [
     layout: "/dashboard",
   },
 
+  {
+    path: "/TDPlots/:WellId",
+    name: "TDPlots",
+    icon: "",
+    component: TDPlots,
+    layout: "/dashboard",
+  },
   
 ];
 

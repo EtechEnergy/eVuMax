@@ -37,5 +37,10 @@ export default class DrlgStandUserSettings {
     ToDate: string = new Date().toLocaleString();
     FromDepth: number = 0;
     ToDepth: number = 0;
+    
+    StandPlot_ShowOffset : boolean =false;
+    StandPlot_ComparisonWindow : Number = 50;
 
+    //public bool StandPlot_ShowOffset = false;
+    //public double StandPlot_ComparisonWindow = 50;
 }
