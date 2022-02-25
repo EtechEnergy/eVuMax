@@ -85,8 +85,17 @@
     <Compile Include="Broomstick\Document\BroomstickData.cs" />
     <Compile Include="Broomstick\Document\BroomstickDataPoint.cs" />
     <Compile Include="Broomstick\Document\BroomstickDocMgr.cs" />
+    <Compile Include="Broomstick\Document\BroomstickDocument\BroomStickProcessor.cs" />
+    <Compile Include="Broomstick\Document\BroomstickDocument\BroomStickSetup.cs" />
+    <Compile Include="Broomstick\Document\BroomstickDocument\BroomstickUserSettings.cs" />
+    <Compile Include="Broomstick\Document\BroomstickDocument\globalTimeFilter.cs" />
+    <Compile Include="Broomstick\Document\BroomstickDocument\HookloadTimeFilterRange.cs" />
+    <Compile Include="Broomstick\Document\BroomstickDocument\PUSOPoint.cs" />
+    <Compile Include="Broomstick\Document\BroomstickDocument\ROBPoint.cs" />
+    <Compile Include="Broomstick\Document\BroomstickDocument\TDPointProp.cs" />
     <Compile Include="Broomstick\Document\BroomstickPlanData.cs" />
     <Compile Include="Broomstick\Document\PlanDataPoint.cs" />
+    <Compile Include="CommonUtil.cs" />
     <Compile Include="Common\authentication\LDAP.cs" />
     <Compile Include="Common\authentication\RSAService.cs" />
     <Compile Include="Common\authentication\UserAuthentication.cs" />

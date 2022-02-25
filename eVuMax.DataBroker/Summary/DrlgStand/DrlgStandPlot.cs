@@ -12,8 +12,11 @@ using Microsoft.VisualBasic;
 
 namespace eVuMax.DataBroker.Summary.DrlgStand
 {
+    
     public class DrlgStandPlot
     {
+        [NonSerialized]
+        eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
 
         [NonSerialized]
         public TimeLog objTimeLog = new TimeLog();
@@ -80,7 +83,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         public Broker.BrokerRequest objRequest = new Broker.BrokerRequest();
         public string WellID = "";
         public string WellName = "";
-        string warnings = "";
+        public string offsetWellName = "";
+        public string warnings = "";
 
         DateTime dtDayTimeFrom = new DateTime();
 
@@ -120,8 +124,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("DrlgStandPlot =" + ex.Message + ex.StackTrace);
 
-                
             }
         }
 
@@ -172,8 +176,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("DrlgStandPlot =" + ex.Message + ex.StackTrace);
 
-                
             }
         }
 
@@ -191,6 +195,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("DrlgStandPlot =" + ex.Message + ex.StackTrace);
             }
         }
 
@@ -232,6 +237,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("DrlgStandPlot =" + ex.Message + ex.StackTrace);
             }
         }
 
@@ -240,9 +246,10 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             try
             {
 
-              
-                            
 
+                
+
+                warnings += "inside generatereportdata";
                 this.WellID = paramWellID;
                 this.objRequest = paramRequest;
                 this.objDataSelection.objRequest = paramRequest;
@@ -275,6 +282,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 //Get the primary time log 
                 objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref objRequest.objDataService, WellID);
 
+               
                 populateExclList();
 
                 if (objTimeLog != null)
@@ -286,7 +294,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                     catch (Exception ex)
                     {
 
-                        
+                        objLogger.LogMessage("DrlgStandPlot =" + ex.Message + ex.StackTrace);
                     }
                     
                 }
@@ -308,9 +316,12 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         if (objConnList.Rows.Count > 0)
                         {
                     ConnectionLogProcessor objProcessor = new ConnectionLogProcessor(ref objRequest, WellID);
-                    
-                                        
+
+
                     objProcessor.ProcessPoints(ref objTimeLog, fromDate, toDate);
+               
+
+                    warnings += objProcessor.LastError;
                             foreach (ConnectionLogPoint objItem in objProcessor.connectionPoints.Values)
                             {
                                 KPIDrilingConnections objConnection = KPIDrilingConnections.createKPIDrlgConnection(ref objRequest.objDataService, WellID, objItem);
@@ -331,7 +342,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
 
                 objStandProcessor.DepthComparisonWindow = objDataSelection.StandPlot_ComparisonWindow;
-                        objStandProcessor.ProcessPoints(ref objTimeLog, fromDate, toDate);
+            
+                objStandProcessor.ProcessPoints(ref objTimeLog, fromDate, toDate);
                         AvgROP = 0;
                         AvgRotaryROP = 0;
                         AvgSlideROP = 0;
@@ -348,13 +360,15 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         double TotalFootage = 0d;
                         double TotalTimePeriod = 0d;
                         string dataTableName = objTimeLog.__dataTableName;
-                        strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
-                        TotalFootage = Convert.ToInt32(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
-                        strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
+
+                strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
+                //TotalFootage = Convert.ToInt32(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
+                TotalFootage = CommonUtil.convertToDouble(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
+                strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
                         TotalTimePeriod = Convert.ToInt32(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
 
-                        /// Recalculate AvgROP
-                        if (TotalFootage > 0 & TotalTimePeriod > 0)
+                /// Recalculate AvgROP
+                if (TotalFootage > 0 & TotalTimePeriod > 0)
                         {
                             AvgROP = Math.Round(TotalFootage / (TotalTimePeriod / 60 / 60), 2); // ft/hours
                         }
@@ -368,8 +382,11 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         double RotaryFootage = 0d;
                         double RotaryTimePeriod = 0d;
                         strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0) AND NEXT_DEPTH>0 AND HDTH>=0 ";
-                        RotaryFootage = Convert.ToInt32(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
-                        strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0) AND NEXT_DEPTH>0 AND HDTH>=0 ";
+                //RotaryFootage = Convert.ToInt32(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
+                RotaryFootage = CommonUtil.convertToDouble(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
+              
+
+                strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0) AND NEXT_DEPTH>0 AND HDTH>=0 ";
                         RotaryTimePeriod = Convert.ToInt32(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
 
                         /// Recalculate RotaryROP
@@ -546,6 +563,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                     int DSampleCount = 0;
                     int NSampleCount = 0;
                     int SampleCount = objStandProcessor.connectionPoints.Count;
+
+                  
                     foreach (StandPoint objPoint in objStandProcessor.connectionPoints.Values)
                     {
                         
@@ -661,7 +680,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         {
                             offsetDAvgTime = Math.Round(sumTime / SampleCount / 60d, 2);
                         }
-
+                      
 
                         // '*****************************************************************************''
                         // '****** Night Time**************************************************************''
@@ -704,7 +723,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
                 //////***************************************
                 refreshConnectionTable();
-
+              
 
                 objResponse.RequestSuccessfull = true;
                 objResponse.Response = JsonConvert.SerializeObject(this);
@@ -713,7 +732,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
             catch (Exception ex)
             {
-
+                objLogger.LogMessage("DrlgStandPlot =" + ex.Message + ex.StackTrace);
                 Broker.BrokerResponse objBadResponse = objRequest.createResponseObject();
                 objBadResponse.RequestSuccessfull = false;
                 objBadResponse.Errors = "Error in generateReportData. " + ex.Message + ex.StackTrace;
@@ -744,8 +763,13 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                     return;
                 }
 
+             
+
                 offsetWellID = Convert.ToString(objWell.offsetWells.Values.First().OffsetWellID);
-                
+                offsetWellName = VuMaxDR.Data.Objects.Well.getName(ref objRequest.objDataService, offsetWellID);
+             
+
+
                 double hdthFrom = objTimeLog.getHoleDepthFromDateTime(ref objRequest.objDataService, fromDate.ToOADate());
                 double hdthTo = objTimeLog.getHoleDepthFromDateTime(ref objRequest.objDataService, toDate.ToOADate());
                 TimeLog offsetTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref objRequest.objDataService, offsetWellID);
@@ -764,9 +788,14 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 DateTime oFromDate = offsetTimeLog.getDateTimeFromDepthBegining(ref objRequest.objDataService, hdthFrom);
                 DateTime oToDate = offsetTimeLog.getDateTimeFromDepthEnding(ref objRequest.objDataService, hdthTo);
                 strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + oFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + oToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
-                TotalFootage = Convert.ToInt32(objRequest.objDataService.getValueFromDatabase(strSQL));
+            
+
+                TotalFootage  = CommonUtil.convertToDouble(objRequest.objDataService.getValueFromDatabase(strSQL));
+                                         
+                
                 strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + oFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + oToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
-                TotalTimePeriod = Convert.ToInt32(objRequest.objDataService.getValueFromDatabase(strSQL));
+                TotalTimePeriod = CommonUtil.convertToDouble(objRequest.objDataService.getValueFromDatabase(strSQL));
+
 
                 /// Recalculate AvgROP
                 if (TotalFootage > 0 & TotalTimePeriod > 0)
@@ -778,14 +807,14 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                     OffsetAvgROP = 0;
                 }
 
-
+              
                 // 'get RotaryROP
                 double RotaryFootage = 0d;
                 double RotaryTimePeriod = 0d;
                 strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + oFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + oToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0) AND NEXT_DEPTH>0 AND HDTH>=0 ";
-                RotaryFootage = Convert.ToDouble(objRequest.objDataService.getValueFromDatabase(strSQL));
+                RotaryFootage = CommonUtil.convertToDouble(objRequest.objDataService.getValueFromDatabase(strSQL));
                 strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + oFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + oToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0) AND NEXT_DEPTH>0 AND HDTH>=0 ";
-                RotaryTimePeriod = Convert.ToDouble(objRequest.objDataService.getValueFromDatabase(strSQL));
+                RotaryTimePeriod = CommonUtil.convertToDouble(objRequest.objDataService.getValueFromDatabase(strSQL));
 
                 /// Recalculate RotaryROP
                 if (RotaryTimePeriod > 0d & RotaryFootage > 0)
@@ -801,9 +830,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 double SlideFootage = 0d;
                 double SlideTimePeriod = 0d;
                 strSQL = "SELECT SUM(HDTH-NEXT_DEPTH) FROM " + dataTableName + " WHERE DATETIME>='" + oFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + oToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
-                SlideFootage = Convert.ToDouble(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
+                SlideFootage = CommonUtil.convertToDouble(DataService.checkNumericNull(objRequest.objDataService.getValueFromDatabase(strSQL)));
                 strSQL = "SELECT SUM(TIME_DURATION) FROM " + dataTableName + " WHERE DATETIME>='" + oFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + oToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
-                SlideTimePeriod = Convert.ToDouble(DataService.checkNumericNull( objRequest.objDataService.getValueFromDatabase(strSQL)));
+                SlideTimePeriod = CommonUtil.convertToDouble(DataService.checkNumericNull( objRequest.objDataService.getValueFromDatabase(strSQL)));
                 /// Recalculate SlideROP
                 if (SlideTimePeriod > 0d & SlideFootage > 0d)
                 {
@@ -828,6 +857,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 double NRotaryTimePeriod = 0d;
                 double NSlideFootage = 0d;
                 double NSlideTimePeriod = 0d;
+              
                 strSQL = "SELECT DATETIME,HDTH,NEXT_DEPTH,TIME_DURATION,RIG_STATE FROM " + dataTableName + " WHERE DATETIME>='" + oFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + oToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) AND NEXT_DEPTH>0 AND HDTH>=0 ";
                 DataTable objROPData = objRequest.objDataService.getTable(strSQL);
                 DateTime dtDateTime;
@@ -891,7 +921,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         }
                     }
                 }
-
+                
                 OffsetDAvgROP = 0;
                 OffsetDAvgRotaryROP = 0;
                 OffsetDAvgSlideROP = 0;
@@ -944,9 +974,12 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 {
                     OffsetNAvgSlideROP = Math.Round(NSlideFootage / (NSlideTimePeriod / 60d / 60d), 2);
                 }
+                
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("DrlgStandPlot =" + ex.Message + ex.StackTrace);
+                warnings += ex.Message + ex.StackTrace;
             }
         }
 

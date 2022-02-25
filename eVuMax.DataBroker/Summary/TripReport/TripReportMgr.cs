@@ -41,18 +41,6 @@ namespace eVuMax.DataBroker.Summary.TripReport
                 
                 }
                 
-
-                //string strTripReportSettings = "";
-
-                //strTripReportSettings = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserSettings")).FirstOrDefault().ParamValue.ToString();
-
-                //if (strTripReportSettings != "")
-                //{
-                //    objTripReport.objUserSettings = JsonConvert.DeserializeObject<TripReportSettings>(strTripReportSettings);
-
-                //}
-
-
                 objResponse = objTripReport.generateTripReport(ref paramRequest.objDataService, WellID, UserID);
                                 
                 if (objResponse.RequestSuccessfull == false)

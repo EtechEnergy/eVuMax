@@ -13,11 +13,15 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
     {
         const string generateDrlgStandPlot = "generateDrlgStandPlot";
         const string saveUserSettings = "SaveUserSettings";
+        public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
+
         public BrokerResponse getData(BrokerRequest paramRequest)
         {
             try
             {
+
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
+                
                 if (paramRequest.Function == generateDrlgStandPlot)
                 {
                   
@@ -87,6 +91,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         objDrlgStandPlot.objDataSelection.objRequest.objDataService.UserName = objStandUserSettings.UserID;
                         objDrlgStandPlot.objDataSelection.WellID = objStandUserSettings.WellID;
 
+                        
+                        objLogger.LogMessage("DlgStanPlotMgr Error Line 95" );
+
                         objDrlgStandPlot.objDataSelection.loadDataSelection("STANDREPORT");
 
                         objStandUserSettings.FromDate = objDrlgStandPlot.objDataSelection.FromDate;
@@ -108,6 +115,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         objSettings.WellId = objStandUserSettings.WellID;
                         objSettings.SettingsId = "STANDREPORT";
 
+                        objLogger.LogMessage("DlgStanPlotMgr Error Line 118");
                         objSettingsMgr.saveUserSettings(objSettings);
                     }
 
@@ -115,12 +123,18 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                  
 
                     objDrlgStandPlot.objUserSettings = objStandUserSettings;
-                   // wellID = objStandUserSettings.WellID; //work around
+                    // wellID = objStandUserSettings.WellID; //work around
+
+
+
+
                     
-                  
-                    
+
                     objResponse = objDrlgStandPlot.generateReportData(ref paramRequest, objStandUserSettings.WellID);
-                    if(objResponse.RequestSuccessfull == false)
+                    objResponse.Warnings = objDrlgStandPlot.warnings;
+                 
+
+                    if (objResponse.RequestSuccessfull == false)
                     {
                         objResponse.Warnings = objResponse.Errors;
                     }
@@ -136,6 +150,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             catch (Exception ex)
             {
 
+                eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
+           
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.Response = ex.Message + ex.StackTrace;
                 return objResponse;
@@ -177,6 +193,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("DlgStanPlotMgr Error Line 189" + ex.Message + ex.StackTrace);
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.Response = ex.Message + ex.StackTrace;
                 return objResponse;

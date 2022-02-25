@@ -32,7 +32,6 @@ interface IProps {
   updateWarnings: any;
   parentRef: any;
   objDataSelector: any;
-
 }
 
 export class CustomDrillingSummary extends Component<IProps>  {

@@ -8,16 +8,65 @@ using VuMaxDR.Data;
 using System.Data;
 using System.Drawing;
 
+
+
+
+
+
 namespace eVuMax.DataBroker.Broomstick.Document
 {
     public class BroomstickDocMgr : IBroker
     {
-
+        const string ProcessBroomstickDoc = "ProcessBroomstickDoc";
+        const string SaveSetup = "SaveSetup";
         public Broker.BrokerResponse getData(Broker.BrokerRequest paramRequest)
         {
             try
             {
 
+                //Nishant
+                if (paramRequest.Function == ProcessBroomstickDoc)
+                {
+                    Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
+
+
+                    string WellID = "";
+                    string UserID = "";
+                    int DocType = 1;
+
+                    try
+                    {
+                        WellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellID")).FirstOrDefault().ParamValue.ToString();
+                        UserID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                        DocType = Convert.ToInt32( paramRequest.Parameters.Where(x => x.ParamName.Contains("DocType")).FirstOrDefault().ParamValue.ToString());
+                    }
+                    catch (Exception)
+                    {
+
+
+                    }
+                    BroomStickSetup objSetup = new BroomStickSetup(ref paramRequest.objDataService);
+
+                    BroomstickDocument.BroomstickUserSettings objUserSettings = new BroomstickDocument.BroomstickUserSettings();
+                    objUserSettings.LoadBroomStickUserSettings(ref paramRequest.objDataService, WellID, DocType, UserID);
+
+                    objSetup = objUserSettings.objSetup;
+
+                    //load BroomstickSetup from database using table evumaxBroomstickDocs
+
+
+                  
+                    BroomstickDocument.BroomStickProcessor objBroomstickProcessor = new BroomstickDocument.BroomStickProcessor(ref paramRequest.objDataService, WellID);
+                    //objBroomstickProcessor.ProcessPoints(objSetup);
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Response = objBroomstickProcessor.ProcessPoints(objSetup);
+
+                    return objResponse;
+
+
+                }
+
+                //Nitin Code
                 if (paramRequest.Function == "BroomstickDocData")
                 {
                     //TO-DO -- Validate the user with or without AD Integration and return the result
@@ -52,6 +101,36 @@ namespace eVuMax.DataBroker.Broomstick.Document
             {
 
                 //Nothing to implement anything yet
+
+                if(paramRequest.Function == SaveSetup)
+                {
+                    BroomStickSetup objSetup = new BroomStickSetup();
+                    string strObjSetup = "";
+
+                    try
+                    {
+                        strObjSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objSetup")).FirstOrDefault().ParamValue.ToString();
+
+                        if (strObjSetup != "")
+                        {
+                            objSetup = JsonConvert.DeserializeObject<BroomStickSetup>(strObjSetup);
+
+                            //pending...
+
+                        }
+
+
+
+                        
+                    }
+                    catch (Exception)
+                    {
+
+
+                    }
+
+                  
+                }
 
                 return paramRequest.createResponseObject();
             }

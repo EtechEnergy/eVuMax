@@ -49,7 +49,18 @@ namespace eVuMax.DataBroker.Broomstick
             try
             {
 
-                //Nothing to implemente till now ...
+                if (paramRequest.Broker == Global.BS_DataManager)
+                {
+
+                    Broomstick.Document.BroomstickDocMgr objMgr = new BroomstickDocMgr();
+                    return objMgr.performTask(paramRequest);
+
+                    //Common.authentication.UserAuthentication objAuth = new Common.authentication.UserAuthentication();
+                    //return objAuth.getData(paramRequest);
+                }
+
+
+
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";

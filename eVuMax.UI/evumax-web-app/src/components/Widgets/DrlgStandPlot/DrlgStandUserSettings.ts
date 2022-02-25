@@ -41,6 +41,7 @@ export default class DrlgStandUserSettings {
     StandPlot_ShowOffset : boolean =false;
     StandPlot_ComparisonWindow : Number = 50;
 
+    
     //public bool StandPlot_ShowOffset = false;
     //public double StandPlot_ComparisonWindow = 50;
 }

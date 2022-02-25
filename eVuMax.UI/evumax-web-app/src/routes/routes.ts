@@ -25,7 +25,7 @@ import ChangePassword from "../components/login/changePassword";
 import customDrlgSummaryViewer from "../components/Widgets/CustomDrillingSummary/customDrlgSummaryViewer";
 import DrlgStandPlot from "../components/Widgets/DrlgStandPlot/DrlgStandPlot";
 import TripReport from "../components/Widgets/TripReport/TripReport";
-import  TDPlots from "../components/Widgets/TDPlots/TDPlots";
+import  BroomstickPlot from "../components/Widgets/BroomstickDocs/BroomstickPlot";
 
 
 
@@ -224,10 +224,10 @@ const dashbordRoutes = [
   },
 
   {
-    path: "/TDPlots/:WellId",
-    name: "TDPlots",
+    path: "/BroomstickDocs/:WellId",
+    name: "BroomstickPlot",
     icon: "",
-    component: TDPlots,
+    component: BroomstickPlot,
     layout: "/dashboard",
   },
   

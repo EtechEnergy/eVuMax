@@ -56,6 +56,7 @@ export function DictionaryToMap(paramDict: any, paramNewMap: any) {
 
 //Function to convert hex format to a rgb color
 export function rgb2hex(rgb: any) {
+  
   rgb = rgb.match(
     /^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i
   );
@@ -158,7 +159,7 @@ export function getWidgetList() {
       { id: "customDrlgSummaryViewer", name: "Custom Drilling Summary", isFav: false },
       { id: "DrlgStandPlot", name: "Drilling Stand Plot", isFav: false },
       { id: "TripReport", name: "Trip Report", isFav: false },
-      { id: "TDPlots", name: "TDPlots Report", isFav: false },
+      { id: "BroomstickPlot", name: "Broomstick Document", isFav: false },
     ];
 
     return WidgetList;
@@ -218,8 +219,8 @@ export function launchWidget(interfaceID: string, wellID: string) {
       history.push("TripReport/" + wellID);
     }
 
-    if (interfaceID === "TDPlots") {
-      history.push("TDPlots/" + wellID);
+    if (interfaceID === "BroomstickPlot") {
+      history.push("BroomstickDocs/" + wellID);
     }
 
   } catch (error) { }

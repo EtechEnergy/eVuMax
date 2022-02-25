@@ -12,6 +12,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
      public class StandLogProcessor
     {
+
+        
         public Dictionary<int, StandPoint> connectionPoints = new Dictionary<int, StandPoint>();
         //public int ProcessStatus = 0;
         public DateTime DayTimeHoursFrom;
@@ -19,7 +21,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         public bool ShowOffsetWells = true;
         public double DepthComparisonWindow = 50d;
         private TimeLog __localTimeLog;
-        private DataService objLocalConn;
+        //private DataService objLocalConn;
 
 
         //Nishant
@@ -36,7 +38,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             objRequest = paramRequest;
             objADSettings.loadSettings();
             WellID = paramWellID;
-            objLocalConn = objRequest.objDataService; //Fix 
+            //objLocalConn = objRequest.objDataService; //Fix 
             objWell = VuMaxDR.Data.Objects.Well.loadObject(ref objRequest.objDataService, WellID, ref LastError);
         }
         public StandLogProcessor()
@@ -92,28 +94,29 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 //{
                 //    return;
                 //}
-
+            
                 //ProcessStatus = 1;
                 __localTimeLog = objTimeLog;
                 connectionPoints.Clear();
+            
+                //if (objADSettings.IsADActive)
+                //{
+                //    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
+                //}
+                //else
+                //{
+                //    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true);
+                //}
 
-                if (objADSettings.IsADActive)
-                {
-                    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
-                }
-                else
-                {
-                    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true);
-                }
+                //objLocalConn.OpenConnection(objRequest.objDataService.UserName, objRequest.objDataService.Password, objRequest.objDataService.ServerName);
+                //if (objTimeLog is null)
+                //{
+                // //   ProcessStatus = 0;
+                //    return;
+                //}
 
-                objLocalConn.OpenConnection(objRequest.objDataService.UserName, objRequest.objDataService.Password, objRequest.objDataService.ServerName);
-                if (objTimeLog is null)
-                {
-                 //   ProcessStatus = 0;
-                    return;
-                }
-
-                DataTable objData = objLocalConn.getTable("SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + WellID + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY DEPTH");
+                
+                DataTable objData = objRequest.objDataService.getTable("SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + WellID + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY DEPTH");
                 DateTime standStartDate;
                 DateTime standEndDate;
                 DateTime connStartDate;
@@ -121,15 +124,21 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 DateTime prevConnStartDate;
                 DateTime prevConnEndDate;
                 double standDepth = 0d;
+                
+                try
+                {
+
+                
                 for (int i = 1; i <= objData.Rows.Count - 1; i++)
                 {
+                    //objLogger.LogMessage("Process Points inside loop-1 line 130");
                     connStartDate = Convert.ToDateTime( objData.Rows[i]["FROM_DATE"]);
                     connEndDate = Convert.ToDateTime( objData.Rows[i]["TO_DATE"]);
                     prevConnStartDate = Convert.ToDateTime( objData.Rows[i - 1]["FROM_DATE"]);
                     prevConnEndDate =Convert.ToDateTime( objData.Rows[i - 1]["TO_DATE"]);
 
                     // 'This is first connection, find the starting of the drilling from the beginning of the well ...
-                    DataTable objConn = objLocalConn.getTable("SELECT TOP 1 DATETIME,DEPTH FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>'" + prevConnEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND  DATETIME<'" + connStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME");
+                    DataTable objConn = objRequest.objDataService.getTable("SELECT TOP 1 DATETIME,DEPTH FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>'" + prevConnEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND  DATETIME<'" + connStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME");
                     if (objConn.Rows.Count > 0)
                     {
 
@@ -161,23 +170,25 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         else
                         {
                             // 'Another Check if POOH, the bit depth shouldn't go up by more than 90 * 3 stands
-                            double minDepthInStand = Util.ValEx(objLocalConn.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
+                            double minDepthInStand = Util.ValEx(objRequest.objDataService.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
                             if (standDepth - minDepthInStand > 270d)
                             {
                                 // 'There seems a Trip Out between these two drilling connections ...
                                 bool watchIt = true;
-                                DateTime minDepthDate =Convert.ToDateTime( objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
+                                DateTime minDepthDate =Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
 
                                 // 'Adjust the end date of this stand, we can't reject it
                                 // 'Find the end of drilling of this stand
-                                DateTime lastDrillingDate = Convert.ToDateTime( objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
+                                DateTime lastDrillingDate = Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
                                 objPoint.ToDate = lastDrillingDate;
                                 populateRigStates(ref objPoint, objTimeLog);
+                                
                                 connectionPoints.Add(connectionPoints.Count + 1, objPoint.getCopy());
                             }
                             else
                             {
                                 populateRigStates(ref objPoint, objTimeLog);
+                                
 
                                 // 'It seems valid drilling connection
                                 connectionPoints.Add(connectionPoints.Count + 1, objPoint.getCopy());
@@ -185,7 +196,13 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         }
                     }
                 }
+                }
+                catch (Exception ex)
+                {
 
+                    
+                }
+                
                 // 'Find previous connection if found
                 if (objData.Rows.Count > 0)
                 {
@@ -193,7 +210,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                     double firstConnStartDepth = Convert.ToDouble( objData.Rows[0]["DEPTH"]);
 
                     // 'Find any connection previous to this
-                    DataTable objData2 = objLocalConn.getTable("SELECT TOP 1 * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + WellID + "' AND TO_DATE<='" + firstConnStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE DESC");
+                    DataTable objData2 = objRequest.objDataService.getTable("SELECT TOP 1 * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + WellID + "' AND TO_DATE<='" + firstConnStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE DESC");
                     if (objData2.Rows.Count > 0)
                     {
                         DateTime dataStartdate = Convert.ToDateTime( objData2.Rows[0]["FROM_DATE"]);
@@ -226,16 +243,16 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         {
 
                             // 'Another Check if POOH, the bit depth shouldn't go up by more than 90 * 3 stands
-                            double minDepthInStand = Util.ValEx(objLocalConn.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
+                            double minDepthInStand = Util.ValEx(objRequest.objDataService.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
                             if (standDepth - minDepthInStand > 270d)
                             {
                                 // 'There seems a Trip Out between these two drilling connections ...
                                 bool watchIt = true;
-                                DateTime minDepthDate =Convert.ToDateTime(  objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
+                                DateTime minDepthDate =Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
 
                                 // 'Adjust the end date of this stand, we can't reject it
                                 // 'Find the end of drilling of this stand
-                                DateTime lastDrillingDate = Convert.ToDateTime( objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
+                                DateTime lastDrillingDate = Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
                                 objPoint.ToDate = lastDrillingDate;
                                 populateRigStates(ref objPoint, objTimeLog);
                                 connectionPoints.Add(connectionPoints.Count + 1, objPoint.getCopy());
@@ -288,16 +305,16 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                             {
 
                                 // 'Another Check if POOH, the bit depth shouldn't go up by more than 90 * 3 stands
-                                double minDepthInStand =Util.ValEx(objLocalConn.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
+                                double minDepthInStand =Util.ValEx(objRequest.objDataService.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
                                 if (standDepth - minDepthInStand > 270d)
                                 {
                                     // 'There seems a Trip Out between these two drilling connections ...
                                     bool watchIt = true;
-                                    DateTime minDepthDate = Convert.ToDateTime(objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
+                                    DateTime minDepthDate = Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
 
                                     // 'Adjust the end date of this stand, we can't reject it
                                     // 'Find the end of drilling of this stand
-                                    DateTime lastDrillingDate = Convert.ToDateTime( objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
+                                    DateTime lastDrillingDate = Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
                                     objPoint.ToDate = lastDrillingDate;
                                     populateRigStates(ref objPoint, objTimeLog);
                                     connectionPoints.Add(connectionPoints.Count + 1, objPoint.getCopy());
@@ -324,7 +341,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                     DateTime lastConnEndDate = Convert.ToDateTime( objData.Rows[objData.Rows.Count - 1]["TO_DATE"]);
 
                     // 'Find any connection previous to this
-                    DataTable objData2 = objLocalConn.getTable("SELECT TOP 1 * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + WellID + "' AND FROM_DATE>'" + lastConnStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE");
+                    DataTable objData2 = objRequest.objDataService.getTable("SELECT TOP 1 * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + WellID + "' AND FROM_DATE>'" + lastConnStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE");
                     if (objData2.Rows.Count > 0)
                     {
                         DateTime dataStartdate = Convert.ToDateTime( objData2.Rows[0]["FROM_DATE"]);
@@ -357,18 +374,19 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         {
 
                             // 'Another Check if POOH, the bit depth shouldn't go up by more than 90 * 3 stands
-                            double minDepthInStand = Util.ValEx(objLocalConn.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
+                            double minDepthInStand = Util.ValEx(objRequest.objDataService.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
                             if (standDepth - minDepthInStand > 270)
                             {
                                 // 'There seems a Trip Out between these two drilling connections ...
                                 bool watchIt = true;
-                                DateTime minDepthDate = Convert.ToDateTime( objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
+                                DateTime minDepthDate = Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
 
                                 // 'Adjust the end date of this stand, we can't reject it
                                 // 'Find the end of drilling of this stand
-                                DateTime lastDrillingDate = Convert.ToDateTime( objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
+                                DateTime lastDrillingDate = Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
                                 objPoint.ToDate = lastDrillingDate;
                                 populateRigStates(ref objPoint, objTimeLog);
+                                
                                 connectionPoints.Add(connectionPoints.Count + 1, objPoint.getCopy());
                             }
                             else
@@ -376,6 +394,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                                 populateRigStates(ref objPoint, objTimeLog);
 
                                 // 'It seems valid drilling connection
+                                
                                 connectionPoints.Add(connectionPoints.Count + 1, objPoint.getCopy());
                             }
 
@@ -418,18 +437,19 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                             {
 
                                 // 'Another Check if POOH, the bit depth shouldn't go up by more than 90 * 3 stands
-                                double minDepthInStand =Util.ValEx(objLocalConn.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
+                                double minDepthInStand =Util.ValEx(objRequest.objDataService.getValueFromDatabase("SELECT MIN(DEPTH) FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH>=0 "));
                                 if (standDepth - minDepthInStand > 270d)
                                 {
                                     // 'There seems a Trip Out between these two drilling connections ...
                                     bool watchIt = true;
-                                    DateTime minDepthDate = Convert.ToDateTime( objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
+                                    DateTime minDepthDate = Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + standEndDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DEPTH<=" + (standDepth - 270d).ToString() + "  ORDER BY DATETIME"));
 
                                     // 'Adjust the end date of this stand, we can't reject it
                                     // 'Find the end of drilling of this stand
-                                    DateTime lastDrillingDate = Convert.ToDateTime( objLocalConn.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
+                                    DateTime lastDrillingDate = Convert.ToDateTime(objRequest.objDataService.getValueFromDatabase("SELECT TOP 1 DATETIME FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + standStartDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + minDepthDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IN (0,1,19) ORDER BY DATETIME DESC"));
                                     objPoint.ToDate = lastDrillingDate;
                                     populateRigStates(ref objPoint, objTimeLog);
+                                    
                                     connectionPoints.Add(connectionPoints.Count + 1, objPoint.getCopy());
                                 }
                                 else
@@ -437,6 +457,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                                     populateRigStates(ref objPoint, objTimeLog);
 
                                     // 'It seems valid drilling connection
+                                    
                                     connectionPoints.Add(connectionPoints.Count + 1, objPoint.getCopy());
                                 }
 
@@ -445,7 +466,6 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         }
                     }
                 }
-
 
 
                 // '===================================================================================================''
@@ -493,15 +513,16 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 }
                 // '===================================================================================================''
                 // '===================================================================================================''
-
+                
 
 
                 //ProcessStatus = 0;
-               // objLocalConn.closeConnection();
+                // objLocalConn.closeConnection();
             }
             catch (Exception ex)
             {
-               // ProcessStatus = 0;
+                // ProcessStatus = 0;
+                
             }
         }
 
@@ -510,7 +531,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             try
             {
                 paramPoint.RigStates.Clear();
-                DataTable objData = objLocalConn.getTable("SELECT DATETIME,RIG_STATE,TIME_DURATION FROM " + paramTimeLog.__dataTableName + " WHERE DATETIME>='" + paramPoint.FromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramPoint.ToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL");
+                DataTable objData = objRequest.objDataService.getTable("SELECT DATETIME,RIG_STATE,TIME_DURATION FROM " + paramTimeLog.__dataTableName + " WHERE DATETIME>='" + paramPoint.FromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + paramPoint.ToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL");
                 foreach (DataRow objRow in objData.Rows)
                 {
                     int lnRigState =Convert.ToInt32( DataService.checkNull(objRow["RIG_STATE"], 0));

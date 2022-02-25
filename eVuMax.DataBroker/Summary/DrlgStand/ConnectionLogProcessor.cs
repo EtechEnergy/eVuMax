@@ -12,7 +12,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 {
     public class ConnectionLogProcessor
     {
-            public Dictionary<int, ConnectionLogPoint> connectionPoints = new Dictionary<int, ConnectionLogPoint>();
+
+        eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
+        public Dictionary<int, ConnectionLogPoint> connectionPoints = new Dictionary<int, ConnectionLogPoint>();
             public int ProcessStatus = 0;
             public double SlotTimeSec = 1800d;
             public int SectionType = 0; // '0 - Surface/Vertical 1 - Curve/Lateral
@@ -24,7 +26,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             // 'Dim objFile As System.IO.StreamWriter
 
             private TimeLog __localTimeLog;
-            private DataService objLocalConn;
+            //private DataService objLocalConn;
 
             #region Algorithm Settings
             public bool RUN_DRLG_CHECK = true;
@@ -44,7 +46,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         {
             objRequest = paramRequest;
             WellID = paramWellID;
-            objLocalConn = objRequest.objDataService;
+            //objLocalConn = objRequest.objDataService;
             objADSettings.loadSettings();
             objMnemonicMappingMgr.loadMappings(ref paramRequest.objDataService);
         }
@@ -91,35 +93,34 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         {
             try
             {
-                if (ProcessStatus == 1)
-                {
-                    return;
-                }
+
+     
+
                 objRigState = rigState.loadWellRigStateSetup(ref objRequest.objDataService, WellID); //Nishant
 
-                ProcessStatus = 1;
+              
                 __localTimeLog = objTimeLog;
                 connectionPoints.Clear();
-                if (objADSettings.IsADActive)
-                {
-                    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
-                }
-                else
-                {
-                    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true);
-                }
+                //if (objADSettings.IsADActive)
+                //{
+                //    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, true);
+                //}
+                //else
+                //{
+                //    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true);
+                //}
 
-                objLocalConn.OpenConnection(objRequest.objDataService.UserName, objRequest.objDataService.Password, objRequest.objDataService.ServerName);
-                if (objTimeLog is null)
-                {
-                    ProcessStatus = 0;
-                    return;
-                }
+                //objLocalConn.OpenConnection(objRequest.objDataService.UserName, objRequest.objDataService.Password, objRequest.objDataService.ServerName);
+                //if (objTimeLog is null)
+                //{
+                //    ProcessStatus = 0;
+                //    return;
+                //}
 
 
                 // 'Load Settings
-                string strCheck1 = WellSettings.getWellSetting(ref objLocalConn, WellID, WellSettings.WLS_CONN_SETTING1, "1");
-                string strCheck2 = WellSettings.getWellSetting(ref objLocalConn, WellID, WellSettings.WLS_CONN_SETTING2, "1");
+                string strCheck1 = WellSettings.getWellSetting(ref objRequest.objDataService, WellID, WellSettings.WLS_CONN_SETTING1, "1");
+                string strCheck2 = WellSettings.getWellSetting(ref objRequest.objDataService, WellID, WellSettings.WLS_CONN_SETTING2, "1");
                 if (Util.ValEx(strCheck1) == 1)
                 {
                     RUN_DRLG_CHECK = true;
@@ -137,16 +138,19 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 {
                     RUN_HKLD_CHECK = false;
                 }
-
+                
 
                 // 'objFile = New System.IO.StreamWriter("c:\output\connection.txt")
 
-                string __dataTableName = objTimeLog.getDataTableName(ref objLocalConn);
+                string __dataTableName = objTimeLog.getDataTableName(ref objRequest.objDataService);
                 var limitDate = toDate;
-
+                
                 // 'Add 1 day to the toDate
                 toDate = toDate.AddDays(1d);
-                DataTable objData = objLocalConn.getTable("SELECT DATETIME,DEPTH,HDTH,HKLD,RIG_STATE,TIME_DURATION FROM " + __dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL ORDER BY DATETIME DESC");
+                DataTable objData = objRequest.objDataService.getTable("SELECT DATETIME,DEPTH,HDTH,HKLD,RIG_STATE,TIME_DURATION FROM " + __dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL ORDER BY DATETIME DESC");
+
+                
+                
                 int startRow = -1;
 
                 // 'Find the row no. where to start
@@ -163,9 +167,16 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 if (startRow >= 0)
                 {
                     //for (int i = startRow, loopTo1 = objData.Rows.Count - 1; i <= loopTo1; i++)
+
+                    try
+                    {
+
+                    
                     
                     for (int i = startRow; i <= objData.Rows.Count - 1; i++)
                     {
+
+                        
                         int lnRigState = Convert.ToInt32(objData.Rows[i]["RIG_STATE"]);
                         double lnHkld = Convert.ToDouble(objData.Rows[i]["HKLD"]);
                         DateTime dateTime = Convert.ToDateTime(objData.Rows[i]["DATETIME"]);
@@ -175,7 +186,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         {
                             // 'If lnRigState = 2 Then
 
-                            int forwardPointer = i;
+                            
+
+                           int forwardPointer = i;
                             if (dateTime <= DateTime.Parse("22-Dec-2016 12:50:15"))
                             {
                                 bool halt = true;
@@ -185,18 +198,27 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                             {
                                 bool halt1 = true;
                             }
-
+                         
                             detectAndAddPoints(objData, i, ref forwardPointer);
                             i = forwardPointer;
                         }
                     }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        objLogger.LogMessage("ConnectionLogProcessor =" + ex.Message + ex.StackTrace);
+                    }
+
+
                 }
 
-
+               
 
 
                 // '************** Process these connections for other information ************************''
-                
+
                 //Original Nitins Code in vb
                 //foreach (ConnectionLogPoint objItem in connectionPoints.Values)
                 //{
@@ -208,9 +230,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 // '************** Process these connections for other information ************************''
 
                 ////New Logic for ProcessConnecion coz ref cannot be used in for Each Loop
-                processConnection(ref connectionPoints, objLocalConn);
+                processConnection(ref connectionPoints, objRequest.objDataService);
 
-
+              
 
                 ProcessStatus = 0;
                 try
@@ -222,9 +244,11 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 }
                 catch (Exception ex)
                 {
+                    objLogger.LogMessage("ConnectionLogProcessor - " + ex.Message + " --" + ex.StackTrace);
+                    LastError = ex.Message + ex.StackTrace;
                 }
 
-                objLocalConn.closeConnection();
+                //objLocalConn.closeConnection();
             }
 
             // objFile.Flush()
@@ -232,6 +256,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
             catch (Exception ex)
             {
+                LastError += ex.Message + ex.StackTrace;
                 ProcessStatus = 0;
             }
         }
@@ -812,7 +837,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         // '================== Implementation of NOVOS Status Codes ==================================''
                         if (__localTimeLog.logCurves.ContainsKey("NOVOS.ActivityStatus") | __localTimeLog.logCurves.ContainsKey("NOVOS.ACTIVITYSTATUS"))
                         {
-                            DataTable objStatusCodes = objLocalConn.getTable("SELECT DISTINCT([NOVOS.ActivityStatus]) AS Status from " + __localTimeLog.__dataTableName + " WHERE DATETIME>='" + objPoint.FromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + objPoint.ToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "'");
+                            DataTable objStatusCodes = objRequest.objDataService.getTable("SELECT DISTINCT([NOVOS.ActivityStatus]) AS Status from " + __localTimeLog.__dataTableName + " WHERE DATETIME>='" + objPoint.FromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + objPoint.ToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "'");
                             if (objStatusCodes.Rows.Count > 0)
                             {
                                 bool AutomatedFound = false;
@@ -849,6 +874,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         }
                         // '==========================================================================================''
 
+                      
                         connectionPoints.Add(connectionPoints.Count + 1, objPoint);
                     }
 
@@ -859,6 +885,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("ConnectionLogProcessor: detectAndAddPoints Error " + ex.Message + ex.StackTrace);
+
             }
         }
 
@@ -902,8 +930,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             try
             {
 
-             
 
+                
                 foreach (ConnectionLogPoint objItem in paramConnectionPoints.Values)
                 {
                     ConnectionLogPoint paramConnection = objItem;
@@ -1005,6 +1033,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("ConnectionLogProcessor  error" + ex.Message   + " "+ ex.StackTrace);
             }
         }
 
