@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using eVuMax.DataBroker.Common;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -98,36 +99,86 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
         }
 
 
-        //public bool Save(ref DataService paramObjDataService, string paramWellID)
-        //{
+        public bool Insert(ref DataService paramObjDataService)
+        {
+            try
+            {
 
-        //}
+                objDataService = paramObjDataService;
+                DocID = ObjectIDFactory.getObjectID();
+                string strSQL= "";
+                strSQL = "INSERT INTO eVuMaxBroomStickDocs ([DOC_ID] ,[WELL_ID],[USER_ID],[DOC_TYPE],[DOC_NAME]  ,[SETUP] ,[TIME_FILTER])  VALUES(";
+                strSQL += " '" + DocID + "',";
+                strSQL += "'" + WellID + "',";
+                strSQL += "'" + UserID + "',";
+                strSQL += "" + DocType + ",";
+                strSQL += "'" + DocName + "',";
+                strSQL += "'" + JsonConvert.SerializeObject(objSetup) + "'";
 
+                objDataService.executeNonQuery(strSQL);
 
-        //public BroomStickProcessor processBroomStick()
-        //{
-        //    try
-        //    {
-        //        BroomStickProcessor objBroomStickProcessor = new BroomStickProcessor(ref objDataService, WellID);
+                    
+                    return true;
+            }
+            catch (Exception ex)
+            {
 
-        //        objBroomStickProcessor._fromDate =Convert.ToDateTime( objTimeFilter.FromDateTime);
-        //        objBroomStickProcessor._toDate = Convert.ToDateTime(objTimeFilter.ToDateTime);
+                warning = ex.Message + ex.StackTrace;
+                return false;
+            }
+        }
+
+        public bool Update(ref DataService paramObjDataService)
+        {
+            try
+            {
+
+                objDataService = paramObjDataService;
                 
+                string strSQL = "";
+
+                strSQL = "UPDATE eVuMaxBroomStickDocs SET ";
+                strSQL += "DOC_TYPE = '" + DocType + "',";
+                strSQL += "DOC_NAME= '" + DocName + "',";
+                strSQL += "SETUP =  '" + JsonConvert.SerializeObject(objSetup) + "'";
+                strSQL += " WHERE DOC_ID='" + DocID + "'";
 
 
-        //        objBroomStickProcessor._objSetup = objSetup;
-
-        //        objBroomStickProcessor.ProcessPoints();
+                objDataService.executeNonQuery(strSQL);
 
 
-        //        return objBroomStickProcessor;
-        //    }
-        //    catch (Exception ex)
-        //    {
+                return true;
+            }
+            catch (Exception ex)
+            {
 
-        //        return null;
-        //    }
-        //}
+                warning = ex.Message + ex.StackTrace;
+                return false;
+            }
+        }
+
+        public  bool Remove(ref DataService paramObjDataService, string paramDocID)
+        {
+            try
+            {
+
+                objDataService = paramObjDataService;
+
+                string strSQL = "";
+                strSQL = "DELETE FROM eVuMaxBroomStickDocs WHERE DOC_ID='" + paramDocID;
+                objDataService.executeNonQuery(strSQL);
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                warning = ex.Message + ex.StackTrace;
+                return false;
+            }
+        }
+
+
+
 
     }//Class
 }

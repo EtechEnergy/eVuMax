@@ -102,6 +102,7 @@
     <Compile Include="Common\CommonBroker.cs" />
     <Compile Include="Common\CommonFunctions.cs" />
     <Compile Include="Common\DownSample.cs" />
+    <Compile Include="Common\ObjectIDFactory.cs" />
     <Compile Include="Common\TimeData\TimeData.cs" />
     <Compile Include="Common\Util.cs" />
     <Compile Include="Config\ConfigBroker.cs" />
