@@ -105,17 +105,22 @@ namespace eVuMax.DataBroker.Broomstick.Document
                 if(paramRequest.Function == SaveSetup)
                 {
                     BroomStickSetup objSetup = new BroomStickSetup();
-                    string strObjSetup = "";
-
+                    
                     try
                     {
-                        strObjSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objSetup")).FirstOrDefault().ParamValue.ToString();
+                        string strObjSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objSetup")).FirstOrDefault().ParamValue.ToString();
+                        string UserID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                        string WellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellID")).FirstOrDefault().ParamValue.ToString();
 
                         if (strObjSetup != "")
                         {
                             objSetup = JsonConvert.DeserializeObject<BroomStickSetup>(strObjSetup);
 
                             //pending...
+
+                          
+
+
 
                         }
 

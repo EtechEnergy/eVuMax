@@ -503,7 +503,8 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                 //    objLocalConn = new DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true);
                 //}
 
-                objLocalConn.OpenConnection(objDataService.UserName, objDataService.Password, objDataService.ServerName);
+                //objLocalConn.OpenConnection(objDataService.UserName, objDataService.Password, objDataService.ServerName);
+
                 if (objTimeLog is null)
                 {
                     warnings += "TimeLog not Found (null).";
