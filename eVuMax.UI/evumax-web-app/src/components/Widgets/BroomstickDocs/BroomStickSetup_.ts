@@ -54,7 +54,7 @@ export enum bmStaticMethod {
 
    
 export  class BroomStickSetup_ {
-    public DepthMovThresholdWidth:number = 1;   
+    //public DepthMovThresholdWidth:number = 1;   
       public  PlanLineWidth:number = 3;
     public  PKUPColor:string = "blue";
     public  PKUPStaticColor:string = "lightblue";
@@ -161,6 +161,7 @@ export  class BroomStickSetup_ {
 
     public TDPointStyle:number = 0;
     public TDPointSize:number = 3;
+    public RunNo:string = "";
 
 
 

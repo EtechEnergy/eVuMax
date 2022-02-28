@@ -45,26 +45,26 @@ public partial class BroomStickSetup
 
     public string pickupPumpMnemonic = "SPPA";
     public bmPumpStatus pickupPumpStatus = bmPumpStatus.Both;
-    public int pickupMaxBlockMovement = 70;
+    public int pickupMaxBlockMovement = 90;
     public int pickupMinBlockMovement = 5;
     public string slackOffPumpMnemonic = "SPPA";
     public bmPumpStatus slackOffPumpStatus = bmPumpStatus.Both;
-    public int slackOffMaxBlockMovement = 70;
+    public int slackOffMaxBlockMovement = 90;
     public int slackOffMinBlockMovement = 5;
-    public double pickupRPMCutOff = 12d;
-    public double slackOffRPMCutOff = 12d;
+    public double pickupRPMCutOff = 15;
+    public double slackOffRPMCutOff = 12;
     public string rotatePumpMnemonic = "SPPA";
-    public bmPumpStatus rotatePumpStatus = bmPumpStatus.Both;
-    public double pickupCutOffValue = 99d;
-    public double slackOffCutOffValue = 99d;
-    public double rotateCutOffValue = 99d;
+    public bmPumpStatus rotatePumpStatus = bmPumpStatus.PumpOn;
+    public double pickupCutOffValue = 100;
+    public double slackOffCutOffValue = 100;
+    public double rotateCutOffValue = 100;
     public bmStaticMethod pickupPointSelectionMethod = bmStaticMethod.Max;
     public bmStaticMethod slackOffPointSelectionMethod = bmStaticMethod.Min;
     public int rotateTime = 120;
     public pointPlotMethod PointToPlot = pointPlotMethod.DynamicMethod;
     public double StringSpeed = 0d;
     public double OffBottomCircHeight = 10d;
-    public double rotateRPMCutOff = 12d;
+    public double rotateRPMCutOff = 12;
     public double rotateMaxRPM = 30d;
     public bmDynamicMethod pickupDynamicMethod = bmDynamicMethod.BreakOver;
     public bmDynamicMethod slackOffDynamicMethod = bmDynamicMethod.BreakOver;
@@ -104,6 +104,8 @@ public partial class BroomStickSetup
     public int TDPointSize = 3;
     public BroomstickProfile objProfile = new BroomstickProfile();
 
+    public string PlanID = "";
+
     //
 
 
@@ -120,6 +122,8 @@ public partial class BroomStickSetup
     public int TimePeriod = 1;
     public Dictionary<int, int> PointSelectionMethod = new Dictionary<int, int>(); // 'This includes min/max/avg.
     public globalTimeFilter objTimeFilter = new globalTimeFilter();
+    public string RunNo = "";
+ 
 
     VuMaxDR.Data.DataService objDataService;
     public BroomStickSetup(ref DataService paramObjDataService)

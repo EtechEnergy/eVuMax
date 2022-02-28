@@ -37,6 +37,7 @@ import BrokerParameter from "../../../broker/BrokerParameter";
 import GlobalMod from "../../../objects/global";
 import { ObjectFlags } from "typescript";
 import { TDPointProp } from "./TDPointProp";
+import { Chart } from "../../../eVuMaxObjects/Chart/Chart";
 
 let _gMod = new GlobalMod();
 
@@ -44,6 +45,10 @@ interface IProps {
   objRigStates: any;
   paramObjSetup: BroomStickSetup_;
   WellId: string;
+  RunList: any;
+  DocMode: string;
+  DocID: string;
+  onClose_:any;
 
 }
 
@@ -58,6 +63,8 @@ export class BroomstickSetup extends Component<IProps> {
 
   }
 
+
+
   componentWillMount(): void {
     try {
 
@@ -65,6 +72,9 @@ export class BroomstickSetup extends Component<IProps> {
         objSetup: this.props.paramObjSetup,
         objTimeFilter: this.props.paramObjSetup.objTimeFilter
       });
+      console.log("Time Filter --",  this.props.paramObjSetup.objTimeFilter);
+
+
 
     } catch (error) {
 
@@ -73,7 +83,9 @@ export class BroomstickSetup extends Component<IProps> {
 
 
 
+  objChart_Broomstick: Chart;
   WellId: string = "";
+  cmbRunList: comboData[] = [];
 
   AxiosSource = axios.CancelToken.source();
   AxiosConfig = { cancelToken: this.AxiosSource.token };
@@ -102,9 +114,10 @@ export class BroomstickSetup extends Component<IProps> {
 
   state = {
 
-    PointSelectionMethod_Min:false,
-    PointSelectionMethod_Max:false,
-    PointSelectionMethod_Avg:false,
+    cmbSelectedRun: new comboData("Select Run", "-1"),
+    PointSelectionMethod_Min: false,
+    PointSelectionMethod_Max: false,
+    PointSelectionMethod_Avg: false,
 
     selectedPickupRigState: [],
     grdPickupRigState: [],
@@ -181,9 +194,9 @@ export class BroomstickSetup extends Component<IProps> {
       for (let index = 0; index < this.cmbRigStateFunction.length; index++) {
         const objItem = this.cmbRigStateFunction[index];
         if (objItem.id == edited.GroupFunction.toString()) {
-          
+
           this.setState({
-            cmbRigStateFunction:objItem
+            cmbRigStateFunction: objItem
           });
           break;
 
@@ -215,17 +228,80 @@ export class BroomstickSetup extends Component<IProps> {
   };
 
   componentDidMount(): void {
+
+
+
     console.log("objRigState", this.props.paramObjSetup.objRigState);
     console.log(this.state.objSetup);
+    this.initilizeCharts();
+
     this.generateAllCombo();
     this.loadRigstatesGrid();
   }
+  initilizeCharts = () => {
+    debugger;
+
+    this.objChart_Broomstick = new Chart(this, "Broom_Stick");
+
+    this.objChart_Broomstick.ContainerId = "Broomstick";
+    this.objChart_Broomstick.Title = "";
+    this.objChart_Broomstick.leftAxis().AutoScale = true;
+    this.objChart_Broomstick.leftAxis().Min = 0;
+    this.objChart_Broomstick.leftAxis().Max = 100;
+    this.objChart_Broomstick.leftAxis().Inverted = true;
+    this.objChart_Broomstick.leftAxis().ShowLabels = true;
+    this.objChart_Broomstick.leftAxis().ShowTitle = true;
+    // this.objChart_Broomstick.leftAxis().Title =
+    //   "Depth" + " (" + this.state.objBroomstickData.depthUnit + ")"; //???? Unit
+
+
+    this.objChart_Broomstick.leftAxis().Title =
+      "Depth" + " (" + "UnitPending" + ")"; //???? Unit
+
+
+    this.objChart_Broomstick.leftAxis().DisplayOrder = 1;
+    this.objChart_Broomstick.leftAxis().Visible = true;
+    this.objChart_Broomstick.leftAxis().PaddingMin = 10;
+    this.objChart_Broomstick.leftAxis().PaddingMax = 15;
+
+    this.objChart_Broomstick.bottomAxis().AutoScale = true;
+    this.objChart_Broomstick.bottomAxis().bandScale = false;
+    this.objChart_Broomstick.bottomAxis().Min = 100;
+    this.objChart_Broomstick.bottomAxis().Max = 200;
+    // this.objChart_Broomstick.bottomAxis().Title =
+    //   "Hookload" + " (" + this.state.objBroomstickData.hkldUnit + ")"; //???? Unit
+
+    this.objChart_Broomstick.bottomAxis().Title =
+      "Hookload" + " (" + "Ybu" + ")"; //???? Unit
+
+
+    this.objChart_Broomstick.bottomAxis().ShowLabels = true;
+    this.objChart_Broomstick.bottomAxis().ShowTitle = true;
+    this.objChart_Broomstick.bottomAxis().LabelAngel = 10;
+    this.objChart_Broomstick.bottomAxis().ShowSelector = false;
+    this.objChart_Broomstick.bottomAxis().IsDateTime = false;
+    this.objChart_Broomstick.bottomAxis().Visible = true;
+
+    this.objChart_Broomstick.rightAxis().Visible = false;
+
+    this.objChart_Broomstick.MarginLeft = 10;
+    this.objChart_Broomstick.MarginBottom = 70;
+    this.objChart_Broomstick.MarginTop = 10;
+    this.objChart_Broomstick.MarginRight = 10;
+
+    this.objChart_Broomstick.initialize();
+
+    this.objChart_Broomstick.reDraw();
+    // this.objChart_Broomstick.onBeforeSeriesDraw.subscribe((e, i) => {
+    //     this.onBeforeDrawSeries(e, i);
+    //   });
+  };
 
   saveSettings = () => {
     try {
 
       console.log("pichUp RigSate", this.state.grdPickupRigState);
-      
+
 
       Util.StatusInfo("Getting data from the server  ");
       // this.setState({
@@ -258,31 +334,41 @@ export class BroomstickSetup extends Component<IProps> {
       // );
       // objBrokerRequest.Parameters.push(paramDocId);
       debugger;
-      let objTDPropsDic = utilFunc.convertMapToDictionaryJSON(this.state.objTDPointProperties,"RigState");
-      let objSetup:BroomStickSetup_  = utilFunc.CopyObject(this.state.objSetup);
+      let objTDPropsDic = utilFunc.convertMapToDictionaryJSON(this.state.objTDPointProperties, "RigState");
+      let objSetup: BroomStickSetup_ = utilFunc.CopyObject(this.state.objSetup);
       objSetup.objTimeFilter = utilFunc.CopyObject(this.state.objTimeFilter);
+      debugger;
       objSetup.TDPointProperties = objTDPropsDic;
 
-      
+
+      if (this.state.cmbSelectedRun.id != "-1") {
+        objSetup.RunNo = this.state.cmbSelectedRun.id;
+      } else {
+        objSetup.RunNo = "";
+      }
 
 
-
-      
 
       let objParameter: BrokerParameter = new BrokerParameter("objSetup", JSON.stringify(objSetup));
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter =new BrokerParameter("WellID", this.WellId);
+      objParameter = new BrokerParameter("WellID", this.WellId);
       objBrokerRequest.Parameters.push(objParameter);
 
-      objParameter =new BrokerParameter("UserID", _gMod._userId);
+      objParameter = new BrokerParameter("UserID", _gMod._userId);
+      objBrokerRequest.Parameters.push(objParameter);
+
+      objParameter = new BrokerParameter("DocType", this.props.DocMode);
+      objBrokerRequest.Parameters.push(objParameter);
+
+      objParameter = new BrokerParameter("DocID", this.props.DocID);
       objBrokerRequest.Parameters.push(objParameter);
 
 
 
       this.AxiosSource = axios.CancelToken.source();
 
-      
+
       axios
         .get(_gMod._performTask, {
           cancelToken: this.AxiosSource.token,
@@ -296,20 +382,24 @@ export class BroomstickSetup extends Component<IProps> {
           // $("#loader").hide();
           //alert("success");
           debugger;
-          let objData = JSON.parse(res.data.Response);
-
-
-          //Warnings Notifications
-          let warnings: string = res.data.Warnings;
-          if (warnings.trim() != "") {
-            let warningList = [];
-            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
-            this.setState({
-              warningMsg: warningList
-            });
+          // let objData = res.data.Response;
+          if (res.data.RequestSuccessfull == false) {
+            //Warnings Notifications
+            let warnings: string = res.data.Warnings;
+            if (warnings.trim() != "") {
+              let warningList = [];
+              warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+              this.setState({
+                warningMsg: warningList
+              });
+            }
           }
 
+
+
+
           Util.StatusSuccess("Data successfully retrived  ");
+          this.onClose();
 
 
         })
@@ -374,6 +464,25 @@ export class BroomstickSetup extends Component<IProps> {
 
   setAllComboValues = () => {
     try {
+
+debugger;
+      //Set Run Combo
+      if (this.state.objSetup.RunNo != "") {
+        for (let index = 0; index < this.cmbRunList.length; index++) {
+
+          let objItem = this.cmbRunList[index];
+
+
+          if (objItem.id == this.state.objSetup.RunNo.toString()) {
+            this.setState({
+              cmbSelectedRun: objItem,
+            });
+
+            break;
+          }
+        }
+      }
+
       for (let index = 0; index < this.cmbDownSampleMethod.length; index++) {
 
         let objItem = this.cmbDownSampleMethod[index];
@@ -402,7 +511,7 @@ export class BroomstickSetup extends Component<IProps> {
 
         let objItem = this.cmbHkldPointStyle[index];
 
-        if (objItem.id == this.state.objSetup.HkldPointStyle.toString()) {
+        if (objItem.id == this.state.objSetup.TDPointStyle.toString()) {
           this.setState({
             cmbHkldPointStyle: objItem,
           });
@@ -423,6 +532,7 @@ export class BroomstickSetup extends Component<IProps> {
         }
       }
 
+      debugger;
       for (let index = 0; index < this.cmbBroomStickPoints.length; index++) {
 
         let objItem = this.cmbBroomStickPoints[index];
@@ -811,6 +921,23 @@ export class BroomstickSetup extends Component<IProps> {
       //   ],
       // });
 
+      let comboList: comboData[] = [];
+
+      debugger;
+      if (this.props.RunList != null || this.props.RunList != undefined) {
+        comboList.push(new comboData("Select Run No.", "-1"));
+        let objPlanList = Object.values(this.props.RunList);
+
+        for (let index = 0; index < objPlanList.length; index++) {
+          const objItem: any = objPlanList[index];
+          let objComboData: comboData = new comboData(objItem.RUN_NO, objItem.RUN_NO);
+          comboList.push(objComboData);
+
+        }
+        this.cmbRunList = comboList;
+      }
+
+
       this.setAllComboValues();
     } catch (error) { }
   };
@@ -819,10 +946,21 @@ export class BroomstickSetup extends Component<IProps> {
   onDropdownChange = (event: any, field: string) => {
     try {
       debugger;
+
       let objValue: comboData = event.value;
-      //      let edited: any = utilFunc.CopyObject(this.state.cmbDownSampleMethod);
 
 
+      //Pending
+      if (field == "cmbSelectedRun") {
+
+        this.setState({
+          cmbSelectedRun: event.value
+        });
+
+        return;
+
+      }
+      //********** */
 
 
       if (field == "cmbDownSampleMethod") {
@@ -877,6 +1015,12 @@ export class BroomstickSetup extends Component<IProps> {
       if (field == "cmbBroomStickPoints") {
         this.setState({
           cmbBroomStickPoints: objValue
+        });
+
+        let edited = this.state.objSetup;
+        edited[field] = objValue.id;
+        this.setState({
+          objSetup:edited
         });
       }
 
@@ -1037,6 +1181,9 @@ export class BroomstickSetup extends Component<IProps> {
     }
   }
 
+  onClose=()=>{
+    this.props.onClose_();
+  }
   render() {
 
     return (
@@ -1051,7 +1198,25 @@ export class BroomstickSetup extends Component<IProps> {
               textAlign: "end",
             }}
           >
-            <div className="col-lg-12">
+            <div className="col-lg-12 mt-3">
+              <div className="mr-2 " style={{ float: "left" }}>
+                <label>Run No.</label>
+                <DropDownList
+                  id="DocType"
+                  style={{
+                    width: "350px",
+                  }}
+                  className="ml-3"
+                  name="cmbDownSampleMethod"
+                  data={this.cmbRunList}
+                  value={this.state.cmbSelectedRun}
+                  textField="text"
+                  dataItemKey="id"
+                  onChange={(e) =>
+                    this.onDropdownChange(e, "cmbSelectedRun")
+                  }
+                ></DropDownList>
+              </div>
               <button
                 onClick={this.saveSettings}
                 className="btn-custom btn-custom-primary ml-1 mr-1"
@@ -1059,7 +1224,7 @@ export class BroomstickSetup extends Component<IProps> {
                 Save
               </button>
               <button
-                //onClick={this.SaveSettings}
+                onClick={this.onClose}
                 className="btn-custom btn-custom-primary ml-1 mr-1"
               >
                 Cancel
@@ -1161,10 +1326,45 @@ export class BroomstickSetup extends Component<IProps> {
                       {this.state.objTimeFilter.FilterType == vFilterType.SpecificRange &&
                         <div>
                           <Label className="mr-2 mt-3">From Date</Label>
-                          <DateTimePicker className="ml-2"></DateTimePicker>
+                          <DateTimePicker className="ml-2"
+                            name="txtFromDate"
+                            value={this.state.objTimeFilter.FromDateTime.toString() == "" ? null :     new Date(this.state.objTimeFilter.FromDateTime)}
+                            format="MM/dd/yyyy HH:mm:ss"
+                            formatPlaceholder={{
+                              year: "yyyy",
+                              month: "MM",
+                              day: "dd",
+                              hour: "HH",
+                              minute: "mm",
+                              second: "ss",
+                            }}
+                            onChange={(e: any) => {
+                              this.onTimeFilterChange(e, "FromDateTime");
+                            }}
+                          >
+
+
+
+                          </DateTimePicker>
                           <br />
                           <Label className="mr-2 mt-3">To Date</Label>
-                          <DateTimePicker className="ml-2"></DateTimePicker>
+                          <DateTimePicker className="ml-2"
+                           name="txtToDate"
+                           value={this.state.objTimeFilter.ToDateTime.toString() == "" ? null : new Date(this.state.objTimeFilter.ToDateTime)}
+                           format="MM/dd/yyyy HH:mm:ss"
+                           formatPlaceholder={{
+                             year: "yyyy",
+                             month: "MM",
+                             day: "dd",
+                             hour: "HH",
+                             minute: "mm",
+                             second: "ss",
+                           }}
+                           onChange={(e: any) => {
+                             this.onTimeFilterChange(e, "ToDateTime");
+                           }}
+                          
+                          ></DateTimePicker>
                         </div>
                       }
                     </div>
@@ -1235,7 +1435,7 @@ export class BroomstickSetup extends Component<IProps> {
 
                       <Checkbox
                         className="mr-2"
-                        value ={bmStaticMethod.Min}
+                        value={bmStaticMethod.Min}
                         label={"Min"}
                         checked={this.state.PointSelectionMethod_Min}
                         onChange={(event) => {
@@ -1247,7 +1447,7 @@ export class BroomstickSetup extends Component<IProps> {
                       <Checkbox
                         className="mr-2"
                         label={"Max"}
-                        value ={bmStaticMethod.Max}
+                        value={bmStaticMethod.Max}
                         checked={this.state.PointSelectionMethod_Max}
                         onChange={(event) => {
                           this.setState({ PointSelectionMethod_Max: event.value });
@@ -1257,7 +1457,7 @@ export class BroomstickSetup extends Component<IProps> {
                       <Checkbox
                         className="mr-2"
                         label={"Avg"}
-                        value ={bmStaticMethod.Avg}
+                        value={bmStaticMethod.Avg}
                         checked={this.state.PointSelectionMethod_Avg}
                         onChange={(event) => {
                           this.setState({ PointSelectionMethod_Avg: event.value });
@@ -1543,10 +1743,10 @@ export class BroomstickSetup extends Component<IProps> {
                       <div className="form-group">
                         <Grid
                           style={{ height: "150px" }}
-                         // data={this.state.objTDPointProperties == undefined ? [] : Object.values(this.state.objTDPointProperties)}
-                         data={Object.values(this.state.objTDPointProperties) != null ? (Object.values(this.state.objTDPointProperties).map((item: TDPointProp) =>
-                          ({ ...item, selected: item.RigState === this.state.objSelectedTDPointProp.RigState })
-                      )) : null}
+                          // data={this.state.objTDPointProperties == undefined ? [] : Object.values(this.state.objTDPointProperties)}
+                          data={Object.values(this.state.objTDPointProperties) != null ? (Object.values(this.state.objTDPointProperties).map((item: TDPointProp) =>
+                            ({ ...item, selected: item.RigState === this.state.objSelectedTDPointProp.RigState })
+                          )) : null}
                           onRowClick={(e: any) => { (this.onGridItemChange(e, "objTDPointProperties")) }}
                           selectedField="selected"
                         >
@@ -1630,11 +1830,11 @@ export class BroomstickSetup extends Component<IProps> {
                       <span className="mr-2">
                         <label className="">Size</label>
                         <NumericTextBox
-                          value={this.state.objSetup.HkldPointSize}
+                          value={this.state.objSetup.TDPointSize}
                           format="n2"
                           width="100px"
                           onChange={(e: any) => {
-                            this.onTextChange(e, "HkldPointSize");
+                            this.onTextChange(e, "TDPointSize");
                           }}
                         />
                       </span>
@@ -2416,15 +2616,12 @@ export class BroomstickSetup extends Component<IProps> {
                   </label>
                   <NumericTextBox
                     className="ml-2"
-                    value={this.state.objSetup.DepthMovThresholdWidth}
+                    value={this.state.objSetup.MaxPauseTime}
                     format="n2"
                     width="100px"
-                  // onChange={(event) => {
-                  //   this.disableRealTime();
-                  //   this.setState({
-                  //     MaxConnTime: event.target.value,
-                  //   });
-                  // }}
+                    onChange={(e) =>
+                      this.onTextChange(e, "MaxPauseTime")
+                    }
                   />
                   <label className="leftPadding-small">Seconds</label>
                 </div>

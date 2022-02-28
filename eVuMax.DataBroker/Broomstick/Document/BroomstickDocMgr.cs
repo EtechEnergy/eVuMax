@@ -7,11 +7,7 @@ using System.Threading.Tasks;
 using VuMaxDR.Data;
 using System.Data;
 using System.Drawing;
-
-
-
-
-
+using VuMaxDR.Data.Objects;
 
 namespace eVuMax.DataBroker.Broomstick.Document
 {
@@ -19,11 +15,39 @@ namespace eVuMax.DataBroker.Broomstick.Document
     {
         const string ProcessBroomstickDoc = "ProcessBroomstickDoc";
         const string SaveSetup = "SaveSetup";
+        const string LoadPlanList = "LoadPlanList";
         public Broker.BrokerResponse getData(Broker.BrokerRequest paramRequest)
         {
             try
             {
+                if(paramRequest.Function == LoadPlanList)
+                {
+                    //                    Dim objPlan As AdnlHookloadPlan = AdnlHookloadPlan.loadObject(objDataService, wellID, wellboreID, logID, PlanID)
+                    string WellID = "";
+                    string UserID = "";
+                    int DocType = 1;
 
+                    try
+                    {
+                        WellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellID")).FirstOrDefault().ParamValue.ToString();
+                        //UserID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                        //DocType = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("DocType")).FirstOrDefault().ParamValue.ToString());
+
+                        TimeLog objTimeLog = new TimeLog();
+                        objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref paramRequest.objDataService, WellID);
+                        if (objTimeLog != null)
+                        {
+                            
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+
+                    }
+
+
+                }
                 //Nishant
                 if (paramRequest.Function == ProcessBroomstickDoc)
                 {
@@ -59,7 +83,8 @@ namespace eVuMax.DataBroker.Broomstick.Document
                     BroomstickDocument.BroomStickProcessor objBroomstickProcessor = new BroomstickDocument.BroomStickProcessor(ref paramRequest.objDataService, WellID);
                     //objBroomstickProcessor.ProcessPoints(objSetup);
                     objResponse.RequestSuccessfull = true;
-                    objResponse.Response = objBroomstickProcessor.ProcessPoints(objSetup);
+                    //objResponse.Response =   objBroomstickProcessor.ProcessPoints(objSetup);
+                    objResponse.Response = objUserSettings.ProcessDocument();
 
                     return objResponse;
 
@@ -111,6 +136,8 @@ namespace eVuMax.DataBroker.Broomstick.Document
                         string strObjSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objSetup")).FirstOrDefault().ParamValue.ToString();
                         string UserID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
                         string WellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellID")).FirstOrDefault().ParamValue.ToString();
+                        string DocType = paramRequest.Parameters.Where(x => x.ParamName.Contains("DocType")).FirstOrDefault().ParamValue.ToString();
+                        string DocID = paramRequest.Parameters.Where(x => x.ParamName.Contains("DocID")).FirstOrDefault().ParamValue.ToString();
 
                         if (strObjSetup != "")
                         {
@@ -118,7 +145,16 @@ namespace eVuMax.DataBroker.Broomstick.Document
 
                             //pending...
 
-                          
+                            BroomstickDocument.BroomstickUserSettings objUserSettings = new BroomstickDocument.BroomstickUserSettings();
+                            objUserSettings.WellID = WellID;
+                            objUserSettings.UserID = UserID;
+                            objUserSettings.objSetup = objSetup;
+                            objUserSettings.DocID = DocID;
+                            objUserSettings.DocType = (BroomstickDocument.enumDocType_) Convert.ToInt32(DocType);
+                            
+                            objUserSettings.Update(ref paramRequest.objDataService);
+
+
 
 
 

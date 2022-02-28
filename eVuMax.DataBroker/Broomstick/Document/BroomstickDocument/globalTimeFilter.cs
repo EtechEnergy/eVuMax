@@ -22,7 +22,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
         public vFilterType FilterType = vFilterType.LastData;
         public string FromDateTime = "";
         public string ToDateTime = "";
-        public double LastPeriod = 24;
+        public double LastPeriod = 524;
         public vFilterType DepthFilterType = vFilterType.LastData;
         public double FromDepth = 0d;
         public double ToDepth = 0d;

@@ -11,8 +11,8 @@
 
     public FilterStatus : boolean = false;
     public FilterType : vFilterType = vFilterType.LastData;
-    public FromDateTime : string = "";
-    public ToDateTime : string = "";
+    public FromDateTime : Date =  new Date();
+    public ToDateTime : Date = new Date();;
     public LastPeriod : number = 0;
 
     public DepthFilterType : vFilterType = vFilterType.LastData;

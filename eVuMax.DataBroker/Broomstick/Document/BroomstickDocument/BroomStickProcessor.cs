@@ -56,13 +56,72 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
         private DataService objLocalConn;
         public string warnings = "";
         public string WellID = "";
+
+        public Dictionary<string, AdnlHookloadPlan> objAdnlHookloadPlan = new Dictionary<string, AdnlHookloadPlan>();
+        public DataTable RunList = new DataTable();
+        
+        
+
         VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
+        public string WellName = "";
 
       
         public rigState objRigState = new rigState();
-       
 
 
+        public void getUniqueRuns()
+        
+        {
+            try
+            {
+                string LogID = _objTimeLog.ObjectID;
+                string PlanType = "";
+
+                switch (DocumentMode)
+                {
+                    case enumDocumentMode.HookloadDocument:
+                        PlanType =  "HKLDP";
+                        break;
+                    case enumDocumentMode.TorqueDocument:
+                        PlanType = "TORP";
+                        break;
+                    case enumDocumentMode.ConnectionHkld:
+                        PlanType = "HKLDP";
+                        break;
+                    case enumDocumentMode.ConnectionTorque:
+                        PlanType = "TORP";
+                        break;
+                    default:
+                        PlanType = "";
+                        break;
+                }
+
+
+
+                DataTable objData = new DataTable();
+                string WellboreID = Wellbore.getAnyWellboreID(ref objDataService, WellID);
+                objData = objDataService.getTable("SELECT DISTINCT RUN_NO  FROM VMX_ADNL_HKLD_PLAN WHERE WELL_ID='" + WellID + "' AND WELLBORE_ID='" + WellboreID + "' AND LOG_ID='" + LogID + "' AND PLAN_TYPE='" + PlanType + "'");
+                if(objData.Rows.Count > 0)
+                {
+                    RunList= objData;
+                    
+                }
+                else
+                {
+                    RunList = null;
+                }
+                
+            }
+            catch (Exception)
+            {
+
+                RunList=  null;
+            }
+        }
+        public BroomStickProcessor()
+        {
+
+        }
         public BroomStickProcessor(ref DataService paramObjDataService, string paramWellID)
         {
 
@@ -73,6 +132,21 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
             _objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref objDataService, paramWellID);
             objRigState = rigState.loadWellRigStateSetup(ref objDataService, WellID);
             objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref objDataService, paramWellID);
+            if (objWell != null)
+            {
+                WellName = objWell.name;
+            }
+            
+
+            //        Public Const cnTypeHkldPlan As String = "HKLDP"
+            //Public Const cnTypeActualHkld As String = "HKLDA"
+            //Public Const cnTypeTorquePlan As String = "TORP"
+            //Public Const cnTypeActualTorque As String = "TORA"
+
+            getUniqueRuns();
+
+          
+            
         }
 
 
@@ -279,7 +353,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                             }
                         }
 
-                        if (objCombinedPoint.DynamicPU == 0 & objCombinedPoint.DynamicSO == 0 & objCombinedPoint.Rotate == 0)
+                        if (objCombinedPoint.DynamicPU == 0 && objCombinedPoint.DynamicSO == 0 && objCombinedPoint.Rotate == 0)
                         {
                         }
 
@@ -308,7 +382,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
             {
                 foreach (wellSection objWellSection_ in WellSectionList.Values)
                 {
-                    if (paramDepth >= objWellSection_.StartDepth & paramDepth <= objWellSection_.EndDepth)
+                    if (paramDepth >= objWellSection_.StartDepth && paramDepth <= objWellSection_.EndDepth)
                     {
                         return objWellSection_;
                     }
@@ -329,7 +403,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
             {
                 foreach (wellSection objWellSection_ in WellSectionList.Values)
                 {
-                    if (paramDepth >= objWellSection_.StartDepth & paramDepth <= objWellSection_.EndDepth)
+                    if (paramDepth >= objWellSection_.StartDepth && paramDepth <= objWellSection_.EndDepth)
                     {
                         return objWellSection_;
                     }
@@ -362,18 +436,58 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
         //    }
         //}
 
-        public string ProcessPoints(BroomStickSetup paramObjSetup)
+        public void ProcessPoints(BroomStickSetup paramObjSetup)
         {
             try
             {
                 _objSetup = paramObjSetup;
                 objLocalConn = objDataService;
-                // 'objFile = New System.IO.StreamWriter("c:\output\robpoints.txt")
 
-                
+
+                objAdnlHookloadPlan.Clear();
+
+                switch (DocumentMode)
+                {
+                    case enumDocumentMode.HookloadDocument:
+                        objAdnlHookloadPlan = AdnlHookloadPlan.getList(ref objDataService, WellID, Wellbore.getAnyWellboreID(ref objDataService, WellID), _objTimeLog.ObjectID, "HKLDP");
+                        break;
+                    case enumDocumentMode.TorqueDocument:
+                        objAdnlHookloadPlan = AdnlHookloadPlan.getList(ref objDataService, WellID, Wellbore.getAnyWellboreID(ref objDataService, WellID), _objTimeLog.ObjectID, "TORP");
+                        break;
+                    case enumDocumentMode.ConnectionHkld:
+                        objAdnlHookloadPlan = AdnlHookloadPlan.getList(ref objDataService, WellID, Wellbore.getAnyWellboreID(ref objDataService, WellID), _objTimeLog.ObjectID, "HKLDP");
+                        break;
+                    case enumDocumentMode.ConnectionTorque:
+                        objAdnlHookloadPlan = AdnlHookloadPlan.getList(ref objDataService, WellID, Wellbore.getAnyWellboreID(ref objDataService, WellID), _objTimeLog.ObjectID, "TORP");
+                        break;
+                    default:
+                        break;
+                }
+
+                //only take RunNo which is set in Setup
+                if (_objSetup.RunNo == "")
+                {
+                    objAdnlHookloadPlan.Clear();
+                }
+
+            StartOver:
+                foreach (AdnlHookloadPlan objPlan in objAdnlHookloadPlan.Values)
+                {
+                    if (_objSetup.RunNo != objPlan.RunNo)
+                    {
+                        objAdnlHookloadPlan.Remove(objPlan.PlanID);
+                        goto StartOver;
+                    }
+                }
+
+
+
+
+
+
 
                 // '(1) No filter applied ...
-                if (_objSetup.objTimeFilter.FilterStatus == false & _objSetup.objTimeFilter.FilterByEvents == false)
+                if (_objSetup.objTimeFilter.FilterStatus == false && _objSetup.objTimeFilter.FilterByEvents == false)
                 {
                     // 'No filter applied ... default last 24 hours ...
 
@@ -508,7 +622,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                 if (objTimeLog is null)
                 {
                     warnings += "TimeLog not Found (null).";
-                    return "";
+                    //return void
                 }
 
                 // 'Load Settings
@@ -535,7 +649,8 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                 DateTime maxDate = DateTime.MinValue;
 
                 // 'Load previously stored points from the database
-                if (DocumentMode == enumDocumentMode.ConnectionHkld | DocumentMode == enumDocumentMode.HookloadDocument & CombinedMode == true)
+                //If DocumentMode = HookloadDocument.enumDocumentMode.ConnectionHkld Or(DocumentMode = HookloadDocument.enumDocumentMode.HookloadDocument And CombinedMode = True) Then
+                if (DocumentMode == enumDocumentMode.ConnectionHkld || DocumentMode == enumDocumentMode.HookloadDocument && CombinedMode == true)
                 {
                     // 'Load hookload points
                     loadPointsFromDBHookload();
@@ -568,7 +683,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     {
                         int lnRigState = Convert.ToInt32( objData.Rows[i]["RIG_STATE"]);
                         double lnHkld = Convert.ToDouble( objData.Rows[i]["HKLD"]);
-                        if (lnRigState == 2 | lnRigState == 13 & lnHkld < objRigState.HookloadCutOff)
+                        if (lnRigState == 2 || lnRigState == 13 && lnHkld < objRigState.HookloadCutOff)
                         {
                             int forwardPointer = i;
 
@@ -614,7 +729,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                 // '==================================================================================''
 
                 // 'Load previously stored points from the database
-                if (DocumentMode == enumDocumentMode.ConnectionHkld | DocumentMode == enumDocumentMode.HookloadDocument & CombinedMode == true)
+                if (DocumentMode == enumDocumentMode.ConnectionHkld || DocumentMode == enumDocumentMode.HookloadDocument && CombinedMode == true)
                 {
                     clearPointsFromDBHookload();
                     savePointsToDBHookload();
@@ -654,11 +769,11 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                 objData.Dispose();
                 //objLocalConn.closeConnection();
-                return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+                //return Newtonsoft.Json.JsonConvert.SerializeObject(this);
             }
             catch (Exception ex)
             {
-                return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+                //return Newtonsoft.Json.JsonConvert.SerializeObject(this);
             }
         }
 
@@ -730,7 +845,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     strSQL += "" + objItem.UserDynamicValue.ToString() + ",";
                     strSQL += "" + objItem.UserStaticValue.ToString() + ",";
                     strSQL += "" + Global.Iif(objItem.UserVisible == true, 1, 0).ToString() + ",";
-                    strSQL += "" + objItem.PumpStatus+ ",";
+                    strSQL += "" + Convert.ToInt32(objItem.PumpStatus)+ ",";
                     strSQL += "'" + objDataService.UserName.Replace("'", "''") + "',";
                     strSQL += "'" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + "',";
                     strSQL += "'" + objDataService.UserName.Replace("'", "''") + "',";
@@ -783,7 +898,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     strSQL += "" + objItem.UserDynamicValue.ToString() + ",";
                     strSQL += "" + objItem.UserStaticValue.ToString() + ",";
                     strSQL += "" + Global.Iif(objItem.UserVisible == true, 1, 0).ToString() + ",";
-                    strSQL += "" + objItem.PumpStatus.ToString() + ",";
+                    strSQL += "" + Convert.ToInt32(objItem.PumpStatus) + ",";
                     strSQL += "'" + objDataService.UserName.Replace("'", "''") + "',";
                     strSQL += "'" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + "',";
                     strSQL += "'" + objDataService.UserName.Replace("'", "''") + "',";
@@ -836,7 +951,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     strSQL += "" + objItem.UserDynamicValue.ToString() + ",";
                     strSQL += "" + objItem.UserStaticValue.ToString() + ",";
                     strSQL += "" + Global.Iif(objItem.UserVisible == true, 1, 0).ToString() + ",";
-                    strSQL += "" + objItem.PumpStatus.ToString() + ",";
+                    strSQL += "" + Convert.ToInt32(objItem.PumpStatus) + ",";
                     strSQL += "'" + objDataService.UserName.Replace("'", "''") + "',";
                     strSQL += "'" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + "',";
                     strSQL += "'" + objDataService.UserName.Replace("'", "''") + "',";
@@ -918,7 +1033,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     strSQL += "" + objItem.UserDynamicValue.ToString() + ",";
                     strSQL += "" + objItem.UserStaticValue.ToString() + ",";
                     strSQL += "" + Global.Iif(objItem.UserVisible == true, 1, 0).ToString() + ",";
-                    strSQL += "" + objItem.PumpStatus + ",";
+                    strSQL += "" + Convert.ToInt32(objItem.PumpStatus) + ",";
                     strSQL += "'" + objDataService.UserName.Replace("'", "''") + "',";
                     strSQL += "'" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + "',";
                     strSQL += "'" + objDataService.UserName.Replace("'", "''") + "',";
@@ -1041,7 +1156,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                         break;
                     }
 
-                    if (lnRigState == 0 | lnRigState == 1 | lnRigState == 19)
+                    if (lnRigState == 0 || lnRigState == 1 || lnRigState == 19)
                     {
 
                         // 'check if it's a drilling for at least 1 minute ...
@@ -1063,7 +1178,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                                 break;
                             }
 
-                            if (lnSubRigState == 0 | lnSubRigState == 1 | lnSubRigState == 19)
+                            if (lnSubRigState == 0 || lnSubRigState == 1 || lnSubRigState == 19)
                             {
                             }
                             // 'Do nothing ...
@@ -1094,7 +1209,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                                     break;
                                 }
 
-                                if (lnSubRigState == 0 | lnSubRigState == 1 | lnSubRigState == 19)
+                                if (lnSubRigState == 0 || lnSubRigState == 1 || lnSubRigState == 19)
                                 {
                                     subDrillingRowFound = true;
                                     drillingEndTime = Convert.ToDateTime( objData.Rows[j]["DATETIME"]);
@@ -1135,7 +1250,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                         break;
                     }
 
-                    if (lnRigState == 0 | lnRigState == 1 | lnRigState == 19)
+                    if (lnRigState == 0 || lnRigState == 1 || lnRigState == 19)
                     {
 
                         // 'Add 1 minute and find out if it's drilling continuous ...
@@ -1155,7 +1270,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                             }
 
                             int lnSubRigState = Convert.ToInt32( objData.Rows[j]["RIG_STATE"]);
-                            if (lnSubRigState == 0 | lnSubRigState == 1 | lnSubRigState == 19)
+                            if (lnSubRigState == 0 || lnSubRigState == 1 || lnSubRigState == 19)
                             {
                             }
                             // 'Nothing to do ...
@@ -1205,7 +1320,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                 {
                     double lnHkld = Convert.ToDouble( objData.Rows[i]["HKLD"]);
                     int lnRigState = Convert.ToInt32( objData.Rows[i]["RIG_STATE"]);
-                    if (lnHkld <= lnHKldCutOff | lnRigState == 2)
+                    if (lnHkld <= lnHKldCutOff || lnRigState == 2)
                     {
                         slipsStartRowIndex = i;
                         slipsStartTime = Convert.ToDateTime(objData.Rows[i]["DATETIME"]);
@@ -1240,7 +1355,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     for (int i = slipsEndRowIndex - 1, loopTo = searchLimitNext; i >= loopTo; i -= 1)
                     {
                         int lnRigState = Convert.ToInt32( objData.Rows[i]["RIG_STATE"]);
-                        if (lnRigState == 0 | lnRigState == 1 | lnRigState == 19)
+                        if (lnRigState == 0 || lnRigState == 1 || lnRigState == 19)
                         {
                             // 'Check if it's proper slips to bottom time ...
 
@@ -1262,7 +1377,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                                 }
 
                                 int lnSubRigState = Convert.ToInt32( objData.Rows[j]["RIG_STATE"]);
-                                if (lnSubRigState == 0 | lnSubRigState == 1 | lnSubRigState == 19)
+                                if (lnSubRigState == 0 || lnSubRigState == 1 || lnSubRigState == 19)
                                 {
                                 }
                                 // 'Nothing to do ...
@@ -1324,7 +1439,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                 //line 3
                 // '** New Logic ...
-                    if (Slot1Time >= 5 & Slot2Time < 14400)
+                    if (Slot1Time >= 5 && Slot2Time < 14400)
                 {
 
                   
@@ -1385,7 +1500,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     objItem.UserDynamicValue = Convert.ToDouble(DataService.checkNull(objRow["USER_DYNAMIC_VALUE"], 0));
                     objItem.UserStaticValue = Convert.ToDouble(DataService.checkNull(objRow["USER_STATIC_VALUE"], 0));
                     objItem.UserVisible = Global.Iif(Convert.ToInt32( DataService.checkNull(objRow["USER_VISIBLE"], 0)) == 1, true, false);
-                    objItem.PumpStatus = (PUSOPoint.pusoPumpStatus)DataService.checkNull(objRow["PUMP_STATUS"], 0);
+                    objItem.PumpStatus = (PUSOPoint.pusoPumpStatus) Convert.ToInt16(DataService.checkNull(objRow["PUMP_STATUS"], 0));
                     PUPoints.Add(PUPoints.Count + 1, objItem);
                 }
 
@@ -1417,7 +1532,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     objItem.UserDynamicValue = Convert.ToDouble(DataService.checkNull(objRow["USER_DYNAMIC_VALUE"], 0));
                     objItem.UserStaticValue = Convert.ToDouble(DataService.checkNull(objRow["USER_STATIC_VALUE"], 0));
                     objItem.UserVisible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["USER_VISIBLE"], 0)) == 1, true, false);
-                    objItem.PumpStatus = (PUSOPoint.pusoPumpStatus)DataService.checkNull(objRow["PUMP_STATUS"], 0);
+                    objItem.PumpStatus = (PUSOPoint.pusoPumpStatus) Convert.ToInt16(DataService.checkNull(objRow["PUMP_STATUS"], 0));
                     SOPoints.Add(SOPoints.Count + 1, objItem);
                 }
 
@@ -1471,7 +1586,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     objItem.UserDynamicValue = Convert.ToDouble(DataService.checkNull(objRow["USER_DYNAMIC_VALUE"], 0));
                     objItem.UserStaticValue = Convert.ToDouble(DataService.checkNull(objRow["USER_STATIC_VALUE"], 0));
                     objItem.UserVisible = Global.Iif(Convert.ToInt32(DataService.checkNull(objRow["USER_VISIBLE"], 0)) == 1, true, false);
-                    objItem.PumpStatus = (PUSOPoint.pusoPumpStatus)DataService.checkNull(objRow["PUMP_STATUS"], 0);
+                    objItem.PumpStatus = (PUSOPoint.pusoPumpStatus) Convert.ToInt16( DataService.checkNull(objRow["PUMP_STATUS"], 0));
                     PUPoints.Add(PUPoints.Count + 1, objItem);
                     RotatePoints.Add(RotatePoints.Count + 1, objItem);
                 }
@@ -1581,7 +1696,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                     // '#1 The Depth is moving down and rig state is changing ...
                     // 'If (lnNextDepth > lnDepth And (lnNextRigState <> 8 And lnNextRigState <> 10 And lnNextRigState <> 28)) Then
-                    if (lnNextDepth > lnDepth | !pkupRigStates.ContainsKey(lnNextRigState))
+                    if (lnNextDepth > lnDepth || !pkupRigStates.ContainsKey(lnNextRigState))
                     {
                         DoCloseDataCollection = true;
                     }
@@ -1589,7 +1704,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                     // '#2 If no depth movement then 
                     // 'If (lnNextDepth = lnDepth) And (lnNextRigState <> 8 And lnNextRigState <> 10 And lnNextRigState <> 28) Then
-                    if (lnNextDepth == lnDepth | !pkupRigStates.ContainsKey(lnNextRigState))
+                    if (lnNextDepth == lnDepth || !pkupRigStates.ContainsKey(lnNextRigState))
                     {
                         var PauseStartTime = default(DateTime);
 
@@ -1605,7 +1720,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                             else
                             {
                                 // 'Depth changed ...
-                                if (pp - 1 >= 0 & pp - 1 <= objData.Rows.Count - 1)
+                                if (pp - 1 >= 0 && pp - 1 <= objData.Rows.Count - 1)
                                 {
                                     PauseStartTime = Convert.ToDateTime( objData.Rows[pp]["DATETIME"]);
                                 }
@@ -1635,12 +1750,12 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                         objPUSO.EndIndex = i;
                         objPUSO.EndDate = Convert.ToDateTime( objData.Rows[i]["DATETIME"]);
                         objPUSO.EndDepth = Convert.ToDouble( objData.Rows[i]["DEPTH"]);
-                        if (sampleCount > 0 & sumSPPA > 0d)
+                        if (sampleCount > 0 && sumSPPA > 0d)
                         {
                             objPUSO.PumpPressure = Math.Round(sumSPPA / sampleCount, 2);
                         }
 
-                        if (sampleCount > 0 & sumCirc > 0d)
+                        if (sampleCount > 0 && sumCirc > 0d)
                         {
                             objPUSO.Circulation = Math.Round(sumCirc / sampleCount, 2);
                         }
@@ -1831,7 +1946,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
 
                     bool AtInSlipsDepth = false;
-                    if (lnDepth >= depthWindowFrom & lnDepth <= depthWindowTo)
+                    if (lnDepth >= depthWindowFrom && lnDepth <= depthWindowTo)
                     {
                         AtInSlipsDepth = true;
                     }
@@ -1849,7 +1964,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     // 'Check if this point is within any PU/SO
                     foreach (PUSOPoint objPoint in tmpPUList.Values)
                     {
-                        if (i >= objPoint.StartIndex & i <= objPoint.EndIndex)
+                        if (i >= objPoint.StartIndex && i <= objPoint.EndIndex)
                         {
                             AtInSlipsDepth = true;
                             break;
@@ -1858,7 +1973,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                     foreach (PUSOPoint objPoint in tmpSOList.Values)
                     {
-                        if (i >= objPoint.StartIndex & i <= objPoint.EndIndex)
+                        if (i >= objPoint.StartIndex && i <= objPoint.EndIndex)
                         {
                             AtInSlipsDepth = true;
                             break;
@@ -1869,9 +1984,9 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                     // 'Check all stall rig states ...
                     // 'If (lnRigState = 11 Or lnRigState = 12 Or lnRigState = 13 Or lnRigState = 3 Or lnRigState = 7) And (Not AtInSlipsDepth) Then
-                    if (rotRigStates.ContainsKey(lnRigState) & !AtInSlipsDepth)
+                    if (rotRigStates.ContainsKey(lnRigState) && !AtInSlipsDepth)
                     {
-                        if (lnRigState == 3 | lnRigState == 7)
+                        if (lnRigState == 3 || lnRigState == 7)
                         {
                             // 'Check if we got into reaming/back reaming
                             double depthDiff = Math.Abs(Convert.ToDouble(objData.Rows[i]["DEPTH"]) - Convert.ToDouble(objData.Rows[i + 1]["DEPTH"]));
@@ -1890,7 +2005,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                         if (rotRigStates.ContainsKey(lnRigState))
                         {
-                            if (lnRPM > _objSetup.rotateRPMCutOff & lnRPM <= _objSetup.rotateMaxRPM)
+                            if (lnRPM > _objSetup.rotateRPMCutOff && lnRPM <= _objSetup.rotateMaxRPM)
                             {
                                 DoContinue = true;
                             }
@@ -1903,17 +2018,17 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                         // '**************
                         // 'Reaming rig states ...
 
-                        if (lnRigState == 3 | lnRigState == 7)
+                        if (lnRigState == 3 || lnRigState == 7)
                         {
                             // 'Nishant
                             if (objWellSection is object)
                             {
-                                if (lnRPM > _objSetup.rotateRPMCutOff & lnRPM <= objWellSection.PUSOSettings.ROTMaxRPM)
+                                if (lnRPM > _objSetup.rotateRPMCutOff && lnRPM <= objWellSection.PUSOSettings.ROTMaxRPM)
                                 {
                                     DoContinue = true;
                                 }
                             }
-                            else if (lnRPM > _objSetup.rotateRPMCutOff & lnRPM <= _objSetup.rotateMaxRPM)
+                            else if (lnRPM > _objSetup.rotateRPMCutOff && lnRPM <= _objSetup.rotateMaxRPM)
                             {
                                 DoContinue = true;
                             }
@@ -1923,9 +2038,9 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                         // 'Nishant check from here Pending
 
-                        if (lnHkld > lnHKldCutOff & DoContinue)
+                        if (lnHkld > lnHKldCutOff && DoContinue)
                         {
-                            if (lnRigState == 11 | lnRigState == 12 | lnRigState == 13)
+                            if (lnRigState == 11 || lnRigState == 12||lnRigState == 13)
                             {
                                 RotateRigStateFound = true;
                             }
@@ -1945,7 +2060,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                                 objNewPoint.Circulation = lnCirc;
                                 objNewPoint.PumpPressure = lnSPPA;
                                 objNewPoint.Depth = lnDepth;
-                                if (!WithinPUSO(objNewPoint.RecordDate, tmpPUList) & !WithinPUSO(objNewPoint.RecordDate, tmpSOList))
+                                if (!WithinPUSO(objNewPoint.RecordDate, tmpPUList) && !WithinPUSO(objNewPoint.RecordDate, tmpSOList))
                                 {
                                     robPoints.Add(robPoints.Count + 1, objNewPoint);
                                 }
@@ -1969,7 +2084,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                                         objNewPoint.Circulation = lnCirc;
                                         objNewPoint.PumpPressure = lnSPPA;
                                         objNewPoint.Depth = lnDepth;
-                                        if (!WithinPUSO(objNewPoint.RecordDate, tmpPUList) & !WithinPUSO(objNewPoint.RecordDate, tmpSOList))
+                                        if (!WithinPUSO(objNewPoint.RecordDate, tmpPUList) && !WithinPUSO(objNewPoint.RecordDate, tmpSOList))
                                         {
                                             robPoints.Add(robPoints.Count + 1, objNewPoint);
                                         }
@@ -1993,7 +2108,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                                         objNewPoint.Circulation = lnCirc;
                                         objNewPoint.PumpPressure = lnSPPA;
                                         objNewPoint.Depth = lnDepth;
-                                        if (!WithinPUSO(objNewPoint.RecordDate, tmpPUList) & !WithinPUSO(objNewPoint.RecordDate, tmpSOList))
+                                        if (!WithinPUSO(objNewPoint.RecordDate, tmpPUList) && !WithinPUSO(objNewPoint.RecordDate, tmpSOList))
                                         {
                                             robPoints.Add(robPoints.Count + 1, objNewPoint);
                                         }
@@ -2004,12 +2119,12 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     }
                 }
 
-                if (sampleCount > 0 & sumHkld > 0d)
+                if (sampleCount > 0 && sumHkld > 0d)
                 {
                     AvgValue = Math.Round(sumHkld / sampleCount, 2);
                 }
 
-                if (sampleCount > 0 & sumTorque > 0d)
+                if (sampleCount > 0 && sumTorque > 0d)
                 {
                     AvgTorqueValue = Math.Round(sumTorque / sampleCount, 2);
                 }
@@ -2047,9 +2162,9 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                 if (_objSetup.CheckPUSOProcedure)
                 {
-                    if (AvgValue > 0d & RotateRigStateFound)
+                    if (AvgValue > 0d && RotateRigStateFound)
                     {
-                        if (tmpPUList.Count > 0 | tmpSOList.Count > 0)
+                        if (tmpPUList.Count > 0||tmpSOList.Count > 0)
                         {
                             bool isDynamicValueFound = false;
                             foreach (PUSOPoint objPoint in tmpPUList.Values)
@@ -2103,7 +2218,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                         }
                     }
                 }
-                else if (tmpPUList.Count > 0 | tmpSOList.Count > 0)
+                else if (tmpPUList.Count > 0||tmpSOList.Count > 0)
                 {
                     bool isDynamicValueFound = false;
                     foreach (PUSOPoint objPoint in tmpPUList.Values)
@@ -2170,7 +2285,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
             {
                 foreach (PUSOPoint objItem in paramList.Values)
                 {
-                    if (paramDateTime >= objItem.StartDate & paramDateTime <= objItem.EndDate)
+                    if (paramDateTime >= objItem.StartDate && paramDateTime <= objItem.EndDate)
                     {
                         return true;
                     }
@@ -2217,7 +2332,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                     // '#1 The Depth is moving down and rig state is changing ...
                     // 'If (lnNextDepth < lnDepth And (lnNextRigState <> 6 And lnNextRigState <> 4 And lnNextRigState <> 27)) Then
-                    if (lnNextDepth < lnDepth | !slkRigStates.ContainsKey(lnNextRigState))
+                    if (lnNextDepth < lnDepth||!slkRigStates.ContainsKey(lnNextRigState))
                     {
                         DoCloseDataCollection = true;
                     }
@@ -2225,7 +2340,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
 
                     // '#2 If no depth movement then 
                     // 'If (lnNextDepth = lnDepth And lnNextRigState <> 6 And lnNextRigState <> 4 And lnNextRigState <> 27) Then
-                    if (lnNextDepth == lnDepth | !slkRigStates.ContainsKey(lnNextRigState))
+                    if (lnNextDepth == lnDepth||!slkRigStates.ContainsKey(lnNextRigState))
                     {
                         var PauseStartTime = default(DateTime);
 
@@ -2241,7 +2356,7 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                             else
                             {
                                 // 'Depth changed ...
-                                if (pp - 1 >= 0 & pp - 1 <= objData.Rows.Count - 1)
+                                if (pp - 1 >= 0 && pp - 1 <= objData.Rows.Count - 1)
                                 {
                                     PauseStartTime = Convert.ToDateTime( objData.Rows[pp]["DATETIME"]);
                                 }
@@ -2270,12 +2385,12 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                         objPUSO.EndIndex = i;
                         objPUSO.EndDate = Convert.ToDateTime( objData.Rows[i]["DATETIME"]);
                         objPUSO.EndDepth = Convert.ToDouble( objData.Rows[i]["DEPTH"]);
-                        if (sampleCount > 0 & sumSPPA > 0d)
+                        if (sampleCount > 0 && sumSPPA > 0d)
                         {
                             objPUSO.PumpPressure = Math.Round(sumSPPA / sampleCount, 2);
                         }
 
-                        if (sampleCount > 0 & sumCirc > 0d)
+                        if (sampleCount > 0 && sumCirc > 0d)
                         {
                             objPUSO.Circulation = Math.Round(sumCirc / sampleCount, 2);
                         }
