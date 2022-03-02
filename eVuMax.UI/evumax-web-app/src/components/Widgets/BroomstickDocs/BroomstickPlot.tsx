@@ -52,11 +52,9 @@ export default class BroomstickPlot extends Component {
     this.objChart_Broomstick.leftAxis().Inverted = true;
     this.objChart_Broomstick.leftAxis().ShowLabels = true;
     this.objChart_Broomstick.leftAxis().ShowTitle = true;
-    this.objChart_Broomstick.leftAxis().Title =
-      "Depth" + " ()"; //???? Unit
 
-    // this.objChart_Broomstick.leftAxis().Title =
-    // "Depth" + " (" + this.state.objBroomstickData.depthUnit + ")"; //???? Unit
+
+    this.objChart_Broomstick.leftAxis().Title = "Depth";// + " (" + this.state.objBrookstickDoc.depthUnit + ")"; 
 
     this.objChart_Broomstick.leftAxis().DisplayOrder = 1;
     this.objChart_Broomstick.leftAxis().Visible = true;
@@ -170,23 +168,23 @@ export default class BroomstickPlot extends Component {
   }
 
 
-  getXValue=(objParamPoint: any)=>{
+  getXValue = (objParamPoint: any) => {
 
     try {
       debugger;
 
-      if(this.state.cmbDocumentType.id == "2"){ //Torque Document
+      if (this.state.cmbDocumentType.id == "2") { //Torque Document
         return objParamPoint.DynamicTorqueValue;
       }
 
-      if(this.state.cmbDocumentType.id == "1"){ //Broomstick  Document
+      if (this.state.cmbDocumentType.id == "1") { //Broomstick  Document
         return objParamPoint.DynamicValue;
       }
-      
+
 
 
     } catch (error) {
-      
+
     }
 
   }
@@ -351,7 +349,7 @@ export default class BroomstickPlot extends Component {
       objSlackOffDynamicSeries.Type = dataSeriesType.Point;
       objSlackOffDynamicSeries.PointStyle = pointStyle.Circle;
       objSlackOffDynamicSeries.PointSize = 5;
-      objSlackOffDynamicSeries.Title = "Slackoff Dynamic";
+      objSlackOffDynamicSeries.Title = "Slackoff";
 
       objSlackOffDynamicSeries.Color = "Orange"; //"blue"; //this.getRigStateColor(0); //"#1762ad";
       objSlackOffDynamicSeries.ShowInLegend = true;
@@ -389,7 +387,7 @@ export default class BroomstickPlot extends Component {
         debugger;
         switch (Number(this.state.objSetup.PointToPlot)) {
           case pointPlotMethod.DynamicMethod:
-            objVal.x =  this.getXValue(objDataPoint);//  objDataPoint.DynamicValue;
+            objVal.x = this.getXValue(objDataPoint);//  objDataPoint.DynamicValue;
             objSlackOffDynamicSeries.Data.push(objVal);
 
             break;
@@ -456,8 +454,8 @@ export default class BroomstickPlot extends Component {
 
   preparePlanSeries = () => {
     try {
-      
- 
+
+
 
       //objAdnlHookloadPlan
       debugger;
@@ -471,23 +469,24 @@ export default class BroomstickPlot extends Component {
         let objAdnlHookloadPlan = Object.values(this.state.objBrookstickDoc.objAdnlHookloadPlan);
         if (objAdnlHookloadPlan.length > 0) {
 
+          //Rotate Plan
           for (let index = 0; index < objAdnlHookloadPlan.length; index++) {
             const objPlan: any = objAdnlHookloadPlan[index];
 
             if (objPlan.rotate != null && RotateDataFound == false) {
               RotateDataFound = true;
               objRotateSeries.Id = "RotateSeries";
-              objRotateSeries.Name = "Pickup Points Dynamic";
+              objRotateSeries.Name = "Rotate - " + objPlan.Name;
               objRotateSeries.XAxisId = this.objChart_Broomstick.bottomAxis().Id;
               objRotateSeries.YAxisId = this.objChart_Broomstick.leftAxis().Id;
               objRotateSeries.Type = dataSeriesType.Line;
               //objRotateSeries.PointStyle = pointStyle.Circle;
               //objRotateSeries.PointSize = 5;
               objRotateSeries.LineWidth = 2;
-              objRotateSeries.Title = "Pickup Dynamic";
+              objRotateSeries.Title = "Rotate - " + objPlan.Name;
 
               objRotateSeries.Color = "red"; //"blue"; //this.getRigStateColor(0); //"#1762ad";
-             
+
               objRotateSeries.ShowInLegend = true;
               this.objChart_Broomstick.DataSeries.set(objRotateSeries.Id, objRotateSeries);
 
@@ -501,7 +500,7 @@ export default class BroomstickPlot extends Component {
                   objPoint.x = objData.Weight;
                   objPoint.y = objData.Depth;
                   objRotateSeries.Data.push(objPoint);
-                  
+
 
                 }
               }
@@ -509,36 +508,150 @@ export default class BroomstickPlot extends Component {
 
             }
 
+            // if (objPlan.pickup != null) {
+
+            //   objPUPlanSeries = new DataSeries();
+            //   objPUPlanSeries.Id = "PUPlanSeries-" + index;
+            //   objPUPlanSeries.Name = "Pickup - " + objPlan.Name;
+            //   objPUPlanSeries.XAxisId = this.objChart_Broomstick.bottomAxis().Id;
+            //   objPUPlanSeries.YAxisId = this.objChart_Broomstick.leftAxis().Id;
+            //   objPUPlanSeries.Type = dataSeriesType.Line;
+            //   objPUPlanSeries.LineWidth = 2;
+
+            //   objPUPlanSeries.Title = "Pickup - " + objPlan.Name;
+
+            //   objPUPlanSeries.Color = "blue"; //"blue"; //this.getRigStateColor(0); //"#1762ad";
+            //   if (objPlan.Name.indexOf("0.1") != -1) {
+
+            //     objPUPlanSeries.Color = intToColor(-7105537);
+            //   }
+
+            //   if (objPlan.Name.indexOf("0.2") != -1) {
+            //     objPUPlanSeries.Color = intToColor(-9474049);
+            //   }
+
+            //   if (objPlan.Name.indexOf("0.3") != -1) {
+            //     objPUPlanSeries.Color = intToColor(-11184641);
+            //   }
+
+            //   if (objPlan.Name.indexOf("0.4") != -1) {
+            //     objPUPlanSeries.Color = intToColor(-15395329);
+            //   }
+            //   if (objPlan.Name.indexOf("0.5") != -1) {
+            //     objPUPlanSeries.Color = intToColor(-16777065);
+            //   }
+
+            //   objPUPlanSeries.ShowInLegend = true;
+            //   this.objChart_Broomstick.DataSeries.set(objPUPlanSeries.Id, objPUPlanSeries);
+
+            //   let objPickupData: any = Object.values(objPlan.pickup);
+            //   if (objPickupData != null) {
+            //     for (let index = 0; index < objPickupData.length; index++) {
+            //       let objData = objPickupData[index];
+            //       //
+            //       //
+            //       let objPoint: ChartData = new ChartData();
+            //       objPoint.x = objData.Weight;
+            //       objPoint.y = objData.Depth;
+            //       objPUPlanSeries.Data.push(objPoint);
+
+            //     }
+            //   }
+            // }
+
+
+            //
+            // if (objPlan.slackoff != null) {
+            //   objSOPlanSeries = new DataSeries();
+            //   objSOPlanSeries.Id = "SOPlanSeries-" + index;
+            //   objSOPlanSeries.Name = "Slackoff Plan";
+            //   objSOPlanSeries.XAxisId = this.objChart_Broomstick.bottomAxis().Id;
+            //   objSOPlanSeries.YAxisId = this.objChart_Broomstick.leftAxis().Id;
+            //   objSOPlanSeries.Type = dataSeriesType.Line;
+            //   objSOPlanSeries.LineWidth = 2;
+            //   objSOPlanSeries.Title = "Slackoff Plan - " + objPlan.Name;;
+
+            //   objSOPlanSeries.Color = "green";
+
+            //   if (objPlan.Name.indexOf("0.1") != -1) {
+
+            //     objSOPlanSeries.Color = "#81C784";
+            //   }
+
+            //   if (objPlan.Name.indexOf("0.2") != -1) {
+            //     objSOPlanSeries.Color = "#66BB6A"
+            //   }
+
+            //   if (objPlan.Name.indexOf("0.3") != -1) {
+            //     objSOPlanSeries.Color = "#4CAF50"
+            //   }
+
+            //   if (objPlan.Name.indexOf("0.4") != -1) {
+            //     objSOPlanSeries.Color = "#43A047";
+            //   }
+            //   if (objPlan.Name.indexOf("0.5") != -1) {
+            //     objSOPlanSeries.Color = "#1B5E20";
+            //   }
+
+            //   objSOPlanSeries.ShowInLegend = true;
+            //   this.objChart_Broomstick.DataSeries.set(objSOPlanSeries.Id, objSOPlanSeries);
+
+            //   let objSlackOffData: any = Object.values(objPlan.slackoff);
+            //   if (objSlackOffData != null) {
+            //     for (let index = 0; index < objSlackOffData.length; index++) {
+            //       let objData = objSlackOffData[index];
+            //       //
+            //       //
+            //       let objPoint: ChartData = new ChartData();
+            //       objPoint.x = objData.Weight;
+            //       objPoint.y = objData.Depth;
+            //       if (objData.Weight > 0) {
+            //         objSOPlanSeries.Data.push(objPoint);
+            //       }
+
+
+            //     }
+            //   }
+            // }
+
+          }
+
+
+
+          //PUPlan Series
+          for (let index = 0; index < objAdnlHookloadPlan.length; index++) {
+            const objPlan: any = objAdnlHookloadPlan[index];
+
             if (objPlan.pickup != null) {
 
               objPUPlanSeries = new DataSeries();
               objPUPlanSeries.Id = "PUPlanSeries-" + index;
-              objPUPlanSeries.Name = "Pickup Plan";
+              objPUPlanSeries.Name = "Pickup - " + objPlan.Name;
               objPUPlanSeries.XAxisId = this.objChart_Broomstick.bottomAxis().Id;
               objPUPlanSeries.YAxisId = this.objChart_Broomstick.leftAxis().Id;
               objPUPlanSeries.Type = dataSeriesType.Line;
-              objPUPlanSeries.LineWidth=2;
+              objPUPlanSeries.LineWidth = 2;
 
-              objPUPlanSeries.Title = "Pickup Plan";
+              objPUPlanSeries.Title = "Pickup - " + objPlan.Name;
 
               objPUPlanSeries.Color = "blue"; //"blue"; //this.getRigStateColor(0); //"#1762ad";
-              if(objPlan.Name.indexOf("0.1")!=-1){
-              
+              if (objPlan.Name.indexOf("0.1") != -1) {
+
                 objPUPlanSeries.Color = intToColor(-7105537);
               }
 
-              if(objPlan.Name.indexOf("0.2")!=-1){
+              if (objPlan.Name.indexOf("0.2") != -1) {
                 objPUPlanSeries.Color = intToColor(-9474049);
               }
 
-              if(objPlan.Name.indexOf("0.3")!=-1){
+              if (objPlan.Name.indexOf("0.3") != -1) {
                 objPUPlanSeries.Color = intToColor(-11184641);
               }
 
-              if(objPlan.Name.indexOf("0.4")!=-1){
+              if (objPlan.Name.indexOf("0.4") != -1) {
                 objPUPlanSeries.Color = intToColor(-15395329);
               }
-              if(objPlan.Name.indexOf("0.5")!=-1){
+              if (objPlan.Name.indexOf("0.5") != -1) {
                 objPUPlanSeries.Color = intToColor(-16777065);
               }
 
@@ -560,37 +673,42 @@ export default class BroomstickPlot extends Component {
               }
             }
 
+          }
 
-            //
+
+          //SlackOff Plan
+
+          for (let index = 0; index < objAdnlHookloadPlan.length; index++) {
+            const objPlan: any = objAdnlHookloadPlan[index];
             if (objPlan.slackoff != null) {
               objSOPlanSeries = new DataSeries();
               objSOPlanSeries.Id = "SOPlanSeries-" + index;
-              objSOPlanSeries.Name = "slackoff Plan";
+              objSOPlanSeries.Name = "Slackoff Plan";
               objSOPlanSeries.XAxisId = this.objChart_Broomstick.bottomAxis().Id;
               objSOPlanSeries.YAxisId = this.objChart_Broomstick.leftAxis().Id;
               objSOPlanSeries.Type = dataSeriesType.Line;
-              objSOPlanSeries.LineWidth=2; 
-              objSOPlanSeries.Title = "Pickup Plan";
+              objSOPlanSeries.LineWidth = 2;
+              objSOPlanSeries.Title = "Slackoff Plan - " + objPlan.Name;;
 
-              objSOPlanSeries.Color = "green"; 
+              objSOPlanSeries.Color = "green";
 
-              if(objPlan.Name.indexOf("0.1")!=-1){
-              
+              if (objPlan.Name.indexOf("0.1") != -1) {
+
                 objSOPlanSeries.Color = "#81C784";
               }
 
-              if(objPlan.Name.indexOf("0.2")!=-1){
+              if (objPlan.Name.indexOf("0.2") != -1) {
                 objSOPlanSeries.Color = "#66BB6A"
               }
 
-              if(objPlan.Name.indexOf("0.3")!=-1){
+              if (objPlan.Name.indexOf("0.3") != -1) {
                 objSOPlanSeries.Color = "#4CAF50"
               }
 
-              if(objPlan.Name.indexOf("0.4")!=-1){
-                objSOPlanSeries.Color ="#43A047";
+              if (objPlan.Name.indexOf("0.4") != -1) {
+                objSOPlanSeries.Color = "#43A047";
               }
-              if(objPlan.Name.indexOf("0.5")!=-1){
+              if (objPlan.Name.indexOf("0.5") != -1) {
                 objSOPlanSeries.Color = "#1B5E20";
               }
 
@@ -617,6 +735,7 @@ export default class BroomstickPlot extends Component {
 
           }
 
+
           this.objChart_Broomstick.reDraw();
 
 
@@ -640,9 +759,9 @@ export default class BroomstickPlot extends Component {
       objPUDynamicSeries.Type = dataSeriesType.Point;
       objPUDynamicSeries.PointStyle = pointStyle.Circle;
       objPUDynamicSeries.PointSize = 5;
-      objPUDynamicSeries.Title = "Pickup Dynamic";
+      objPUDynamicSeries.Title = "Pickup";
 
-      objPUDynamicSeries.Color = "blue"; 
+      objPUDynamicSeries.Color = "blue";
       objPUDynamicSeries.ShowInLegend = true;
       this.objChart_Broomstick.DataSeries.set(objPUDynamicSeries.Id, objPUDynamicSeries);
 
@@ -746,13 +865,13 @@ export default class BroomstickPlot extends Component {
       //Generate PU Series
       let objRotateSeries = new DataSeries();
       objRotateSeries.Id = "RotateSeries";
-      objRotateSeries.Name = "Rotate Points Dynamic";
+      objRotateSeries.Name = "Rotate";
       objRotateSeries.XAxisId = this.objChart_Broomstick.bottomAxis().Id;
       objRotateSeries.YAxisId = this.objChart_Broomstick.leftAxis().Id;
       objRotateSeries.Type = dataSeriesType.Point;
       objRotateSeries.PointStyle = pointStyle.Circle;
       objRotateSeries.PointSize = 5;
-      objRotateSeries.Title = "Rotate Dynamic";
+      objRotateSeries.Title = "Rotate";
 
       objRotateSeries.Color = "Black"; //"blue"; //this.getRigStateColor(0); //"#1762ad";
       objRotateSeries.ShowInLegend = true;
@@ -767,7 +886,7 @@ export default class BroomstickPlot extends Component {
           let objVal: ChartData = new ChartData();
           objVal.y = objRotatePoints.Depth;
           //objVal.x = objRotatePoints.DynamicValue;
-          objVal.x =  this.getXValue(objRotatePoints);//  objDataPoint.DynamicValue;
+          objVal.x = this.getXValue(objRotatePoints);//  objDataPoint.DynamicValue;
           objRotateSeries.Data.push(objVal);
         }
       } else {
@@ -802,7 +921,17 @@ export default class BroomstickPlot extends Component {
         return;
       }
 
-      
+      this.initilizeCharts();
+      this.objChart_Broomstick.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)
+      this.objChart_Broomstick.leftAxis().Title = "Depth" + " (" + this.state.objBrookstickDoc.depthUnit + ")";
+
+
+      if (this.state.objBrookstickDoc.DocumentMode == 1) {
+        this.objChart_Broomstick.bottomAxis().Title = "Torque" + " (" + this.state.objBrookstickDoc.torqueUnit + ")";
+      }
+
+      //
+
 
       this.preparePUSeries();
       this.prepareSlackOffSeries();
@@ -876,9 +1005,9 @@ export default class BroomstickPlot extends Component {
                   <FontAwesomeIcon
                     icon={faUndo}
                     size="lg"
-                  onClick={() => {
-                    this.objChart_Broomstick.reDraw();
-                  }}
+                    onClick={() => {
+                      this.objChart_Broomstick.reDraw();
+                    }}
                   />
                 </div>
 
@@ -938,17 +1067,34 @@ export default class BroomstickPlot extends Component {
           {this.state.objBrookstickDoc.WellName}
 
 
-
-          <div
-            id="BroomStickChart"
-            style={{
-              height: "calc(100vh - 150px)",
-              //width: "calc(70vw)",
-              width: "auto",
-              backgroundColor: "transparent",
-              marginLeft: "10px",
-            }}
-          ></div>
+          <div className="row">
+            <div className="col-xl-10 col-lg-9 col-md-7 col-sm-7">
+              <div
+                id="BroomStickChart"
+                style={{
+                  height: "calc(100vh - 150px)",
+                  //width: "calc(70vw)",
+                  width: "auto",
+                  backgroundColor: "transparent",
+                  marginLeft: "10px",
+                }}
+              ></div>
+            </div>
+            <div className="col-xl-2 col-lg-3 col-md-5 col-sm-5">
+              {/* <div style={{ width: "18%" }}> */}
+              <div
+                id="BroomStickChart_legend"
+                style={{
+                  textAlign: "left",
+                  height: "auto",
+                  alignItems: "left",
+                  width: "300px",
+                  backgroundColor: "transparent",
+                  display: "block",
+                }}
+              ></div>
+            </div>
+          </div>
 
         </div>
       </>

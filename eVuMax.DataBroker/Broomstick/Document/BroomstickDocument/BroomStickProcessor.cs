@@ -65,7 +65,11 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
         VuMaxDR.Data.Objects.Well objWell = new VuMaxDR.Data.Objects.Well();
         public string WellName = "";
 
-      
+        public string depthUnit = "ft";
+        public string hkldUnit = "klbf";
+        public string torqueUnit = "ft.lbf";
+
+
         public rigState objRigState = new rigState();
 
 
@@ -130,6 +134,13 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
             objADSettings.loadSettings();
             WellID = paramWellID;
             _objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref objDataService, paramWellID);
+            if (_objTimeLog != null)
+            {
+                depthUnit = _objTimeLog.logCurves["DEPTH"].VuMaxUnitID;
+                hkldUnit = _objTimeLog.logCurves["HKLD"].VuMaxUnitID;
+                torqueUnit = _objTimeLog.logCurves["STOR"].VuMaxUnitID;
+
+            }
             objRigState = rigState.loadWellRigStateSetup(ref objDataService, WellID);
             objWell = VuMaxDR.Data.Objects.Well.loadWellStructureWOPlan(ref objDataService, paramWellID);
             if (objWell != null)
