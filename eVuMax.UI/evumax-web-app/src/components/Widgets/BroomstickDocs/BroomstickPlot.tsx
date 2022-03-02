@@ -924,7 +924,7 @@ export default class BroomstickPlot extends Component {
       this.initilizeCharts();
       this.objChart_Broomstick.LegendPosition = 2; // 1 (left), 2 (right), 3 (top), 4 (bottom)
       this.objChart_Broomstick.leftAxis().Title = "Depth" + " (" + this.state.objBrookstickDoc.depthUnit + ")";
-
+      this.objChart_Broomstick.bottomAxis().Title = "Hookload" + " (" + this.state.objBrookstickDoc.hkldUnit + ")";
 
       if (this.state.objBrookstickDoc.DocumentMode == 1) {
         this.objChart_Broomstick.bottomAxis().Title = "Torque" + " (" + this.state.objBrookstickDoc.torqueUnit + ")";
