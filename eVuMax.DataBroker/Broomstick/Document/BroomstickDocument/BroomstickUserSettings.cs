@@ -52,20 +52,20 @@ namespace eVuMax.DataBroker.Broomstick.Document.BroomstickDocument
                     case enumDocType_.BroomStickTorqueDocument:
                         objProcessor.DocumentMode = enumDocumentMode.TorqueDocument;
                         break;
-                    //case enumDocType_.HookloadDocument:
-                    //    objProcessor.DocumentMode = enumDocumentMode.HookloadDocument;
-                    //    break;
-                    //case enumDocType_.TorqueDocument:
-                    //    objProcessor.DocumentMode = enumDocumentMode.ConnectionTorque;
-                    //    break;
-                    //case enumDocType_.CombinedBroomStickDocument:
-                    //    objProcessor.DocumentMode = enumDocumentMode.ConnectionHkld;
-                    //    break;
-                    //case enumDocType_.CombineBroomStickTorqueDocument:
-                    //    objProcessor.DocumentMode = enumDocumentMode.ConnectionTorque;
-                    //    break;
-                    //default:
-                    //    break;
+                    case enumDocType_.HookloadDocument:
+                        objProcessor.DocumentMode = enumDocumentMode.HookloadDocument;
+                        break;
+                        //case enumDocType_.TorqueDocument:
+                        //    objProcessor.DocumentMode = enumDocumentMode.ConnectionTorque;
+                        //    break;
+                        //case enumDocType_.CombinedBroomStickDocument:
+                        //    objProcessor.DocumentMode = enumDocumentMode.ConnectionHkld;
+                        //    break;
+                        //case enumDocType_.CombineBroomStickTorqueDocument:
+                        //    objProcessor.DocumentMode = enumDocumentMode.ConnectionTorque;
+                        //    break;
+                        //default:
+                        //    break;
                 }
                 objProcessor.ProcessPoints(objSetup);
                 return Newtonsoft.Json.JsonConvert.SerializeObject(this);

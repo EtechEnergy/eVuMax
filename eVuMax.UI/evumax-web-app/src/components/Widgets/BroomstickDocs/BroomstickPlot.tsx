@@ -171,7 +171,7 @@ export default class BroomstickPlot extends Component {
   getXValue = (objParamPoint: any) => {
 
     try {
-      debugger;
+      
 
       if (this.state.cmbDocumentType.id == "2") { //Torque Document
         return objParamPoint.DynamicTorqueValue;
@@ -230,7 +230,7 @@ export default class BroomstickPlot extends Component {
         .then((res) => {
           // $("#loader").hide();
           //alert("success");
-          debugger;
+          
           let objData = JSON.parse(res.data.Response);
           console.log("BroomstickDoc", objData);
 
@@ -271,7 +271,7 @@ export default class BroomstickPlot extends Component {
             objBrookstickDoc: objData.objProcessor,
             objUserSettings: objData
           });
-          debugger;
+          
           this.prepareChart();
           Util.StatusSuccess("Data successfully retrived  ");
 
@@ -372,7 +372,7 @@ export default class BroomstickPlot extends Component {
 
 
       let chartData = Object.values(this.state.objBrookstickDoc.SOPoints);
-      debugger;
+      
       //PUPoints
       for (let index = 0; index < chartData.length; index++) {
         const objDataPoint: any = chartData[index];
@@ -384,7 +384,7 @@ export default class BroomstickPlot extends Component {
         this.state.objSetup.PointToPlot = pointPlotMethod.Both;
         this.state.objSetup.slackOffPointSelectionMethod = Number(bmStaticMethod.Min);
         //**************
-        debugger;
+        
         switch (Number(this.state.objSetup.PointToPlot)) {
           case pointPlotMethod.DynamicMethod:
             objVal.x = this.getXValue(objDataPoint);//  objDataPoint.DynamicValue;
@@ -436,7 +436,7 @@ export default class BroomstickPlot extends Component {
 
 
       }
-      debugger;
+      
 
       if (this.state.objSetup.PointToPlot == pointPlotMethod.DynamicMethod) {
         objSlackOffSeries.Visible = false;
@@ -458,7 +458,7 @@ export default class BroomstickPlot extends Component {
 
 
       //objAdnlHookloadPlan
-      debugger;
+      
       let objRotateSeries: DataSeries = new DataSeries();
       let objPUPlanSeries: DataSeries = new DataSeries();
       let objSOPlanSeries: DataSeries = new DataSeries();
@@ -781,7 +781,7 @@ export default class BroomstickPlot extends Component {
       this.objChart_Broomstick.DataSeries.set(objPUSeries.Id, objPUSeries);
 
       let chartData = Object.values(this.state.objBrookstickDoc.PUPoints);
-      debugger;
+      
       //PUPoints
       for (let index = 0; index < chartData.length; index++) {
         const objPUPoint: any = chartData[index];
@@ -793,7 +793,7 @@ export default class BroomstickPlot extends Component {
         this.state.objSetup.PointToPlot = pointPlotMethod.Both;
         this.state.objSetup.pickupPointSelectionMethod = Number(bmStaticMethod.Min);
         //**************
-        debugger;
+        
         switch (Number(this.state.objSetup.PointToPlot)) {
           case pointPlotMethod.DynamicMethod:
             objVal.x = objPUPoint.DynamicValue; //DynamicTorqueValue
@@ -845,7 +845,7 @@ export default class BroomstickPlot extends Component {
 
 
       }
-      debugger;
+      
 
       if (this.state.objSetup.PointToPlot == pointPlotMethod.DynamicMethod) {
         objPUSeries.Visible = false;
@@ -878,7 +878,7 @@ export default class BroomstickPlot extends Component {
       this.objChart_Broomstick.DataSeries.set(objRotateSeries.Id, objRotateSeries);
 
       let chartData = Object.values(this.state.objBrookstickDoc.RotatePoints);
-      debugger;
+      
 
       if (this.state.objSetup.PointToPlot == pointPlotMethod.DynamicMethod) {
         for (let index = 0; index < chartData.length; index++) {
@@ -947,6 +947,7 @@ export default class BroomstickPlot extends Component {
   closeSetupDialog = () => {
     try {
       this.setState({ showFilterDialog: false });
+      this.loadDocument();
     } catch (error) {
 
     }
@@ -964,6 +965,9 @@ export default class BroomstickPlot extends Component {
               }}
               initialHeight={750}
               initialWidth={1700}
+              stage="FULLSCREEN"
+              
+              
             >
               <BroomstickSetup onClose_={this.closeSetupDialog} DocID={this.state.objUserSettings.DocID} DocMode={this.state.cmbDocumentType.id} WellId={this.WellId} paramObjSetup={this.state.objSetup} objRigStates={this.state.objBrookstickDoc.objRigState} RunList={this.state.objBrookstickDoc.RunList} />
             </Window>

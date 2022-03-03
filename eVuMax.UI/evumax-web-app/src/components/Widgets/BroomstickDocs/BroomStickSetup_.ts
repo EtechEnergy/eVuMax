@@ -64,8 +64,8 @@ export  class BroomStickSetup_ {
     public  ONTorqueColor:string = "orange";
     public  OFFTorqueColor:string = "red";
     public  BMPointStyle:number = 1;
-    public  HkldPointStyle:number = 0;
-    public  HkldPointSize:number = 3;
+    // public  HkldPointStyle:number = 0;
+    // public  HkldPointSize:number = 3;
     public  BMPointSize:number = 4;
     public  Transparency:number = 0;
     public DownSampleMethod:enDownSampleMethod = enDownSampleMethod.ByDepth;

@@ -89,13 +89,13 @@ public partial class BroomStickSetup
     public Dictionary<int, TDPointProp> TDPointProperties = new Dictionary<int, TDPointProp>();
 
     public int PlanLineWidth = 3;
-    public Color PKUPColor = Color.Blue;
-    public Color PKUPStaticColor = Color.SteelBlue;
-    public Color SLOFColor = Color.Green;
-    public Color SLOFStaticColor = Color.LightGreen;
-    public Color ROBColor = Color.Black;
-    public Color ONTorqueColor = Color.Orange;
-    public Color OFFTorqueColor = Color.Red;
+    public string PKUPColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Blue.ToArgb()));
+    public string PKUPStaticColor = ColorTranslator.ToHtml(Color.FromArgb(Color.SteelBlue.ToArgb()));
+    public string SLOFColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Green.ToArgb()));
+    public string SLOFStaticColor = ColorTranslator.ToHtml(Color.FromArgb(Color.LightGreen.ToArgb()));
+    public string ROBColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Black.ToArgb()));
+    public string ONTorqueColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Orange.ToArgb()));
+    public string OFFTorqueColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Red.ToArgb()));
     public int BMPointStyle = 0;
     public int BMPointSize = 4;
     public int Transparency = 0;
@@ -150,8 +150,10 @@ public partial class BroomStickSetup
                 objItem.RigState = Convert.ToInt32( DataService.checkNull(objRow["RIG_STATE_NUMBER"], 0));
                 objItem.RigStateName = DataService.checkNull(objRow["RIG_STATE_NAME"], "").ToString();
                 objItem.GroupFunction = 2;
-                objItem.Color = DataService.checkNull(objRow["RIG_STATE_COLOR"], 0).ToString();
-                
+                objItem.Color =   DataService.checkNull(objRow["RIG_STATE_COLOR"], 0).ToString();
+                objItem.Color = ColorTranslator.ToHtml(Color.FromArgb(Convert.ToInt32(objItem.Color)));
+
+
                 if (!TDPointProperties.ContainsKey(objItem.RigState))
                 {
                     TDPointProperties.Add(objItem.RigState, objItem.getCopy());
@@ -163,13 +165,13 @@ public partial class BroomStickSetup
             PlanLineWidth = 2;
             BMPointStyle = 1;
             BMPointSize = 6;
-            PKUPColor = Color.Blue;
-            PKUPStaticColor = Color.SteelBlue;
-            SLOFColor = Color.Green;
-            SLOFStaticColor = Color.LightGreen;
-            ROBColor = Color.Black;
-            ONTorqueColor = Color.Orange;
-            OFFTorqueColor = Color.Red;
+            PKUPColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Blue.ToArgb()));
+            PKUPStaticColor = ColorTranslator.ToHtml(Color.FromArgb(Color.SteelBlue.ToArgb()));
+            SLOFColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Green.ToArgb()));
+            SLOFStaticColor = ColorTranslator.ToHtml(Color.FromArgb(Color.LightGreen.ToArgb()));
+            ROBColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Black.ToArgb()));
+            ONTorqueColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Orange.ToArgb()));
+            OFFTorqueColor = ColorTranslator.ToHtml(Color.FromArgb(Color.Red.ToArgb()));
         }
         catch (Exception ex)
         {

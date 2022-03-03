@@ -1,7 +1,7 @@
 export class TDPointProp
     {
 
-        public  RigState :number = 0;
+        public  RigState :number = -1;
         public  RigStateName:string = "";
         public  Color:string = "black";
         public  GroupFunction:number = 0;

@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   DateRangePicker,
   DateTimePicker,
+  DropDownButtonItem,
   DropDownList,
   GridColumn,
   Label,
@@ -27,7 +28,7 @@ import {
 } from "@progress/kendo-react-inputs";
 //import DataSelector from "../../Common/DataSelector";
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
-import { bmStaticMethod, BroomStickSetup_, pointPlotMethod } from "./BroomStickSetup_";
+import { bmStaticMethod, BroomStickSetup_, enDownSampleMethod, pointPlotMethod } from "./BroomStickSetup_";
 import { TimeFilter, vFilterType } from "./TimeFilter";
 
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
@@ -48,7 +49,7 @@ interface IProps {
   RunList: any;
   DocMode: string;
   DocID: string;
-  onClose_:any;
+  onClose_: any;
 
 }
 
@@ -72,7 +73,7 @@ export class BroomstickSetup extends Component<IProps> {
         objSetup: this.props.paramObjSetup,
         objTimeFilter: this.props.paramObjSetup.objTimeFilter
       });
-      console.log("Time Filter --",  this.props.paramObjSetup.objTimeFilter);
+      console.log("Time Filter --", this.props.paramObjSetup.objTimeFilter);
 
 
 
@@ -108,7 +109,7 @@ export class BroomstickSetup extends Component<IProps> {
   cmbSlackOffPumpStatus: comboData[] = [];
   cmbRotatePumpStatus: comboData[] = [];
   cmbRigStateFunction: comboData[] = [];
-  cmbHkldPointStyle: comboData[] = [];
+  cmbTDPointStyle: comboData[] = [];
   cmbBMPointStyle: comboData[] = [];
   cmbPickupMultiMethod: comboData[] = [];
 
@@ -145,7 +146,7 @@ export class BroomstickSetup extends Component<IProps> {
     cmbSlackOffPumpStatus: new comboData(),
     cmbRotatePumpStatus: new comboData(),
     cmbRigStateFunction: new comboData(),
-    cmbHkldPointStyle: new comboData(),
+    cmbTDPointStyle: new comboData(),
     cmbBMPointStyle: new comboData(),
     cmbPickupMultiMethod: new comboData(),
 
@@ -159,7 +160,7 @@ export class BroomstickSetup extends Component<IProps> {
 
 
   onGridItemChange = (e: any, grdName: string) => {
-    debugger;
+
     let edited: any;
 
     if (grdName == "grdPickupRigState") {
@@ -188,7 +189,7 @@ export class BroomstickSetup extends Component<IProps> {
 
       let edited = this.state.objSelectedTDPointProp;
       edited = e.dataItem;
-      debugger;
+
       //this.onDropdownChange(e.dataItem,"objSelectedTDPointProp");
       //set Combo 
       for (let index = 0; index < this.cmbRigStateFunction.length; index++) {
@@ -204,7 +205,7 @@ export class BroomstickSetup extends Component<IProps> {
 
       }
 
-
+      
       this.setState({
         objSelectedTDPointProp: edited
       })
@@ -239,7 +240,7 @@ export class BroomstickSetup extends Component<IProps> {
     this.loadRigstatesGrid();
   }
   initilizeCharts = () => {
-    debugger;
+
 
     this.objChart_Broomstick = new Chart(this, "Broom_Stick");
 
@@ -301,43 +302,22 @@ export class BroomstickSetup extends Component<IProps> {
     try {
 
       console.log("pichUp RigSate", this.state.grdPickupRigState);
-
+      //pickupRigStates
 
       Util.StatusInfo("Getting data from the server  ");
-      // this.setState({
-      //   isProcess: true,
-      // });
-      //this.forceUpdate();
+
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Broomstick.Manager";
       objBrokerRequest.Broker = "DataManager";
       objBrokerRequest.Function = "SaveSetup";
 
-      // let paramuserid: BrokerParameter = new BrokerParameter(
-      //   "UserID",
-      //   _gMod._userId
-      // );
-      // objBrokerRequest.Parameters.push(paramuserid);
 
-      // let paramwellId: BrokerParameter = new BrokerParameter(
-      //   "WellID",
-      //   this.WellId
-      // );
-      // objBrokerRequest.Parameters.push(paramwellId);
 
-      // //test depth range
-
-      // let paramDocId: BrokerParameter = new BrokerParameter(
-      //   "DocType",
-      //   this.DocId
-      // );
-      // objBrokerRequest.Parameters.push(paramDocId);
-      debugger;
       let objTDPropsDic = utilFunc.convertMapToDictionaryJSON(this.state.objTDPointProperties, "RigState");
       let objSetup: BroomStickSetup_ = utilFunc.CopyObject(this.state.objSetup);
       objSetup.objTimeFilter = utilFunc.CopyObject(this.state.objTimeFilter);
-      debugger;
+
       objSetup.TDPointProperties = objTDPropsDic;
 
 
@@ -347,6 +327,85 @@ export class BroomstickSetup extends Component<IProps> {
         objSetup.RunNo = "";
       }
 
+      //save pickupRigStates from this.state.grdPickupRigState
+      
+      let grdPickupRigState: any = this.state.grdPickupRigState;
+
+      objSetup.pickupRigStates = "";
+      for (let index = 0; index < grdPickupRigState.length; index++) {
+        const objItem: any = grdPickupRigState[index];
+        if (objItem.Selected == true) {
+          objSetup.pickupRigStates += "," + objItem.Number;
+        }
+
+      }
+      objSetup.pickupRigStates = objSetup.pickupRigStates.substring(1, objSetup.pickupRigStates.length);
+
+      //save slackOffRigStates from this.state.grdPickupRigState
+      
+      let grdSlackOffRigState: any = this.state.grdSlackOffRigState;
+
+      objSetup.slackOffRigStates = "";
+      for (let index = 0; index < grdSlackOffRigState.length; index++) {
+        const objItem: any = grdSlackOffRigState[index];
+        if (objItem.Selected == true) {
+          objSetup.slackOffRigStates += "," + objItem.Number;
+        }
+
+      }
+      objSetup.slackOffRigStates = objSetup.slackOffRigStates.substring(1, objSetup.slackOffRigStates.length);
+
+      //save roateRigStates from this.state.grdPickupRigState
+      
+      let grdRotateRigState: any = this.state.grdRotateRigState;
+
+      objSetup.rotateRigStates = "";
+      for (let index = 0; index < grdRotateRigState.length; index++) {
+        const objItem: any = grdRotateRigState[index];
+        if (objItem.Selected == true) {
+          objSetup.rotateRigStates += "," + objItem.Number;
+        }
+      }
+      objSetup.rotateRigStates = objSetup.rotateRigStates.substring(1, objSetup.rotateRigStates.length);
+      //
+
+      //Set all combo Values to setup object
+      
+
+      objSetup.RunNo = this.state.cmbSelectedRun.id;
+
+      objSetup.DownSampleMethod = eval(this.state.cmbDownSampleMethod.id);
+      objSetup.objTimeFilter.MeanMethod = eval(this.state.cmbMeanMethod.id);
+
+      objSetup.TDPointProperties = utilFunc.convertMapToDictionaryJSON(this.state.objTDPointProperties);
+
+      objSetup.TDPointStyle = eval(this.state.cmbTDPointStyle.id);
+
+      objSetup.BMPointStyle = eval(this.state.cmbBMPointStyle.id);
+
+
+      objSetup.PointToPlot = eval(this.state.cmbBroomStickPoints.id);
+
+
+      objSetup.pickupPumpMnemonic = this.state.cmbPickupPumpChannel.id;
+      objSetup.pickupPumpStatus = eval(this.state.cmbPickupPumpStatus.id);
+      objSetup.slackOffPointSelectionMethod = eval(this.state.cmbStaticPointSelectionMethod.id);
+      objSetup.pickupDynamicMethod = eval(this.state.cmbPickupDynamicMethod.id);
+      objSetup.pickupMultiPointMethod = eval(this.state.cmbPickupMultiMethod.id);
+
+      objSetup.slackOffPumpMnemonic = this.state.cmbSlackOffPumpChannel.id;
+      objSetup.slackOffPumpStatus = eval(this.state.cmbSlackOffPumpStatus.id);
+      objSetup.slackOffPointSelectionMethod = eval(this.state.cmbStaticPointSelectionMethod.id);
+      objSetup.slackOffDynamicMethod = eval(this.state.cmbSlackOffDynamicMethod.id);
+      objSetup.slackOffMultiPointMethod = eval(this.state.cmbSlackOffMultiMethod.id);
+      objSetup.rotatePumpMnemonic = this.state.cmbRotatePumpChannel.id;
+      objSetup.rotatePumpStatus = eval(this.state.cmbRotatePumpStatus.id);
+      objSetup.ROBMultiPointMethod = eval(this.state.cmbROBMultiMethod.id);
+
+
+      ///********************* */
+
+      objSetup.objTimeFilter = this.state.objTimeFilter;
 
 
       let objParameter: BrokerParameter = new BrokerParameter("objSetup", JSON.stringify(objSetup));
@@ -381,7 +440,7 @@ export class BroomstickSetup extends Component<IProps> {
         .then((res) => {
           // $("#loader").hide();
           //alert("success");
-          debugger;
+
           // let objData = res.data.Response;
           if (res.data.RequestSuccessfull == false) {
             //Warnings Notifications
@@ -435,20 +494,57 @@ export class BroomstickSetup extends Component<IProps> {
   loadRigstatesGrid = () => {
     try {
 
-      debugger;
-      let objRigState = utilFunc.CopyObject(Object.values(this.props.objRigStates.rigStates));
-      if (objRigState != null) {
-        //add checkbox to grid
-        objRigState.map((dataItem: any) =>
-          Object.assign(dataItem, { Selected: false })
-        );
+      
+      //wip  02-Feb-2022
+      let pickupRigstates = this.props.paramObjSetup.pickupRigStates.split(",");
+      let slackOffRigStates = this.props.paramObjSetup.slackOffRigStates.split(",");
+      let rotateRigStates = this.props.paramObjSetup.rotateRigStates.split(",");
 
-        this.setState({
-          grdPickupRigState: utilFunc.CopyObject(objRigState),
-          grdSlackOffRigState: utilFunc.CopyObject(objRigState),
-          grdRotateRigState: utilFunc.CopyObject(objRigState)
+
+      let objRigStatePickup = utilFunc.CopyObject(Object.values(this.props.objRigStates.rigStates));
+      let objRigStateSlackOff = utilFunc.CopyObject(Object.values(this.props.objRigStates.rigStates));
+      let objRigStateRotate = utilFunc.CopyObject(Object.values(this.props.objRigStates.rigStates));
+      //Pickup
+      if (objRigStatePickup != null) {
+        //add checkbox to grid
+        objRigStatePickup.map((dataItem: any) => {
+          Object.assign(dataItem, { Selected: false });
+
+          if (pickupRigstates.indexOf(dataItem.Number.toString()) != -1) {
+            Object.assign(dataItem, { Selected: true })
+          }
+
+        });
+      }
+      //SlackOff
+      if (objRigStateSlackOff != null) {
+        //add checkbox to grid
+        objRigStateSlackOff.map((dataItem: any) => {
+          Object.assign(dataItem, { Selected: false });
+
+          if (slackOffRigStates.indexOf(dataItem.Number.toString()) != -1) {
+            Object.assign(dataItem, { Selected: true })
+          }
+        });
+      }
+
+      //Rotate
+      if (objRigStateRotate != null) {
+        //add checkbox to grid
+        objRigStateRotate.map((dataItem: any) => {
+          Object.assign(dataItem, { Selected: false });
+
+          if (rotateRigStates.indexOf(dataItem.Number.toString()) != -1) {
+            Object.assign(dataItem, { Selected: true })
+          }
         });
 
+        
+        this.setState({
+          grdPickupRigState: utilFunc.CopyObject(objRigStatePickup),
+          grdSlackOffRigState: utilFunc.CopyObject(objRigStateSlackOff),
+          grdRotateRigState: utilFunc.CopyObject(objRigStateRotate)
+        });
 
       }
       //Load TDProperties into List
@@ -465,7 +561,7 @@ export class BroomstickSetup extends Component<IProps> {
   setAllComboValues = () => {
     try {
 
-debugger;
+
       //Set Run Combo
       if (this.state.objSetup.RunNo != "") {
         for (let index = 0; index < this.cmbRunList.length; index++) {
@@ -507,13 +603,13 @@ debugger;
           break;
         }
       }
-      for (let index = 0; index < this.cmbHkldPointStyle.length; index++) {
+      for (let index = 0; index < this.cmbTDPointStyle.length; index++) {
 
-        let objItem = this.cmbHkldPointStyle[index];
+        let objItem = this.cmbTDPointStyle[index];
 
         if (objItem.id == this.state.objSetup.TDPointStyle.toString()) {
           this.setState({
-            cmbHkldPointStyle: objItem,
+            cmbTDPointStyle: objItem,
           });
 
           break;
@@ -532,7 +628,7 @@ debugger;
         }
       }
 
-      debugger;
+
       for (let index = 0; index < this.cmbBroomStickPoints.length; index++) {
 
         let objItem = this.cmbBroomStickPoints[index];
@@ -797,7 +893,7 @@ debugger;
         new comboData("Max", "1"),
         new comboData("Avg", "2"),
       ];
-      this.cmbHkldPointStyle = [
+      this.cmbTDPointStyle = [
         new comboData("Rectangle", "0"),
         new comboData("Circle", "1"),
         new comboData("Diamond", "7"),
@@ -923,7 +1019,7 @@ debugger;
 
       let comboList: comboData[] = [];
 
-      debugger;
+
       if (this.props.RunList != null || this.props.RunList != undefined) {
         comboList.push(new comboData("Select Run No.", "-1"));
         let objPlanList = Object.values(this.props.RunList);
@@ -945,7 +1041,7 @@ debugger;
 
   onDropdownChange = (event: any, field: string) => {
     try {
-      debugger;
+
 
       let objValue: comboData = event.value;
 
@@ -999,9 +1095,9 @@ debugger;
         return;
       }
 
-      if (field == "cmbHkldPointStyle") {
+      if (field == "cmbTDPointStyle") {
         this.setState({
-          cmbHkldPointStyle: objValue
+          cmbTDPointStyle: objValue
         });
       }
 
@@ -1020,7 +1116,7 @@ debugger;
         let edited = this.state.objSetup;
         edited[field] = objValue.id;
         this.setState({
-          objSetup:edited
+          objSetup: edited
         });
       }
 
@@ -1116,7 +1212,7 @@ debugger;
 
   onTimeFilterChange = (event: any, field: string) => {
     try {
-      debugger;
+
 
       const value = event.value;
 
@@ -1138,16 +1234,20 @@ debugger;
   }
 
 
-
-  onTextChange = (event: any, field: string) => {
+  onColorChange = (event: any, field: string) => {
     try {
-      debugger;
-
-      const value = event.value;
-      const name = field; // target.props ? target.props.name : target.name;
+      
+      let value = event.value;
+      // value = utilFunc.rgb2hex(value);
+      // const name = field; // target.props ? target.props.name : target.name;
 
       if (field == "objSelectedTDPointProp") {
         let edited: TDPointProp = utilFunc.CopyObject(this.state.objSelectedTDPointProp);
+
+
+
+
+
         edited.Color = value;
         let tdPointPropsList = Object.values(this.state.objTDPointProperties);
         for (let index = 0; index < tdPointPropsList.length; index++) {
@@ -1181,7 +1281,54 @@ debugger;
     }
   }
 
-  onClose=()=>{
+  onTextChange = (event: any, field: string) => {
+    try {
+
+
+      let value = event.value;
+      const name = field; // target.props ? target.props.name : target.name;
+
+      // if (field == "objSelectedTDPointProp") {
+      //   let edited: TDPointProp = utilFunc.CopyObject(this.state.objSelectedTDPointProp);
+
+      //   value = utilFunc.rgb2hex(value);
+
+
+
+      //   edited.Color = value;
+      //   let tdPointPropsList = Object.values(this.state.objTDPointProperties);
+      //   for (let index = 0; index < tdPointPropsList.length; index++) {
+      //     const objItem: TDPointProp = tdPointPropsList[index];
+      //     if (objItem.RigState == this.state.objSelectedTDPointProp.RigState) {
+      //       objItem.Color = value;
+      //       break;
+      //     }
+      //   }
+
+      //   this.setState({
+      //     objSelectedTDPointProp: edited,
+      //     objTDPointProperties: tdPointPropsList
+      //   });
+
+      //   return;
+      // }
+
+
+      let edited = utilFunc.CopyObject(this.state.objSetup);
+
+
+      edited[field] = value;
+      this.setState({
+        objSetup: edited
+      });
+
+
+    } catch (error) {
+
+    }
+  }
+
+  onClose = () => {
     this.props.onClose_();
   }
   render() {
@@ -1328,7 +1475,7 @@ debugger;
                           <Label className="mr-2 mt-3">From Date</Label>
                           <DateTimePicker className="ml-2"
                             name="txtFromDate"
-                            value={this.state.objTimeFilter.FromDateTime.toString() == "" ? null :     new Date(this.state.objTimeFilter.FromDateTime)}
+                            value={this.state.objTimeFilter.FromDateTime.toString() == "" ? null : new Date(this.state.objTimeFilter.FromDateTime)}
                             format="MM/dd/yyyy HH:mm:ss"
                             formatPlaceholder={{
                               year: "yyyy",
@@ -1349,21 +1496,21 @@ debugger;
                           <br />
                           <Label className="mr-2 mt-3">To Date</Label>
                           <DateTimePicker className="ml-2"
-                           name="txtToDate"
-                           value={this.state.objTimeFilter.ToDateTime.toString() == "" ? null : new Date(this.state.objTimeFilter.ToDateTime)}
-                           format="MM/dd/yyyy HH:mm:ss"
-                           formatPlaceholder={{
-                             year: "yyyy",
-                             month: "MM",
-                             day: "dd",
-                             hour: "HH",
-                             minute: "mm",
-                             second: "ss",
-                           }}
-                           onChange={(e: any) => {
-                             this.onTimeFilterChange(e, "ToDateTime");
-                           }}
-                          
+                            name="txtToDate"
+                            value={this.state.objTimeFilter.ToDateTime.toString() == "" ? null : new Date(this.state.objTimeFilter.ToDateTime)}
+                            format="MM/dd/yyyy HH:mm:ss"
+                            formatPlaceholder={{
+                              year: "yyyy",
+                              month: "MM",
+                              day: "dd",
+                              hour: "HH",
+                              minute: "mm",
+                              second: "ss",
+                            }}
+                            onChange={(e: any) => {
+                              this.onTimeFilterChange(e, "ToDateTime");
+                            }}
+
                           ></DateTimePicker>
                         </div>
                       }
@@ -1384,14 +1531,28 @@ debugger;
                       {this.state.objTimeFilter.FilterType == vFilterType.OpenEnded &&
                         <div>
                           <Label className="mr-2 mt-3">Start Date</Label>
-                          <DateTimePicker className="ml-2"></DateTimePicker>
+                          <DateTimePicker className="ml-2"
+                            format="MM/dd/yyyy HH:mm:ss"
+                            formatPlaceholder={{
+                              year: "yyyy",
+                              month: "MM",
+                              day: "dd",
+                              hour: "HH",
+                              minute: "mm",
+                              second: "ss",
+                            }}
+                            value={this.state.objTimeFilter.FromDateTime.toString() == "" ? null : new Date(this.state.objTimeFilter.FromDateTime)}
+                            onChange={(e: any) => {
+                              this.onTimeFilterChange(e, "FromDateTime");
+                            }}
+                          ></DateTimePicker>
                         </div>}
 
 
                       <br />
                     </div>
                   </div>
-                  <div className="col-4" style={{ width: "100%" }}>
+                  {false && <div className="col-4" style={{ width: "100%" }}>
                     <div className="col-lg-12">
                       <h6 className="summaryGroupHeader">Data Down Sampling</h6>
                     </div>
@@ -1439,7 +1600,7 @@ debugger;
                         label={"Min"}
                         checked={this.state.PointSelectionMethod_Min}
                         onChange={(event) => {
-                          debugger;
+
                           this.setState({ PointSelectionMethod_Min: event.value });
                         }}
                       />
@@ -1464,7 +1625,7 @@ debugger;
                         }}
                       />
                     </div>
-                  </div>
+                  </div>}
                   {false && (
                     <div className="col-4" style={{ width: "100%" }}>
                       {/* <div className="col-lg-12">
@@ -1627,7 +1788,7 @@ debugger;
                             view={"gradient"}
                             //   gradientSettings={this.gradientSettings}
                             onChange={(e: any) => {
-                              this.onTextChange(e, "PKUPColor");
+                              this.onColorChange(e, "PKUPColor");
                             }}
                           />
                         </div>
@@ -1641,7 +1802,7 @@ debugger;
                             value={this.state.objSetup.PKUPStaticColor}
                             view={"gradient"}
                             onChange={(e: any) => {
-                              this.onTextChange(e, "PKUPStaticColor");
+                              this.onColorChange(e, "PKUPStaticColor");
                             }}
                           />
                         </div>
@@ -1655,7 +1816,7 @@ debugger;
                             value={this.state.objSetup.SLOFColor}
                             view={"gradient"}
                             onChange={(e: any) => {
-                              this.onTextChange(e, "SLOFColor");
+                              this.onColorChange(e, "SLOFColor");
                             }}
                           />
                         </div>
@@ -1669,7 +1830,7 @@ debugger;
                             value={this.state.objSetup.SLOFStaticColor}
                             view={"gradient"}
                             onChange={(e: any) => {
-                              this.onTextChange(e, "SLOFStaticColor");
+                              this.onColorChange(e, "SLOFStaticColor");
                             }}
                           />
                         </div>
@@ -1684,7 +1845,7 @@ debugger;
                             value={this.state.objSetup.ROBColor}
                             view={"gradient"}
                             onChange={(e: any) => {
-                              this.onTextChange(e, "ROBColor");
+                              this.onColorChange(e, "ROBColor");
                             }}
                           />
                         </div>
@@ -1698,7 +1859,7 @@ debugger;
                             value={this.state.objSetup.ONTorqueColor}
                             view={"gradient"}
                             onChange={(e: any) => {
-                              this.onTextChange(e, "ONTorqueColor");
+                              this.onColorChange(e, "ONTorqueColor");
                             }}
                           />
                         </div>
@@ -1713,7 +1874,7 @@ debugger;
                             value={this.state.objSetup.OFFTorqueColor}
                             view={"gradient"}
                             onChange={(e: any) => {
-                              this.onTextChange(e, "OFFTorqueColor");
+                              this.onColorChange(e, "OFFTorqueColor");
                             }}
                           />
                         </div>
@@ -1774,10 +1935,11 @@ debugger;
                           <label>Color</label>
 
                           <ColorPicker
-                            value={utilFunc.intToColor(this.state.objSelectedTDPointProp.Color)}
+                            // value={this.state.objSelectedTDPointProp.Color.indexOf("#") != -1 ? this.state.objSelectedTDPointProp.Color : utilFunc.intToColor(this.state.objSelectedTDPointProp.Color)}
+                            value={this.state.objSelectedTDPointProp.Color}
                             view={"gradient"}
                             onChange={(e: any) => {
-                              this.onTextChange(e, "objSelectedTDPointProp");
+                              this.onColorChange(e, "objSelectedTDPointProp");
                             }}
                           />
 
@@ -1815,20 +1977,20 @@ debugger;
 
                       <DropDownList
                         className="marginLeft-small"
-                        name="cmbHkldPointStyle"
-                        data={this.cmbHkldPointStyle}
-                        value={this.state.cmbHkldPointStyle}
+
+                        data={this.cmbTDPointStyle}
+                        value={this.state.cmbTDPointStyle}
                         textField="text"
                         dataItemKey="id"
                         onChange={(e: any) => {
-                          this.onDropdownChange(e, "cmbHkldPointStyle");
+                          this.onDropdownChange(e, "cmbTDPointStyle");
                         }}
                       />
                       <br />
                     </div>
                     <div className="col-lg-12 mb-2">
                       <span className="mr-2">
-                        <label className="">Size</label>
+                        <label className="mr-3">Size</label>
                         <NumericTextBox
                           value={this.state.objSetup.TDPointSize}
                           format="n2"
@@ -1844,7 +2006,7 @@ debugger;
                     <div className="col-lg-12">
                       <h6 className="summaryGroupHeader">Plan Lines</h6>
                       <span className="ml-2">
-                        <label className="">Line Thickness</label>
+                        <label className="mr-3">Line Thickness</label>
                         <NumericTextBox
                           value={this.state.objSetup.PlanLineWidth}
                           format="n2"
@@ -1878,7 +2040,7 @@ debugger;
                     </div>
                     <div className="col-lg-12">
                       <span className="mr-2">
-                        <label className="">Size</label>
+                        <label className="mr-3">Size</label>
                         <NumericTextBox
                           value={this.state.objSetup.BMPointSize}
                           format="n2"
@@ -2212,7 +2374,7 @@ debugger;
                                 format="n2"
                                 width="100px"
                                 onChange={(e) => {
-                                  this.onTextChange(e, "slackOffCutOffValue");
+                                  this.onTextChange(e, "slackOffRPMCutOff");
                                 }}
                               />
                               <label className="leftPadding-small"> RPM</label>
@@ -2230,7 +2392,7 @@ debugger;
                                 format="n2"
                                 width="100px"
                                 onChange={(e) => {
-                                  this.onTextChange(e, "slackOffCutOffValue");
+                                  this.onTextChange(e, "slackOffMaxBlockMovement");
                                 }}
                               />
                               <label className="leftPadding-small"> ft</label>
@@ -2248,7 +2410,7 @@ debugger;
                                 format="n2"
                                 width="100px"
                                 onChange={(e) => {
-                                  this.onTextChange(e, "slackOffCutOffValue");
+                                  this.onTextChange(e, "slackOffMinBlockMovement");
                                 }}
                               />
                               <label className="leftPadding-small"> ft</label>
@@ -2541,12 +2703,7 @@ debugger;
                                 value={this.state.objSetup.ROBMaxHkldTolerance}
                                 format="n2"
                                 width="100px"
-                              // onChange={(event) => {
-                              //   this.disableRealTime();
-                              //   this.setState({
-                              //     MaxConnTime: event.target.value,
-                              //   });
-                              // }}
+                                onChange={(e) => this.onTextChange(e, "ROBMaxHkldTolerance")}
                               />
                               <label className="leftPadding-small">klbf</label>
                               <label className="leftPadding-small">Over</label>
@@ -2554,12 +2711,8 @@ debugger;
                                 value={this.state.objSetup.TolerancePoints}
                                 format="n2"
                                 width="50px"
-                              // onChange={(event) => {
-                              //   this.disableRealTime();
-                              //   this.setState({
-                              //     MaxConnTime: event.target.value,
-                              //   });
-                              // }}
+                                onChange={(e) => this.onTextChange(e, "TolerancePoints")}
+                              
                               />
                               <label className="leftPadding-small">
                                 Points
