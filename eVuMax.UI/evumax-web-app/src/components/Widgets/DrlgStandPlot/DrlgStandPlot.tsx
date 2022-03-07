@@ -343,6 +343,8 @@ export default class DrlgStandPlot extends React.Component {
         this.objChart.leftAxis().ShowSelector = false;
         this.objChart.leftAxis().ShowTitle = true;
         this.objChart.leftAxis().Visible = true;
+        
+
 
         this.objChart.bottomAxis().AutoScale = true;
         this.objChart.bottomAxis().Title = "Measured Depth" + "(" + this.state.objPlotData.DepthUnit + ")";
@@ -453,6 +455,10 @@ export default class DrlgStandPlot extends React.Component {
             //Configure Axes
             this.objChart.leftAxis().Inverted = false;
             this.objChart.leftAxis().AutoScale = true;
+         
+
+
+
             this.objChart.leftAxis().Title = "Time (Hours)";
             this.objChart.leftAxis().ShowSelector = false;
             this.objChart.leftAxis().ShowTitle = true;
@@ -464,10 +470,6 @@ export default class DrlgStandPlot extends React.Component {
             this.objChart.bottomAxis().ShowSelector = false;
             this.objChart.bottomAxis().ShowTitle = true;
             this.objChart.bottomAxis().Visible = true;
-
-
-
-
 
 
             let objBar = new DataSeries();
@@ -494,7 +496,7 @@ export default class DrlgStandPlot extends React.Component {
             objOffsetWellBar.Stacked = false;
             objOffsetWellBar.Title = "Offset Time (Hrs) - " + this.state.objPlotData.offsetWellName;
             objOffsetWellBar.Type = dataSeriesType.Bar;
-            objOffsetWellBar.Color = "Blue"; //#1089ff
+            objOffsetWellBar.Color = "Green"; //#1089ff
             objOffsetWellBar.XAxisId = this.objChart.bottomAxis().Id;
             objOffsetWellBar.YAxisId = this.objChart.leftAxis().Id;
             //objOffsetWellBar.ColorEach = true;
@@ -520,7 +522,7 @@ export default class DrlgStandPlot extends React.Component {
             let chartData = connPoints;
 
             //alert(this.state.objDrlgStandUserSettings.HighlightDayNight);
-            
+
 
             //Fill up the data for data series
             for (let i = 0; i < chartData.length; i++) {
@@ -528,9 +530,10 @@ export default class DrlgStandPlot extends React.Component {
 
                 //rigStateKeys=Object.keys(chartData[i].RigStates)
 
-
-
                 objStandPoint.x = Math.round(chartData[i]["Depth"]);
+
+
+             
                 let standTime: number = 0;
                 standTime = moment.duration(moment(chartData[i]["ToDate"]).diff(moment(chartData[i]["FromDate"]))).asHours();
                 // standTime = Math.round(((standTime / 60) / 60));
@@ -539,7 +542,7 @@ export default class DrlgStandPlot extends React.Component {
                 //objStandPoint.label = chartData[i]["Comments"];
 
                 //
-                
+
                 let grdConnection_: any = Object.values(this.state.objPlotData.grdConnection);
                 let foundIndex = grdConnection_.findIndex((el: any) => Math.round(Number.parseFloat(el.Depth)) === Math.round(objStandPoint.x));
                 if (foundIndex > -1) {
@@ -569,18 +572,20 @@ export default class DrlgStandPlot extends React.Component {
 
 
                 if (this.state.objPlotData.objDataSelection.StandPlot_ShowOffset) {
-                    objStandPoint = new ChartData();
-                    objStandPoint.x = Math.round(chartData[i]["Depth"]);
+                    let objStandPointOffset = new ChartData();
+                    objStandPointOffset.x = Math.round(chartData[i]["Depth"]);
 
-                    if (chartData[i].OffsetTime > 0) {
-                        objStandPoint.y = eval((chartData[i].OffsetTime / 60).toFixed(2));
+                    if (chartData[i].OffsetTime >= 0) { //resolve error due to value of offsettime =0 so value shows undefined 05-March
+                        objStandPointOffset.y = eval((chartData[i].OffsetTime / 60).toFixed(2));
                     }
 
-                    objOffsetWellBar.Data.push(objStandPoint);
+                    objOffsetWellBar.Data.push(objStandPointOffset);
                 }
 
             }
 
+            this.objChart.updateChart();
+            
             this.objChart.reDraw();
         } catch (error) {
 
@@ -759,14 +764,14 @@ export default class DrlgStandPlot extends React.Component {
 
                         let objDataSelector_: DataSelector_ = new DataSelector_();
                         objDataSelector_.wellID = objData_.WellID;
-                        objDataSelector_.refreshHrs = objData_.objUserSettings.LastHrs;
-                        objDataSelector_.fromDate = objData_.objUserSettings.FromDate;
-                        objDataSelector_.toDate = objData_.objUserSettings.ToDate;
-                        objDataSelector_.fromDepth = objData_.objUserSettings.FromDepth;
-                        objDataSelector_.toDepth = objData_.objUserSettings.ToDepth;
+                        objDataSelector_.refreshHrs =objData_.LastHrs; // objData_.objUserSettings.LastHrs;
+                        objDataSelector_.fromDate = objData_.fromDate; // objData_.objUserSettings.FromDate;
+                        objDataSelector_.toDate = objData_.toDate; // objData_.objUserSettings.ToDate;
+
+                        objDataSelector_.fromDepth = objData_.fromDepth;// objData_.objUserSettings.FromDepth;
+                        objDataSelector_.toDepth = objData_.toDepth; //objData_.objUserSettings.ToDepth;
                         objDataSelector_.needForceReload = true;
-
-
+                        
 
                         // objData_.selectionType are:
                         // ByHours = 0,
@@ -790,6 +795,8 @@ export default class DrlgStandPlot extends React.Component {
                         // alert(objDataSelector_.fromDate);
                         // alert(objDataSelector_.toDate);
                         // 
+                        debugger;
+                        
                         switch (objData_.objUserSettings.SelectionType) {
                             case 1:
                                 //objDataSelector.selectedval = "-1" //-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
@@ -902,9 +909,9 @@ export default class DrlgStandPlot extends React.Component {
             objUserSettings.UserID = _gMod._userId;
             objUserSettings.LastHrs = this.state.objDataSelector.refreshHrs;
             objUserSettings.RealTime = this.state.realTime;
-            
 
-            objUserSettings.FromDate = utilFunc.formateDate(this.state.objDataSelector.fromDate); 
+
+            objUserSettings.FromDate = utilFunc.formateDate(this.state.objDataSelector.fromDate);
             objUserSettings.ToDate = utilFunc.formateDate(this.state.objDataSelector.toDate);
 
             objUserSettings.FromDepth = this.state.objDataSelector.fromDepth;
@@ -914,15 +921,14 @@ export default class DrlgStandPlot extends React.Component {
             objUserSettings.ShowComments = this.state.objDrlgStandUserSettings.ShowComments;
             objUserSettings.ShowExcludedStands = this.state.objDrlgStandUserSettings.ShowExcludedStands;
             objUserSettings.ShowRigStateView = this.state.objDrlgStandUserSettings.ShowRigStateView;
-
-            objUserSettings.dtDayTimeFrom = this.state.objDrlgStandUserSettings.dtDayTimeFrom;
-            objUserSettings.dtDayTimeTo = this.state.objDrlgStandUserSettings.dtDayTimeTo;
+            
+            objUserSettings.dtDayTimeFrom = new Date(this.state.objDrlgStandUserSettings.dtDayTimeFrom);
+            objUserSettings.dtDayTimeTo = new Date(this.state.objDrlgStandUserSettings.dtDayTimeTo);
             objUserSettings.HighlightDayNight = this.state.objDrlgStandUserSettings.HighlightDayNight;
-
 
             objUserSettings.StandPlot_ShowOffset = this.state.objDrlgStandUserSettings.StandPlot_ShowOffset;
             objUserSettings.StandPlot_ComparisonWindow = this.state.objDrlgStandUserSettings.StandPlot_ComparisonWindow;
-            //alert("Save setting :-" + this.state.objDrlgStandUserSettings.StandPlot_ShowOffset);
+            
 
 
             switch (this.state.objDataSelector.selectedval) ////"-1 Default, 0= DateRange and 1 = Depth Range" 2 = Realtime"
@@ -997,7 +1003,7 @@ export default class DrlgStandPlot extends React.Component {
     }
 
     render() {
-
+        
         return (
             <>
                 <div className="row ml-1 mr-1" style={{ justifyContent: "space-between" }}>
@@ -1196,7 +1202,7 @@ export default class DrlgStandPlot extends React.Component {
                                         <div className="form-group">
                                             <label className="summaryLabelHeader">Avg. Slide ROP</label>
                                             <label className="summaryLabel" id="txtAvgSTB">
-                                                {this.state.objPlotData.DAvgRotaryROP}
+                                                {this.state.objPlotData.DAvgSlideROP}
                                             </label>
                                         </div>
                                     </div>
@@ -1230,7 +1236,7 @@ export default class DrlgStandPlot extends React.Component {
                                         <div className="form-group">
                                             <label className="summaryLabelHeader">Avg. Slide ROP</label>
                                             <label className="summaryLabel" id="txtAvgSTB">
-                                                {this.state.objPlotData.NAvgRotaryROP}
+                                                {this.state.objPlotData.NAvgSlideROP}
                                             </label>
                                         </div>
                                     </div>
@@ -1531,10 +1537,16 @@ export default class DrlgStandPlot extends React.Component {
                              */}
                             <span>DayTime Hours from</span>
                             <span style={{ marginLeft: "10px", marginRight: "10px" }}>
-                                <TimePicker onChange={(event) => {
+                                <TimePicker
+                                  format={{
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  
+                                  }}
+                                onChange={(event) => {
+
                                     let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
                                     objUserSettings.dtDayTimeFrom = event.target.value;
-                                    console.log(event.target.value);
                                     this.setState({ objDrlgStandUserSettings: objUserSettings });
                                 }}
                                     value={new Date(this.state.objDrlgStandUserSettings.dtDayTimeFrom)}
@@ -1565,7 +1577,13 @@ export default class DrlgStandPlot extends React.Component {
                                         //this.setState({ objDrlgStandUserSettings: objUserSettings });
                                     }}
                                 /> */}
-                                <TimePicker onChange={(event) => {
+                                <TimePicker 
+                                  format={{
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  
+                                  }}
+                                onChange={(event) => {
                                     let objUserSettings: DrlgStandUserSettings = this.state.objDrlgStandUserSettings;
                                     objUserSettings.dtDayTimeTo = event.target.value;
                                     this.setState({ objDrlgStandUserSettings: objUserSettings });

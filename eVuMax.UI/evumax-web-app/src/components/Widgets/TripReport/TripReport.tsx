@@ -1087,7 +1087,7 @@ export default class DrlgStandPlot extends React.Component {
             this.ST_objChart3BarTripConn.MarginBottom = 0; //40;
             this.ST_objChart3BarTripConn.MarginTop = 0; //10;
             this.ST_objChart3BarTripConn.MarginRight = 0; // 10;
-
+            
 
 
             this.ST_objChart3BarTripConn.onAfterSeriesDraw.subscribe((e, i) => {
@@ -1103,6 +1103,7 @@ export default class DrlgStandPlot extends React.Component {
             objSeries.ColorEach = true;
             objSeries.XAxisId = this.ST_objChart3BarTripConn.bottomAxis().Id;
             objSeries.YAxisId = this.ST_objChart3BarTripConn.leftAxis().Id;
+
 
 
             // Update Customize Scale 10-Feb-2022
@@ -2908,6 +2909,9 @@ export default class DrlgStandPlot extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+
+                                    
+
                                 <div className="row" style={{ backgroundColor: "transparent", height: "50%", width: "100%", margin: "0px" }}>
                                     {/* <label style={{ display: "flex", justifyContent: "center" }}>Trip Connections</label> */}
                                     <h6 style={{ display: "flex", justifyContent: "center" }} className="summaryGroupHeaderTripReport">Trip Connections</h6>

@@ -62,7 +62,7 @@ class DataSelector extends Component<IProps> {
 
   constructor(props: any) {
     super(props);
-    this.__parentRef = props;
+    this.__parentRef = utilFunc.CopyObject(props);
     this.WellId = this.props.wellID;
 
 
@@ -89,7 +89,8 @@ class DataSelector extends Component<IProps> {
   //Initialize chart after component was mounted
   componentDidMount() {
     try {
-
+      
+      
       //Prepare chart object
       //initialize chart
 
@@ -211,9 +212,9 @@ class DataSelector extends Component<IProps> {
   //   } catch (error) { }
   // };
 
-  selectorChanged =  (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pMatchDepthByFormationTops?: boolean) => {
+  selectorChanged =  async (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pMatchDepthByFormationTops?: boolean) => {
     try {
-
+      
 
       let objDataSelector: DataSelector_ = new DataSelector_();
       objDataSelector.selectedval = ptype;
@@ -227,7 +228,8 @@ class DataSelector extends Component<IProps> {
       objDataSelector.MatchDepthByFormationTops= pMatchDepthByFormationTops;
 
 
-      this.setState({ objDataSelector: objDataSelector })
+      //xxxxxxxxxxxxxxxxxxxxx copyobject added
+      this.setState({ objDataSelector: utilFunc.CopyObject(objDataSelector) })
 
       //this.objChart.setSelectorDateRange(this.state.objDataSelector.fromDate, this.state.objDataSelector.toDate);
       // if (pApplyRefreshHrs == true) {
@@ -237,6 +239,8 @@ class DataSelector extends Component<IProps> {
       // }
 
       this.props.selectionChanged(this.state.objDataSelector, false);
+
+    
     } catch (error) { }
   };
 
@@ -244,7 +248,8 @@ class DataSelector extends Component<IProps> {
     try {
       //Update the chart
 
-      this.objChart.updateChart();
+      //Make comment by Prath on 03-March-2022 (Seems not playing any role )
+//      this.objChart.updateChart();
     } catch (error) { }
   }
 
@@ -270,6 +275,15 @@ class DataSelector extends Component<IProps> {
 
         // $("#tab3").addClass("non-selected");
         // $("#tab3").removeClass("selected");
+
+        //added by prath on 7-March-2022 
+        if (this.state.objDataSelector.selectedval=="1"){//depth range
+           this.objChart.setSelectorDepthRange( this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth);
+         }
+        //  if (this.state.objDataSelector.selectedval=="2"){//depth range
+        //   this.objChart.setSelectorLastHoursRange(this.state.objDataSelector.refreshHrs);
+        // }
+        //
 
         this.objChart.updateChart();
       }
@@ -707,7 +721,7 @@ class DataSelector extends Component<IProps> {
         //$("#lblWarning").text("");
       }
 
-
+      
       for (let i = 0; i < paramData.length; i++) {
         let objVal: ChartData = new ChartData();
         objVal.datetime = new Date(Date.parse(paramData[i]["DATETIME1"]));
@@ -718,6 +732,31 @@ class DataSelector extends Component<IProps> {
         this.objLine.Data.push(objVal);
       }
 
+      
+      
+      // if (this.__parentRef.objDataSelector.selectedval==0){ //datewise
+      //   this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
+      // }
+      
+      // if (this.__parentRef.objDataSelector.selectedval==1){ //depthwise
+      //   this.objChart.setSelectorDepthRange(this.__parentRef.objDataSelector.fromDepth, this.__parentRef.objDataSelector.toDepth);
+      // }
+
+      // if (this.__parentRef.objDataSelector.selectedval==2){ //last hrs depth
+      //   debugger;
+      //   this.objChart.setSelectorLastHoursRange(this.__parentRef.objDataSelector.refreshHrs);
+      //   this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
+      // }
+      //alert(this.__parentRef.objDataSelector.fromDate + " - " + this.__parentRef.objDataSelector.toDate);
+      debugger;
+      //Set dataselector 
+      //alert(this.__parentRef.objDataSelector.fromDate + " - data selector - " + this.__parentRef.objDataSelector.toDate); 
+      if (this.__parentRef.objDataSelector.fromDate != this.__parentRef.objDataSelector.toDate){
+        this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
+      }
+      
+
+     
       this.objChart.updateChart();
     } catch (error) { }
   };
@@ -769,6 +808,7 @@ class DataSelector extends Component<IProps> {
         .then((res) => {
           const objData = JSON.parse(res.data.Response);
           this.setData(objData);
+          console.log("DATA SELECTOR DATA -->" , objData);
           Util.StatusSuccess("Data successfully retrived DataSelector ");
           Util.StatusReady();
 
@@ -856,14 +896,13 @@ class DataSelector extends Component<IProps> {
           objNewObjDataSelector.toDepth = objData.MaxDepth;
           objNewObjDataSelector.refreshHrs = this.props.objDataSelector.refreshHrs;
 
-
           this.setState({
             objDataSelector: objNewObjDataSelector
           });
 
 
 
-
+          
           this.setData(objData);
           Util.StatusSuccess("Data successfully retrived  ");
           Util.StatusReady();

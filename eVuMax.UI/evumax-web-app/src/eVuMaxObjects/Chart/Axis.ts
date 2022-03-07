@@ -1315,6 +1315,8 @@ export class Axis {
         }
       }
 
+      
+
       if (this.bandScale) {
         //loop through
         
@@ -1783,7 +1785,7 @@ export class Axis {
           }
 
           if (!this.IsDateTime) {
-
+            
 
             //Is Multiline
             let objRange = new AxisRange();

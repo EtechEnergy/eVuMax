@@ -270,8 +270,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 //    HighlightDayNight = objUserSettings.HighlightDayNight;
                 //}
 
-                dtDayTimeFrom = Convert.ToDateTime(objUserSettings.dtDayTimeFrom);
-                dtDayTimeTo = Convert.ToDateTime(objUserSettings.dtDayTimeTo);
+                dtDayTimeFrom = Convert.ToDateTime(objUserSettings.dtDayTimeFrom.ToLocalTime());
+                dtDayTimeTo = Convert.ToDateTime(objUserSettings.dtDayTimeTo.ToLocalTime());
                 HighlightDayNight = objUserSettings.HighlightDayNight;
 
 

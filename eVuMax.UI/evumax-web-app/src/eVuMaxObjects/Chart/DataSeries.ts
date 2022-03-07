@@ -101,6 +101,7 @@ export class DataSeries {
   };
 
   getMinX = (): number => {
+    
     return Math.min.apply(
       Math,
       this.Data.map(function (o) {
@@ -110,12 +111,14 @@ export class DataSeries {
   };
 
   getMaxY = (): number => {
-    return Math.max.apply(
-      Math,
-      this.Data.map(function (o) {
-        return o.y;
-      })
-    );
+ 
+      return Math.max.apply(
+        Math,
+        this.Data.map(function (o) {
+          return o.y;
+        })
+      );
+   
   };
 
   getMinY = (): number => {

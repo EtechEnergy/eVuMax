@@ -247,6 +247,11 @@ export class StackedBarSeries {
 								this.ChartRef.__toolTip.css('display', 'none');
 							})
 							.on('mousemove', (a, b, c) => {
+								
+								if (this.ChartRef.__mouseLastX== undefined || this.ChartRef.__mouseLastY == undefined){
+									return;
+								}
+
 								let seriesID = c[0].getAttribute('seriesId');
 								let index = c[0].getAttribute('index');
 
@@ -261,8 +266,12 @@ export class StackedBarSeries {
 								this.ChartRef.__toolTip.css('top', 0);
 								this.ChartRef.__toolTip.css('z-index', 10000); //bring tooltip on front
 
-								var tooltipX = this.ChartRef.__mouseLastX;
-								var tooltipY = this.ChartRef.__mouseLastY;
+								//alert(this.ChartRef.__mouseLastX + " - " + this.ChartRef.__mouseLastY);
+								 var tooltipX = this.ChartRef.__mouseLastX;
+								 var tooltipY = this.ChartRef.__mouseLastY;
+
+								
+
 								var tooltipWidth = this.ChartRef.__toolTip.innerWidth();
 								var tooltipHeight = this.ChartRef.__toolTip.innerHeight();
 

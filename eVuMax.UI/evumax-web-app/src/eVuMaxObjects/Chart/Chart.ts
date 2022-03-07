@@ -34,6 +34,8 @@ import { faAssistiveListeningSystems, faLeaf } from "@fortawesome/free-solid-svg
 
 import { AxisRange, AxisDateRange } from "../Chart/AxisRange";
 import { ClientLogger } from "../../components/ClientLogger/ClientLogger";
+import moment from "moment";
+import { exit } from "process";
 
 export enum lineStyle {
   solid = 0,
@@ -508,6 +510,98 @@ export class Chart {
       this.objLogger.SendLog("Error ->CHART-setSelectorDateRange : " + error);
     }
   };
+
+  //====================Add by prath on 5-March-2022
+  setSelectorDepthRange = (startDepth: number, endDepth: number) => {
+    try {
+      if (!this.hasSelector) {
+        return null;
+      }
+
+      let objAxis = this.getAxisWithSelector();
+
+      if (objAxis == null) {
+        return null;
+      }
+
+      debugger;
+      let startDate=new Date();
+      let endDate=new Date();
+
+
+      for (let key of this.DataSeries.keys()) {
+        let objSeries: DataSeries = this.DataSeries.get(key);
+        let foundStartDate : boolean = false;
+        let foundEndDate : boolean = false;
+
+        objSeries.Data.forEach((element) => {
+          if (
+            moment(element.datetime).isValid() &&
+            element.x == undefined
+          ) {
+
+            if (element.y >= startDepth && foundStartDate== false){
+              startDate = new Date(element.datetime);
+              foundStartDate= true;
+            }
+
+            if (element.y > endDepth && foundEndDate== false){
+              endDate = new Date(element.datetime);
+              foundEndDate= true;
+            }
+          }
+        });
+      }
+      objAxis.__selectorStartDatePos =   startDate;
+      objAxis.__selectorEndDatePos = endDate;
+    } catch (error) {
+      this.objLogger.SendLog("Error ->CHART-setSelectorDateRange : " + error);
+    }
+  };
+  //=========
+
+
+   //====================Add by prath on 5-March-2022
+   setSelectorLastHoursRange = (lastHrs: number) => {
+    try {
+      if (!this.hasSelector) {
+        return null;
+      }
+
+      let objAxis = this.getAxisWithSelector();
+
+      if (objAxis == null) {
+        return null;
+      }
+
+      
+      
+      let startDate =new Date();
+      let endDate =new Date();
+
+      for (let key of this.DataSeries.keys()) {
+        let objSeries: DataSeries = this.DataSeries.get(key);
+
+        if (objSeries.Data.length==0){
+          break;
+        }
+
+        
+        startDate = new Date( Math.max.apply(Math, objSeries.Data.map(function(o) { return o.datetime; })));
+        endDate= new Date(moment(new Date(startDate)).subtract(lastHrs, 'h').toDate());
+        //alert(startDate + " -- " + endDate);
+      }
+      debugger;
+      objAxis.__selectorStartDatePos = new Date(startDate);
+      objAxis.__selectorEndDatePos = new Date(endDate);
+      
+    
+    } catch (error) {
+      this.objLogger.SendLog("Error ->setSelectorLastHoursRange : " + error);
+    }
+  };
+  //=========
+
 
   updateAxes = () => {
     try {
@@ -1053,6 +1147,8 @@ export class Chart {
   //For move on Canvas
   mouseMoveOnSvg = (d: any, i: any) => {
     try {
+
+     
 
       d3.event.preventDefault();
       let SVGRef = this.SVGRef;
@@ -2365,6 +2461,8 @@ export class Chart {
     try {
       this.__mouseLastX = e.clientX;
       this.__mouseLastY = e.clientY;
+      //console.log("XY ==> " + this.__mouseLastX + " - " + this.__mouseLastY );
+      
 
       if (this.hasSelectorDragInProgress()) {
         let offsetDiff =
