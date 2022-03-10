@@ -1345,9 +1345,10 @@ export class DrillingSummary extends Component {
         .then((res) => {
 
           this.objLogger.SendLog("loadDrlgSummary Data Received...");
-
-
+          
+          
           let objData = JSON.parse(res.data.Response);
+          console.log("Drlg Summary data  -->", objData);
 
           //Warnings Notifications
           let warnings: string = res.data.Warnings;

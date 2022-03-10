@@ -613,7 +613,7 @@ export default class DrlgStandPlot extends React.Component {
     loadDrlgStandPlotData = async () => {
         try {
 
-
+            alert("loadDrlgStandPlotData called");
             Util.StatusInfo("Getting data from the server, Please wait");
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Summary.Manager";
@@ -795,7 +795,7 @@ export default class DrlgStandPlot extends React.Component {
                         // alert(objDataSelector_.fromDate);
                         // alert(objDataSelector_.toDate);
                         // 
-                        debugger;
+                        
                         
                         switch (objData_.objUserSettings.SelectionType) {
                             case 1:

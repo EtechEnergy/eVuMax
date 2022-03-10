@@ -524,7 +524,7 @@ export class Chart {
         return null;
       }
 
-      debugger;
+      
       let startDate=new Date();
       let endDate=new Date();
 
@@ -591,7 +591,7 @@ export class Chart {
         endDate= new Date(moment(new Date(startDate)).subtract(lastHrs, 'h').toDate());
         //alert(startDate + " -- " + endDate);
       }
-      debugger;
+      
       objAxis.__selectorStartDatePos = new Date(startDate);
       objAxis.__selectorEndDatePos = new Date(endDate);
       

@@ -52,10 +52,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         string lastError = "";
         DataBroker.MnemonicMappingMgr objMnemonicMappingMgr = new MnemonicMappingMgr();
 
-        private double fromDepth = 0;
-        private double toDepth = 0;
-        private DateTime fromDate;
-        private DateTime toDate;
+        public double fromDepth = 0;
+        public double toDepth = 0;
+        public DateTime fromDate;
+        public DateTime toDate;
         private VuMaxDR.Data.Objects.TimeLog objTimeLog = new TimeLog();
 
         private int Intervals = 10;

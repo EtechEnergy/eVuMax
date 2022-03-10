@@ -20,6 +20,7 @@ import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import * as d3 from "d3";
 import { Checkbox, Switch } from "@progress/kendo-react-inputs";
 import $ from "jquery";
+import { axisLeft } from "d3";
 
 let _gMod = new GlobalMod();
 
@@ -31,7 +32,7 @@ interface IProps {
   PlotName: string;
   updateWarnings: any;
   parentRef: any;
-  objDataSelector: any;
+  objDataSelector: DataSelector_;
 }
 
 export class CustomDrillingSummary extends Component<IProps>  {
@@ -59,7 +60,8 @@ export class CustomDrillingSummary extends Component<IProps>  {
     warningMsg: [],
     isRealTime: false as boolean,
     objDataSelector: this.props.objDataSelector,
-    showOffsetWell: true
+    showOffsetWell: true,
+    
   };
 
 
@@ -98,7 +100,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
   async componentDidMount() {
     try {
       window.addEventListener('resize', this.loadSummary);
-
+      
       this.loadSummary();
 
       //RealTime 
@@ -109,6 +111,15 @@ export class CustomDrillingSummary extends Component<IProps>  {
       }
     } catch (error) {
 
+    }
+  }
+
+
+  componentWillUpdate() : void{
+    try {
+      this.state.objDataSelector.isApplyDateRange = false;
+    } catch (error) {
+      
     }
   }
 
@@ -192,10 +203,10 @@ export class CustomDrillingSummary extends Component<IProps>  {
        if (res.data.RequestSuccessfull == true) {
             let objData_ = JSON.parse(res.data.Response);
 
-            console.log(objData_);
+            console.log("CustomDrillSumm data", objData_);
 
             let warnings: string = res.data.Warnings;
-            // warnings = "Test Warning";
+            // warnings = "Test Warning"; 
 
             if (warnings.trim() != "") {
               let warningList = [];
@@ -211,7 +222,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
             this.WellName = res.data.Category;
             this.objData = objData_;
             
-
+           
 
             this.generateReport();
             Util.StatusSuccess("Data successfully retrived");
@@ -1505,6 +1516,11 @@ export class CustomDrillingSummary extends Component<IProps>  {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
+      
+      //prath
+
+      // this.state.objDataSelector = new DataSelector_();
+      this.setState({objDataSelector : new DataSelector_()});
 
       this.showListPanel();
     } catch (error) {
@@ -1580,7 +1596,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           }}
         />
         <div className="Data">
-          <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
+       <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
         </div>
       </div>
     );

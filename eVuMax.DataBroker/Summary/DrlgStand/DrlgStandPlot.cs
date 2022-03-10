@@ -316,11 +316,10 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         if (objConnList.Rows.Count > 0)
                         {
                     ConnectionLogProcessor objProcessor = new ConnectionLogProcessor(ref objRequest, WellID);
-
-
+                    
                     objProcessor.ProcessPoints(ref objTimeLog, fromDate, toDate);
-               
 
+                    
                     warnings += objProcessor.LastError;
                             foreach (ConnectionLogPoint objItem in objProcessor.connectionPoints.Values)
                             {

@@ -51,6 +51,7 @@ import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
+import * as utilFunctions from "../../../utilFunctions/utilFunctions";
 
 let _gMod = new GlobalMod();
 
@@ -364,6 +365,7 @@ class DrlgConnSummary2 extends Component {
 
   formateDate = (paramDate: Date) => {
     try {
+      return utilFunctions.formateDate(paramDate);
       let day = paramDate.getDate();
       let mlist = [
         "Jan",
@@ -462,7 +464,7 @@ class DrlgConnSummary2 extends Component {
         "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
-      
+        
 
       this.AxiosSource = axios.CancelToken.source();
       axios

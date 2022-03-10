@@ -33,6 +33,7 @@ const ServiceName = "/eVuMax.asmx";
 const getData = "/getData";
 const performTask = "/performTask";
 
+
 //for client side install
 
 // const Port = "/../evumaxapi";

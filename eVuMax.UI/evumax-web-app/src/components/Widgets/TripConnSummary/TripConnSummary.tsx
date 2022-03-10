@@ -35,6 +35,7 @@ import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
+import * as utilFunctions from "../../../utilFunctions/utilFunctions";
 
 
 
@@ -220,8 +221,9 @@ class TripConnSummary extends Component {
     } catch (error) { }
   };
 
-  formateDate = (paramDate: Date) => {
+  formateDate_NotInUse = (paramDate: Date) => {
     try {
+
       let day = paramDate.getDate();
       let mlist = [
         "Jan",
@@ -288,13 +290,13 @@ class TripConnSummary extends Component {
 
       let paramFromDate: BrokerParameter = new BrokerParameter(
         "FromDate",
-        this.formateDate(this.fromDate)
+        utilFunctions.formateDate(this.fromDate)
       );
       objBrokerRequest.Parameters.push(paramFromDate);
 
       let paramToDate: BrokerParameter = new BrokerParameter(
         "ToDate",
-        this.formateDate(this.toDate)
+        utilFunctions.formateDate(this.toDate)
       );
       objBrokerRequest.Parameters.push(paramToDate);
 

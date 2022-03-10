@@ -89,8 +89,6 @@ class DataSelector extends Component<IProps> {
   //Initialize chart after component was mounted
   componentDidMount() {
     try {
-      
-      
       //Prepare chart object
       //initialize chart
 
@@ -212,7 +210,8 @@ class DataSelector extends Component<IProps> {
   //   } catch (error) { }
   // };
 
-  selectorChanged =  async (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pMatchDepthByFormationTops?: boolean) => {
+  selectorChanged =  async (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pMatchDepthByFormationTops?: boolean ) => {
+    
     try {
       
 
@@ -225,6 +224,11 @@ class DataSelector extends Component<IProps> {
       objDataSelector.refreshHrs = this.state.objDataSelector.refreshHrs;
       objDataSelector.fromDateS = new Date(pfromdate);
       objDataSelector.toDateS = new Date(ptodate);
+      
+      
+      if(pMatchDepthByFormationTops == undefined){
+        pMatchDepthByFormationTops = false;
+      }
       objDataSelector.MatchDepthByFormationTops= pMatchDepthByFormationTops;
 
 
@@ -337,7 +341,7 @@ class DataSelector extends Component<IProps> {
 
   handleChange = (event: any, field: string) => {
     
-
+    
     const value = event.value;
     const name = field; // target.props ? target.props.name : target.name;
     let edited: any = utilFunc.CopyObject(this.state.objDataSelector);
@@ -492,8 +496,9 @@ class DataSelector extends Component<IProps> {
                 <Checkbox
                   id={"MatchDepthByFormationTops"}
                   className="col-lg-4 col-xl-3 col-md-4 col-sm-4"
-                  value={this.state.MatchDepthByFormationTops}
+                  value={this.state.objDataSelector.MatchDepthByFormationTops}
                   onChange={(e) => this.handleChange(e, "MatchDepthByFormationTops")}
+                                                         
                   label="Match Depth By Formation Tops"
                 />
 
@@ -743,15 +748,23 @@ class DataSelector extends Component<IProps> {
       // }
 
       // if (this.__parentRef.objDataSelector.selectedval==2){ //last hrs depth
-      //   debugger;
+      //   
       //   this.objChart.setSelectorLastHoursRange(this.__parentRef.objDataSelector.refreshHrs);
       //   this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
       // }
       //alert(this.__parentRef.objDataSelector.fromDate + " - " + this.__parentRef.objDataSelector.toDate);
-      debugger;
+      
       //Set dataselector 
       //alert(this.__parentRef.objDataSelector.fromDate + " - data selector - " + this.__parentRef.objDataSelector.toDate); 
-      if (this.__parentRef.objDataSelector.fromDate != this.__parentRef.objDataSelector.toDate){
+
+
+      //alert(this.__parentRef.objDataSelector.fromDate + "  " +  this.__parentRef.objDataSelector.toDate);
+      
+      console.log("xxx" , this.__parentRef);
+      // alert(this.__parentRef.objDataSelector.isApplyDateRange + "");
+      debugger;
+      //set data selector - isApplyDateRange only used to handle Custom Drilling summary
+      if ((this.__parentRef.objDataSelector.fromDate != this.__parentRef.objDataSelector.toDate) && this.__parentRef.objDataSelector.isApplyDateRange){
         this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
       }
       
@@ -872,7 +885,7 @@ class DataSelector extends Component<IProps> {
         })
         .then((res) => {
           let objData = JSON.parse(res.data.Response);
-
+          
           //set the state
 
           // this.setState({

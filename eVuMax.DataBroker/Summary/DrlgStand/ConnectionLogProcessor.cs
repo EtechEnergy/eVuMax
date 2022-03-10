@@ -214,7 +214,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
                 }
 
-               
+
 
 
                 // '************** Process these connections for other information ************************''
@@ -230,9 +230,14 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 // '************** Process these connections for other information ************************''
 
                 ////New Logic for ProcessConnecion coz ref cannot be used in for Each Loop
+                var watch = new System.Diagnostics.Stopwatch();
+                watch.Start();
                 processConnection(ref connectionPoints, objRequest.objDataService);
+                watch.Stop();
+                var a = watch.ElapsedMilliseconds;
 
-              
+
+
 
                 ProcessStatus = 0;
                 try
@@ -281,6 +286,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 var lowerLimit = pointerDate.AddMinutes(-1 * timeThreshold);
                 var upperLimit = pointerDate.AddMinutes(timeThreshold);
                 int searchLimit = Convert.ToInt32(Math.Round(currentRowIndex + rowThreshold * 60 / 5d));
+
                 if (searchLimit > objData.Rows.Count - 1)
                 {
                     searchLimit = objData.Rows.Count - 1;
@@ -354,8 +360,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 
 
 
-                    StartOver:
-                        ;
+                    //StartOver:
+             
                         if (!isConstantlyDrilling)
                         {
                             bool subDrillingRowFound = false;
@@ -375,8 +381,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                                     {
                                         int subSubStartRow = j;
                                     StartSubSearch:
-                                        ;
-                                        //for (int ssr = subSubStartRow, loopTo3 = objData.Rows.Count - 1; ssr <= loopTo3; ssr++)
+                                        
+                                        
                                         for (int ssr = subSubStartRow; ssr <= objData.Rows.Count - 1; ssr++)
                                         
                                         {
@@ -879,7 +885,6 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                     }
 
                 MoveForward:
-                    ;
                     depthCounter += 1;
                 }
             }

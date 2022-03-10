@@ -159,7 +159,7 @@ export function getWidgetList() {
       { id: "customDrlgSummaryViewer", name: "Custom Drilling Summary", isFav: false },
       { id: "DrlgStandPlot", name: "Drilling Stand Plot", isFav: false },
       { id: "TripReport", name: "Trip Report", isFav: false },
-      { id: "BroomstickPlot", name: "Broomstick Document", isFav: false },
+      // { id: "BroomstickPlot", name: "Broomstick Document", isFav: false },
     ];
 
     return WidgetList;
@@ -219,9 +219,9 @@ export function launchWidget(interfaceID: string, wellID: string) {
       history.push("TripReport/" + wellID);
     }
 
-    if (interfaceID === "BroomstickPlot") {
-      history.push("BroomstickDocs/" + wellID);
-    }
+    // if (interfaceID === "BroomstickPlot") {
+    //   history.push("BroomstickDocs/" + wellID);
+    // }
 
   } catch (error) { }
 }

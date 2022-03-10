@@ -2201,17 +2201,6 @@ export default class DrlgStandPlot extends React.Component {
         }
     };
 
-    scale_handleSelected = (item: any) => {
-        try {
-
-            alert("test");
-
-
-
-        } catch (error) {
-
-        }
-    }
 
 
 
