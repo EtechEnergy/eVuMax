@@ -27,7 +27,7 @@ interface IProps {
 export default class DepthLogChannelInLineEditor extends Component<IProps> {
     constructor(props: any) {
         super(props);
-        console.log(this.props.dataItem);
+      //  console.log(this.props.dataItem);
 
     }
 
@@ -88,7 +88,7 @@ export default class DepthLogChannelInLineEditor extends Component<IProps> {
     }
 
     render() {
-        console.log(this.props.unitList);
+     //   console.log(this.props.unitList);
         return (
             <>
 

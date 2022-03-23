@@ -320,6 +320,10 @@ class TripConnSummary extends Component {
                     $("#loader").hide();
 
                     this.objSummaryData = JSON.parse(res.data.Response);
+                //    console.log(this.objSummaryData);
+                    
+                    
+
                     this.setData();
                 })
                 .catch((error) => {

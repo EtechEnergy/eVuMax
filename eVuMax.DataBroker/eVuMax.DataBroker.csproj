@@ -77,6 +77,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdvKPI\AdvKPI.cs" />
+    <Compile Include="AdvKPI\AdvKPIBroker.cs" />
+    <Compile Include="AdvKPI\AdvKPIManager.cs" />
+    <Compile Include="AdvKPI\AdvKPISettings.cs" />
+    <Compile Include="AdvKPI\ProcessAdvKPI.cs" />
     <Compile Include="BrokerFactory.cs" />
     <Compile Include="Broker\BrokerParameter.cs" />
     <Compile Include="Broker\BrokerRequest.cs" />

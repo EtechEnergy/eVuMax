@@ -91,7 +91,8 @@ class DataSelector extends Component<IProps> {
     try {
       //Prepare chart object
       //initialize chart
-
+      
+      
       this.objChart = new Chart(this, "SelectorChart");
       this.objChart.ContainerId = "selector_chart";
       this.objChart.isZoomByRect = false; //No need to zoom
@@ -760,9 +761,9 @@ class DataSelector extends Component<IProps> {
 
       //alert(this.__parentRef.objDataSelector.fromDate + "  " +  this.__parentRef.objDataSelector.toDate);
       
-      console.log("xxx" , this.__parentRef);
+      //console.log("xxx" , this.__parentRef);
       // alert(this.__parentRef.objDataSelector.isApplyDateRange + "");
-      debugger;
+      
       //set data selector - isApplyDateRange only used to handle Custom Drilling summary
       if ((this.__parentRef.objDataSelector.fromDate != this.__parentRef.objDataSelector.toDate) && this.__parentRef.objDataSelector.isApplyDateRange){
         this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
@@ -821,7 +822,7 @@ class DataSelector extends Component<IProps> {
         .then((res) => {
           const objData = JSON.parse(res.data.Response);
           this.setData(objData);
-          console.log("DATA SELECTOR DATA -->" , objData);
+          //console.log("DATA SELECTOR DATA -->" , objData);
           Util.StatusSuccess("Data successfully retrived DataSelector ");
           Util.StatusReady();
 

@@ -618,6 +618,7 @@ export class ROPSummaryPlot extends Component {
       }
       //
 
+      
       this.objChart_Rotary.drawLegend();
       this.objChart_Rotary.reDraw();
     } catch (error) { }

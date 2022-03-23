@@ -3,7 +3,7 @@ using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Data;
-
+using System.Diagnostics;
 using VuMaxDR.Common;
 using VuMaxDR.Data;
 using VuMaxDR.Data.Objects;
@@ -26,7 +26,9 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             // 'Dim objFile As System.IO.StreamWriter
 
             private TimeLog __localTimeLog;
-            //private DataService objLocalConn;
+        //private DataService objLocalConn;
+        private DataTable objData = new DataTable();
+
 
             #region Algorithm Settings
             public bool RUN_DRLG_CHECK = true;
@@ -94,8 +96,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
             try
             {
 
-     
 
+                Debug.WriteLine("Process Point Start-->" + DateTime.Now);
                 objRigState = rigState.loadWellRigStateSetup(ref objRequest.objDataService, WellID); //Nishant
 
               
@@ -147,10 +149,11 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 
                 // 'Add 1 day to the toDate
                 toDate = toDate.AddDays(1d);
-                DataTable objData = objRequest.objDataService.getTable("SELECT DATETIME,DEPTH,HDTH,HKLD,RIG_STATE,TIME_DURATION FROM " + __dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL ORDER BY DATETIME DESC");
+                DataTable objDatalocal = objRequest.objDataService.getTable("SELECT DATETIME,DEPTH,HDTH,HKLD,RIG_STATE,TIME_DURATION FROM " + __dataTableName + " WHERE DATETIME>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL ORDER BY DATETIME DESC");
+                objData = objDatalocal;
 
-                
-                
+
+                var watch = new System.Diagnostics.Stopwatch();
                 int startRow = -1;
 
                 // 'Find the row no. where to start
@@ -163,6 +166,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         break;
                     }
                 }
+                
 
                 if (startRow >= 0)
                 {
@@ -171,13 +175,14 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                     try
                     {
 
-                    
-                    
-                    for (int i = startRow; i <= objData.Rows.Count - 1; i++)
+                     
+
+                        for (int i = startRow; i <= objData.Rows.Count - 1; i++)
                     {
 
-                        
-                        int lnRigState = Convert.ToInt32(objData.Rows[i]["RIG_STATE"]);
+                            Debug.WriteLine("Detacted point at i-->" + i.ToString() + " - " + DateTime.Now);
+
+                            int lnRigState = Convert.ToInt32(objData.Rows[i]["RIG_STATE"]);
                         double lnHkld = Convert.ToDouble(objData.Rows[i]["HKLD"]);
                         DateTime dateTime = Convert.ToDateTime(objData.Rows[i]["DATETIME"]);
                         double lnDepth = Convert.ToDouble( objData.Rows[i]["DEPTH"]);
@@ -189,18 +194,25 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                             
 
                            int forwardPointer = i;
-                            if (dateTime <= DateTime.Parse("22-Dec-2016 12:50:15"))
-                            {
-                                bool halt = true;
-                            }
+                                //if (dateTime <= DateTime.Parse("22-Dec-2016 12:50:15"))
+                                //{
+                                //    bool halt = true;
+                                //}
 
-                            if (Math.Round(lnDepth, 0) == 675d)
-                            {
-                                bool halt1 = true;
-                            }
-                         
-                            detectAndAddPoints(objData, i, ref forwardPointer);
-                            i = forwardPointer;
+                                //if (Math.Round(lnDepth, 0) == 675d)
+                                //{
+                                //    bool halt1 = true;
+                                //}
+
+                                watch = new System.Diagnostics.Stopwatch();
+                                watch.Start();
+                                //detectAndAddPoints(objData, i, ref forwardPointer);
+                              
+
+                                detectAndAddPoints(i, ref forwardPointer);
+                                watch.Stop();
+                                objLogger.LogMessage(watch.ElapsedMilliseconds.ToString());
+                                i = forwardPointer;
                         }
                     }
 
@@ -230,7 +242,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 // '************** Process these connections for other information ************************''
 
                 ////New Logic for ProcessConnecion coz ref cannot be used in for Each Loop
-                var watch = new System.Diagnostics.Stopwatch();
+                 watch = new System.Diagnostics.Stopwatch();
                 watch.Start();
                 processConnection(ref connectionPoints, objRequest.objDataService);
                 watch.Stop();
@@ -267,7 +279,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
         }
 
 
-        public void detectAndAddPoints(DataTable objData, int currentRowIndex, ref int forwardPointer)
+        public void detectAndAddPoints(int currentRowIndex, ref int forwardPointer)
         {
             try
             {
@@ -327,8 +339,8 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                         int lnBreakRow = i;
                         //for (int j = i, loopTo1 = objData.Rows.Count - 1; j <= loopTo1; j++)
                         for (int j = i; j < objData.Rows.Count - 1; j++)
-                        
                         {
+                         //   Debug.WriteLine("Row Processed - " + objData.Rows.Count.ToString() + " -->- " + j.ToString());
                             int lnSubRigState = Convert.ToInt32(objData.Rows[j]["RIG_STATE"]);
                             DateTime lnSubDate = Convert.ToDateTime( objData.Rows[j]["DATETIME"]);
                             
@@ -356,12 +368,15 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                             
                             isConstantlyDrilling = true;
                         }
-                    // '####################################''
+                        // '####################################''
 
 
 
-                    //StartOver:
-             
+                        //StartOver:
+                        Console.WriteLine("d: " + new DateTime().ToString("F"));
+
+                        //Debug.WriteLine("Current Datetime  - " + DateTime.Now);
+
                         if (!isConstantlyDrilling)
                         {
                             bool subDrillingRowFound = false;
@@ -380,38 +395,91 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                                     if (RUN_DRLG_CHECK)
                                     {
                                         int subSubStartRow = j;
-                                    StartSubSearch:
-                                        
-                                        
-                                        for (int ssr = subSubStartRow; ssr <= objData.Rows.Count - 1; ssr++)
-                                        
-                                        {
-                                            if (ssr == objData.Rows.Count - 1)
-                                            {
-                                                break;
-                                            }
+                                    //Changes done on 10-March-2022
+                                 //   StartSubSearch:
 
-                                            int lnsSubRigState = Convert.ToInt32(objData.Rows[ssr]["RIG_STATE"]);
-                                            DateTime lnsSubDate = Convert.ToDateTime( objData.Rows[ssr]["DATETIME"]);
-                                            if (lnsSubRigState == 0 | lnsSubRigState == 1 | lnsSubRigState == 19)
+
+                                        //for (int ssr = subSubStartRow; ssr <= objData.Rows.Count - 1; ssr++)
+
+                                        //{
+                                        //    if (ssr == objData.Rows.Count - 1)
+                                        //    {
+                                        //        break;
+                                        //    }
+
+                                        //    int lnsSubRigState = Convert.ToInt32(objData.Rows[ssr]["RIG_STATE"]);
+                                        //    DateTime lnsSubDate = Convert.ToDateTime( objData.Rows[ssr]["DATETIME"]);
+                                        //    if (lnsSubRigState == 0 | lnsSubRigState == 1 | lnsSubRigState == 19)
+                                        //    {
+                                        //        if (Math.Abs(DateAndTime.DateDiff(DateInterval.Second, lnsSubDate, lnSubDate)) >= 60L)
+                                        //        {
+                                        //            subDrillingRowFound = true;
+                                        //            drillingEndTime = Convert.ToDateTime( objData.Rows[ssr]["DATETIME"]);
+                                        //            drillingEndRowIndex = ssr;
+                                        //            drillingEndHkld = Convert.ToDouble( objData.Rows[ssr]["HKLD"]);
+                                        //            isDrillingFound = true;
+                                        //            goto Continue1;
+                                        //            break;
+                                        //        }
+                                        //    }
+                                        //    else
+                                        //    {
+                                        //        subSubStartRow = ssr + 1;
+                                        //        goto StartSubSearch;
+                                        //    }
+                                        //}
+
+                                        bool StartSubSearch = false;
+                                        bool Continue1 = false;
+
+                                        while ((StartSubSearch==false) && (Continue1 = false))
+                                        {
+                                            for (int ssr = subSubStartRow; ssr <= objData.Rows.Count - 1; ssr++)
+
                                             {
-                                                if (Math.Abs(DateAndTime.DateDiff(DateInterval.Second, lnsSubDate, lnSubDate)) >= 60L)
+                                                if (ssr == objData.Rows.Count - 1)
                                                 {
-                                                    subDrillingRowFound = true;
-                                                    drillingEndTime = Convert.ToDateTime( objData.Rows[ssr]["DATETIME"]);
-                                                    drillingEndRowIndex = ssr;
-                                                    drillingEndHkld = Convert.ToDouble( objData.Rows[ssr]["HKLD"]);
-                                                    isDrillingFound = true;
-                                                    goto Continue1;
+                                                    StartSubSearch = true;
                                                     break;
                                                 }
+
+                                                int lnsSubRigState = Convert.ToInt32(objData.Rows[ssr]["RIG_STATE"]);
+                                                DateTime lnsSubDate = Convert.ToDateTime(objData.Rows[ssr]["DATETIME"]);
+                                                if (lnsSubRigState == 0 | lnsSubRigState == 1 | lnsSubRigState == 19)
+                                                {
+                                                    if (Math.Abs(DateAndTime.DateDiff(DateInterval.Second, lnsSubDate, lnSubDate)) >= 60L)
+                                                    {
+                                                        subDrillingRowFound = true;
+                                                        drillingEndTime = Convert.ToDateTime(objData.Rows[ssr]["DATETIME"]);
+                                                        drillingEndRowIndex = ssr;
+                                                        drillingEndHkld = Convert.ToDouble(objData.Rows[ssr]["HKLD"]);
+                                                        isDrillingFound = true;
+                                                        //           goto Continue1;
+                                                        Continue1 = true;
+                                                        break;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    subSubStartRow = ssr + 1;
+                                                    break;
+                                                    //goto StartSubSearch;
+
+                                                }
+
                                             }
-                                            else
-                                            {
-                                                subSubStartRow = ssr + 1;
-                                                goto StartSubSearch;
-                                            }
+                                            
+
                                         }
+
+                                        
+                                        //=============================================================================
+
+
+
+
+
+
                                     }
                                     else
                                     {
@@ -420,13 +488,13 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                                         drillingEndRowIndex = j;
                                         drillingEndHkld = Convert.ToDouble( objData.Rows[j]["HKLD"]);
                                         isDrillingFound = true;
-                                        goto Continue1;
+                        //                goto Continue1;
                                         break;
                                     }
                                 }
                             }
 
-                        Continue1:
+                      //  Continue1:
                             
                             // '### Continuous Drilling Check ######''
                             if (!RUN_DRLG_CHECK)

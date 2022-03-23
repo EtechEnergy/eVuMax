@@ -427,6 +427,8 @@ export class Axis {
         y = this.IRelativePos;
       }
       
+      
+
       this.ChartRef.SVGRef.append("g")
         .attr("transform", "translate(" + x + "," + y + ")")
         .attr("id", this.Id)
@@ -561,10 +563,10 @@ export class Axis {
 
       this.AxisRef.tickValues(ticks);
     }
-
+    debugger ;
     //Add Title to the axis
     if (this.Position == axisPosition.left) {
-
+     
       let titleX = 0;
       let titleY = 0;
       
@@ -919,7 +921,7 @@ export class Axis {
         this.AxisRef.tickFormat(d3.format(this.NumericFormat));
       }
     }
-
+debugger;
     this.ChartRef.SVGRef.select("#" + this.Id).call(this.AxisRef);
 
     let dashArray: string = "0";
@@ -1019,7 +1021,7 @@ export class Axis {
     //set the x & y position to start the axis drawing
     let x = 0;
     let y = 0;
-    
+    debugger;
     if (
       this.Position == axisPosition.left ||
       this.Position == axisPosition.right
@@ -1042,6 +1044,7 @@ export class Axis {
       this.Position == axisPosition.left ||
       this.Position == axisPosition.right
     ) {
+      debugger;
       this.ChartRef.SVGRef.select("#" + this.Id)
         .attr("transform", "translate(" + x + "," + "0" + ")")
         .call(this.AxisRef);
@@ -1158,7 +1161,9 @@ export class Axis {
             "</tspan>"
           );
         }
-      } catch (error) { }
+      } catch (error) {
+        //alert(error);
+       }
     } else {
       try {
 
@@ -1293,7 +1298,7 @@ export class Axis {
   updateAxis = () => {
     try {
       
-
+       ;
       if (!this.__selectorEventsAttached) {
         let selectorElement = $("#" + this.ChartRef.Id + "__selector_rect");
 
@@ -1398,10 +1403,10 @@ export class Axis {
       }
 
       this.ScaleRef.range([this.StartPos, this.EndPos]);
-
+       ;
       if (!this.IsDateTime && !this.bandScale) {
-
-        
+    
+        debugger;
         let objAxisRange: AxisRange = this.getAxisRange();
         this.MaxWidthLabel = objAxisRange.MaxWidthLabel; //prath 14-08-2021 (for Multiline label)
 
@@ -1456,7 +1461,9 @@ export class Axis {
       //=================================
       this.formatAxis();
 
-    } catch (error) { }
+    } catch (error) {
+      //alert("Line 1463 " + error);
+     }
   };
 
   //This is special function which is used to determine max and min of axis in case of stacked bar chart
@@ -1709,7 +1716,7 @@ export class Axis {
   //Returns range of data / scale
   getAxisRange = (): any => {
     try {
-
+       ;
       if (!this.AutoScale) {
         if (this.IsDateTime) {
           let objRange = new AxisDateRange();

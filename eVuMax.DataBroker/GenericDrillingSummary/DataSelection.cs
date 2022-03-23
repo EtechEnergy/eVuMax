@@ -163,8 +163,10 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
         {
             this.WellID = paramWellID;
             this.objRequest = paramRequest;
-            this.objWell = VuMaxDR.Data.Objects.Well.loadObject(ref objRequest.objDataService, paramWellID, ref LastError);
-            
+            //Change by Prathmesh 15-March-2022 (As discussed with Nitin)
+            //   this.objWell = VuMaxDR.Data.Objects.Well.loadObject(ref objRequest.objDataService, paramWellID, ref LastError);
+            this.objWell = VuMaxDR.Data.Objects.Well.loadWellStructure(ref objRequest.objDataService, paramWellID);
+
 
         }
 

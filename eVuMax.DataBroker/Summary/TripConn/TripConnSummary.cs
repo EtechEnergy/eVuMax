@@ -512,14 +512,14 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
 
-                        subQuery += "OR (DATETIME>'" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<'" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "') ";
+                        subQuery += "OR (DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "') ";
 
                     }
 
                     if (subQuery.Trim() != "")
                     {
                         subQuery = subQuery.Substring(2);
-                        strSQL = strSQL + " AND (" + subQuery + ")";
+                        strSQL = strSQL + " AND (" + subQuery + ") order by rig_state";  //order by added by prath on 15-March-2022 
                     }
 
 
@@ -585,7 +585,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                             rigStateTimes.Add(lnKey, 0);
                         }
 
-                        strSQL = "SELECT TIME_DURATION,RIG_STATE FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>'" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<'" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL";
+                        strSQL = "SELECT TIME_DURATION,RIG_STATE FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL";
 
                         DataTable connRigStates = paramRequest.objDataService.getTable(strSQL);
 

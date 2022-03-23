@@ -28,14 +28,11 @@ import BrokerParameter from "../../../broker/BrokerParameter";
 import axios from "axios";
 
 import {
-
   NumericTextBox,
   Checkbox,
   ColorPicker,
   Switch,
-
 } from "@progress/kendo-react-inputs";
-
 
 
 import {
@@ -66,8 +63,6 @@ import { ClientLogger } from "../../ClientLogger/ClientLogger";
 import NotifyMe from 'react-notification-timeline';
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
 import * as utilFunctions from "../../../utilFunctions/utilFunctions";
-
-
 
 
 let _gMod = new GlobalMod();

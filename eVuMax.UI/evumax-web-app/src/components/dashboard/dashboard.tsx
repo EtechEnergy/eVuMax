@@ -180,6 +180,9 @@ export class Dashboard extends React.Component<Props> {
           );
         }
 
+        
+
+
 
       });
     }
@@ -409,6 +412,18 @@ export class Dashboard extends React.Component<Props> {
                   <FontAwesomeIcon icon={faDownload} />
                 </NavLink>
               </li>
+
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  exact
+                  to="/dashboard/AdvKPI"
+                >
+                  <FontAwesomeIcon icon={faKey} />
+                  
+                </NavLink>
+              </li>
+              
 
               {/* Nishant 27-11-2020 Witsml Explorer */}
               {/* <li className="nav-item">

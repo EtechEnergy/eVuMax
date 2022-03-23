@@ -142,7 +142,7 @@ export default class DrlgStandPlot extends React.Component {
             let isRealtimeRunning = sessionStorage.getItem("realTimeDrlgStandPlot"); //set in toggel realtime switch change event
             if (isRealtimeRunning == "true") {
                 await this.setState({ realTime: !this.state.realTime });
-                this.intervalID = setInterval(this.loadDrlgStandPlotData.bind(this), 15000);
+                this.intervalID = setInterval(this.loadDrlgStandPlotData.bind(this), 25000);
             }
             //==============
 
@@ -204,7 +204,7 @@ export default class DrlgStandPlot extends React.Component {
 
         if (this.state.realTime) {
 
-            this.intervalID = setInterval(this.loadDrlgStandPlotData.bind(this), 15000);
+            this.intervalID = setInterval(this.loadDrlgStandPlotData.bind(this), 25000);
         } else {
 
             this.AxiosSource.cancel();
@@ -269,7 +269,7 @@ export default class DrlgStandPlot extends React.Component {
                 objDataSelector: objDataSelector_
             });
 
-            this.intervalID = setInterval(this.loadDrlgStandPlotData.bind(this), 15000);
+            this.intervalID = setInterval(this.loadDrlgStandPlotData.bind(this), 25000);
         } else {
 
             this.AxiosSource.cancel();
@@ -613,7 +613,7 @@ export default class DrlgStandPlot extends React.Component {
     loadDrlgStandPlotData = async () => {
         try {
 
-            alert("loadDrlgStandPlotData called");
+            
             Util.StatusInfo("Getting data from the server, Please wait");
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Summary.Manager";
@@ -762,9 +762,10 @@ export default class DrlgStandPlot extends React.Component {
                         //         "OffsetSlideROP": 0
                         //       },
 
+                        
                         let objDataSelector_: DataSelector_ = new DataSelector_();
                         objDataSelector_.wellID = objData_.WellID;
-                        objDataSelector_.refreshHrs =objData_.LastHrs; // objData_.objUserSettings.LastHrs;
+                        objDataSelector_.refreshHrs =objData_.objUserSettings.LastHrs; // objData_.objUserSettings.LastHrs;
                         objDataSelector_.fromDate = objData_.fromDate; // objData_.objUserSettings.FromDate;
                         objDataSelector_.toDate = objData_.toDate; // objData_.objUserSettings.ToDate;
 
@@ -834,8 +835,8 @@ export default class DrlgStandPlot extends React.Component {
 
 
                         });
-                        console.log(objDataSelector_);
-                        console.log(objData_)
+                        // console.log(objDataSelector_);
+                        // console.log(objData_);
 
                         this.refreshChart();
                     } else {

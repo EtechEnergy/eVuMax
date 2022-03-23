@@ -31,7 +31,7 @@ export default class DataSelectorInfo extends Component<IProps>  {
      if (!this.props.objDataSelector.needForceReload ||this.props.objDataSelector.fromDate==null  ||this.props.objDataSelector.toDate==null)
      {
          
-         console.log(this.props.objDataSelector.needForceReload);
+       //  console.log(this.props.objDataSelector.needForceReload);
          return;
      }
 

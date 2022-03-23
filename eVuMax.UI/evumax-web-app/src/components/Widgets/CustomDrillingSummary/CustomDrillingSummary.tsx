@@ -10,7 +10,7 @@ import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 
 import { Axis, axisPosition } from "../../../eVuMaxObjects/Chart/Axis";
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
-import { debug } from "console";
+
 import DataSelector from "../../Common/DataSelector";
 import DataSelector_ from "../../Common/DataSelector_";
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
@@ -20,7 +20,7 @@ import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 import * as d3 from "d3";
 import { Checkbox, Switch } from "@progress/kendo-react-inputs";
 import $ from "jquery";
-import { axisLeft } from "d3";
+
 
 let _gMod = new GlobalMod();
 
@@ -259,7 +259,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
       this.objChart = new Chart(this, "chart1" + Number(Math.random() * 1000).toFixed(0));
       this.objChart.ContainerId = "SummaryChart" + this.randNumber;
-
+      
 
 
       this.objChart.onAfterSeriesDraw.subscribe((e, i) => {
@@ -300,13 +300,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
       this.objChart.rightAxis().ShowLabels = false;
 
 
-      // objChart.MarginLeft = 10;
-      // objChart.MarginBottom = 10;
-      // objChart.MarginTop = 0;
-      // objChart.MarginRight = 100;
-
+      
       this.objChart.initialize();
-
+      this.objChart.drawLegend();
       this.objChart.reDraw();
 
     } catch (error) {
@@ -425,8 +421,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
     try {
 
 
-
+      
       this.initializeChart();
+      this.objChart.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
 
       //Generate Plot using state objGDSummary object
       // console.log("objData", objData);
@@ -452,6 +449,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
         this.objChart.MarginBottom = 10;
         this.objChart.MarginTop = 10;
         this.objChart.MarginRight = 90;
+        
 
         let axisList = Object.values(this.objData.Axis);
         axisList = this.getOrdersAxisListByPosition(0);//Left
@@ -480,7 +478,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objAxis.Title = objSummaryAxis.AxisTitle;
 
           //alert(objAxis.Id +  " Auto Scale- " + objAxis.AutoScale + " Min -"  + objSummaryAxis.MinValue + " Max -"+ objSummaryAxis.MaxValue); 
-          //FUCK
+          
           objAxis.ShowLabels = true;
           objAxis.ShowTitle = true;
           objAxis.EndPos = objSummaryAxis.EndPosition;
@@ -838,7 +836,8 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
         this.objChart.initialize();
 
-        
+
+        this.objChart.drawLegend();
         this.objChart.reDraw();
 
       }
@@ -1581,8 +1580,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
             marginLeft: "10px",
           }}
         ></div>
+        
         <div
-          id="SummaryChart_legend"
+          id={"SummaryChart"+ this.randNumber+"_legend"}
           style={{
             textAlign: "center",
             height: "40px",

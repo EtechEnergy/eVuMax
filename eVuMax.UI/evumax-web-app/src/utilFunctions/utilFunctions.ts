@@ -1,4 +1,5 @@
 import DropDownBase from "@progress/kendo-react-dropdowns/dist/npm/common/DropDownBase";
+import { color } from "d3";
 import history from "../history/history";
 
 export function CopyObject(paramObject: any) {
@@ -56,6 +57,7 @@ export function DictionaryToMap(paramDict: any, paramNewMap: any) {
 
 //Function to convert hex format to a rgb color
 export function rgb2hex(rgb: any) {
+  
   
   rgb = rgb.match(
     /^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i
@@ -223,8 +225,10 @@ export function launchWidget(interfaceID: string, wellID: string) {
     //   history.push("BroomstickDocs/" + wellID);
     // }
 
+  
   } catch (error) { }
 }
+
 
 export function parseJSON(pString: string) {
   try {
@@ -290,4 +294,27 @@ export function intToColor(num) {
       r = (num & 0xFF0000) >>> 16,
       a = ( (num & 0xFF000000) >>> 24 ) / 255 ;
   return "rgba(" + [r, g, b, a].join(",") + ")";
+}
+
+export function ConvertRGBtoHex(RGB:string) {
+  let colorArr = RGB.split(",");
+
+  let red, green, blue;
+  red = colorArr[0];
+  green = colorArr[1];
+  blue = colorArr[2];
+  return "#" + ColorToHex(red) + ColorToHex(green) + ColorToHex(blue);
+}
+
+function ColorToHex(color) {
+  var hexadecimal = color.toString(16);
+  return hexadecimal.length == 1 ? "0" + hexadecimal : hexadecimal;
+}
+
+export function removeUnderScoreFromID(pValue: string){
+  try {
+    return pValue.replace(/[&\/\\#,+()$~%.'":*?<>{}_]/g, '');
+  } catch (error) {
+    
+  }
 }

@@ -85,6 +85,16 @@ namespace eVuMax.DataBroker
 					GenericDrillingSummary.gdSummaryBroker objBroker = new GenericDrillingSummary.gdSummaryBroker();
 					return objBroker;
 				}
+
+				//
+				if (paramRequest.Module == Global.Mod_AdvKPI)
+				{
+
+					AdvKPI_.AdvKPIBroker objBroker = new AdvKPI_.AdvKPIBroker();
+					return objBroker;
+				}
+
+
 				return null;
 			}
 			catch (Exception)

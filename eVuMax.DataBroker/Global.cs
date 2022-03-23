@@ -20,6 +20,8 @@ namespace eVuMax.DataBroker
         public const string Mod_Summary_Manager = "Summary.Manager";
         public const string Mod_DataObject_Manager = "DataObject.Manager";
         public const string Mod_Broomstick_Manager = "Broomstick.Manager";
+        public const string Mod_AdvKPI = "AdvKPI.Manager";  //11-March-2022 Prath
+
 
         //Nishant
         public const string Mod_GenericDrillingSummary_Manager = "GenericDrillingSummary.Manager";
@@ -45,7 +47,8 @@ namespace eVuMax.DataBroker
         public const string Brk_Authentication = "Authentication";
         public const string Brk_TimeData = "TimeData";
         public const string Common_Functions = "Common.Functions";//Nitin 16-10-2020
-        
+
+        public const string Brk_AdvKPI = "AdvKPI";  //11-March-2022 Prath
 
         #endregion
 

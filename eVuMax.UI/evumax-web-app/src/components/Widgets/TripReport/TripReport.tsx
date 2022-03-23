@@ -1297,7 +1297,7 @@ export default class DrlgStandPlot extends React.Component {
                         return;
                     }
                     let objData_: any = JSON.parse(res.data.Response);
-                    console.log("PlotData", objData_);
+              //      console.log("PlotData", objData_);
 
 
                     if (objData_ != "" || objData_ != undefined) {
@@ -1338,14 +1338,14 @@ export default class DrlgStandPlot extends React.Component {
                             });
                         }
 
-                        console.log("objUserSettings", this.state.objUserSettings);
+                      //  console.log("objUserSettings", this.state.objUserSettings);
                         
                         this.setState({
                             objPlotData: objData_,
                             objGridData: objData_.grdData,
                         });
 
-                        console.log("prath load trip report - " +  objData_.grdData );
+                     //   console.log("prath load trip report - " +  objData_.grdData );
                         this.refreshChart();
                     } else {
                         warnings += "No Data Available";
@@ -1612,7 +1612,7 @@ export default class DrlgStandPlot extends React.Component {
                         return;
                     }
                     let objData_: any = JSON.parse(res.data.Response);
-                    console.log("SingleTripReportData", objData_);
+             //       console.log("SingleTripReportData", objData_);
 
 
                     if (objData_ != "" || objData_ != undefined) {
@@ -2177,7 +2177,7 @@ export default class DrlgStandPlot extends React.Component {
         try {
 
 
-            console.log("item", props.dataItem);
+        //    console.log("item", props.dataItem);
             let item = props.dataItem;
 
             let classNames = item.selected
@@ -2266,7 +2266,7 @@ export default class DrlgStandPlot extends React.Component {
 
                             <button className="btn-custom btn-custom-primary ml-1" type="button" onClick={() => {
 
-                                console.log("grdTags", this.state.grdTags);
+                           //     console.log("grdTags", this.state.grdTags);
                                 this.loadSelectionTagList();
                             }} > Trips Selection</button>
 

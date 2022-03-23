@@ -829,7 +829,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
 
 
-                        subQuery += "OR (DATETIME>'" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<'" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "') ";
+                        subQuery += "OR (DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "') ";
 
                     }
 
@@ -903,7 +903,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                             rigStateTimes.Add(lnKey, 0);
                         }
 
-                        strSQL = "SELECT TIME_DURATION,RIG_STATE FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>'" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<'" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL";
+                        strSQL = "SELECT TIME_DURATION,RIG_STATE FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL";
 
                         DataTable connRigStates = paramRequest.objDataService.getTable(strSQL);
 

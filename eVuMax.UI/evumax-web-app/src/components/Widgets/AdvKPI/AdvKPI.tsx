@@ -1,0 +1,1349 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChartLine, faFilter } from "@fortawesome/free-solid-svg-icons";
+import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
+import React, { Component } from "react";
+import { Button, Dialog, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
+
+import { Window } from "@progress/kendo-react-dialogs";
+import BrokerRequest from "../../../broker/BrokerRequest";
+import BrokerParameter from "../../../broker/BrokerParameter";
+import axios from "axios";
+import GlobalMod from "../../../objects/global";
+import { Util } from "../../../Models/eVuMax";
+import NotifyMe from 'react-notification-timeline';
+
+import { Checkbox } from "@progress/kendo-react-inputs";
+import { Chart, curveStyle, zoomOnAxies } from "../../../eVuMaxObjects/Chart/Chart";
+import { Axis, axisPosition } from "../../../eVuMaxObjects/Chart/Axis";
+import { DataSeries, dataSeriesType } from "../../../eVuMaxObjects/Chart/DataSeries";
+import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
+import $ from "jquery";
+
+import * as utilFunc from "../../../utilFunctions/utilFunctions";
+import { confirmAlert } from "react-confirm-alert";
+let _gMod = new GlobalMod();
+
+
+export default class AdvKPI extends Component {
+    //Cancel all Axios Request
+    state = {
+        panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
+        grdWells: [],
+        grdProfile: [],
+        grdComposite: [],
+        runReport: false,
+        warningMsg: [],
+        selectedTab: 0,
+        currentProfileID: "",
+        //showChartDialog: false,
+        showCrossHair: false
+    };
+
+    intervalID: NodeJS.Timeout | undefined;
+    AxiosSource = axios.CancelToken.source();
+    AxiosConfig = { cancelToken: this.AxiosSource.token };
+    objChart: Chart;
+    objData: any = "";
+    objAxisList: any = [];
+    topAxisCount: number = 0;
+
+    componentDidMount() {
+        try {
+
+            this.loadWorkSpace();
+
+        } catch (error) {
+
+        }
+    }
+
+    loadGridData = (objData: any) => {
+        try {
+
+            let wellList = Object.values(objData.arrWells);
+            let newWellList: any = [];
+            for (let index = 0; index < wellList.length; index++) {
+                const objItem: any = wellList[index];
+                let objWell: any = objItem.objWell;
+
+                newWellList.push({ selected1: false, Selected: objItem.Selected, WellID: objWell.ObjectID, name: objWell.name, RigName: objWell.RigName, operatorName: objWell.operatorName, county: objWell.county, field: objWell.field, district: objWell.district, country: objWell.country });
+
+
+            }
+
+
+            this.setState({
+                grdComposite: objData.grdComposite,
+                grdProfile: objData.grdProfile,
+                grdWells: newWellList
+            });
+            console.log("grdWell", this.state.grdWells);
+
+        } catch (error) {
+
+        }
+    }
+
+    initializeChart = () => {
+        try {
+
+            this.objChart = new Chart(this, "AdvKPI");
+            this.objChart.ContainerId = "AdvKPIChart";
+
+
+            this.objChart.onAfterSeriesDraw.subscribe((e, i) => {
+                //this.onAfterSeriesDraw(e, i);
+            });
+
+            this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
+                //this.onBeforeSeriesDraw(e, i);
+            });
+
+
+            this.objChart.DataSeries.clear();
+            this.objChart.Axes.clear();
+            this.objChart.createDefaultAxes();
+            this.objChart.updateChart();
+
+            this.objChart.leftAxis().AutoScale = true;
+            this.objChart.leftAxis().Inverted = false;
+            this.objChart.leftAxis().ShowLabels = true;
+            this.objChart.leftAxis().ShowTitle = true;
+            this.objChart.leftAxis().Title = "";
+            this.objChart.leftAxis().Visible = true;
+
+            this.objChart.bottomAxis().AutoScale = true;
+            this.objChart.bottomAxis().IsDateTime = false;
+            this.objChart.bottomAxis().bandScale = false; //wip
+            this.objChart.bottomAxis().ShowLabels = true;
+            this.objChart.bottomAxis().ShowTitle = false;
+            this.objChart.bottomAxis().LabelAngel = 90;
+            this.objChart.bottomAxis().ShowSelector = false;
+            this.objChart.bottomAxis().Visible = true;
+            this.objChart.bottomAxis().PaddingMax = 0; //wip
+
+
+            this.objChart.rightAxis().Visible = false;
+            this.objChart.rightAxis().ShowLabels = false;
+
+
+
+            this.objChart.initialize();
+
+            this.objChart.reDraw();
+
+        } catch (error) {
+
+        }
+    }
+
+
+    setAxisPerColumnAndRow = (axisList: any): number => {
+        try {
+            let totalRighAxis: number = 0;
+            let totalLeftAxis: number = 0;
+            let totalTopAxis: number = 0;
+            let totalBottomAxis: number = 0;
+
+            //Set Axis Per Column
+            for (let index = 0; index < axisList.length; index++) {
+
+
+                if (axisList[index].Orientation == 0) { //// 0-Horizontal, 1-Vertical
+                    if (axisList[index].AxisPosition == 0) { //Left
+                        totalLeftAxis += 1;
+                    }
+
+                    if (axisList[index].AxisPosition == 2) { //Right
+                        totalRighAxis += 1;
+                    }
+
+                    if (axisList[index].AxisPosition == 1) { //Bottom
+                        totalBottomAxis += 1;
+                    }
+
+                    if (axisList[index].AxisPosition == 3) { //Top
+                        totalTopAxis += 1;
+                    }
+                }
+
+
+            }
+
+            //Set Axis Per Column
+            for (let index = 0; index < axisList.length; index++) {
+
+                if (axisList[index].Orientation == 1) { //// 0-Horizontal, 1-Vertical
+                    if (axisList[index].AxisPosition == 1) { //Bottom
+                        totalBottomAxis += 1;
+                    }
+
+                    if (axisList[index].AxisPosition == 3) { //Top
+                        totalTopAxis += 1;
+                    }
+
+                    if (axisList[index].AxisPosition == 0) { //Left
+                        totalLeftAxis += 1;
+                    }
+
+                    if (axisList[index].AxisPosition == 2) { //Right
+                        totalRighAxis += 1;
+                    }
+
+                }
+            }
+
+
+
+
+            if (totalRighAxis >= totalLeftAxis) {
+                this.objChart.axisPerColumn = totalRighAxis;
+            } else {
+                this.objChart.axisPerColumn = totalLeftAxis;
+            }
+
+
+            if (totalBottomAxis >= totalTopAxis) {
+                this.objChart.axisPerRow = totalBottomAxis
+            } else {
+                this.objChart.axisPerRow = totalTopAxis;
+            }
+
+
+
+
+
+
+        } catch (error) {
+            return 1;
+        }
+    }
+
+
+    getOrdersAxisListByPosition = (paramAxisPosition: number) => {
+
+        let arrAxis: any = [];
+        try {
+            let list = [];
+            for (let index = 0; index < this.objAxisList.length; index++) {
+                let objAxis = this.objAxisList[index];
+
+
+                if (objAxis.AxisPosition == paramAxisPosition) {
+                    list.push(objAxis);
+                }
+
+
+            }
+            if (list.length > 0) {
+                arrAxis = list.sort((a, b) => (a.DisplayOrder < b.DisplayOrder) ? -1 : 1);
+            }
+
+            return arrAxis;
+
+        } catch (error) {
+            return arrAxis;
+        }
+    }
+
+    plotChart = () => {
+        try {
+
+
+            this.initializeChart();
+            this.objChart.CrossHairRequire = true;
+            if (this.objData.objProfile.axesList != null || this.objData.objProfile.axesList != undefined) {
+                this.objAxisList = Object.values(this.objData.objProfile.axesList);
+
+
+
+                this.setAxisPerColumnAndRow(this.objAxisList);
+
+
+                if (this.objChart.axisPerColumn > 1) {
+                    this.objChart.ZoomOnAxies = zoomOnAxies.x;
+                }
+
+                if (this.objChart.axisPerRow > 1) {
+                    this.objChart.ZoomOnAxies = zoomOnAxies.y;
+                }
+
+                this.objChart.Axes.clear();
+                this.objChart.DataSeries.clear();
+
+                this.objChart.MarginLeft = 50;
+                this.objChart.MarginBottom = 50;
+                this.objChart.MarginTop = 10;
+                this.objChart.MarginRight = 90;
+
+                let axisList = Object.values(this.objData.objProfile.axesList);
+                axisList = this.getOrdersAxisListByPosition(0);//Left
+
+
+
+                for (let index = 0; index < axisList.length; index++) {
+
+                    let objSummaryAxis: any = axisList[index];
+
+                    //Create Custom Left Axis 
+                    let objAxis = new Axis();
+
+                    objAxis.DisplayOrder = index;
+                    objAxis.Id = "Y" + utilFunc.removeUnderScoreFromID(objSummaryAxis.AxisID);//NEED TO ADD ALPHABAT TO ID
+
+
+
+                    objAxis.Position = axisPosition.left;
+
+                    objAxis.IsDateTime = false;
+                    objAxis.bandScale = false; //as in Toolface
+                    //objAxis.AutoScale = objSummaryAxis.Automatic;
+                    objAxis.AutoScale = true;
+                    objAxis.Title = objSummaryAxis.AxisTitle;
+
+                    objAxis.ShowLabels = true;
+                    objAxis.ShowTitle = true;
+                    // objAxis.EndPos = objSummaryAxis.EndPosition;
+                    // objAxis.StartPos = objSummaryAxis.StartPosition;
+                    objAxis.GridVisible = objSummaryAxis.ShowGrid;
+                    // objAxis.LabelFont = objSummaryAxis.FontName;
+                    // objAxis.LabelFontBold = objSummaryAxis.FontBold;
+                    // objAxis.LabelFontColor = objSummaryAxis.FontColor;
+                    // objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize; 
+                    // objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+
+                    // objAxis.Min = objSummaryAxis.MinValue;
+                    // objAxis.Max = objSummaryAxis.MaxValue;
+                    objAxis.LabelAngel = 0;
+                    objAxis.ShowSelector = false;
+                    objAxis.Visible = true;
+                    objAxis.Inverted = objSummaryAxis.Inverted;
+                    objAxis.PaddingMin = 0;
+
+
+
+                    if (this.objChart.axisPerColumn > 1) {
+                        objAxis.isAllowZooming = false;
+                        objAxis.isAllowScrolling = false;
+                    }
+                    //===============
+
+                    this.objChart.Axes.set(objAxis.Id, objAxis);
+
+
+                    //*************************************************** */
+                }
+
+
+                //// 0-left, 1-bottom, 2-right, 3-top
+                axisList = this.getOrdersAxisListByPosition(2);//Right
+                for (let index = 0; index < axisList.length; index++) {
+
+                    let objSummaryAxis: any = axisList[index];
+
+
+                    let objAxis = new Axis();
+
+                    objAxis.CustomPosition = true;
+
+                    objAxis.Id = "Y" + utilFunc.removeUnderScoreFromID(objSummaryAxis.AxisID);
+                    objAxis.Position = axisPosition.right;
+                    objAxis.AutoScale = true;// objSummaryAxis.Automatic;
+                    objAxis.IsDateTime = false;
+                    objAxis.bandScale = false;
+                    objAxis.Title = objSummaryAxis.AxisTitle;
+                    objAxis.ShowLabels = true;
+                    objAxis.ShowTitle = true;
+                    // objAxis.EndPos = objSummaryAxis.EndPosition;
+                    // objAxis.StartPos = objSummaryAxis.StartPosition;
+                    // objAxis.GridVisible = objSummaryAxis.ShowGrid;
+                    // objAxis.LabelFont = objSummaryAxis.FontName;
+                    // objAxis.LabelFontBold = objSummaryAxis.FontBold;
+                    // objAxis.LabelFontColor = objSummaryAxis.FontColor;
+                    // objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize;
+                    // objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+                    // objAxis.Min = objSummaryAxis.MinValue;
+                    // objAxis.Max = objSummaryAxis.MaxValue;
+                    objAxis.LabelAngel = 0;
+                    objAxis.ShowSelector = false;
+                    objAxis.Visible = true;
+                    objAxis.Inverted = objSummaryAxis.Inverted;
+
+                    if (this.objChart.axisPerColumn > 1) {
+                        objAxis.isAllowZooming = false;
+                        objAxis.isAllowScrolling = false;
+                    }
+                    //===============
+
+                    this.objChart.Axes.set(objAxis.Id, objAxis);
+                }
+
+                //// 0-left, 1-bottom, 2-right, 3-top
+                axisList = this.getOrdersAxisListByPosition(1);//bottom
+                for (let index = 0; index < axisList.length; index++) {
+
+                    let objSummaryAxis: any = axisList[index];
+
+                    //Create Custom Bottom Axis 
+                    let objAxis = new Axis();
+
+                    objAxis.CustomPosition = true;
+                    objAxis.Id = "X" + utilFunc.removeUnderScoreFromID(objSummaryAxis.AxisID);
+                    objAxis.Position = axisPosition.bottom;
+                    objAxis.AutoScale = true;// objSummaryAxis.Automatic;
+                    objAxis.IsDateTime = false;
+
+
+
+                    objAxis.bandScale = true;
+                    objAxis.Title = objSummaryAxis.AxisTitle;
+                    objAxis.ShowLabels = true;
+                    objAxis.ShowTitle = true;
+                    // objAxis.EndPos = objSummaryAxis.EndPosition;
+                    // objAxis.StartPos = objSummaryAxis.StartPosition;
+                    // objAxis.GridVisible = objSummaryAxis.ShowGrid;
+                    // objAxis.LabelFont = objSummaryAxis.FontName;
+                    // objAxis.LabelFontBold = objSummaryAxis.FontBold;
+                    // objAxis.LabelFontColor = objSummaryAxis.FontColor;
+                    objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize;
+                    objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+                    // objAxis.Min = objSummaryAxis.MinValue;
+                    // objAxis.Max = objSummaryAxis.MaxValue;
+                    objAxis.LabelAngel = 0;
+                    objAxis.ShowSelector = false;
+                    objAxis.Visible = true;
+                    objAxis.Inverted = objSummaryAxis.Inverted;
+                    objAxis.PaddingMax = 2;
+                    this.objChart.Axes.set(objAxis.Id, objAxis);
+
+                    if (this.objChart.axisPerRow > 1) {
+                        objAxis.isAllowZooming = false;
+                        objAxis.isAllowScrolling = false;
+                    }
+                    //===============
+
+                    //*************************************************** */
+
+                }
+
+
+
+                axisList = this.getOrdersAxisListByPosition(3);//Top
+                for (let index = 0; index < axisList.length; index++) {
+
+
+                    let objSummaryAxis: any = axisList[index];
+
+                    //Create Custom Bottom Axis 
+                    let objAxis = new Axis();
+
+                    objAxis.CustomPosition = true;
+                    objAxis.Id = "X" + utilFunc.removeUnderScoreFromID(objSummaryAxis.AxisID);
+
+                    objAxis.AutoScale = objSummaryAxis.Automatic;
+                    objAxis.IsDateTime = false;
+
+                    // if (objSummaryAxis.Id == "DiffPressure") {
+                    //   objAxis.bandScale = true; //false; need to check 
+                    // } else {
+                    //   objAxis.bandScale = false;// need to check if series has Bar then True
+                    // }
+
+                    objAxis.Title = objSummaryAxis.AxisTitle;
+                    objAxis.ShowLabels = true;
+                    objAxis.ShowTitle = true;
+                    // objAxis.EndPos = objSummaryAxis.EndPosition;
+                    // objAxis.StartPos = objSummaryAxis.StartPosition;
+                    // objAxis.GridVisible = objSummaryAxis.ShowGrid;
+                    // objAxis.LabelFont = objSummaryAxis.FontName;
+                    // objAxis.LabelFontBold = objSummaryAxis.FontBold;
+                    // objAxis.LabelFontColor = objSummaryAxis.FontColor;
+                    // objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize;
+                    // objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+                    // objAxis.Min = objSummaryAxis.MinValue;
+                    // objAxis.Max = objSummaryAxis.MaxValue;
+                    objAxis.LabelAngel = 0;
+                    objAxis.ShowSelector = false;
+                    objAxis.Visible = true;
+                    objAxis.Inverted = objSummaryAxis.Inverted;
+                    this.objChart.Axes.set(objAxis.Id, objAxis);
+                    //prath on 27-Jan-2022 wip
+                    if (this.objChart.axisPerRow > 1) {
+                        objAxis.isAllowZooming = false;
+                        objAxis.isAllowScrolling = false;
+                    }
+                    //===============
+                    //*************************************************** */
+                }
+
+                this.topAxisCount = axisList.length;
+
+
+                //Load Series
+                let SeriesList = Object.values(this.objData.outputData);
+                for (let index = 0; index < SeriesList.length; index++) {
+                    let objDataSeries: any = SeriesList[index];
+
+                    let objSeries = new DataSeries();
+                    objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID);
+                    objSeries.Title = objDataSeries.LegendTitle;
+                    objSeries.XAxisId = objDataSeries.XColumn;
+                    objSeries.YAxisId = objDataSeries.YColumn;
+
+
+                    objSeries.PointSize = objDataSeries.PointWidth;
+                    let SeriesType: dataSeriesType = dataSeriesType.Bar;
+                    objSeries.Color = "rgb(" + objDataSeries.SeriesColor + ")";//Dont change position of this line
+
+
+
+                    //objSeries.ShowRoadMap = objDataSeries.ShowRoadMap;
+                    //objSeries.RoadMapTransparency = objDataSeries.RoadMapTransparency;
+                    //objSeries.RoadMapColor = objDataSeries.RoadMapColor;
+                    //objSeries.RMColor = objDataSeries.RMColor;
+                    // objSeries.RoadmapDepth = objDataSeries.roadmapDepth;
+                    // objSeries.RoadmapMin = objDataSeries.roadmapMin;
+                    // objSeries.RoadmapMax = objDataSeries.roadmapMax;
+
+
+                    // Line = 0
+                    // HorizontalArea = 1
+                    // Area = 2
+                    // Points = 3
+                    // Histogram = 4
+                    // Pie = 5
+                    // Bar = 6
+
+                    switch (objDataSeries.SeriesType) {
+                        case 0:
+                            SeriesType = dataSeriesType.Line;
+
+                            objSeries.LineWidth = objDataSeries.LineWidth == 0 ? 1 : objDataSeries.LineWidth;
+                            objSeries.ShowPointsOnLineSeries = objDataSeries.ShowPoints;
+                            // smooth = 0,
+                            // step = 1,
+                            // normal = 2,
+                            if (objDataSeries.StepLine == true) {
+                                objSeries.CurveStyle = curveStyle.step;
+                            } else {
+
+                                objSeries.CurveStyle = curveStyle.normal;
+                            }
+                            break;
+                        case 1://HorizontalArea
+                            SeriesType = dataSeriesType.HorizontalArea;
+                            objSeries.Color = objDataSeries.PointColor;
+
+                            break;
+                        case 2://Area
+                            SeriesType = dataSeriesType.Area;
+                            objSeries.Color = objDataSeries.PointColor;
+                            break;
+                        case 3://Points
+                            SeriesType = dataSeriesType.Point;
+
+                            break;
+                        case 4://Histogram
+                            SeriesType = dataSeriesType.Bar;
+                            break;
+                        case 5://Pie
+                            SeriesType = dataSeriesType.Pie;
+
+                            break;
+                        case 6://Bar
+                            SeriesType = dataSeriesType.Bar;
+                            objSeries.Stacked = false;
+                            objSeries.Color = "rgb( " + objDataSeries.SeriesColor + ")";//Dont change position of this line
+                            objSeries.ShowLabelOnSeries = true; //Parth 05-10-2020
+
+                            break;
+
+                        default:
+                            break;
+                    }
+                    objSeries.Type = SeriesType;
+
+                    objSeries.PointStyle = objDataSeries.PointStyle;
+
+
+
+                    if (SeriesType == dataSeriesType.Area || SeriesType == dataSeriesType.Point) {
+                        objSeries.Color = objDataSeries.PointColor;
+                    }
+                    else if (SeriesType == dataSeriesType.Line) {
+                        objSeries.Color = objDataSeries.LineColor;
+                    }
+
+
+                    objSeries.ShowInLegend = true;
+
+
+                    //Populate the data series with this data
+
+                    objSeries.Data.length = 0;
+                    //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
+
+                    //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+                    let xMin = 0;
+                    let xMax = 0;
+                    let yMin = 0;
+                    let yMax = 0;
+                    let autoScaleX: boolean = false;
+                    let autoScaleY: boolean = false;
+                    if (this.objChart.Axes.get(objSeries.XAxisId).AutoScale == false) {
+                        xMin = this.objChart.Axes.get(objSeries.XAxisId).Min;
+                        xMax = this.objChart.Axes.get(objSeries.XAxisId).Max;
+                        autoScaleX = false;
+                    }
+                    if (this.objChart.Axes.get(objSeries.YAxisId).AutoScale == false) {
+                        yMin = this.objChart.Axes.get(objSeries.YAxisId).Min;
+                        yMax = this.objChart.Axes.get(objSeries.YAxisId).Max;
+                        autoScaleY = false;
+                    }
+                    //==========================================
+
+
+
+                    if (objDataSeries.outputData != null || objDataSeries.outputData != undefined) {
+
+                        let SeriesData: any = Object.values(objDataSeries.outputData);
+
+
+                        for (let i = 0; i < SeriesData.length; i++) {
+                            objSeries.Name = SeriesData[i].LegendTitle;
+
+                            //prath 04-Feb-2022  (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+                            if (objSeries.Type != dataSeriesType.Bar) {
+                                if (autoScaleX == false && !(SeriesData[i].XValue >= xMin && SeriesData[i].XValue <= xMax)) {
+                                    continue;
+                                }
+
+                                if (autoScaleY == false && !(SeriesData[i].YValue >= yMin && SeriesData[i].YValue <= yMax)) {
+                                    continue;
+                                }
+                            }
+                            //========
+
+
+                            let objVal: ChartData = new ChartData();
+
+                            let objBottomAxes: Axis = new Axis();
+                            if (objSeries.Type == dataSeriesType.Bar) {
+                                objVal.x = i + 1;
+
+                                objBottomAxes = this.objChart.getAxisByID(objSeries.XAxisId);
+                            } else {
+                                objVal.x = Number(SeriesData[i].XValue);
+                            }
+
+                            objVal.y = Number(SeriesData[i].YValue);
+                            objBottomAxes.Labels.push(SeriesData[i].XLabel);
+                            objSeries.Data.push(objVal);
+
+                        }
+
+
+                        // if (objDataSeries.ColorPointsAsColumn) {
+
+                        //     this.formatSeries(objSeries, objDataSeries);  
+                        // }
+                        // if (objDataSeries.Visible) {
+
+                        this.objChart.DataSeries.set(objSeries.Id, objSeries);
+                        //    }
+
+                    }
+                }
+
+
+                this.objChart.updateChart();
+                this.objChart.reDraw();
+
+            }
+        } catch (error) {
+
+        }
+    }
+
+    formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
+        try {
+
+            if (paramDataSeries.ColorPointsAsColumn) {
+                //alert(paramSeries.Name);
+                paramSeries.ColorEach = true;
+
+                for (let index = 0; index < paramDataSeries.colorBuffer.length; index++) {
+                    paramSeries.Data[index].color = paramDataSeries.colorBuffer[index]
+                }
+
+            }
+
+
+
+        } catch (error) {
+
+        }
+    }
+    runKPIReport = (paramProfileID: string, SelectedWellList: any) => {
+
+        try {
+
+
+            SelectedWellList = SelectedWellList.substring(1, SelectedWellList.length);
+            let newPanes: any = this.state.panes;
+            newPanes[0].collapsible = true;
+            newPanes[0].collapsed = true;
+
+
+
+            let objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "AdvKPI.Manager";
+            objBrokerRequest.Broker = "AdvKPI";
+            objBrokerRequest.Function = "processAdvKPI";
+
+            let objParameter = new BrokerParameter("", "");
+
+            objParameter = new BrokerParameter("UserID", _gMod._userId);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            objParameter = new BrokerParameter("ProfileID", paramProfileID);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            objParameter = new BrokerParameter("WellList", SelectedWellList);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            this.AxiosSource = axios.CancelToken.source();
+            axios
+                .get(_gMod._getData, {
+                    cancelToken: this.AxiosSource.token,
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+                .then((res) => {
+                    // $("#loader").hide();
+                    //alert("success");
+
+                    this.objData = JSON.parse(res.data.Response);
+
+                    console.log("AdvKPI", this.objData);
+
+
+                    this.plotChart();
+                    //Warnings Notifications
+                    let warnings: string = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    }
+
+
+                    Util.StatusSuccess("Data successfully retrived  ");
+
+                })
+                .catch((error) => {
+                    alert("error " + error.message);
+                    Util.StatusError(error.message);
+                    // this.setState({
+                    //   isProcess: false,
+                    // });
+                    //this.forceUpdate();
+
+                    if (error.response) {
+
+                    } else if (error.request) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("error.request");
+                    } else {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("Error", error);
+                    }
+                    // return <CustomeNotifications Key="success" Icon={false}  />
+                    console.log("rejected");
+                    this.setState({ isProcess: false });
+                });
+
+        } catch (error) {
+
+        }
+
+    }
+
+    loadWorkSpace() {
+        try {
+
+
+            let objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "AdvKPI.Manager";
+            objBrokerRequest.Broker = "AdvKPI";
+            objBrokerRequest.Function = "loadWorkSpace";
+
+
+            _gMod._userId = "PRATH\PRATH";
+
+            let objParameter = new BrokerParameter("", ""); // // "f3205325-4ddb-4996-b700-f04d6773a051"
+
+            objParameter = new BrokerParameter(
+                "UserID",
+                _gMod._userId
+            );
+            objBrokerRequest.Parameters.push(objParameter);
+
+
+            this.AxiosSource = axios.CancelToken.source();
+            axios
+                .get(_gMod._getData, {
+                    cancelToken: this.AxiosSource.token,
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+                .then((res) => {
+                    // $("#loader").hide();
+                    //alert("success");
+
+                    let objData = JSON.parse(res.data.Response);
+                    console.log("AdvKPI", objData);
+
+
+                    //Warnings Notifications
+                    let warnings: string = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    }
+
+
+
+
+
+                    this.loadGridData(objData);
+                    Util.StatusSuccess("Data successfully retrived  ");
+
+
+                })
+                .catch((error) => {
+                    alert("error " + error.message);
+                    Util.StatusError(error.message);
+                    // this.setState({
+                    //   isProcess: false,
+                    // });
+                    //this.forceUpdate();
+
+                    if (error.response) {
+
+                    } else if (error.request) {
+
+                        console.log("error.request");
+                    } else {
+
+                        console.log("Error", error);
+                    }
+
+                    console.log("rejected");
+                    this.setState({ isProcess: false });
+                });
+
+        } catch (error) {
+
+        }
+    }
+
+    updateWarnings = (paramWarnings: any) => {
+        try {
+            this.setState({
+                warningMsg: paramWarnings
+            });
+
+        } catch (error) {
+
+        }
+    }
+
+
+    onChange = (event: SplitterOnChangeEvent) => {
+        if (this.state.runReport == false) {
+            return;
+        }
+        this.setState({
+            panes: event.newState,
+            warningMsg: []
+        });
+    };
+
+
+
+
+    cmdRunKPI_click = (e, objRow: any, RunType: string) => {
+        try {
+
+            //load Selected Wells
+            let wells = this.state.grdWells;
+            let SelectedWellList = "";
+            for (let index = 0; index < wells.length; index++) {
+
+                if (wells[index].selected1 == true) {
+                    SelectedWellList += "," + wells[index].WellID;
+                }
+
+            }
+
+
+
+
+            if (SelectedWellList == "") {
+                confirmAlert({
+                    message: 'Please Select Well for the list',
+                    childrenElement: () => <div />,
+                    buttons: [
+                        {
+                            label: 'Ok',
+                            onClick: () => {
+                                return;
+                            }
+
+                        },
+                        // {
+                        //     label: 'No',
+                        //     onClick: () => null
+                        // }
+                    ]
+                });
+
+                return;
+
+            }
+            let newPanes: any = this.state.panes;
+            newPanes[0].collapsed = true;
+            newPanes[0].collapsible = true;
+
+            newPanes[0].size = "0%";
+
+            let ID: string = "";
+            if (RunType == "RunKPI") {
+                ID = objRow.PROFILE_ID;
+            }
+            if (RunType == "RunComposite") {
+                ID = objRow.PROFILE_ID;
+            }
+
+
+            this.setState({
+                panes: newPanes,
+                currentRow: objRow,
+                currentProfileID: ID,
+                runReport: true,
+                //showChartDialog: false,
+            });
+
+            this.runKPIReport(ID, SelectedWellList);
+
+        } catch (error) { }
+    };
+
+    ClosePanel = async () => {
+        try {
+
+
+            this.AxiosSource.cancel();
+            await clearInterval(this.intervalID);
+            this.intervalID = null;
+
+
+            $("#AdvKPIChart").empty();
+            
+            this.setState({
+                panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
+                runReport:false
+
+            });
+        } catch (error) { }
+    };
+
+    grid_selectionChange = (event: any) => {
+
+        const checked = event.syntheticEvent.target.checked;
+
+        const data = this.state.grdWells.map((item: any) => {
+            if (item["WellID"] === event.dataItem.WellID) {
+                item["selected1"] = checked;
+            }
+            return item;
+        });
+        this.setState({ grdWells: data });
+
+    };
+
+    grid_headerSelectionChange = (event: any) => {
+        const checked = event.syntheticEvent.target.checked;
+        const data = this.state.grdWells.map((item: any) => {
+            item["selected1"] = checked;
+            return item;
+        });
+        this.setState({ grdWells: data });
+    };
+
+
+    handleTabSelection = (e: any) => {
+        this.setState({ selectedTab: e.selected });
+    }
+
+
+    getVerticalAxisByColumnID = (pAxisID: string) => {
+        try {
+            let axisList: any = Object.values(this.objData.objProfile.axesList);
+            for (let index = 0; index < axisList.length; index++) {
+                const objAxis = axisList[index];
+                if (objAxis.AxisID == pAxisID) {
+                    return objAxis.ColumnID;
+                }
+
+            }
+            return "";
+
+        } catch (error) {
+
+        }
+
+    }
+
+    getBottomAxis = () => {
+
+        try {
+
+            for (let key of this.objChart.Axes.keys()) {
+                if (this.objChart.Axes.get(key).Position == 1) {
+                    return this.objChart.Axes.get(key).Id;
+                }
+
+            }
+
+
+
+        } catch (error) {
+
+        }
+    }
+
+
+    render() {
+        return (
+            <div>
+                <div className="" style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <NotifyMe
+
+                        data={this.state.warningMsg}
+                        storageKey='notific_key'
+                        notific_key='timestamp'
+                        notific_value='update'
+                        heading='Warnings'
+                        sortedByKey={false}
+                        showDate={false}
+                        size={24}
+                        color="yellow"
+                    />
+                </div>
+
+                <Splitter
+                    panes={this.state.panes}
+                    onChange={this.onChange}
+                    style={{ height: "90vh" }}
+                >
+
+                    <div className={this.state.runReport ? "k-state-disabled" : "pane-content"}>
+              
+                        <label>Select Well from the List </label>
+
+                        <div className="row" style={{ display: "flex" }}>
+                            <div className="col-8 mt-5"> <Grid
+                                style={{
+                                    height: "750px", width: "auto"
+                                }}
+                                onSelectionChange={this.grid_selectionChange}
+                                onHeaderSelectionChange={this.grid_headerSelectionChange} //Nishant 26-05-2020
+                                selectedField="selected1"
+                                data={this.state.grdWells}
+                           >
+                                <GridColumn
+                                    field="selected1"
+                                    width="65px"
+                                    title=""
+                                    resizable={true}
+                                    minResizableWidth={65}
+                                    headerClassName="text-center"
+                                    className="text-center"
+                                    editable={true}
+                                    editor="boolean"
+                                    headerSelectionValue={
+                                        this.state.grdWells.findIndex(
+                                            (dataItem: any) => dataItem.selected1 === false
+                                        ) === -1
+                                    }
+                                ></GridColumn>
+
+                         
+                                {/* <GridColumn
+                                    field="Selected"
+                                    width="65px"
+                                    title="Included?"
+                                    resizable={true}
+                                    minResizableWidth={65}
+                                    headerClassName="text-center"
+                                    className="text-center"
+                                    editable={true}
+                                    editor="boolean"
+
+                                ></GridColumn> */}
+
+                                {false && <GridColumn field="WellID" width="80px" title="Well Id" />}
+
+
+
+                                <GridColumn
+                                    field="name"
+                                    title="Well Name"
+                       
+                                />
+                                <GridColumn
+                                    field="RigName"
+                                    title="Rig Name"
+                      
+                                />
+                                <GridColumn
+                                    field="operatorName"
+                                    title="Operator"
+                                //width="490px"
+                                //                width="100%"
+                                // resizable={true}
+                                />
+                                <GridColumn
+                                    field="county"
+                                    title="county"
+                           
+                                />
+                                <GridColumn
+                                    field="field"
+                                    title="FIeld"
+                          
+                                />
+                                <GridColumn
+                                    field="district"
+                                    title="District"
+                             
+                                />
+                                <GridColumn
+                                    field="country"
+                                    title="Country"
+                           
+                                />
+
+                            </Grid></div>
+                            <div className="col-4">
+                                <TabStrip selected={this.state.selectedTab}
+                                    onSelect={this.handleTabSelection}
+                                    keepTabsMounted={true}>
+                                    <TabStripTab title="KPI">
+                                        <Grid
+                                            style={{
+                                                height: "730px", width: "auto"
+                                            }}
+                                            data={this.state.grdProfile}
+
+
+                                        >
+
+                                            <GridColumn
+                                                field="PROFILE_NAME"
+                                                title="Profile Name"
+                                            //width="490px"
+                                            //                width="100%"
+                                            // resizable={true}
+                                            />
+
+                                            {false && <GridColumn
+                                                field="PROFILE_ID"
+                                                title="Id"
+
+                                            />}
+                                            <GridColumn
+                                                field="PROFILE_NOTES"
+                                                title="Notes"
+                                                width={50}
+
+                                            />
+
+                                            <GridColumn
+                                                width="50px"
+                                                headerClassName="text-center"
+                                                resizable={false}
+                                                field="editWell"
+                                                title="Run"
+                                                cell={(props) => (
+                                                    <td
+                                                        style={props.style}
+                                                        className={"text-center k-command-cell " + props.className}
+                                                        onClick={(e) => this.cmdRunKPI_click(e, props.dataItem, "RunKPI")}
+                                                    >
+                                                        <span>
+                                                            <FontAwesomeIcon icon={faChartLine} />
+                                                        </span>
+                                                    </td>
+                                                )}
+                                            />
+                                        </Grid>
+                                    </TabStripTab>
+                                   {false && <TabStripTab title="Composite Templates">
+                                        <Grid
+                                            style={{
+                                                height: "750px", width: "auto"
+                                            }}
+                                            data={this.state.grdComposite}
+                            
+
+                                        >
+
+                                            <GridColumn
+                                                field="TEMPLATE_NAME"
+                                                title="Template Name"
+
+                                            />
+                                            {false && <GridColumn
+                                                field="TEMPLATE_ID"
+                                                title="ID"
+                                            />}
+                                            <GridColumn
+                                                field="NOTES"
+                                                title="Notes"
+                                                width={50}
+
+                                            />
+
+                                            <GridColumn
+                                                width="50px"
+                                                headerClassName="text-center"
+                                                resizable={false}
+                                                field="editWell"
+                                                title="Run"
+                                                cell={(props) => (
+                                                    <td
+                                                        style={props.style}
+                                                        className={"text-center k-command-cell " + props.className}
+                                                        onClick={(e) => this.cmdRunKPI_click(e, props.dataItem, "RunComposite")}
+                                                    >
+                                                        <span>
+                                                            <FontAwesomeIcon icon={faChartLine} />
+                                                        </span>
+                                                    </td>
+                                                )}
+                                            />
+                                        </Grid>
+                                    </TabStripTab>}
+                                </TabStrip>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div className="pane-content ml-5" id="rightPanel"  >
+                        <div className="row mt-2 " style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <FontAwesomeIcon
+                                style={{ alignSelf: "center" }}
+                                icon={faFilter}
+                                size="lg"
+                            // onClick={() => {
+                            //   this.onFilterClick();
+                            // }}
+                            />
+                            <Checkbox
+                                className="mr-3 ml-3"
+                                label={"Realtime"}
+                            // checked={}
+                            // onChange={(event) => {
+
+                            // }}
+                            />
+                            <Checkbox
+                                className="mr-3 ml-3"
+                                label={"Cross Hair"}
+                                checked={this.state.showCrossHair}
+                                onChange={(event) => {
+                                    this.setState({
+                                        showCrossHair: !this.state.showCrossHair
+                                    });
+
+                                }}
+                            />
+                            <Button
+                                className="ml-5 mr-3"
+                                id="cmdClose"
+                                onClick={() => {
+
+                                    this.ClosePanel();
+                                }}
+                            >
+                                Close
+                            </Button>
+                        </div>
+                        <div className="">
+                            {/* <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={false} ></DataSelectorInfo> */}
+                            {this.state.runReport && (
+
+                                <div>
+                                    <div
+                                        id="AdvKPIChart"
+                                        style={{
+                                            float: "left",
+                                            //height: "calc(((100vh - 400px)*30)/100)",
+                                            height: "70vh",
+                                            width: "calc(100vw - 280px)",
+                                            backgroundColor: "transparent",
+                                        }}
+                                    ></div>
+
+                                    <div
+                                        id="AdvKPIChart_legend"
+                                        style={{
+                                            textAlign: "center",
+                                            height: "40px",
+                                            width: "100%",
+                                            backgroundColor: "transparent",
+                                            display: "inline-block",
+                                            paddingBottom: '10px',
+                                            fontSize: '81.25% !important',
+                                            lineHeight: 1.5,
+                                            fontWeight: 'bold'
+                                        }}
+                                    >
+
+                                    </div>
+                                </div>
+
+
+
+
+                            )}
+                        </div>
+                    </div>
+
+
+
+                </Splitter>
+
+
+            </div>
+        );
+    }
+}
+
+

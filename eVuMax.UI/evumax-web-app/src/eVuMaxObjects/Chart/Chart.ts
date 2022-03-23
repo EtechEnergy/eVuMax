@@ -1967,7 +1967,7 @@ export class Chart {
       }
 
       let legendString = "";
-
+      
       for (let key of this.DataSeries.keys()) {
         let objSeries = this.DataSeries.get(key);
 

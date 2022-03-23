@@ -26,6 +26,7 @@ import customDrlgSummaryViewer from "../components/Widgets/CustomDrillingSummary
 import DrlgStandPlot from "../components/Widgets/DrlgStandPlot/DrlgStandPlot";
 import TripReport from "../components/Widgets/TripReport/TripReport";
 import  BroomstickPlot from "../components/Widgets/BroomstickDocs/BroomstickPlot";
+import AdvKPI from "../components/Widgets/AdvKPI/AdvKPI";
 
 
 
@@ -230,6 +231,16 @@ const dashbordRoutes = [
     component: BroomstickPlot,
     layout: "/dashboard",
   },
+
+ 
+  {
+    path: "/AdvKPI",
+    name: "AdvKPI",
+    icon: "",
+    component: AdvKPI,
+    layout: "/dashboard",
+  },
+
   
 ];
 
