@@ -465,7 +465,7 @@ export class Axis {
   formatAxis = () => {
     
     let maxLabel = "";
-
+    debugger;
 
     if (this.IsDateTime) {
       let objRange: AxisDateRange = this.getAxisRange();
@@ -563,7 +563,7 @@ export class Axis {
 
       this.AxisRef.tickValues(ticks);
     }
-    debugger ;
+    
     //Add Title to the axis
     if (this.Position == axisPosition.left) {
      
@@ -921,7 +921,7 @@ export class Axis {
         this.AxisRef.tickFormat(d3.format(this.NumericFormat));
       }
     }
-debugger;
+
     this.ChartRef.SVGRef.select("#" + this.Id).call(this.AxisRef);
 
     let dashArray: string = "0";
@@ -1021,7 +1021,7 @@ debugger;
     //set the x & y position to start the axis drawing
     let x = 0;
     let y = 0;
-    debugger;
+    
     if (
       this.Position == axisPosition.left ||
       this.Position == axisPosition.right
@@ -1044,7 +1044,7 @@ debugger;
       this.Position == axisPosition.left ||
       this.Position == axisPosition.right
     ) {
-      debugger;
+      
       this.ChartRef.SVGRef.select("#" + this.Id)
         .attr("transform", "translate(" + x + "," + "0" + ")")
         .call(this.AxisRef);
@@ -1406,7 +1406,7 @@ debugger;
        ;
       if (!this.IsDateTime && !this.bandScale) {
     
-        debugger;
+        
         let objAxisRange: AxisRange = this.getAxisRange();
         this.MaxWidthLabel = objAxisRange.MaxWidthLabel; //prath 14-08-2021 (for Multiline label)
 
@@ -1880,7 +1880,9 @@ debugger;
           }
         }
       }
-    } catch (error) { }
+    } catch (error) {
+      //alert("Error 1884 get Axes range" + error);
+     }
   };
 
 

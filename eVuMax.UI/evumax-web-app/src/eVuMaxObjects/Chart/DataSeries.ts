@@ -32,8 +32,8 @@ export enum pointStyle {
 
   Diamond = 7,//old=2,
   Star = 6,//old=3,
-  
-  
+
+
   LeftTriangle = 10,//old=6,
   RightTriangle = 11,//old=7,
 }
@@ -77,21 +77,31 @@ export class DataSeries {
   //showPointsOnLineSeries: boolean = false;
 
 
-  
+
   ShowRoadMap: boolean = false; //prath
-  RoadMapTransparency : number=20;//prath
-  RoadMapColor: string =""; //prath
-  RMColor: string =""; //prath
-  RoadmapDepth:  [];//prath
-  RoadmapMax:[];//prath
-  RoadmapMin:[];//prath
-  
-  ShowPointsOnLineSeries : boolean = false;
+  RoadMapTransparency: number = 20;//prath
+  RoadMapColor: string = ""; //prath
+  RMColor: string = ""; //prath
+  RoadmapDepth: [];//prath
+  RoadmapMax: [];//prath
+  RoadmapMin: [];//prath
+
+  ShowPointsOnLineSeries: boolean = false;
   //StepLine: boolean = false;
 
   //#region Min/Max Methods
 
   getMaxX = (): number => {
+    let maxValue = Number.MIN_VALUE;
+  
+    for(let i=0;i<this.Data.length;i++){
+        if(this.Data[i].x>maxValue){
+        maxValue = this.Data[i].x;
+       }
+    }
+    return maxValue;
+    
+    //Below Code is Original by Nitin
     return Math.max.apply(
       Math,
       this.Data.map(function (o) {
@@ -100,8 +110,22 @@ export class DataSeries {
     );
   };
 
+
+
+
+
+
   getMinX = (): number => {
-    
+
+    let minValue = Number.MAX_VALUE;
+  
+    for(let i=0;i<this.Data.length;i++){
+        if(this.Data[i].x<minValue){
+          minValue = this.Data[i].x;
+       }
+    }
+    return minValue;
+    //Below Code is Original by Nitin
     return Math.min.apply(
       Math,
       this.Data.map(function (o) {
@@ -111,17 +135,41 @@ export class DataSeries {
   };
 
   getMaxY = (): number => {
- 
-      return Math.max.apply(
-        Math,
-        this.Data.map(function (o) {
-          return o.y;
-        })
-      );
+    let maxValue = Number.MIN_VALUE;
+  
+    for(let i=0;i<this.Data.length;i++){
+        if(this.Data[i].y>maxValue){
+        maxValue = this.Data[i].y;
+       }
+    }
+    return maxValue;
    
+    //Below Code is Original by Nitin
+    return Math.max.apply(
+      Math,
+      this.Data.map(function (o) {
+        return o.y;
+      })
+    );
+
   };
 
+
+
+
+
+
   getMinY = (): number => {
+    let minValue = Number.MAX_VALUE;
+  
+    for(let i=0;i<this.Data.length;i++){
+        if(this.Data[i].y<minValue){
+          minValue = this.Data[i].y;
+       }
+    }
+    return minValue;
+    //Below Code is Original by Nitin
+
     return Math.min.apply(
       Math,
       this.Data.map(function (o) {
@@ -131,6 +179,19 @@ export class DataSeries {
   };
 
   getMaxZ = (): number => {
+    
+    let maxValue = Number.MIN_VALUE;
+  
+    for(let i=0;i<this.Data.length;i++){
+        if(this.Data[i].z>maxValue){
+        maxValue = this.Data[i].z;
+       }
+    }
+    return maxValue;
+    
+    //Below Code is Original by Nitin
+
+    
     return Math.max.apply(
       Math,
       this.Data.map(function (o) {
@@ -140,6 +201,16 @@ export class DataSeries {
   };
 
   getMinZ = (): number => {
+    
+    let minValue = Number.MAX_VALUE;
+  
+    for(let i=0;i<this.Data.length;i++){
+        if(this.Data[i].z<minValue){
+          minValue = this.Data[i].z;
+       }
+    }
+    return minValue;
+    //Below Code is Original by Nitin
     return Math.min.apply(
       Math,
       this.Data.map(function (o) {

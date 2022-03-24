@@ -3,6 +3,7 @@ import { faChartLine, faFilter } from "@fortawesome/free-solid-svg-icons";
 import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
 import React, { Component } from "react";
 import { Button, Dialog, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
+import * as d3 from "d3";
 
 import { Window } from "@progress/kendo-react-dialogs";
 import BrokerRequest from "../../../broker/BrokerRequest";
@@ -46,6 +47,8 @@ export default class AdvKPI extends Component {
     objData: any = "";
     objAxisList: any = [];
     topAxisCount: number = 0;
+    objSeries: DataSeries;
+    objDataSeries: any;
 
     componentDidMount() {
         try {
@@ -84,6 +87,64 @@ export default class AdvKPI extends Component {
         }
     }
 
+
+
+    onAfterSeriesDraw = (e, i) => {
+        try {
+
+            d3.select(".benchmark").remove();
+
+
+            if (this.objData.objProfile.drawLine && this.objData.objProfile.linePc > 0) {
+
+
+                let objLeftAxes: Axis = new Axis();
+                objLeftAxes = this.objChart.getAxisByID(this.objChart.DataSeries.values().next().value.YAxisId);
+
+
+
+                let x1 = this.objChart.__chartRect.left;
+                let x2 = this.objChart.__chartRect.right;
+                let y1 = objLeftAxes.ScaleRef(this.objData.objProfile.linePc);
+                let y2 = y1 + 4;
+
+                // this.objChart.SVGRef.append("g")
+                //     .attr("class", "benchmark")
+                //     .append("rect")
+                //     .attr("id", "benchmark")
+                //     .attr("x", x1)
+                //     .attr("y", y1)
+                //     .attr("width", x2 - x1)
+                //     .attr("height", y2 - y1)
+                //     .style("fill", "rgb(" + this.objData.objProfile.lineColor + ")");
+
+                    this.objChart.SVGRef.append("g")
+                    .attr("class", "benchmark")
+                    .append("line")
+                    .attr("id", "benchmark")
+                    .attr("x1", x1)
+                    .attr("y1", y1)
+                    .attr("x2", x2)
+                    .attr("y2", y2)
+                    .attr("stroke-width",this.objData.objProfile.lineWidth > 0? this.objData.objProfile.lineWidth :3 ) 
+                    .style("stroke", "rgb(" + this.objData.objProfile.lineColor + ")");
+
+
+            }
+
+
+            //             drawLine: true
+            // lineColor: "255, 128, 64"
+            // linePc: 15
+            // lineWidth: 3
+
+
+        } catch (error) {
+
+        }
+    }
+
+
     initializeChart = () => {
         try {
 
@@ -92,7 +153,9 @@ export default class AdvKPI extends Component {
 
 
             this.objChart.onAfterSeriesDraw.subscribe((e, i) => {
-                //this.onAfterSeriesDraw(e, i);
+                this.onAfterSeriesDraw(e, i);
+
+
             });
 
             this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
@@ -305,7 +368,7 @@ export default class AdvKPI extends Component {
                     objAxis.ShowTitle = true;
                     // objAxis.EndPos = objSummaryAxis.EndPosition;
                     // objAxis.StartPos = objSummaryAxis.StartPosition;
-                    objAxis.GridVisible = objSummaryAxis.ShowGrid;
+                    objAxis.GridVisible = false;// objSummaryAxis.ShowGrid;
                     // objAxis.LabelFont = objSummaryAxis.FontName;
                     // objAxis.LabelFontBold = objSummaryAxis.FontBold;
                     // objAxis.LabelFontColor = objSummaryAxis.FontColor;
@@ -396,6 +459,7 @@ export default class AdvKPI extends Component {
 
 
                     objAxis.bandScale = true;
+                    //                    objAxis.bandScale = true;     //For Bar Chart
                     objAxis.Title = objSummaryAxis.AxisTitle;
                     objAxis.ShowLabels = true;
                     objAxis.ShowTitle = true;
@@ -478,23 +542,28 @@ export default class AdvKPI extends Component {
 
                 this.topAxisCount = axisList.length;
 
+                //if (objDataSeries.outputData != null || objDataSeries.outputData != undefined) {
 
                 //Load Series
                 let SeriesList = Object.values(this.objData.outputData);
                 for (let index = 0; index < SeriesList.length; index++) {
                     let objDataSeries: any = SeriesList[index];
+                    this.objDataSeries = objDataSeries;
 
-                    let objSeries = new DataSeries();
-                    objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID);
-                    objSeries.Title = objDataSeries.LegendTitle;
-                    objSeries.XAxisId = objDataSeries.XColumn;
-                    objSeries.YAxisId = objDataSeries.YColumn;
+                    this.objSeries = new DataSeries();
+
+                    this.objSeries.Data.length = 0;
+                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID);
+                    this.objSeries.Title = objDataSeries.LegendTitle;
+                    this.objSeries.XAxisId = objDataSeries.XColumn;
+                    this.objSeries.YAxisId = objDataSeries.YColumn;
 
 
-                    objSeries.PointSize = objDataSeries.PointWidth;
-                    let SeriesType: dataSeriesType = dataSeriesType.Bar;
-                    objSeries.Color = "rgb(" + objDataSeries.SeriesColor + ")";//Dont change position of this line
+                    this.objSeries.PointSize = objDataSeries.PointWidth;
 
+                    this.objSeries.Color = "rgb(" + objDataSeries.SeriesColor + ")";//Dont change position of this line
+
+                    this.objSeries.ShowInLegend = true;
 
 
                     //objSeries.ShowRoadMap = objDataSeries.ShowRoadMap;
@@ -514,149 +583,114 @@ export default class AdvKPI extends Component {
                     // Pie = 5
                     // Bar = 6
 
+
                     switch (objDataSeries.SeriesType) {
                         case 0:
-                            SeriesType = dataSeriesType.Line;
+                            this.objSeries.Type = dataSeriesType.Line;
 
-                            objSeries.LineWidth = objDataSeries.LineWidth == 0 ? 1 : objDataSeries.LineWidth;
-                            objSeries.ShowPointsOnLineSeries = objDataSeries.ShowPoints;
+                            this.objSeries.LineWidth = objDataSeries.LineWidth == 0 ? 1 : objDataSeries.LineWidth;
+                            this.objSeries.ShowPointsOnLineSeries = objDataSeries.ShowPoints;
                             // smooth = 0,
                             // step = 1,
                             // normal = 2,
                             if (objDataSeries.StepLine == true) {
-                                objSeries.CurveStyle = curveStyle.step;
+                                this.objSeries.CurveStyle = curveStyle.step;
                             } else {
 
-                                objSeries.CurveStyle = curveStyle.normal;
+                                this.objSeries.CurveStyle = curveStyle.normal;
                             }
+                            this.getPointSeriesData();
                             break;
                         case 1://HorizontalArea
-                            SeriesType = dataSeriesType.HorizontalArea;
-                            objSeries.Color = objDataSeries.PointColor;
+                            this.objSeries.Type = dataSeriesType.HorizontalArea;
+                            this.objSeries.Color = objDataSeries.PointColor;
 
                             break;
                         case 2://Area
-                            SeriesType = dataSeriesType.Area;
-                            objSeries.Color = objDataSeries.PointColor;
+                            this.objSeries.Type = dataSeriesType.Area;
+                            this.objSeries.Color = objDataSeries.PointColor;
                             break;
                         case 3://Points
-                            SeriesType = dataSeriesType.Point;
+                            this.objSeries.Type = dataSeriesType.Point;
 
+                            this.objSeries.PointStyle = objDataSeries.PointStyle;
+
+                            //                            this.objSeries.LineWidth = objDataSeries.LineWidth == 0 ? 1 : objDataSeries.LineWidth;
+                            this.getPointSeriesData();
                             break;
                         case 4://Histogram
-                            SeriesType = dataSeriesType.Bar;
+                            this.objSeries.Type = dataSeriesType.Bar;
                             break;
                         case 5://Pie
-                            SeriesType = dataSeriesType.Pie;
+                            this.objSeries.Type = dataSeriesType.Pie;
 
                             break;
                         case 6://Bar
-                            SeriesType = dataSeriesType.Bar;
-                            objSeries.Stacked = false;
-                            objSeries.Color = "rgb( " + objDataSeries.SeriesColor + ")";//Dont change position of this line
-                            objSeries.ShowLabelOnSeries = true; //Parth 05-10-2020
 
+                            this.objSeries.Type = dataSeriesType.Bar;
+
+
+
+
+
+                            this.objSeries.Stacked = false;
+                            this.objSeries.Color = "rgb( " + objDataSeries.SeriesColor + ")";//Dont change position of this line
+                            this.objSeries.ShowLabelOnSeries = true; //Parth 05-10-2020
+                            this.getBarSeriesData(); //WIP
                             break;
 
                         default:
                             break;
                     }
-                    objSeries.Type = SeriesType;
-
-                    objSeries.PointStyle = objDataSeries.PointStyle;
 
 
 
-                    if (SeriesType == dataSeriesType.Area || SeriesType == dataSeriesType.Point) {
-                        objSeries.Color = objDataSeries.PointColor;
-                    }
-                    else if (SeriesType == dataSeriesType.Line) {
-                        objSeries.Color = objDataSeries.LineColor;
-                    }
 
 
-                    objSeries.ShowInLegend = true;
+
+                    // if (SeriesType == dataSeriesType.Area || SeriesType == dataSeriesType.Point) {
+                    //     this.objSeries.Color = objDataSeries.PointColor;
+                    // }
+                    // else if (SeriesType == dataSeriesType.Line) {
+                    //     this.objSeries.Color = objDataSeries.LineColor;
+                    // }
+
+
+
+
 
 
                     //Populate the data series with this data
 
-                    objSeries.Data.length = 0;
+
                     //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
 
-                    //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
-                    let xMin = 0;
-                    let xMax = 0;
-                    let yMin = 0;
-                    let yMax = 0;
-                    let autoScaleX: boolean = false;
-                    let autoScaleY: boolean = false;
-                    if (this.objChart.Axes.get(objSeries.XAxisId).AutoScale == false) {
-                        xMin = this.objChart.Axes.get(objSeries.XAxisId).Min;
-                        xMax = this.objChart.Axes.get(objSeries.XAxisId).Max;
-                        autoScaleX = false;
-                    }
-                    if (this.objChart.Axes.get(objSeries.YAxisId).AutoScale == false) {
-                        yMin = this.objChart.Axes.get(objSeries.YAxisId).Min;
-                        yMax = this.objChart.Axes.get(objSeries.YAxisId).Max;
-                        autoScaleY = false;
-                    }
-                    //==========================================
 
 
 
-                    if (objDataSeries.outputData != null || objDataSeries.outputData != undefined) {
-
-                        let SeriesData: any = Object.values(objDataSeries.outputData);
 
 
-                        for (let i = 0; i < SeriesData.length; i++) {
-                            objSeries.Name = SeriesData[i].LegendTitle;
-
-                            //prath 04-Feb-2022  (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
-                            if (objSeries.Type != dataSeriesType.Bar) {
-                                if (autoScaleX == false && !(SeriesData[i].XValue >= xMin && SeriesData[i].XValue <= xMax)) {
-                                    continue;
-                                }
-
-                                if (autoScaleY == false && !(SeriesData[i].YValue >= yMin && SeriesData[i].YValue <= yMax)) {
-                                    continue;
-                                }
-                            }
-                            //========
 
 
-                            let objVal: ChartData = new ChartData();
-
-                            let objBottomAxes: Axis = new Axis();
-                            if (objSeries.Type == dataSeriesType.Bar) {
-                                objVal.x = i + 1;
-
-                                objBottomAxes = this.objChart.getAxisByID(objSeries.XAxisId);
-                            } else {
-                                objVal.x = Number(SeriesData[i].XValue);
-                            }
-
-                            objVal.y = Number(SeriesData[i].YValue);
-                            objBottomAxes.Labels.push(SeriesData[i].XLabel);
-                            objSeries.Data.push(objVal);
-
-                        }
 
 
-                        // if (objDataSeries.ColorPointsAsColumn) {
 
-                        //     this.formatSeries(objSeries, objDataSeries);  
-                        // }
-                        // if (objDataSeries.Visible) {
 
-                        this.objChart.DataSeries.set(objSeries.Id, objSeries);
-                        //    }
+                    // if (objDataSeries.ColorPointsAsColumn) {
 
-                    }
+                    //     this.formatSeries(objSeries, objDataSeries);  
+                    // }
+                    // if (objDataSeries.Visible) {
+
+                    this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
+                    //    }
+
+
                 }
 
 
                 this.objChart.updateChart();
+                debugger;
                 this.objChart.reDraw();
 
             }
@@ -665,6 +699,110 @@ export default class AdvKPI extends Component {
         }
     }
 
+    getPointSeriesData = () => {
+        try {
+
+            let SeriesXData: any = Object.values(this.objDataSeries.arrXData);
+            let SeriesYData: any = Object.values(this.objDataSeries.arrYData);
+
+
+            //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+            let xMin = 0;
+            let xMax = 0;
+            let yMin = 0;
+            let yMax = 0;
+            let autoScaleX: boolean = false;
+            let autoScaleY: boolean = false;
+            if (this.objChart.Axes.get(this.objSeries.XAxisId).AutoScale == false) {
+                xMin = this.objChart.Axes.get(this.objSeries.XAxisId).Min;
+                xMax = this.objChart.Axes.get(this.objSeries.XAxisId).Max;
+                autoScaleX = false;
+            }
+            if (this.objChart.Axes.get(this.objSeries.YAxisId).AutoScale == false) {
+                yMin = this.objChart.Axes.get(this.objSeries.YAxisId).Min;
+                yMax = this.objChart.Axes.get(this.objSeries.YAxisId).Max;
+                autoScaleY = false;
+            }
+            //==========================================
+            for (let i = 0; i < SeriesXData.length; i++) {
+
+                // this.objSeries.Name = SeriesXData[i].LegendTitle;
+                let objVal: ChartData = new ChartData();
+                //let objBottomAxes: Axis = new Axis();
+                objVal.x = eval(Number(SeriesXData[i]).toFixed(2));
+                //  objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
+                objVal.y = Number(SeriesYData[i]);
+                //objBottomAxes.Labels.push(SeriesXData[i].XLabel);
+                this.objSeries.Data.push(objVal);
+            }
+
+
+
+        } catch (error) {
+
+        }
+    }
+    getBarSeriesData = () => {
+        try {
+            let SeriesData: any = Object.values(this.objDataSeries.outputData);
+
+            //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+            let xMin = 0;
+            let xMax = 0;
+            let yMin = 0;
+            let yMax = 0;
+            let autoScaleX: boolean = false;
+            let autoScaleY: boolean = false;
+            if (this.objChart.Axes.get(this.objSeries.XAxisId).AutoScale == false) {
+                xMin = this.objChart.Axes.get(this.objSeries.XAxisId).Min;
+                xMax = this.objChart.Axes.get(this.objSeries.XAxisId).Max;
+                autoScaleX = false;
+            }
+            if (this.objChart.Axes.get(this.objSeries.YAxisId).AutoScale == false) {
+                yMin = this.objChart.Axes.get(this.objSeries.YAxisId).Min;
+                yMax = this.objChart.Axes.get(this.objSeries.YAxisId).Max;
+                autoScaleY = false;
+            }
+            //==========================================
+            for (let i = 0; i < SeriesData.length; i++) {
+                this.objSeries.Name = SeriesData[i].LegendTitle;
+
+                //prath 04-Feb-2022  (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+                if (this.objSeries.Type != dataSeriesType.Bar) {
+                    if (autoScaleX == false && !(SeriesData[i].XValue >= xMin && SeriesData[i].XValue <= xMax)) {
+                        continue;
+                    }
+
+                    if (autoScaleY == false && !(SeriesData[i].YValue >= yMin && SeriesData[i].YValue <= yMax)) {
+                        continue;
+                    }
+                }
+                //========
+
+
+                let objVal: ChartData = new ChartData();
+
+                let objBottomAxes: Axis = new Axis();
+                if (this.objSeries.Type == dataSeriesType.Bar) {
+                    objVal.x = i + 1;
+
+                    objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
+                    //objBottomAxes.bandScale= true;
+                } else {
+                    objVal.x = Number(SeriesData[i].XValue);
+                }
+
+                objVal.y = Number(SeriesData[i].YValue);
+                objBottomAxes.Labels.push(SeriesData[i].XLabel);
+                this.objSeries.Data.push(objVal);
+
+            }
+
+
+        } catch (error) {
+
+        }
+    }
     formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
         try {
 
@@ -961,10 +1099,10 @@ export default class AdvKPI extends Component {
 
 
             $("#AdvKPIChart").empty();
-            
+
             this.setState({
                 panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
-                runReport:false
+                runReport: false
 
             });
         } catch (error) { }
@@ -1061,7 +1199,7 @@ export default class AdvKPI extends Component {
                 >
 
                     <div className={this.state.runReport ? "k-state-disabled" : "pane-content"}>
-              
+
                         <label>Select Well from the List </label>
 
                         <div className="row" style={{ display: "flex" }}>
@@ -1073,7 +1211,7 @@ export default class AdvKPI extends Component {
                                 onHeaderSelectionChange={this.grid_headerSelectionChange} //Nishant 26-05-2020
                                 selectedField="selected1"
                                 data={this.state.grdWells}
-                           >
+                            >
                                 <GridColumn
                                     field="selected1"
                                     width="65px"
@@ -1091,7 +1229,7 @@ export default class AdvKPI extends Component {
                                     }
                                 ></GridColumn>
 
-                         
+
                                 {/* <GridColumn
                                     field="Selected"
                                     width="65px"
@@ -1112,12 +1250,12 @@ export default class AdvKPI extends Component {
                                 <GridColumn
                                     field="name"
                                     title="Well Name"
-                       
+
                                 />
                                 <GridColumn
                                     field="RigName"
                                     title="Rig Name"
-                      
+
                                 />
                                 <GridColumn
                                     field="operatorName"
@@ -1129,22 +1267,22 @@ export default class AdvKPI extends Component {
                                 <GridColumn
                                     field="county"
                                     title="county"
-                           
+
                                 />
                                 <GridColumn
                                     field="field"
                                     title="FIeld"
-                          
+
                                 />
                                 <GridColumn
                                     field="district"
                                     title="District"
-                             
+
                                 />
                                 <GridColumn
                                     field="country"
                                     title="Country"
-                           
+
                                 />
 
                             </Grid></div>
@@ -1202,13 +1340,13 @@ export default class AdvKPI extends Component {
                                             />
                                         </Grid>
                                     </TabStripTab>
-                                   {false && <TabStripTab title="Composite Templates">
+                                    {false && <TabStripTab title="Composite Templates">
                                         <Grid
                                             style={{
                                                 height: "750px", width: "auto"
                                             }}
                                             data={this.state.grdComposite}
-                            
+
 
                                         >
 

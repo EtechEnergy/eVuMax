@@ -78,7 +78,7 @@ namespace eVuMax.DataBroker.AdvKPI_
                 }
 
                 objProcessor.processProfile();
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
 
                 //update Series 
 

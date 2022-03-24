@@ -139,7 +139,7 @@ namespace eVuMax.API
 
                     if (objRequest != null)
                     {
-                        //Close the database connection
+                        //Close the database connection WA$#
                         if (objDataService != null)
                         {
                             objDataService.closeConnection();
