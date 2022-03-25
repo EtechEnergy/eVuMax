@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faFilter } from "@fortawesome/free-solid-svg-icons";
 import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
 import React, { Component } from "react";
-import { Button, Dialog, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
+import { Button, DateTimePicker, Dialog, DropDownList, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
 import * as d3 from "d3";
 
 import { Window } from "@progress/kendo-react-dialogs";
@@ -13,7 +13,7 @@ import GlobalMod from "../../../objects/global";
 import { Util } from "../../../Models/eVuMax";
 import NotifyMe from 'react-notification-timeline';
 
-import { Checkbox } from "@progress/kendo-react-inputs";
+import { Checkbox, NumericTextBox, RadioButton } from "@progress/kendo-react-inputs";
 import { Chart, curveStyle, zoomOnAxies } from "../../../eVuMaxObjects/Chart/Chart";
 import { Axis, axisPosition } from "../../../eVuMaxObjects/Chart/Axis";
 import { DataSeries, dataSeriesType } from "../../../eVuMaxObjects/Chart/DataSeries";
@@ -22,6 +22,9 @@ import $ from "jquery";
 
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
 import { confirmAlert } from "react-confirm-alert";
+
+import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
+import { ADVKPIDataFilter } from "./AdvKPIDataFilter";
 let _gMod = new GlobalMod();
 
 
@@ -36,9 +39,16 @@ export default class AdvKPI extends Component {
         warningMsg: [],
         selectedTab: 0,
         currentProfileID: "",
-        //showChartDialog: false,
-        showCrossHair: false
+        showFilterDialog: false,
+        showCrossHair: false,
+        cboWellList: [],
+        selectedMainWell: new comboData(),
+        FilterBy: new comboData(),
+        KPIDataFilter: new ADVKPIDataFilter(),
     };
+
+    filterByComboList = [new comboData("Last Hours", "1"), new comboData("Date Range", "2"), new comboData("From Date Onwards", "3"), new comboData("Depth Range", "4"),
+    new comboData("From Depth Onwards", "5"), new comboData("Current Section", "6")];
 
     intervalID: NodeJS.Timeout | undefined;
     AxiosSource = axios.CancelToken.source();
@@ -118,7 +128,7 @@ export default class AdvKPI extends Component {
                 //     .attr("height", y2 - y1)
                 //     .style("fill", "rgb(" + this.objData.objProfile.lineColor + ")");
 
-                    this.objChart.SVGRef.append("g")
+                this.objChart.SVGRef.append("g")
                     .attr("class", "benchmark")
                     .append("line")
                     .attr("id", "benchmark")
@@ -126,7 +136,7 @@ export default class AdvKPI extends Component {
                     .attr("y1", y1)
                     .attr("x2", x2)
                     .attr("y2", y2)
-                    .attr("stroke-width",this.objData.objProfile.lineWidth > 0? this.objData.objProfile.lineWidth :3 ) 
+                    .attr("stroke-width", this.objData.objProfile.lineWidth > 0 ? this.objData.objProfile.lineWidth : 3)
                     .style("stroke", "rgb(" + this.objData.objProfile.lineColor + ")");
 
 
@@ -312,16 +322,35 @@ export default class AdvKPI extends Component {
     plotChart = () => {
         try {
 
+            //Load Workspace Wells into Combo FilterData
+            debugger;
+            let WellList: any = Object.values(this.objData.objWorkSpace.wells);
+            if (WellList != null || WellList.length > 0) {
+
+                let wellComboList: comboData[] = [];
+                let objCombo: comboData;
+                // wellComboList.push(new comboData("Select Main Well", "-1"));
+
+                for (let index = 0; index < WellList.length; index++) {
+                    const objWell: any = WellList[index].objWell;
+                    objCombo = new comboData(objWell.name, objWell.ObjectID);
+                    wellComboList.push(objCombo);
+                }
+
+
+                this.setState({
+                    cboWellList: wellComboList
+                });
+
+            }
+
 
             this.initializeChart();
-            this.objChart.CrossHairRequire = true;
+            this.objChart.CrossHairRequire = this.state.showCrossHair;
+            
             if (this.objData.objProfile.axesList != null || this.objData.objProfile.axesList != undefined) {
                 this.objAxisList = Object.values(this.objData.objProfile.axesList);
-
-
-
                 this.setAxisPerColumnAndRow(this.objAxisList);
-
 
                 if (this.objChart.axisPerColumn > 1) {
                     this.objChart.ZoomOnAxies = zoomOnAxies.x;
@@ -583,6 +612,8 @@ export default class AdvKPI extends Component {
                     // Pie = 5
                     // Bar = 6
 
+                    debugger;
+                    
 
                     switch (objDataSeries.SeriesType) {
                         case 0:
@@ -599,7 +630,7 @@ export default class AdvKPI extends Component {
 
                                 this.objSeries.CurveStyle = curveStyle.normal;
                             }
-                            this.getPointSeriesData();
+                      //      this.getLineSeriesData();
                             break;
                         case 1://HorizontalArea
                             this.objSeries.Type = dataSeriesType.HorizontalArea;
@@ -616,7 +647,7 @@ export default class AdvKPI extends Component {
                             this.objSeries.PointStyle = objDataSeries.PointStyle;
 
                             //                            this.objSeries.LineWidth = objDataSeries.LineWidth == 0 ? 1 : objDataSeries.LineWidth;
-                            this.getPointSeriesData();
+                       //     this.getPointSeriesData();
                             break;
                         case 4://Histogram
                             this.objSeries.Type = dataSeriesType.Bar;
@@ -636,7 +667,7 @@ export default class AdvKPI extends Component {
                             this.objSeries.Stacked = false;
                             this.objSeries.Color = "rgb( " + objDataSeries.SeriesColor + ")";//Dont change position of this line
                             this.objSeries.ShowLabelOnSeries = true; //Parth 05-10-2020
-                            this.getBarSeriesData(); //WIP
+                        //    this.getBarSeriesData(); //WIP
                             break;
 
                         default:
@@ -644,7 +675,15 @@ export default class AdvKPI extends Component {
                     }
 
 
+                    //prath
+                    if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit ==  3){
+                        this.getPointSeriesData();
+                    }else{
+                        this.getBarSeriesData(); //WIP
+                    }
+                    //
 
+                        
 
 
 
@@ -736,6 +775,53 @@ export default class AdvKPI extends Component {
                 this.objSeries.Data.push(objVal);
             }
 
+
+
+        } catch (error) {
+
+        }
+    }
+
+    getLineSeriesData = () => {
+        try {
+            let SeriesData: any = Object.values(this.objDataSeries.outputData);
+
+            //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+            let xMin = 0;
+            let xMax = 0;
+            let yMin = 0;
+            let yMax = 0;
+            let autoScaleX: boolean = false;
+            let autoScaleY: boolean = false;
+            if (this.objChart.Axes.get(this.objSeries.XAxisId).AutoScale == false) {
+                xMin = this.objChart.Axes.get(this.objSeries.XAxisId).Min;
+                xMax = this.objChart.Axes.get(this.objSeries.XAxisId).Max;
+                autoScaleX = false;
+            }
+            if (this.objChart.Axes.get(this.objSeries.YAxisId).AutoScale == false) {
+                yMin = this.objChart.Axes.get(this.objSeries.YAxisId).Min;
+                yMax = this.objChart.Axes.get(this.objSeries.YAxisId).Max;
+                autoScaleY = false;
+            }
+            //==========================================
+            for (let i = 0; i < SeriesData.length; i++) {
+                this.objSeries.Name = SeriesData[i].LegendTitle;
+
+                let objVal: ChartData = new ChartData();
+
+                let objBottomAxes: Axis = new Axis();
+
+                objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
+                //objBottomAxes.bandScale= true;
+
+                objVal.x = Number(SeriesData[i].XValue);
+
+
+                objVal.y = Number(SeriesData[i].YValue);
+                objBottomAxes.Labels.push(SeriesData[i].XLabel);
+                this.objSeries.Data.push(objVal);
+
+            }
 
 
         } catch (error) {
@@ -1020,7 +1106,13 @@ export default class AdvKPI extends Component {
     };
 
 
+    handleChangeDropDown = (event: any) => {
 
+        debugger;
+        this.setState({ [event.target.name]: event.value });
+        //this.setState({ selectedMainWell: new comboData(event.value.text, event.value.id) });
+
+    }
 
     cmdRunKPI_click = (e, objRow: any, RunType: string) => {
         try {
@@ -1173,6 +1265,20 @@ export default class AdvKPI extends Component {
         }
     }
 
+    handleChange = async (event: any,fieldName:string) => {
+        try {
+            debugger;
+           
+          await  this.setState({
+                [fieldName]: event.value
+            });
+
+            this.plotChart();
+        } catch (error) {
+
+        }
+
+    }
 
     render() {
         return (
@@ -1399,9 +1505,13 @@ export default class AdvKPI extends Component {
                                 style={{ alignSelf: "center" }}
                                 icon={faFilter}
                                 size="lg"
-                            // onClick={() => {
-                            //   this.onFilterClick();
-                            // }}
+                                onClick={() => {
+
+                                    this.setState({
+                                        showFilterDialog: true
+
+                                    })
+                                }}
                             />
                             <Checkbox
                                 className="mr-3 ml-3"
@@ -1412,13 +1522,13 @@ export default class AdvKPI extends Component {
                             // }}
                             />
                             <Checkbox
+                                name="showCrossHair"
                                 className="mr-3 ml-3"
                                 label={"Cross Hair"}
                                 checked={this.state.showCrossHair}
+                                
                                 onChange={(event) => {
-                                    this.setState({
-                                        showCrossHair: !this.state.showCrossHair
-                                    });
+                                    this.handleChange(event,"showCrossHair");
 
                                 }}
                             />
@@ -1477,7 +1587,185 @@ export default class AdvKPI extends Component {
 
 
                 </Splitter>
+                {this.state.showFilterDialog && <Dialog title={"Data Filter"} height={340} width={550}
 
+
+                    onClose={() => { this.setState({ showFilterDialog: false }) }}
+                >
+                    <div className="row mt-3">
+                        <div className="col-4" >
+                            <Checkbox
+                                className="mr-3 ml-3"
+                                label={"Filter Data"}
+                            // checked={}
+                            // onChange={(event) => {
+
+                            // }}
+                            />
+                        </div>
+                        <div className="col-8" style={{ display: "flex", justifyContent: "flex-end" }}> <Button
+                            className=" mr-2"
+                            id="cmdClose"
+                            onClick={() => {
+                                this.setState({ showFilterDialog: false })
+
+                            }}
+                        >
+                            OK
+                        </Button>
+                            <Button
+                                className=""
+                                id="cmdClose"
+                                onClick={() => {
+                                    this.setState({ showFilterDialog: false })
+
+                                }}
+                            >
+                                Close
+                            </Button></div>
+
+
+                    </div>
+                    <div className="col-12 mt-4" style={{ width: "100%" }}>
+                        <Label className="mr-2 mt-3">Main well</Label>
+                        <DropDownList
+                            name="selectedMainWell"
+                            label=''
+                            data={this.state.cboWellList}
+                            textField="text"
+                            dataItemKey="id"
+                            value={this.state.selectedMainWell}
+                            style={{ width: 200 }}
+                            onChange={this.handleChangeDropDown}
+                        />
+                        <br />
+                        <Label className="mr-4 mt-3">Filter Data By</Label>
+                        <DropDownList
+                            name="FilterBy"
+                            label=''
+                            data={this.filterByComboList}
+                            textField="text"
+                            dataItemKey="id"
+                            value={this.state.FilterBy}
+                            style={{ width: 200 }}
+                            onChange={this.handleChangeDropDown}
+                        />
+                        {this.state.FilterBy.id == "1" && <div className="col-lg-12">
+                            <div className="row ml-5">
+                                <span className="ml-5 pl-2 ml-2 mt-2">
+                                    <NumericTextBox
+                                        //value={this.state.objTimeFilter.LastPeriod}
+                                        format="n2"
+                                        width="100px"
+                                    //   onChange={(e: any) => {
+                                    //     this.onTimeFilterChange(e, "LastPeriod");
+                                    //   }}
+                                    />
+                                    <label className="leftPadding-small">Hours</label>
+                                </span>
+                            </div>
+                        </div>}
+
+                        <div className="col-lg-12 mt-3">
+
+                            {this.state.FilterBy.id == "2" || this.state.FilterBy.id == "3" ? (
+                                <label className="mr-4">From Date </label>
+                            ) : (
+                                ""
+                            )}
+
+                            {this.state.FilterBy.id == "2" || this.state.FilterBy.id == "3" ? (
+                                <DateTimePicker
+                                    name="txtFromDate"
+                                    // value={new Date(this.state.objDataSelector.fromDate)}
+                                    format="MM/dd/yyyy HH:mm:ss"
+                                    formatPlaceholder={{
+                                        year: "yyyy",
+                                        month: "MM",
+                                        day: "dd",
+                                        hour: "HH",
+                                        minute: "mm",
+                                        second: "ss",
+                                    }}
+                                // onChange={(e) => {
+                                //   this.setState({ fromDate: e.value });
+                                // }}
+                                // onChange={(e) => this.handleChange(e, "fromDate")}
+                                />
+                            ) : (
+                                ""
+                            )}
+                            <br />
+                            {this.state.FilterBy.id == "2" ? (
+                                <label className="mr-4 ml-4">To Date </label>
+                            ) : (
+                                ""
+                            )}
+
+                            {this.state.FilterBy.id == "2" ? (
+                                <DateTimePicker
+                                    name="txtToDate"
+                                    // value={new Date(this.state.objDataSelector.toDate)}
+                                    format="MM/dd/yyyy HH:mm:ss"
+                                    formatPlaceholder={{
+                                        year: "yyyy",
+                                        month: "MM",
+                                        day: "dd",
+                                        hour: "HH",
+                                        minute: "mm",
+                                        second: "ss",
+                                    }}
+                                // onChange={(e) => {
+                                //   this.setState({ toDate: e.value });
+                                // }}
+                                //onChange={(e) => this.handleChange(e, "toDate")}
+                                />
+                            ) : (
+                                ""
+                            )}
+                        </div>
+                        <div className="col-lg-12">
+                            {this.state.FilterBy.id == "4" || this.state.FilterBy.id == "5" ? (
+                                <label className="mr-4">From Depth </label>
+                            ) : (
+                                ""
+                            )}
+
+                            {this.state.FilterBy.id == "4" || this.state.FilterBy.id == "5" ? (
+                                <NumericTextBox
+                                    width={100}
+                                    name="txtFromDepth"
+                                    // value={this.state.objDataSelector.fromDepth}
+                                    format="n2"
+                                // onChange={(e) => this.setState({ fromDepth: e.value })}
+                                // onChange={(e) => this.handleChange(e, "fromDepth")}
+                                />
+                            ) : (
+                                ""
+                            )}
+                            <br />
+                            {this.state.FilterBy.id == "4" ? (
+                                <label className="mr-4 ml-4">To Depth </label>
+                            ) : (
+                                ""
+                            )}
+
+                            {this.state.FilterBy.id == "4" ? (
+                                <NumericTextBox
+                                    name="txtFromDepth"
+                                    width={100}
+                                    //value={this.state.objDataSelector.fromDepth}
+                                    format="n2"
+                                // onChange={(e) => this.setState({ fromDepth: e.value })}
+                                // onChange={(e) => this.handleChange(e, "fromDepth")}
+                                />
+                            ) : (
+                                ""
+                            )}
+                        </div>
+
+                    </div>
+                </Dialog>}
 
             </div>
         );
