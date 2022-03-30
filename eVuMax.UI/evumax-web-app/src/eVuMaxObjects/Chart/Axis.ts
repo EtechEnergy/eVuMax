@@ -105,6 +105,8 @@ export class Axis {
 
   ScaleRef_x1: any; //for barchart
 
+  autoScaleMinValueZero : boolean = false;  //Handle AdvKPI Bar Chart
+
   AxisRef: any;
   __textHeight: number = 0;
   __textWidth: number = 0;
@@ -151,6 +153,16 @@ export class Axis {
         this.Min = min;
         this.Max = max;
       }
+    } catch (error) { }
+  };
+
+  setMin = (min: number) => {
+    try {
+      if (this.bandScale)      {
+        this.Min = min;
+      }
+        
+      
     } catch (error) { }
   };
 
@@ -1167,7 +1179,7 @@ export class Axis {
     } else {
       try {
 
-
+debugger;
 
 
         let sel = this.ChartRef.SVGRef.select("#" + this.Id).selectAll(
@@ -1312,7 +1324,7 @@ export class Axis {
         let objAxisDateRange: AxisDateRange = this.getAxisRange();
         this.MinDate = objAxisDateRange.Min;
         this.MaxDate = objAxisDateRange.Max;
-
+        
         if (!this.Inverted) {
           this.ScaleRef.domain([objAxisDateRange.Min, objAxisDateRange.Max]);
         } else {
@@ -1403,7 +1415,7 @@ export class Axis {
       }
 
       this.ScaleRef.range([this.StartPos, this.EndPos]);
-       ;
+       
       if (!this.IsDateTime && !this.bandScale) {
     
         
@@ -1418,7 +1430,7 @@ export class Axis {
           this.Position == axisPosition.right
         ) {
           ////added by prath for inverted axis
-
+          debugger;
           if (!this.Inverted) {
             
             this.ScaleRef.domain([objAxisRange.Max, objAxisRange.Min]);
@@ -1868,6 +1880,11 @@ export class Axis {
             //objRange = new AxisRange();
             objRange.Min = lMin;
             objRange.Max = lMax;
+
+           // if ((this.ChartRef.Id=="AdvKPI") && (objRange.Min == objRange.Max)){
+             if (this.autoScaleMinValueZero && objRange.Min >0){
+              objRange.Min = 0;
+            }
             
             if (this.PaddingMin > 0 || this.PaddingMax > 0) {
               let paddingNumber: number = objRange.Max - objRange.Min;

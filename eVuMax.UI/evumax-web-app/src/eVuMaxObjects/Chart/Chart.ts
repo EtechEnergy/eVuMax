@@ -2219,7 +2219,7 @@ export class Chart {
 
       for (let key of this.DataSeries.keys()) {
         //alert("update series " + key);
-        debugger;
+       
         if (this.DataSeries.get(key).Type == dataSeriesType.Bar) {
           if (this.DataSeries.get(key).Stacked) {
             stackedBarChartsFound = true;

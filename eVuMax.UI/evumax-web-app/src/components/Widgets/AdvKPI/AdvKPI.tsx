@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faFilter, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
 import React, { Component } from "react";
-import { Button, DateTimePicker, Dialog, DropDownList, filterBy, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
+import { Button, DateTimePicker, Dialog, DropDownList, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
 import * as d3 from "d3";
 
 import { Window } from "@progress/kendo-react-dialogs";
@@ -19,6 +19,7 @@ import { Axis, axisPosition } from "../../../eVuMaxObjects/Chart/Axis";
 import { DataSeries, dataSeriesType } from "../../../eVuMaxObjects/Chart/DataSeries";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import $ from "jquery";
+import { filterBy } from "@progress/kendo-data-query";
 
 import * as utilFunc from "../../../utilFunctions/utilFunctions";
 import { confirmAlert } from "react-confirm-alert";
@@ -48,7 +49,8 @@ export default class AdvKPI extends Component {
         KPIDataFilter: new ADVKPIDataFilter(),
         ProfileName: "",
         objFilterData: new ADVKPIDataFilter(),
-        dataFilterString: ""
+        dataFilterString: "",
+        isRealTime: false as boolean,
     };
 
     filterTypeComboList = [new comboData("Last Hours", "1"), new comboData("Date Range", "2"), new comboData("From Date Onwards", "3"), new comboData("Depth Range", "4"),
@@ -659,11 +661,11 @@ export default class AdvKPI extends Component {
 
 
                         default:
-                            dataFilterString="";
+                            dataFilterString = "";
                             break;
                     }
 
-                    dataFilterString+=")";
+                    dataFilterString += ")";
                 }
 
                 this.setState({
@@ -943,6 +945,17 @@ export default class AdvKPI extends Component {
 
 
 
+
+                    //prath
+                    debugger;
+                    if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
+                        this.getGroupSeriesData();
+                    } else {
+                        this.getSingleSeriesData(); //WIP
+                    }
+                    //
+
+
                     switch (objDataSeries.SeriesType) {
                         case 0:
                             this.objSeries.Type = dataSeriesType.Line;
@@ -994,28 +1007,27 @@ export default class AdvKPI extends Component {
                             objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
                             objBottomAxes.bandScale = true;
 
+                            //set Y scale Min Value with Zero (0)
+                            let objYAxes = this.objChart.getAxisByID(this.objSeries.YAxisId);
+                            objYAxes.autoScaleMinValueZero = true;
+
+
+                            debugger;
+
 
 
                             this.objSeries.Stacked = false;
                             this.objSeries.Color = "rgb( " + objDataSeries.SeriesColor + ")";//Dont change position of this line
                             this.objSeries.ShowLabelOnSeries = true; //Parth 05-10-2020
                             //    this.getSingleSeriesData(); //WIP
+
+
+
                             break;
 
                         default:
                             break;
                     }
-
-
-                    //prath
-                    debugger;
-                    if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
-                        this.getGroupSeriesData();
-                    } else {
-                        this.getSingleSeriesData(); //WIP
-                    }
-                    //
-
 
 
 
@@ -1064,6 +1076,8 @@ export default class AdvKPI extends Component {
 
                 this.objChart.updateChart();
 
+                debugger;
+
                 this.objChart.reDraw();
 
             }
@@ -1110,16 +1124,9 @@ export default class AdvKPI extends Component {
             for (let i = 0; i < SeriesXData.length; i++) {
                 let objVal: ChartData = new ChartData();
 
-                if (objVal.x > 11) {
-                    continue;
-                }
                 objVal.x = eval(Number(SeriesXData[i]).toFixed(4));
                 objVal.y = eval(Number(SeriesYData[i]).toFixed(2));
 
-                if (objVal.x >= 13 && objVal.x <= 20) {
-                    console.log(this.objSeries.Title + " - " + objVal.x + " - " + objVal.y);
-
-                }
                 this.objSeries.Data.push(objVal);
             }
             this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
@@ -1130,57 +1137,11 @@ export default class AdvKPI extends Component {
         }
     }
 
-    // getLineSeriesData = () => {
-    //     try {
-    //         let SeriesData: any = Object.values(this.objDataSeries.outputData);
-    //         debugger;
 
-    //         //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
-    //         let xMin = 0;
-    //         let xMax = 0;
-    //         let yMin = 0;
-    //         let yMax = 0;
-    //         let autoScaleX: boolean = false;
-    //         let autoScaleY: boolean = false;
-    //         if (this.objChart.Axes.get(this.objSeries.XAxisId).AutoScale == false) {
-    //             xMin = this.objChart.Axes.get(this.objSeries.XAxisId).Min;
-    //             xMax = this.objChart.Axes.get(this.objSeries.XAxisId).Max;
-    //             autoScaleX = false;
-    //         }
-    //         if (this.objChart.Axes.get(this.objSeries.YAxisId).AutoScale == false) {
-    //             yMin = this.objChart.Axes.get(this.objSeries.YAxisId).Min;
-    //             yMax = this.objChart.Axes.get(this.objSeries.YAxisId).Max;
-    //             autoScaleY = false;
-    //         }
-    //         //==========================================
-    //         for (let i = 0; i < SeriesData.length; i++) {
-    //             this.objSeries.Name = SeriesData[i].LegendTitle;
-
-    //             let objVal: ChartData = new ChartData();
-
-    //             let objBottomAxes: Axis = new Axis();
-
-    //             objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
-    //             //objBottomAxes.bandScale= true;
-
-    //             objVal.x = Number(SeriesData[i].XValue);
-
-
-    //             objVal.y = Number(SeriesData[i].YValue);
-    //             objBottomAxes.Labels.push(SeriesData[i].XLabel);
-    //             this.objSeries.Data.push(objVal);
-
-    //         }
-
-
-    //     } catch (error) {
-
-    //     }
-    // }
 
     getSingleSeriesData = () => {
         try {
-            //alert("yy");
+
             let SeriesData: any = Object.values(this.objDataSeries.outputData);
 
             //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
@@ -1201,6 +1162,8 @@ export default class AdvKPI extends Component {
                 autoScaleY = false;
             }
             //==========================================
+            let objBottomAxes: Axis = new Axis();
+            objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
             for (let i = 0; i < SeriesData.length; i++) {
                 this.objSeries.Name = SeriesData[i].LegendTitle;
 
@@ -1219,18 +1182,16 @@ export default class AdvKPI extends Component {
 
                 let objVal: ChartData = new ChartData();
 
-                let objBottomAxes: Axis = new Axis();
                 if (this.objSeries.Type == dataSeriesType.Bar) {
                     objVal.x = i + 1;
-
-                    objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
-                    //objBottomAxes.bandScale= true;
                 } else {
                     objVal.x = Number(SeriesData[i].XValue);
                 }
 
                 objVal.y = eval(Number(SeriesData[i].YValue).toFixed(2));
                 objBottomAxes.Labels.push(SeriesData[i].XLabel);
+
+
                 this.objSeries.Data.push(objVal);
 
             }
@@ -1262,7 +1223,6 @@ export default class AdvKPI extends Component {
     runKPIReport = (paramProfileID: string, SelectedWellList: any) => {
 
         try {
-
 
             SelectedWellList = SelectedWellList.substring(1, SelectedWellList.length);
             let newPanes: any = this.state.panes;
@@ -1554,21 +1514,20 @@ export default class AdvKPI extends Component {
             this.AxiosSource.cancel();
             await clearInterval(this.intervalID);
             this.intervalID = null;
-
-
             this.ID = ""
             this.SelectedWellList = "";
 
             this.setState({
-                objFilterData: new ADVKPIDataFilter()
+                objFilterData: new ADVKPIDataFilter(),
+                ProfileName: "",
+                grdProfile: profileList,
+                panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
+                runReport: false
             })
             $("#AdvKPIChart").empty();
 
-            this.setState({
-                panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
-                runReport: false
 
-            });
+
         } catch (error) { }
     };
 
@@ -1601,24 +1560,18 @@ export default class AdvKPI extends Component {
     }
 
     filterData = (e: any) => {
-        // NOTES: ""
-        // PROFILE_ID: "966_396_416_314_772"
-        // PROFILE_NAME: ""
-
         let value = e.target.value;
         let filter: any = {
             logic: "or",
             filters: [
                 { field: "NOTES", operator: "contains", value: value },
                 { field: "PROFILE_NAME", operator: "contains", value: value },
-
             ],
         };
-        console.log("Search ", filterBy(profileList, filter, null));
 
-        // this.setState({
-        //     grdProfile: filterBy(profileList, filter, null)
-        // });
+        this.setState({
+            grdProfile: filterBy(profileList, filter),
+        });
     };
 
 
@@ -1666,7 +1619,19 @@ export default class AdvKPI extends Component {
                 [fieldName]: event.value
             });
 
-            this.plotChart();
+            if (this.state.isRealTime) {
+                this.intervalID = setInterval(this.runKPIReport.bind(this), 15000);
+            } else {
+                this.AxiosSource.cancel();
+                await clearInterval(this.intervalID);
+                this.intervalID = null;
+
+            }
+
+            if (fieldName == "showCrossHair") {
+                this.plotChart();
+            }
+
         } catch (error) {
 
         }
@@ -1921,15 +1886,7 @@ export default class AdvKPI extends Component {
 
                     <div className="pane-content ml-5" id="rightPanel"  >
 
-                        <Button
-                            className="ml-5 mr-3"
-                            id="cmdRefresh"
-                            onClick={() => {
-                                this.plotChart();
-                            }}
-                        >
-                            Refresh
-                        </Button>
+
 
                         <Label>{this.state.ProfileName}</Label>
                         <div className="row mt-2 " style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -1948,10 +1905,12 @@ export default class AdvKPI extends Component {
                             <Checkbox
                                 className="mr-3 ml-3"
                                 label={"Realtime"}
-                            // checked={}
-                            // onChange={(event) => {
+                                checked={this.state.isRealTime}
+                                onChange={(event) => {
+                                    this.handleChange(event, "isRealTime");
 
-                            // }}
+                                }}
+
                             />
                             <Checkbox
                                 name="showCrossHair"
@@ -1969,7 +1928,7 @@ export default class AdvKPI extends Component {
                                     icon={faUndo}
                                     size="lg"
                                     onClick={() => {
-                                        this.objChart.reDraw();
+                                        this.plotChart();
                                     }}
                                 />
                             </div>

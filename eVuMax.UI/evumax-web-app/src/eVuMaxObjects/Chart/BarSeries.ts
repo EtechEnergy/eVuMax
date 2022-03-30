@@ -138,9 +138,10 @@ export class BarSeries {
             this.objHorizontalAxisScaleRef_x1 = d3.scaleBand().padding(0.05); //objHorizontalAxis.ScaleRef_x1;//x1
             this.objHorizontalAxisRef = this.objHorizontalAxis.AxisRef;
 
-            // this.objVerticalAxis = this.ChartRef.getAxisByID(objSeries.YAxisId);
-            // this.objVerticalAxisScaleRef = this.objVerticalAxis.ScaleRef;
-            // this.objVerticalAxisRef = this.objVerticalAxis.AxisRef;
+            this.objVerticalAxis = this.ChartRef.getAxisByID(objSeries.YAxisId);
+            this.objVerticalAxisScaleRef = this.objVerticalAxis.ScaleRef;
+            this.objVerticalAxisRef = this.objVerticalAxis.AxisRef;
+            
               
             //alert(this.objVerticalAxisRef);
 

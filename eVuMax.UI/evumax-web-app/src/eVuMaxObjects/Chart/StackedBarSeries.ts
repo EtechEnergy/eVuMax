@@ -110,7 +110,7 @@ export class StackedBarSeries {
 						objVerticalAxis.isAllowScrolling = false;
 
 						let axisDomainValues: string[] = objHorizontalAxisScaleRef.domain();
-						debugger;
+						
 						for (let d = 0; d < objSeries.Data.length; d++) {
 							let objData: ChartData = objSeries.Data[d];
 
@@ -426,7 +426,7 @@ export class StackedBarSeries {
 						objVerticalAxis.isAllowScrolling = false;
 
 						let axisDomainValues: Date[] = objHorizontalAxisScaleRef.domain();
-						debugger;
+						
 						for (let d = 0; d < objSeries.Data.length; d++) {
 							let objData: ChartData = objSeries.Data[d];
 
