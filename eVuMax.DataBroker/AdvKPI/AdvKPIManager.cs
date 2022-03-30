@@ -37,12 +37,18 @@ namespace eVuMax.DataBroker.AdvKPI
 
                     string ProfileID = "";
                     string strWellList = "";
-                    
+                    string strDataFilter = "";
 
                     string[] wellListArr = new string[0];
+                    AdvKPIDataFilter objDataFilter = new AdvKPIDataFilter();
 
                     ProfileID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ProfileID")).FirstOrDefault().ParamValue.ToString();
                     strWellList = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellList")).FirstOrDefault().ParamValue.ToString();
+                    strDataFilter = paramRequest.Parameters.Where(x => x.ParamName.Contains("objFilterData")).FirstOrDefault().ParamValue.ToString();
+                    if (strDataFilter != "")
+                    {
+                        objDataFilter = JsonConvert.DeserializeObject<AdvKPIDataFilter>(strDataFilter);
+                    }
 
                     if (strWellList != "")
                     {
@@ -51,9 +57,25 @@ namespace eVuMax.DataBroker.AdvKPI
 
 
 
-                    ProcessAdvKPI objProcessor = new ProcessAdvKPI();
-                    objProcessor.WellList = wellListArr;
-                    objResponse =  objProcessor.processKPI(ref paramRequest.objDataService, ProfileID);
+                    ProcessAdvKPI objProcessAdvKPI = new ProcessAdvKPI();
+                    objProcessAdvKPI.WellList = wellListArr;
+                    if (objDataFilter != null)
+                    {
+                        if(objDataFilter.FilterData)
+                        {
+                            objProcessAdvKPI.objProcessor.FilterData = objDataFilter.FilterData;
+                            objProcessAdvKPI.objProcessor.FilterMainWellID = objDataFilter.FilterMainWellID;
+                            objProcessAdvKPI.objProcessor.FilterType = (VuMaxDR.AdvKPI.KPIProcessor.kpiFilterType)objDataFilter.FilterType;
+                            objProcessAdvKPI.objProcessor.Filter_FromDate = objDataFilter.Filter_FromDate;
+                            objProcessAdvKPI.objProcessor.Filter_ToDate = objDataFilter.Filter_ToDate;
+                            objProcessAdvKPI.objProcessor.Filter_FromDepth = objDataFilter.Filter_FromDepth;
+                            objProcessAdvKPI.objProcessor.Filter_ToDepth = objDataFilter.Filter_ToDepth;
+                            objProcessAdvKPI.objProcessor.Filter_LastHours = objDataFilter.Filter_LastHours;
+
+
+                        }
+                    }
+                    objResponse = objProcessAdvKPI.processKPI(ref paramRequest.objDataService, ProfileID);
                     return objResponse;
 
                 }

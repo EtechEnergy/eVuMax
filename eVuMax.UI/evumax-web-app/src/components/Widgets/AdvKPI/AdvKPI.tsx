@@ -25,6 +25,7 @@ import { confirmAlert } from "react-confirm-alert";
 
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 import { ADVKPIDataFilter } from "./AdvKPIDataFilter";
+import { ETIMEDOUT } from "constants";
 let _gMod = new GlobalMod();
 
 let profileList: any[] = [];
@@ -43,12 +44,14 @@ export default class AdvKPI extends Component {
         showCrossHair: false,
         cboWellList: [],
         selectedMainWell: new comboData(),
-        FilterBy: new comboData(),
+        cboFilterType: new comboData(),
         KPIDataFilter: new ADVKPIDataFilter(),
-        ProfileName: ""
+        ProfileName: "",
+        objFilterData: new ADVKPIDataFilter(),
+        dataFilterString: ""
     };
 
-    filterByComboList = [new comboData("Last Hours", "1"), new comboData("Date Range", "2"), new comboData("From Date Onwards", "3"), new comboData("Depth Range", "4"),
+    filterTypeComboList = [new comboData("Last Hours", "1"), new comboData("Date Range", "2"), new comboData("From Date Onwards", "3"), new comboData("Depth Range", "4"),
     new comboData("From Depth Onwards", "5"), new comboData("Current Section", "6")];
 
 
@@ -65,6 +68,9 @@ export default class AdvKPI extends Component {
     objSeries: DataSeries;
     objDataSeries: any;
     doHighlightTags: boolean = true;
+
+    ID: string = "";
+    SelectedWellList: string = "";
 
 
     componentDidMount() {
@@ -607,10 +613,62 @@ export default class AdvKPI extends Component {
                 }
 
 
+                let dataFilterString = "";
+                if (this.objData.FilterData == true) {
+                    dataFilterString = "(";
+                    switch (this.objData.FilterType) {
+                        // AllData = 0,
+                        // LastHours = 1,
+                        // DateRange = 2,
+                        // DateOnwards = 3,
+                        // DepthRange = 4,
+                        // DepthOnwards = 5,
+                        // CurrentSection = 6
+                        //                         FilterData: false
+                        // FilterMainWellID: ""
+                        // FilterType: 0
+                        // Filter_FromDate: "0001-01-01T00:00:00"
+                        // Filter_FromDepth: 0
+                        // Filter_LastHours: 0
+                        // Filter_ToDate: "0001-01-01T00:00:00"
+                        // Filter_ToDepth: 0
+
+
+
+                        case 0:
+
+                            break;
+                        case 1:
+                            dataFilterString += "Last " + this.objData.Filter_LastHours + " Hours";
+                            break;
+                        case 2:
+                            dataFilterString += "From Date " + this.objData.Filter_FromDate + " to " + this.objData.Filter_ToDate;
+                            break;
+                        case 3:
+                            dataFilterString += "From Date " + this.objData.Filter_FromDate + " onwards";
+                            break;
+                        case 4:
+                            dataFilterString += "From Depth " + this.objData.Filter_FromDepth + " to " + this.objData.Filter_ToDepth;
+                            break;
+                        case 5:
+                            dataFilterString += "From Depth " + this.objData.Filter_FromDepth + " onwards";
+                            break;
+                        case 6:
+                            dataFilterString += "Current Well Section";
+                            break;
+
+
+                        default:
+                            dataFilterString="";
+                            break;
+                    }
+
+                    dataFilterString+=")";
+                }
 
                 this.setState({
                     cboWellList: wellComboList,
-                    ProfileName: this.objData.objProfile.ProfileName
+                    ProfileName: this.objData.objProfile.ProfileName + dataFilterString,
                 });
 
             }
@@ -934,7 +992,7 @@ export default class AdvKPI extends Component {
                             let objBottomAxes: Axis = new Axis();
 
                             objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
-                            objBottomAxes.bandScale= true;
+                            objBottomAxes.bandScale = true;
 
 
 
@@ -1229,6 +1287,10 @@ export default class AdvKPI extends Component {
             objParameter = new BrokerParameter("WellList", SelectedWellList);
             objBrokerRequest.Parameters.push(objParameter);
 
+            objParameter = new BrokerParameter("objFilterData", JSON.stringify(this.state.objFilterData));
+            objBrokerRequest.Parameters.push(objParameter);
+
+
             this.AxiosSource = axios.CancelToken.source();
             axios
                 .get(_gMod._getData, {
@@ -1403,11 +1465,18 @@ export default class AdvKPI extends Component {
     };
 
 
-    handleChangeDropDown = (event: any) => {
+    handleChangeDropDown = async (event: any, fieldName: string, filterObject: string) => {
 
 
-        this.setState({ [event.target.name]: event.value });
-        //this.setState({ selectedMainWell: new comboData(event.value.text, event.value.id) });
+        debugger;
+        let edited = this.state.objFilterData;
+        edited[filterObject] = event.value.id;
+        await this.setState({
+            objDataFilter: edited
+        });
+
+        //this.setState({ [event.target.name]: event.value });
+        this.setState({ [fieldName]: new comboData(event.value.text, event.value.id) });
 
     }
 
@@ -1416,11 +1485,11 @@ export default class AdvKPI extends Component {
 
             //load Selected Wells
             let wells = this.state.grdWells;
-            let SelectedWellList = "";
+            //let SelectedWellList = "";
             for (let index = 0; index < wells.length; index++) {
 
                 if (wells[index].selected1 == true) {
-                    SelectedWellList += "," + wells[index].WellID;
+                    this.SelectedWellList += "," + wells[index].WellID;
                 }
 
             }
@@ -1428,7 +1497,7 @@ export default class AdvKPI extends Component {
 
 
 
-            if (SelectedWellList == "") {
+            if (this.SelectedWellList == "") {
                 confirmAlert({
                     message: 'Please Select Well for the list',
                     childrenElement: () => <div />,
@@ -1456,24 +1525,24 @@ export default class AdvKPI extends Component {
 
             newPanes[0].size = "0%";
 
-            let ID: string = "";
+            //let ID: string = "";
             if (RunType == "RunKPI") {
-                ID = objRow.PROFILE_ID;
+                this.ID = objRow.PROFILE_ID;
             }
             if (RunType == "RunComposite") {
-                ID = objRow.PROFILE_ID;
+                this.ID = objRow.PROFILE_ID;
             }
 
 
             this.setState({
                 panes: newPanes,
                 currentRow: objRow,
-                currentProfileID: ID,
+                currentProfileID: this.ID,
                 runReport: true,
                 //showChartDialog: false,
             });
 
-            this.runKPIReport(ID, SelectedWellList);
+            this.runKPIReport(this.ID, this.SelectedWellList);
 
         } catch (error) { }
     };
@@ -1487,6 +1556,12 @@ export default class AdvKPI extends Component {
             this.intervalID = null;
 
 
+            this.ID = ""
+            this.SelectedWellList = "";
+
+            this.setState({
+                objFilterData: new ADVKPIDataFilter()
+            })
             $("#AdvKPIChart").empty();
 
             this.setState({
@@ -1586,12 +1661,28 @@ export default class AdvKPI extends Component {
     handleChange = async (event: any, fieldName: string) => {
         try {
 
-
+            debugger;
             await this.setState({
                 [fieldName]: event.value
             });
 
             this.plotChart();
+        } catch (error) {
+
+        }
+
+    }
+
+    handleDataFilterChange = async (event: any, fieldName: string) => {
+        try {
+
+            debugger;
+            let edited = this.state.objFilterData;
+            edited[fieldName] = event.value;
+            await this.setState({
+                objDataFilter: edited
+            });
+
         } catch (error) {
 
         }
@@ -1947,17 +2038,19 @@ export default class AdvKPI extends Component {
                             <Checkbox
                                 className="mr-3 ml-3"
                                 label={"Filter Data"}
-                            // checked={}
-                            // onChange={(event) => {
+                                checked={this.state.objFilterData.FilterData}
+                                onChange={(event) => {
+                                    this.handleDataFilterChange(event, "FilterData");
 
-                            // }}
+                                }}
                             />
                         </div>
                         <div className="col-8" style={{ display: "flex", justifyContent: "flex-end" }}> <Button
                             className=" mr-2"
                             id="cmdClose"
                             onClick={() => {
-                                this.setState({ showFilterDialog: false })
+                                this.setState({ showFilterDialog: false });
+                                this.runKPIReport(this.ID, this.SelectedWellList);
 
                             }}
                         >
@@ -1986,30 +2079,39 @@ export default class AdvKPI extends Component {
                             dataItemKey="id"
                             value={this.state.selectedMainWell}
                             style={{ width: 200 }}
-                            onChange={this.handleChangeDropDown}
+
+                            onChange={(event) => {
+                                this.handleChangeDropDown(event, "selectedMainWell", "FilterMainWellID");
+
+                            }}
                         />
                         <br />
                         <Label className="mr-4 mt-3">Filter Data By</Label>
                         <DropDownList
                             name="FilterBy"
                             label=''
-                            data={this.filterByComboList}
+                            data={this.filterTypeComboList}
                             textField="text"
                             dataItemKey="id"
-                            value={this.state.FilterBy}
+                            value={this.state.cboFilterType}
                             style={{ width: 200 }}
-                            onChange={this.handleChangeDropDown}
+                            onChange={(event) => {
+                                this.handleChangeDropDown(event, "cboFilterType", "FilterType");
+
+                            }}
+
                         />
-                        {this.state.FilterBy.id == "1" && <div className="col-lg-12">
+                        {this.state.cboFilterType.id == "1" && <div className="col-lg-12">
                             <div className="row ml-5">
                                 <span className="ml-5 pl-2 ml-2 mt-2">
                                     <NumericTextBox
-                                        //value={this.state.objTimeFilter.LastPeriod}
+                                        value={this.state.objFilterData.Filter_LastHours}
                                         format="n2"
                                         width="100px"
-                                    //   onChange={(e: any) => {
-                                    //     this.onTimeFilterChange(e, "LastPeriod");
-                                    //   }}
+                                        onChange={(event) => {
+                                            this.handleDataFilterChange(event, "Filter_LastHours");
+
+                                        }}
                                     />
                                     <label className="leftPadding-small">Hours</label>
                                 </span>
@@ -2018,16 +2120,16 @@ export default class AdvKPI extends Component {
 
                         <div className="col-lg-12 mt-3">
 
-                            {this.state.FilterBy.id == "2" || this.state.FilterBy.id == "3" ? (
+                            {this.state.cboFilterType.id == "2" || this.state.cboFilterType.id == "3" ? (
                                 <label className="mr-4">From Date </label>
                             ) : (
                                 ""
                             )}
 
-                            {this.state.FilterBy.id == "2" || this.state.FilterBy.id == "3" ? (
+                            {this.state.cboFilterType.id == "2" || this.state.cboFilterType.id == "3" ? (
                                 <DateTimePicker
                                     name="txtFromDate"
-                                    // value={new Date(this.state.objDataSelector.fromDate)}
+                                    value={new Date(this.state.objFilterData.Filter_FromDate)}
                                     format="MM/dd/yyyy HH:mm:ss"
                                     formatPlaceholder={{
                                         year: "yyyy",
@@ -2037,25 +2139,25 @@ export default class AdvKPI extends Component {
                                         minute: "mm",
                                         second: "ss",
                                     }}
-                                // onChange={(e) => {
-                                //   this.setState({ fromDate: e.value });
-                                // }}
-                                // onChange={(e) => this.handleChange(e, "fromDate")}
+                                    onChange={(event) => {
+                                        this.handleDataFilterChange(event, "Filter_FromDate");
+
+                                    }}
                                 />
                             ) : (
                                 ""
                             )}
                             <br />
-                            {this.state.FilterBy.id == "2" ? (
+                            {this.state.cboFilterType.id == "2" ? (
                                 <label className="mr-4 ml-4">To Date </label>
                             ) : (
                                 ""
                             )}
 
-                            {this.state.FilterBy.id == "2" ? (
+                            {this.state.cboFilterType.id == "2" ? (
                                 <DateTimePicker
                                     name="txtToDate"
-                                    // value={new Date(this.state.objDataSelector.toDate)}
+                                    value={new Date(this.state.objFilterData.Filter_ToDate)}
                                     format="MM/dd/yyyy HH:mm:ss"
                                     formatPlaceholder={{
                                         year: "yyyy",
@@ -2065,49 +2167,54 @@ export default class AdvKPI extends Component {
                                         minute: "mm",
                                         second: "ss",
                                     }}
-                                // onChange={(e) => {
-                                //   this.setState({ toDate: e.value });
-                                // }}
-                                //onChange={(e) => this.handleChange(e, "toDate")}
+                                    onChange={(event) => {
+                                        this.handleDataFilterChange(event, "Filter_ToDate");
+
+                                    }}
                                 />
                             ) : (
                                 ""
                             )}
                         </div>
                         <div className="col-lg-12">
-                            {this.state.FilterBy.id == "4" || this.state.FilterBy.id == "5" ? (
+                            {this.state.cboFilterType.id == "4" || this.state.cboFilterType.id == "5" ? (
                                 <label className="mr-4">From Depth </label>
                             ) : (
                                 ""
                             )}
 
-                            {this.state.FilterBy.id == "4" || this.state.FilterBy.id == "5" ? (
+                            {this.state.cboFilterType.id == "4" || this.state.cboFilterType.id == "5" ? (
                                 <NumericTextBox
                                     width={100}
                                     name="txtFromDepth"
-                                    // value={this.state.objDataSelector.fromDepth}
+                                    value={this.state.objFilterData.Filter_FromDepth}
                                     format="n2"
-                                // onChange={(e) => this.setState({ fromDepth: e.value })}
-                                // onChange={(e) => this.handleChange(e, "fromDepth")}
+                                    onChange={(event) => {
+                                        this.handleDataFilterChange(event, "Filter_FromDepth");
+
+                                    }}
                                 />
                             ) : (
                                 ""
                             )}
                             <br />
-                            {this.state.FilterBy.id == "4" ? (
+                            {this.state.cboFilterType.id == "4" ? (
                                 <label className="mr-4 ml-4">To Depth </label>
                             ) : (
                                 ""
                             )}
 
-                            {this.state.FilterBy.id == "4" ? (
+                            {this.state.cboFilterType.id == "4" ? (
                                 <NumericTextBox
-                                    name="txtFromDepth"
+                                    name="txtToDepth"
                                     width={100}
-                                    //value={this.state.objDataSelector.fromDepth}
+                                    value={this.state.objFilterData.Filter_ToDepth}
                                     format="n2"
-                                // onChange={(e) => this.setState({ fromDepth: e.value })}
-                                // onChange={(e) => this.handleChange(e, "fromDepth")}
+                                    onChange={(event) => {
+                                        this.handleDataFilterChange(event, "Filter_ToDepth");
+
+                                    }}
+
                                 />
                             ) : (
                                 ""
