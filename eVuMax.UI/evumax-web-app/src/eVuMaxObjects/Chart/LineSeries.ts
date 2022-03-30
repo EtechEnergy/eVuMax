@@ -619,6 +619,7 @@ export class LineSeries {
 
                     if (!(d.horizontalAxisID == undefined)) {
                       horizontalAxies = ChartRef.Axes.get(d.horizontalAxisID);
+                      debugger;
                     } else {
                       alert("undefined Horizontal Axis");
                     }
@@ -661,7 +662,9 @@ export class LineSeries {
                       ) {
                         let xValue = "";
                         if (horizontalAxies.bandScale) {
-                          xValue = "xxx";
+                          
+                          //alert("Horizontal - "+  horizontalAxies.bandScale.toString());
+                          xValue = horizontalAxies.bandScale;
                         } else {
                           if (!horizontalAxies.IsDateTime) {
                             xValue = horizontalAxies.ScaleRef.invert(
@@ -677,6 +680,7 @@ export class LineSeries {
 
                         let yValue = "xxx";
                         if (verticalAxies.bandScale) {
+                          //alert("Vertical - "+  verticalAxies.bandScale.toString());
                           yValue = "xxx";
                         } else {
                           if (!verticalAxies.IsDateTime) {

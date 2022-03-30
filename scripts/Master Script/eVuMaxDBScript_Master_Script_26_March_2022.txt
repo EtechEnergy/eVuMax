@@ -1,0 +1,174 @@
+USE [VuMaxDR]
+GO
+
+IF EXISTS(SELECT * FROM   INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'eVuMaxThemeDetails') 
+BEGIN
+
+
+DROP TABLE eVuMaxThemeDetails
+
+END
+GO
+
+
+IF EXISTS(SELECT * FROM   INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'eVuMaxThemeHeader') 
+BEGIN
+
+DROP TABLE eVuMaxThemeHeader
+
+END
+GO
+
+
+IF EXISTS(SELECT * FROM   INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'eVuMaxUserPref') 
+BEGIN
+
+DROP TABLE eVuMaxUserPref
+
+END
+GO
+
+
+IF EXISTS(SELECT * FROM   INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'eVuMaxUserSettings') 
+BEGIN
+
+DROP TABLE eVuMaxUserSettings
+
+END
+GO
+
+
+IF EXISTS(SELECT * FROM   INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'eVuMaxUserFavorites') 
+BEGIN
+
+DROP TABLE eVuMaxUserFavorites
+
+END
+GO
+
+
+
+CREATE TABLE eVuMaxThemeDetails(
+	[Id] [varchar](50) NOT NULL,
+	[PropertyName] [varchar](200) NULL,
+	[Value] [nvarchar](500) NULL,
+	[CreatedBy] [varchar](50) NULL,
+	[CreatedDate] [datetime] NULL,
+	[ModifiedBy] [varchar](50) NULL,
+	[ModifiedDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+
+
+CREATE TABLE eVuMaxThemeHeader(
+	[Id] [varchar](50) NOT NULL,
+	[Name] [varchar](100) NULL,
+	[CreatedBy] [varchar](50) NULL,
+	[CreatedDate] [datetime] NULL,
+	[ModifiedBy] [varchar](50) NULL,
+	[ModifiedDate] [datetime] NULL,
+ CONSTRAINT [PK_eVuMaxThemeHeader] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+CREATE TABLE eVuMaxUserPref(
+	[UserId] [varchar](50) NOT NULL,
+	[ThemeId] [varchar](50) NOT NULL,
+	[CreatedBy] [varchar](50) NULL,
+	[CreatedDate] [datetime] NULL,
+	[ModifiedBy] [varchar](50) NULL,
+	[ModifiedDate] [datetime] NULL,
+ CONSTRAINT [PK_eVuMaxUserPref] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+INSERT [dbo].[eVuMaxThemeDetails] ([Id], [PropertyName], [Value], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (N'5ccfc673-f853-4883-9230-ca454885fbc3', N'WorkArea', N'rgba(45, 44, 49, 1)', N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime), N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime))
+GO
+INSERT [dbo].[eVuMaxThemeDetails] ([Id], [PropertyName], [Value], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (N'5ccfc673-f853-4883-9230-ca454885fbc3', N'MenuBar', N'rgba(43, 42, 46, 1)', N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime), N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime))
+GO
+INSERT [dbo].[eVuMaxThemeDetails] ([Id], [PropertyName], [Value], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (N'5ccfc673-f853-4883-9230-ca454885fbc3', N'FontColor', N'rgba(226, 226, 239, 1)', N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime), N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime))
+GO
+INSERT [dbo].[eVuMaxThemeDetails] ([Id], [PropertyName], [Value], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (N'5ccfc673-f853-4883-9230-ca454885fbc3', N'PrimaryBackColor', N'rgba(32, 128, 225, 1)', N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime), N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime))
+GO
+INSERT [dbo].[eVuMaxThemeDetails] ([Id], [PropertyName], [Value], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (N'5ccfc673-f853-4883-9230-ca454885fbc3', N'PrimaryColor', N'#FFF', N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime), N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime))
+GO
+INSERT [dbo].[eVuMaxThemeDetails] ([Id], [PropertyName], [Value], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (N'5ccfc673-f853-4883-9230-ca454885fbc3', N'ChartGridColor', N'rgba(253, 253, 253, 1)', N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime), N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime))
+GOs
+INSERT [dbo].[eVuMaxThemeHeader] ([Id], [Name], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (N'5ccfc673-f853-4883-9230-ca454885fbc3', N'Dark', N'sa', CAST(N'2020-05-25T10:24:25.000' AS DateTime), N'', CAST(N'2021-09-18T11:27:41.000' AS DateTime))
+GO
+
+
+
+CREATE TABLE eVuMaxUserSettings(
+	[UserId] [varchar](100) NOT NULL,
+	[SettingsId] [varchar](50) NOT NULL,
+	[WellId] [varchar](100) NOT NULL,
+	[SettingsData] [ntext] NULL,
+	[CreatedBy] [varchar](50) NULL,
+	[CreatedDate] [datetime] NULL,
+	[ModifiedBy] [varchar](50) NULL,
+	[ModifiedDate] [date] NULL,
+ CONSTRAINT [PK_evmx_UserSettings] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC,
+	[SettingsId] ASC,
+	[WellId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+
+CREATE TABLE eVuMaxUserFavorites(
+	[Id] [varchar](100) NOT NULL,
+	[UserID] [varchar](100) NOT NULL,
+	[WellID] [varchar](50) NOT NULL,
+	[CreatedBy] [varchar](50) NULL,
+	[CreatedDate] [datetime] NULL,
+	[ModifiedBy] [varchar](50) NULL,
+	[ModifiedDate] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC,
+	[UserID] ASC,
+	[WellID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+
+
+
+/****** Object:  Table [dbo].[eVuMaxBroomStickDocs]    Script Date: 2/21/2022 3:19:11 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [eVuMaxBroomStickDocs](
+	[DOC_ID] [varchar](50) NOT NULL,
+	[WELL_ID] [varchar](50) NOT NULL,
+	[USER_ID] [varchar](50) NOT NULL,
+	[DOC_TYPE] [int] NULL,
+	[DOC_NAME] [varchar](100) NULL,
+	[SETUP] [ntext] NULL,
+	[TIME_FILTER] [ntext] NULL,
+ CONSTRAINT [PK_eVuMaxBroomStickDocs] PRIMARY KEY CLUSTERED 
+(
+	[DOC_ID] ASC,
+	[WELL_ID] ASC,
+	[USER_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+

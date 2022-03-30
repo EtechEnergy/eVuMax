@@ -1,8 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine, faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faChartLine, faFilter, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
 import React, { Component } from "react";
-import { Button, DateTimePicker, Dialog, DropDownList, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
+import { Button, DateTimePicker, Dialog, DropDownList, filterBy, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
 import * as d3 from "d3";
 
 import { Window } from "@progress/kendo-react-dialogs";
@@ -27,7 +27,7 @@ import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 import { ADVKPIDataFilter } from "./AdvKPIDataFilter";
 let _gMod = new GlobalMod();
 
-
+let profileList: any[] = [];
 export default class AdvKPI extends Component {
     //Cancel all Axios Request
     state = {
@@ -45,20 +45,27 @@ export default class AdvKPI extends Component {
         selectedMainWell: new comboData(),
         FilterBy: new comboData(),
         KPIDataFilter: new ADVKPIDataFilter(),
+        ProfileName: ""
     };
 
     filterByComboList = [new comboData("Last Hours", "1"), new comboData("Date Range", "2"), new comboData("From Date Onwards", "3"), new comboData("Depth Range", "4"),
     new comboData("From Depth Onwards", "5"), new comboData("Current Section", "6")];
+
 
     intervalID: NodeJS.Timeout | undefined;
     AxiosSource = axios.CancelToken.source();
     AxiosConfig = { cancelToken: this.AxiosSource.token };
     objChart: Chart;
     objData: any = "";
+    phaseTagList: any = [];
+    objProfile: any = "";
+
     objAxisList: any = [];
     topAxisCount: number = 0;
     objSeries: DataSeries;
     objDataSeries: any;
+    doHighlightTags: boolean = true;
+
 
     componentDidMount() {
         try {
@@ -87,17 +94,281 @@ export default class AdvKPI extends Component {
 
             this.setState({
                 grdComposite: objData.grdComposite,
-                grdProfile: objData.grdProfile,
+                grdProfile: Object.values(objData.grdProfile),
                 grdWells: newWellList
             });
+            profileList = Object.values(objData.grdProfile);
             console.log("grdWell", this.state.grdWells);
+            console.log("grdProfile", this.state.grdProfile);
 
         } catch (error) {
 
         }
     }
 
+    onAfterAxisDraw = (e, i) => {
+        try {
 
+
+            let lastPoint: number = 0;
+            this.objChart.ShowCustomComments = true;
+
+            let cX1 = this.objChart.__chartRect.left;
+            let cX2 = this.objChart.__chartRect.right;
+
+            let cY1 = this.objChart.__chartRect.top;
+            let cY2 = this.objChart.__chartRect.bottom;
+
+            // '***********************************Phase Tags ************************************************************''
+            if ((this.doHighlightTags
+                && (this.objProfile.TagSourceID.trim() == ""))) {
+
+                let y1: number;
+                let y2: number;
+
+
+                let objSeries: DataSeries = this.objChart.DataSeries.values().next().value;
+
+                let objVertAxis: Axis = new Axis();
+                objVertAxis = this.objChart.getAxisByID(objSeries.YAxisId);
+
+                let objHorizAxis: Axis = new Axis();
+                objHorizAxis = this.objChart.getAxisByID(objSeries.XAxisId);
+
+                if (objVertAxis.Inverted) {
+                    // y1 = objSeries.getMaxY();
+                    // y2 = objSeries.getMinY();
+
+                    y1 = objVertAxis.ScaleRef(objSeries.getMaxY());
+                    y2 = objVertAxis.ScaleRef(objSeries.getMinY());
+                }
+                else {
+                    // y1 = objSeries.getMinY();
+                    // y2 = objSeries.getMaxY();
+                    y1 = objVertAxis.ScaleRef(objSeries.getMinY());
+                    y2 = objVertAxis.ScaleRef(objSeries.getMaxY());
+                }
+
+                let totalHeight: number = (y2 - y1);
+                let phaseHeight: number = ((totalHeight * 100)
+                    / 100);
+
+
+                cY2 = (cY1 + phaseHeight);     //y2 = (y1 + phaseHeight);//WIP ??
+                // let objFont: Steema.TeeChart.Drawing.ChartFont = new Steema.TeeChart.Drawing.ChartFont();
+                // objFont.Name = "Arial";
+                // objFont.Size = 9;
+                // objFont.Bold = true;
+                // objFont.Color = Color.Black;
+
+                let phaseList: any = Object.values(this.phaseTagList);
+                phaseList.sort(function (a, b) {
+                    return a.NumericValue - b.NumericValue;
+                });
+
+
+                // Object.values(this.phaseTagList).forEach((objPhaseTag: any) => {
+                for (let index = 0; index < phaseList.length; index++) {
+                    let objPhaseTag = phaseList[index];
+
+
+                    let doContinue: boolean = true;
+                    if ((Object.values(this.objProfile.tagFilter).length > 0)) {
+                        let found: boolean = false;
+                        // if ((this.objProfile.TagLevel == 0)) {
+                        //     for (let objItem: AdvKPIPhase in this.objProfile.tagFilter.Values) {
+                        //         if ((objItem.PhaseID == objPhaseTag.PhaseID)) {
+                        //             found = true;
+                        //             break;
+                        //         }
+
+                        //     }
+
+                        // }
+
+                        // if ((this.objProfile.TagLevel == 1)) {
+                        //     for (let objItem: AdvKPIPhase in this.objProfile.tagFilter.Values) {
+                        //         if (((objItem.PhaseID == objPhaseTag.PhaseID)
+                        //             && (objItem.StepID == objPhaseTag.StepID))) {
+                        //             found = true;
+                        //             break;
+                        //         }
+
+                        //     }
+
+                        // }
+
+                        // if ((this.objProfile.TagLevel == 2)) {
+                        //     for (let objItem: AdvKPIPhase in objProfile.tagFilter.Values) {
+                        //         if (((objItem.PhaseID == objPhaseTag.PhaseID)
+                        //             && ((objItem.StepID == objPhaseTag.StepID)
+                        //                 && (objItem.EmphID == objPhaseTag.EmphID)))) {
+                        //             found = true;
+                        //             break;
+                        //         }
+
+                        //     }
+
+                        // }
+
+                        if (!found) {
+                            doContinue = false;
+                        }
+
+                    }
+
+                    if (doContinue) {
+
+
+
+                        let x1: number = objHorizAxis.ScaleRef(objPhaseTag.NumericValue);
+
+                        let x2: number = 0;
+
+
+
+                        if (objPhaseTag.IsOpen) {
+
+                            x2 = objHorizAxis.ScaleRef(objPhaseTag.NumericValue);
+
+
+                            objPhaseTag.NumericValue = objHorizAxis.getAxisRange().Max;
+                            x1 = cX2 - 20; //objHorizAxis.ScaleRef(objHorizAxis.getAxisRange().Max);
+                            // debugger;
+                            // if(x1==undefined){
+                            //     x1 = cX2; //Right Edge of Chart
+                            // }
+
+                            debugger;
+
+
+                        }
+                        else {
+                            x2 = objHorizAxis.ScaleRef(objPhaseTag.NumericValue);
+                        }
+
+                        if ((x1 < cX1)) {
+                            x1 = cX1;
+                        }
+
+                        if ((x1 > cX2) && (!objPhaseTag.IsOpen)) {
+                            x1 = cX2;
+                        }
+
+                        if ((x2 < cX1)) {
+                            x2 = cX1;
+                        }
+
+                        if ((x2 > cX2)) {
+                            x2 = cX2;
+                        }
+
+
+
+                        if ((x1 >= (lastPoint + 10))) {
+
+                            let txtLabel = objPhaseTag.phaseName + (" : " + (objPhaseTag.stepName + (" : " + objPhaseTag.emphName)));
+                            // if (objPhaseTag.IsOpen) {
+                            //     alert("abcd" +txtLabel);
+                            // }
+
+                            this.objChart.SVGRect.append("g")
+                                .attr("class", "text-" + this.objChart.Id)
+                                .attr(
+                                    "transform",
+                                    "translate(" + (x1) + "," + this.objChart.__chartRect.bottom + ") rotate(-90)"
+                                )
+                                .append('text')
+                                .style('background-color', 'green')
+                                .attr('class', 'axis-title')
+
+                                .attr('dy', '.75em')
+                                .text(txtLabel);
+
+                            //************************************ */
+
+
+                            lastPoint = x1;
+                        }
+
+
+                    }
+
+                }
+                //);
+
+
+            }
+
+            // '*******************************************************************************************************''
+            // '***********************************Custom Tags ************************************************************''
+            // if ((doHighlightTags
+            //     && (objProfile.TagSourceID.Trim != ""))) {
+            //     let y1: number;
+            //     let y2: number;
+            //     let objSeries: Steema.TeeChart.Styles.Series = objChart.Series(0);
+            //     let objVertAxis: Steema.TeeChart.Axis = objSeries.CustomVertAxis;
+            //     let objHorizAxis: Steema.TeeChart.Axis = objSeries.CustomHorizAxis;
+            //     if (objVertAxis.Inverted) {
+            //         y1 = objVertAxis.CalcYPosValue(objVertAxis.Maximum);
+            //         y2 = objVertAxis.CalcYPosValue(objVertAxis.Minimum);
+            //     }
+            //     else {
+            //         y1 = objVertAxis.CalcYPosValue(objVertAxis.Minimum);
+            //         y2 = objVertAxis.CalcYPosValue(objVertAxis.Maximum);
+            //     }
+
+            //     let totalHeight: number = (y2 - y1);
+            //     let phaseHeight: number = ((totalHeight * 100)
+            //         / 100);
+            //     y2 = (y1 + phaseHeight);
+            //     let objFont: Steema.TeeChart.Drawing.ChartFont = new Steema.TeeChart.Drawing.ChartFont();
+            //     objFont.Name = "Arial";
+            //     objFont.Size = 9;
+            //     objFont.Bold = true;
+            //     objFont.Color = Color.Black;
+            //     for (let objPhaseTag: clsCustomTag in customTagList.Values) {
+            //         let x1: number = objHorizAxis.CalcXPosValue(objPhaseTag.NumericValue);
+            //         let x2: number = 0;
+            //         if (objPhaseTag.IsOpen) {
+            //             x2 = objHorizAxis.CalcXPosValue(objHorizAxis.Maximum);
+            //             objPhaseTag.NumericValue = objHorizAxis.Maximum;
+            //         }
+            //         else {
+            //             x2 = objHorizAxis.CalcXPosValue(objPhaseTag.NumericValue);
+            //         }
+
+            //         if ((x1 < cX1)) {
+            //             x1 = cX1;
+            //         }
+
+            //         if ((x1 > cX2)) {
+            //             x1 = cX2;
+            //         }
+
+            //         if ((x2 < cX1)) {
+            //             x2 = cX1;
+            //         }
+
+            //         if ((x2 > cX2)) {
+            //             x2 = cX2;
+            //         }
+
+            //         let objBrush: System.Drawing.SolidBrush = new System.Drawing.SolidBrush(Color.FromArgb(40, objPhaseTag.TagColor));
+            //         g.FillRectangle(objBrush, x1, y1, (x2 - x1), (y2 - y1));
+            //         g.Font = objFont;
+            //         g.RotateLabel(x1, y1, (objPhaseTag.TagCategoryName + (" : "
+            //             + (objPhaseTag.TagSubCategoryName + (" : " + objPhaseTag.TagActivityName)))), 90);
+            //     }
+
+            // }
+
+
+
+        } catch (error) {
+            //   alert(error);
+        }
+    }
 
     onAfterSeriesDraw = (e, i) => {
         try {
@@ -143,10 +414,6 @@ export default class AdvKPI extends Component {
             }
 
 
-            //             drawLine: true
-            // lineColor: "255, 128, 64"
-            // linePc: 15
-            // lineWidth: 3
 
 
         } catch (error) {
@@ -168,8 +435,10 @@ export default class AdvKPI extends Component {
 
             });
 
-            this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
-                //this.onBeforeSeriesDraw(e, i);
+
+
+            this.objChart.onAfterAxisDraw.subscribe((e, i) => {
+                this.onAfterAxisDraw(e, i);
             });
 
 
@@ -323,7 +592,7 @@ export default class AdvKPI extends Component {
         try {
 
             //Load Workspace Wells into Combo FilterData
-            debugger;
+
             let WellList: any = Object.values(this.objData.objWorkSpace.wells);
             if (WellList != null || WellList.length > 0) {
 
@@ -338,8 +607,10 @@ export default class AdvKPI extends Component {
                 }
 
 
+
                 this.setState({
-                    cboWellList: wellComboList
+                    cboWellList: wellComboList,
+                    ProfileName: this.objData.objProfile.ProfileName
                 });
 
             }
@@ -347,7 +618,7 @@ export default class AdvKPI extends Component {
 
             this.initializeChart();
             this.objChart.CrossHairRequire = this.state.showCrossHair;
-            
+
             if (this.objData.objProfile.axesList != null || this.objData.objProfile.axesList != undefined) {
                 this.objAxisList = Object.values(this.objData.objProfile.axesList);
                 this.setAxisPerColumnAndRow(this.objAxisList);
@@ -487,8 +758,7 @@ export default class AdvKPI extends Component {
 
 
 
-                    objAxis.bandScale = true;
-                    //                    objAxis.bandScale = true;     //For Bar Chart
+
                     objAxis.Title = objSummaryAxis.AxisTitle;
                     objAxis.ShowLabels = true;
                     objAxis.ShowTitle = true;
@@ -506,7 +776,7 @@ export default class AdvKPI extends Component {
                     objAxis.ShowSelector = false;
                     objAxis.Visible = true;
                     objAxis.Inverted = objSummaryAxis.Inverted;
-                    objAxis.PaddingMax = 2;
+                    //objAxis.PaddingMax = 50;
                     this.objChart.Axes.set(objAxis.Id, objAxis);
 
                     if (this.objChart.axisPerRow > 1) {
@@ -612,8 +882,8 @@ export default class AdvKPI extends Component {
                     // Pie = 5
                     // Bar = 6
 
-                    debugger;
-                    
+
+
 
                     switch (objDataSeries.SeriesType) {
                         case 0:
@@ -630,7 +900,7 @@ export default class AdvKPI extends Component {
 
                                 this.objSeries.CurveStyle = curveStyle.normal;
                             }
-                      //      this.getLineSeriesData();
+                            //          this.getLineSeriesData();
                             break;
                         case 1://HorizontalArea
                             this.objSeries.Type = dataSeriesType.HorizontalArea;
@@ -647,10 +917,11 @@ export default class AdvKPI extends Component {
                             this.objSeries.PointStyle = objDataSeries.PointStyle;
 
                             //                            this.objSeries.LineWidth = objDataSeries.LineWidth == 0 ? 1 : objDataSeries.LineWidth;
-                       //     this.getPointSeriesData();
+                            //     this.getGroupSeriesData();
                             break;
                         case 4://Histogram
                             this.objSeries.Type = dataSeriesType.Bar;
+                            //Pending Make band scale True -99999999 pending
                             break;
                         case 5://Pie
                             this.objSeries.Type = dataSeriesType.Pie;
@@ -660,14 +931,17 @@ export default class AdvKPI extends Component {
 
                             this.objSeries.Type = dataSeriesType.Bar;
 
+                            let objBottomAxes: Axis = new Axis();
 
+                            objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
+                            objBottomAxes.bandScale= true;
 
 
 
                             this.objSeries.Stacked = false;
                             this.objSeries.Color = "rgb( " + objDataSeries.SeriesColor + ")";//Dont change position of this line
                             this.objSeries.ShowLabelOnSeries = true; //Parth 05-10-2020
-                        //    this.getBarSeriesData(); //WIP
+                            //    this.getSingleSeriesData(); //WIP
                             break;
 
                         default:
@@ -676,14 +950,15 @@ export default class AdvKPI extends Component {
 
 
                     //prath
-                    if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit ==  3){
-                        this.getPointSeriesData();
-                    }else{
-                        this.getBarSeriesData(); //WIP
+                    debugger;
+                    if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
+                        this.getGroupSeriesData();
+                    } else {
+                        this.getSingleSeriesData(); //WIP
                     }
                     //
 
-                        
+
 
 
 
@@ -721,15 +996,16 @@ export default class AdvKPI extends Component {
                     // }
                     // if (objDataSeries.Visible) {
 
-                    this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
+                    //     this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
                     //    }
 
 
                 }
 
 
+
                 this.objChart.updateChart();
-                debugger;
+
                 this.objChart.reDraw();
 
             }
@@ -738,12 +1014,21 @@ export default class AdvKPI extends Component {
         }
     }
 
-    getPointSeriesData = () => {
+    getGroupSeriesData = () => {
         try {
-
+            console.clear();
+            this.objSeries.Data.length = 0;
+            //alert("Group - " + this.objSeries.Title + " --> " + this.objSeries.Stacked);
             let SeriesXData: any = Object.values(this.objDataSeries.arrXData);
             let SeriesYData: any = Object.values(this.objDataSeries.arrYData);
 
+            SeriesXData.sort(function (a, b) {
+                return a - b;
+            });
+
+            SeriesYData.sort(function (a, b) {
+                return a - b;
+            });
 
             //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
             let xMin = 0;
@@ -763,18 +1048,23 @@ export default class AdvKPI extends Component {
                 autoScaleY = false;
             }
             //==========================================
+            //       alert(SeriesXData.length);
             for (let i = 0; i < SeriesXData.length; i++) {
-
-                // this.objSeries.Name = SeriesXData[i].LegendTitle;
                 let objVal: ChartData = new ChartData();
-                //let objBottomAxes: Axis = new Axis();
-                objVal.x = eval(Number(SeriesXData[i]).toFixed(2));
-                //  objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
-                objVal.y = Number(SeriesYData[i]);
-                //objBottomAxes.Labels.push(SeriesXData[i].XLabel);
+
+                if (objVal.x > 11) {
+                    continue;
+                }
+                objVal.x = eval(Number(SeriesXData[i]).toFixed(4));
+                objVal.y = eval(Number(SeriesYData[i]).toFixed(2));
+
+                if (objVal.x >= 13 && objVal.x <= 20) {
+                    console.log(this.objSeries.Title + " - " + objVal.x + " - " + objVal.y);
+
+                }
                 this.objSeries.Data.push(objVal);
             }
-
+            this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
 
 
         } catch (error) {
@@ -782,8 +1072,57 @@ export default class AdvKPI extends Component {
         }
     }
 
-    getLineSeriesData = () => {
+    // getLineSeriesData = () => {
+    //     try {
+    //         let SeriesData: any = Object.values(this.objDataSeries.outputData);
+    //         debugger;
+
+    //         //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
+    //         let xMin = 0;
+    //         let xMax = 0;
+    //         let yMin = 0;
+    //         let yMax = 0;
+    //         let autoScaleX: boolean = false;
+    //         let autoScaleY: boolean = false;
+    //         if (this.objChart.Axes.get(this.objSeries.XAxisId).AutoScale == false) {
+    //             xMin = this.objChart.Axes.get(this.objSeries.XAxisId).Min;
+    //             xMax = this.objChart.Axes.get(this.objSeries.XAxisId).Max;
+    //             autoScaleX = false;
+    //         }
+    //         if (this.objChart.Axes.get(this.objSeries.YAxisId).AutoScale == false) {
+    //             yMin = this.objChart.Axes.get(this.objSeries.YAxisId).Min;
+    //             yMax = this.objChart.Axes.get(this.objSeries.YAxisId).Max;
+    //             autoScaleY = false;
+    //         }
+    //         //==========================================
+    //         for (let i = 0; i < SeriesData.length; i++) {
+    //             this.objSeries.Name = SeriesData[i].LegendTitle;
+
+    //             let objVal: ChartData = new ChartData();
+
+    //             let objBottomAxes: Axis = new Axis();
+
+    //             objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
+    //             //objBottomAxes.bandScale= true;
+
+    //             objVal.x = Number(SeriesData[i].XValue);
+
+
+    //             objVal.y = Number(SeriesData[i].YValue);
+    //             objBottomAxes.Labels.push(SeriesData[i].XLabel);
+    //             this.objSeries.Data.push(objVal);
+
+    //         }
+
+
+    //     } catch (error) {
+
+    //     }
+    // }
+
+    getSingleSeriesData = () => {
         try {
+            //alert("yy");
             let SeriesData: any = Object.values(this.objDataSeries.outputData);
 
             //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
@@ -791,62 +1130,16 @@ export default class AdvKPI extends Component {
             let xMax = 0;
             let yMin = 0;
             let yMax = 0;
-            let autoScaleX: boolean = false;
-            let autoScaleY: boolean = false;
+            let autoScaleX: boolean = true;
+            let autoScaleY: boolean = true;
             if (this.objChart.Axes.get(this.objSeries.XAxisId).AutoScale == false) {
-                xMin = this.objChart.Axes.get(this.objSeries.XAxisId).Min;
-                xMax = this.objChart.Axes.get(this.objSeries.XAxisId).Max;
+                xMin = this.objChart.Axes.get(this.objSeries.XAxisId).getMin();
+                xMax = this.objChart.Axes.get(this.objSeries.XAxisId).getMax();
                 autoScaleX = false;
             }
             if (this.objChart.Axes.get(this.objSeries.YAxisId).AutoScale == false) {
-                yMin = this.objChart.Axes.get(this.objSeries.YAxisId).Min;
-                yMax = this.objChart.Axes.get(this.objSeries.YAxisId).Max;
-                autoScaleY = false;
-            }
-            //==========================================
-            for (let i = 0; i < SeriesData.length; i++) {
-                this.objSeries.Name = SeriesData[i].LegendTitle;
-
-                let objVal: ChartData = new ChartData();
-
-                let objBottomAxes: Axis = new Axis();
-
-                objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
-                //objBottomAxes.bandScale= true;
-
-                objVal.x = Number(SeriesData[i].XValue);
-
-
-                objVal.y = Number(SeriesData[i].YValue);
-                objBottomAxes.Labels.push(SeriesData[i].XLabel);
-                this.objSeries.Data.push(objVal);
-
-            }
-
-
-        } catch (error) {
-
-        }
-    }
-    getBarSeriesData = () => {
-        try {
-            let SeriesData: any = Object.values(this.objDataSeries.outputData);
-
-            //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
-            let xMin = 0;
-            let xMax = 0;
-            let yMin = 0;
-            let yMax = 0;
-            let autoScaleX: boolean = false;
-            let autoScaleY: boolean = false;
-            if (this.objChart.Axes.get(this.objSeries.XAxisId).AutoScale == false) {
-                xMin = this.objChart.Axes.get(this.objSeries.XAxisId).Min;
-                xMax = this.objChart.Axes.get(this.objSeries.XAxisId).Max;
-                autoScaleX = false;
-            }
-            if (this.objChart.Axes.get(this.objSeries.YAxisId).AutoScale == false) {
-                yMin = this.objChart.Axes.get(this.objSeries.YAxisId).Min;
-                yMax = this.objChart.Axes.get(this.objSeries.YAxisId).Max;
+                yMin = this.objChart.Axes.get(this.objSeries.YAxisId).getMin();
+                yMax = this.objChart.Axes.get(this.objSeries.YAxisId).getMax();
                 autoScaleY = false;
             }
             //==========================================
@@ -878,12 +1171,12 @@ export default class AdvKPI extends Component {
                     objVal.x = Number(SeriesData[i].XValue);
                 }
 
-                objVal.y = Number(SeriesData[i].YValue);
+                objVal.y = eval(Number(SeriesData[i].YValue).toFixed(2));
                 objBottomAxes.Labels.push(SeriesData[i].XLabel);
                 this.objSeries.Data.push(objVal);
 
             }
-
+            this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
 
         } catch (error) {
 
@@ -950,7 +1243,11 @@ export default class AdvKPI extends Component {
                     // $("#loader").hide();
                     //alert("success");
 
-                    this.objData = JSON.parse(res.data.Response);
+
+                    let objDataReeceive = JSON.parse(res.data.Response);
+                    this.objData = objDataReeceive.objProcessor;
+                    this.objProfile = objDataReeceive.objProfile;
+                    this.phaseTagList = objDataReeceive.phaseTagList;
 
                     console.log("AdvKPI", this.objData);
 
@@ -971,7 +1268,7 @@ export default class AdvKPI extends Component {
 
                 })
                 .catch((error) => {
-                    alert("error " + error.message);
+
                     Util.StatusError(error.message);
                     // this.setState({
                     //   isProcess: false,
@@ -1057,7 +1354,7 @@ export default class AdvKPI extends Component {
 
                 })
                 .catch((error) => {
-                    alert("error " + error.message);
+
                     Util.StatusError(error.message);
                     // this.setState({
                     //   isProcess: false,
@@ -1108,7 +1405,7 @@ export default class AdvKPI extends Component {
 
     handleChangeDropDown = (event: any) => {
 
-        debugger;
+
         this.setState({ [event.target.name]: event.value });
         //this.setState({ selectedMainWell: new comboData(event.value.text, event.value.id) });
 
@@ -1228,6 +1525,27 @@ export default class AdvKPI extends Component {
         this.setState({ selectedTab: e.selected });
     }
 
+    filterData = (e: any) => {
+        // NOTES: ""
+        // PROFILE_ID: "966_396_416_314_772"
+        // PROFILE_NAME: ""
+
+        let value = e.target.value;
+        let filter: any = {
+            logic: "or",
+            filters: [
+                { field: "NOTES", operator: "contains", value: value },
+                { field: "PROFILE_NAME", operator: "contains", value: value },
+
+            ],
+        };
+        console.log("Search ", filterBy(profileList, filter, null));
+
+        // this.setState({
+        //     grdProfile: filterBy(profileList, filter, null)
+        // });
+    };
+
 
     getVerticalAxisByColumnID = (pAxisID: string) => {
         try {
@@ -1265,11 +1583,11 @@ export default class AdvKPI extends Component {
         }
     }
 
-    handleChange = async (event: any,fieldName:string) => {
+    handleChange = async (event: any, fieldName: string) => {
         try {
-            debugger;
-           
-          await  this.setState({
+
+
+            await this.setState({
                 [fieldName]: event.value
             });
 
@@ -1296,6 +1614,7 @@ export default class AdvKPI extends Component {
                         size={24}
                         color="yellow"
                     />
+
                 </div>
 
                 <Splitter
@@ -1397,6 +1716,16 @@ export default class AdvKPI extends Component {
                                     onSelect={this.handleTabSelection}
                                     keepTabsMounted={true}>
                                     <TabStripTab title="KPI">
+                                        <div className="k-textbox k-space-right serachStyle">
+                                            <input
+                                                type="text"
+                                                onChange={this.filterData}
+                                                placeholder="Search"
+                                            />
+                                            <a className="k-icon k-i-search" style={{ right: "10px" }}>
+                                                &nbsp;
+                                            </a>
+                                        </div>
                                         <Grid
                                             style={{
                                                 height: "730px", width: "auto"
@@ -1420,7 +1749,7 @@ export default class AdvKPI extends Component {
 
                                             />}
                                             <GridColumn
-                                                field="PROFILE_NOTES"
+                                                field="NOTES"
                                                 title="Notes"
                                                 width={50}
 
@@ -1500,6 +1829,18 @@ export default class AdvKPI extends Component {
                     </div>
 
                     <div className="pane-content ml-5" id="rightPanel"  >
+
+                        <Button
+                            className="ml-5 mr-3"
+                            id="cmdRefresh"
+                            onClick={() => {
+                                this.plotChart();
+                            }}
+                        >
+                            Refresh
+                        </Button>
+
+                        <Label>{this.state.ProfileName}</Label>
                         <div className="row mt-2 " style={{ display: "flex", justifyContent: "flex-end" }}>
                             <FontAwesomeIcon
                                 style={{ alignSelf: "center" }}
@@ -1526,12 +1867,21 @@ export default class AdvKPI extends Component {
                                 className="mr-3 ml-3"
                                 label={"Cross Hair"}
                                 checked={this.state.showCrossHair}
-                                
+
                                 onChange={(event) => {
-                                    this.handleChange(event,"showCrossHair");
+                                    this.handleChange(event, "showCrossHair");
 
                                 }}
                             />
+                            <div className="mr-5">
+                                <FontAwesomeIcon
+                                    icon={faUndo}
+                                    size="lg"
+                                    onClick={() => {
+                                        this.objChart.reDraw();
+                                    }}
+                                />
+                            </div>
                             <Button
                                 className="ml-5 mr-3"
                                 id="cmdClose"

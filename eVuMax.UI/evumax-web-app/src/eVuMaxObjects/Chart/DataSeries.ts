@@ -92,7 +92,7 @@ export class DataSeries {
   //#region Min/Max Methods
 
   getMaxX = (): number => {
-    let maxValue = Number.MIN_VALUE;
+    let maxValue =Number.NEGATIVE_INFINITY;// Number.MIN_VALUE;
   
     for(let i=0;i<this.Data.length;i++){
         if(this.Data[i].x>maxValue){
@@ -115,7 +115,7 @@ export class DataSeries {
 
 
 
-  getMinX = (): number => {
+ public getMinX = (): number => {
 
     let minValue = Number.MAX_VALUE;
   
@@ -134,8 +134,8 @@ export class DataSeries {
     );
   };
 
-  getMaxY = (): number => {
-    let maxValue = Number.MIN_VALUE;
+  public getMaxY = (): number => {
+    let maxValue =Number.NEGATIVE_INFINITY;// Number.MIN_VALUE;
   
     for(let i=0;i<this.Data.length;i++){
         if(this.Data[i].y>maxValue){
@@ -180,7 +180,7 @@ export class DataSeries {
 
   getMaxZ = (): number => {
     
-    let maxValue = Number.MIN_VALUE;
+    let maxValue = Number.NEGATIVE_INFINITY;//Number.MIN_VALUE;
   
     for(let i=0;i<this.Data.length;i++){
         if(this.Data[i].z>maxValue){

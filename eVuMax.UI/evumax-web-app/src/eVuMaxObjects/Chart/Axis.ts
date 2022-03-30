@@ -465,7 +465,7 @@ export class Axis {
   formatAxis = () => {
     
     let maxLabel = "";
-    debugger;
+    
 
     if (this.IsDateTime) {
       let objRange: AxisDateRange = this.getAxisRange();
@@ -1868,7 +1868,7 @@ export class Axis {
             //objRange = new AxisRange();
             objRange.Min = lMin;
             objRange.Max = lMax;
-
+            
             if (this.PaddingMin > 0 || this.PaddingMax > 0) {
               let paddingNumber: number = objRange.Max - objRange.Min;
               objRange.Min = objRange.Min - (paddingNumber * this.PaddingMin) / 100;

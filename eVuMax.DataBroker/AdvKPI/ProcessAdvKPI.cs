@@ -4,11 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using VuMaxDR.AdvKPI;
 using VuMaxDR.Data;
 using VuMaxDR.Data.Objects;
+using Microsoft.VisualBasic;
 
 namespace eVuMax.DataBroker.AdvKPI_
 {
@@ -36,10 +38,10 @@ namespace eVuMax.DataBroker.AdvKPI_
         private int lastY = 0;
         //private Panel panelVertical = new Panel();
         //private Panel panelHorizontal = new Panel();
-        private Dictionary<double, clsPhaseTag> phaseTagList = new Dictionary<double, clsPhaseTag>();
-        private Dictionary<double, clsCustomTag> customTagList = new Dictionary<double, clsCustomTag>();
-        private bool doHighlightTags = false;
-        private bool doHighlightNPT = false;
+        public Dictionary<double, clsPhaseTag> phaseTagList = new Dictionary<double, clsPhaseTag>();
+        public Dictionary<double, clsCustomTag> customTagList = new Dictionary<double, clsCustomTag>();
+        public bool doHighlightTags = false;
+        public bool doHighlightNPT = false;
 
 
         private Broker.BrokerRequest objRequest = new Broker.BrokerRequest();
@@ -77,8 +79,46 @@ namespace eVuMax.DataBroker.AdvKPI_
                     loadCustomTags();
                 }
 
-                objProcessor.processProfile();
+                 objProcessor.processProfile();
+
                 Thread.Sleep(2000);
+
+                foreach (AdvKPIData objItem in objProcessor.outputData.Values)
+                {
+                    
+                    if(objItem.SeriesType == AdvKPIData.enAdvKPiSeriesType.Pie)
+                    {
+                        //noting to do right now..
+                    }
+                    else
+                    {
+                        if (objProfile.DataGroup == AdvKPIData.enAdvKPIDataGroup.TimePeriod & objProfile.TimeUnit == AdvKPIData.enAdvKPITimeUnit.CumulativeDays)
+                        {
+                            if (objProfile.TagSourceID.Trim() == "")
+                            {
+                                mapPhaseTagsWithDays(ref objItem.arrXData,ref objItem.arrDateData);
+                            }
+                        }
+                        else
+                        {
+                            if (objProfile.HighlightTags)
+                            {
+                                if (objProfile.TagSourceID.Trim() == "")
+                                {
+                                    mapPhaseTagsWithDays(ref objItem.outputData);
+                                }
+                                else
+                                {
+                                    mapCustomTagsWithDays(ref objItem.outputData);
+                                }
+
+                                doHighlightTags = true;
+                                doHighlightNPT = true;
+                            }
+                        }
+                    }
+                
+                }
 
                 //update Series 
 
@@ -93,7 +133,8 @@ namespace eVuMax.DataBroker.AdvKPI_
 
 
                 objResponse.RequestSuccessfull = true;
-                objResponse.Response = JsonConvert.SerializeObject(objProcessor);
+                //objResponse.Response = JsonConvert.SerializeObject(objProcessor);
+                objResponse.Response = JsonConvert.SerializeObject(this);
                 return objResponse;
             }
             catch (Exception ex)
@@ -107,6 +148,100 @@ namespace eVuMax.DataBroker.AdvKPI_
 
         }
 
+
+        private void mapPhaseTagsWithDays(ref double[] paramXData, ref DateTime[] paramDateData)
+        {
+            try
+            {
+                foreach (clsPhaseTag objItem in phaseTagList.Values)
+                {
+                    for (int i = 0, loopTo = paramDateData.Length - 1; i <= loopTo; i++)
+                    {
+                        if (paramDateData[i] > objItem.StartDate & i > 0)
+                        {
+
+                            // 'It's between previous entry and this entry
+
+                            // 'Find the percentage increase from previous value
+                            double rangeDiff = Math.Abs(DateAndTime.DateDiff(DateInterval.Second, paramDateData[i - 1], paramDateData[i]));
+                            double currentDiff = Math.Abs(DateAndTime.DateDiff(DateInterval.Second, paramDateData[i - 1], objItem.StartDate));
+                            double pcIncrease = currentDiff * 100d / rangeDiff;
+                            double newValue = paramXData[i - 1] + (paramXData[i] - paramXData[i - 1]) * pcIncrease / 100d;
+                            objItem.NumericValue = Math.Round(newValue,4);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+      
+        private void mapPhaseTagsWithDays(ref Dictionary<string, AdvKPIOutputItem> paramList)
+        {
+            try
+            {
+                AdvKPIOutputItem[] arrOutputItems = paramList.Values.ToArray();
+                foreach (clsPhaseTag objItem in phaseTagList.Values)
+                {
+                    for (int i = 0, loopTo = arrOutputItems.Length - 1; i <= loopTo; i++)
+                    {
+                        if (arrOutputItems[i].DateTimeValue > objItem.StartDate & i > 0)
+                        {
+
+                            // 'It's between previous entry and this entry
+
+                            // 'Find the percentage increase from previous value
+                            double rangeDiff = Math.Abs(DateAndTime.DateDiff(DateInterval.Second, arrOutputItems[i - 1].DateTimeValue, arrOutputItems[i].DateTimeValue));
+                            double currentDiff = Math.Abs(DateAndTime.DateDiff(DateInterval.Second, arrOutputItems[i - 1].DateTimeValue, objItem.StartDate));
+                            double pcIncrease = currentDiff * 100d / rangeDiff;
+                            double newValue = arrOutputItems[i - 1].XValue + (arrOutputItems[i].XValue - arrOutputItems[i - 1].XValue) * pcIncrease / 100;
+                            objItem.NumericValue = Math.Round(newValue, 4);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+
+        //**********
+        private void mapCustomTagsWithDays(ref Dictionary<string, AdvKPIOutputItem> paramList)
+        {
+            try
+            {
+                AdvKPIOutputItem[] arrOutputItems = paramList.Values.ToArray();
+                foreach (clsCustomTag objItem in customTagList.Values)
+                {
+                    for (int i = 0, loopTo = arrOutputItems.Length - 1; i <= loopTo; i++)
+                    {
+                        if (arrOutputItems[i].DateTimeValue > objItem.StartDate & i > 0)
+                        {
+
+                            // 'It's between previous entry and this entry
+
+                            // 'Find the percentage increase from previous value
+                            double rangeDiff = Math.Abs(DateAndTime.DateDiff(DateInterval.Second, arrOutputItems[i - 1].DateTimeValue, arrOutputItems[i].DateTimeValue));
+                            double currentDiff = Math.Abs(DateAndTime.DateDiff(DateInterval.Second, arrOutputItems[i - 1].DateTimeValue, objItem.StartDate));
+                            double pcIncrease = currentDiff * 100d / rangeDiff;
+                            double newValue = arrOutputItems[i - 1].XValue + (arrOutputItems[i].XValue - arrOutputItems[i - 1].XValue) * pcIncrease / 100;
+                            objItem.NumericValue = Math.Round(newValue, 4);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        //*******
         private string getVerticalAxisByColumnID(string ColumnID)
         {
             try
@@ -161,13 +296,28 @@ namespace eVuMax.DataBroker.AdvKPI_
         {
             try
             {
-                for (int i = 0; i < WellList.Length; i++)
-             
+                //for (int i = 0; i < WellList.Length; i++)
+
+                //{
+                //    string WellID = WellList[i];
+                //   if (objWorkSpace.wells.ContainsKey(WellID))
+                //    {
+                //        objWorkSpace.wells[WellID].Selected = true;
+                //    }
+                //}
+
+
+                foreach (AdvKPIWell objWell in objWorkSpace.wells.Values)
                 {
-                    string WellID = WellList[i];
-                   if (objWorkSpace.wells.ContainsKey(WellID))
+
+                    string WellID = objWell.WellID;
+                    if (WellList.Contains(WellID))
                     {
-                        objWorkSpace.wells[WellID].Selected = true;
+                        objWell.Selected = true;
+                    }
+                    else
+                    {
+                        objWell.Selected = false;
                     }
                 }
             }
