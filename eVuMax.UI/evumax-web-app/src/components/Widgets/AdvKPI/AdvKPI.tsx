@@ -1,3 +1,6 @@
+//https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces
+//https://stackoverflow.com/questions/38330484/dynamic-complex-rowspan-in-html-table
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faFilter, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
@@ -37,7 +40,8 @@ export default class AdvKPI extends Component {
         grdWells: [],
         grdProfile: [],
         grdComposite: [],
-        runReport: false,
+        runKPIReport: false,
+        runCompositeReport: false,
         warningMsg: [],
         selectedTab: 0,
         currentProfileID: "",
@@ -51,12 +55,13 @@ export default class AdvKPI extends Component {
         objFilterData: new ADVKPIDataFilter(),
         dataFilterString: "",
         isRealTime: false as boolean,
+
     };
 
     filterTypeComboList = [new comboData("Last Hours", "1"), new comboData("Date Range", "2"), new comboData("From Date Onwards", "3"), new comboData("Depth Range", "4"),
     new comboData("From Depth Onwards", "5"), new comboData("Current Section", "6")];
 
-
+    KPIType = "";
     intervalID: NodeJS.Timeout | undefined;
     AxiosSource = axios.CancelToken.source();
     AxiosConfig = { cancelToken: this.AxiosSource.token };
@@ -64,16 +69,17 @@ export default class AdvKPI extends Component {
     objData: any = "";
     phaseTagList: any = [];
     objProfile: any = "";
-
+    objCompositeProfile: any = "";
     objAxisList: any = [];
     topAxisCount: number = 0;
     objSeries: DataSeries;
     objDataSeries: any;
     doHighlightTags: boolean = true;
 
+
+
     ID: string = "";
     SelectedWellList: string = "";
-
 
     componentDidMount() {
         try {
@@ -98,6 +104,7 @@ export default class AdvKPI extends Component {
 
 
             }
+
 
 
             this.setState({
@@ -242,12 +249,12 @@ export default class AdvKPI extends Component {
 
                             objPhaseTag.NumericValue = objHorizAxis.getAxisRange().Max;
                             x1 = cX2 - 20; //objHorizAxis.ScaleRef(objHorizAxis.getAxisRange().Max);
-                            // debugger;
+                            // 
                             // if(x1==undefined){
                             //     x1 = cX2; //Right Edge of Chart
                             // }
 
-                            debugger;
+
 
 
                         }
@@ -488,6 +495,71 @@ export default class AdvKPI extends Component {
     }
 
 
+
+    initializeCompositeChart = (chartId: string) => {
+        try {
+
+            debugger;
+            // this.objCompositeProfile.items.forEach(element => {
+
+
+
+            // });
+
+
+            let objChart: Chart = new Chart(this, "objChart" + chartId);
+            objChart.ContainerId = chartId;
+
+            objChart.onAfterSeriesDraw.subscribe((e, i) => {
+                this.onAfterSeriesDraw(e, i);
+            });
+
+            objChart.onAfterAxisDraw.subscribe((e, i) => {
+                this.onAfterAxisDraw(e, i);
+            });
+
+            objChart.DataSeries.clear();
+            objChart.Axes.clear();
+            objChart.createDefaultAxes();
+            objChart.updateChart();
+
+            objChart.leftAxis().AutoScale = true;
+            objChart.leftAxis().Inverted = false;
+            objChart.leftAxis().ShowLabels = true;
+            objChart.leftAxis().ShowTitle = true;
+            objChart.leftAxis().Title = "";
+            objChart.leftAxis().Visible = true;
+
+            objChart.bottomAxis().AutoScale = true;
+            objChart.bottomAxis().IsDateTime = false;
+            objChart.bottomAxis().bandScale = false; //wip
+            objChart.bottomAxis().ShowLabels = true;
+            objChart.bottomAxis().ShowTitle = false;
+            objChart.bottomAxis().LabelAngel = 90;
+            objChart.bottomAxis().ShowSelector = false;
+            objChart.bottomAxis().Visible = true;
+            objChart.bottomAxis().PaddingMax = 0; //wip
+
+
+            objChart.rightAxis().Visible = false;
+            objChart.rightAxis().ShowLabels = false;
+
+            objChart.MarginLeft = 50;
+            objChart.MarginBottom = 50;
+            objChart.MarginTop = 10;
+            objChart.MarginRight = 90;
+
+            objChart.initialize();
+
+            objChart.reDraw();
+            return objChart;
+
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+
     setAxisPerColumnAndRow = (axisList: any): number => {
         try {
             let totalRighAxis: number = 0;
@@ -596,11 +668,11 @@ export default class AdvKPI extends Component {
         }
     }
 
-    plotChart = () => {
+    plotChart = (paramObjChart: Chart, isComposite: boolean) => {
         try {
-
+            this.objChart = paramObjChart;
             //Load Workspace Wells into Combo FilterData
-
+            debugger;
             let WellList: any = Object.values(this.objData.objWorkSpace.wells);
             if (WellList != null || WellList.length > 0) {
 
@@ -610,6 +682,9 @@ export default class AdvKPI extends Component {
 
                 for (let index = 0; index < WellList.length; index++) {
                     const objWell: any = WellList[index].objWell;
+                    if (objWell == undefined) {
+                        continue;
+                    }
                     objCombo = new comboData(objWell.name, objWell.ObjectID);
                     wellComboList.push(objCombo);
                 }
@@ -676,8 +751,12 @@ export default class AdvKPI extends Component {
             }
 
 
-            this.initializeChart();
+            if (isComposite == false) {
+                this.initializeChart();
+            }
+
             this.objChart.CrossHairRequire = this.state.showCrossHair;
+            
 
             if (this.objData.objProfile.axesList != null || this.objData.objProfile.axesList != undefined) {
                 this.objAxisList = Object.values(this.objData.objProfile.axesList);
@@ -947,7 +1026,7 @@ export default class AdvKPI extends Component {
 
 
                     //prath
-                    debugger;
+
                     if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
                         this.getGroupSeriesData();
                     } else {
@@ -1012,7 +1091,534 @@ export default class AdvKPI extends Component {
                             objYAxes.autoScaleMinValueZero = true;
 
 
-                            debugger;
+
+
+
+
+                            this.objSeries.Stacked = false;
+                            this.objSeries.Color = "rgb( " + objDataSeries.SeriesColor + ")";//Dont change position of this line
+                            this.objSeries.ShowLabelOnSeries = true; //Parth 05-10-2020
+                            //    this.getSingleSeriesData(); //WIP
+
+
+
+                            break;
+
+                        default:
+                            break;
+                    }
+
+
+
+
+                    // if (SeriesType == dataSeriesType.Area || SeriesType == dataSeriesType.Point) {
+                    //     this.objSeries.Color = objDataSeries.PointColor;
+                    // }
+                    // else if (SeriesType == dataSeriesType.Line) {
+                    //     this.objSeries.Color = objDataSeries.LineColor;
+                    // }
+
+
+
+
+
+
+                    //Populate the data series with this data
+
+
+                    //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
+
+
+
+
+
+
+
+
+
+
+
+
+                    // if (objDataSeries.ColorPointsAsColumn) {
+
+                    //     this.formatSeries(objSeries, objDataSeries);  
+                    // }
+                    // if (objDataSeries.Visible) {
+
+                    //     this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
+                    //    }
+
+
+                }
+
+
+
+                
+                this.objChart.updateChart();
+
+
+
+                this.objChart.reDraw();
+
+            }
+        } catch (error) {
+
+        }
+    }
+
+
+    plotCompositeChart = async () => {
+        try {
+
+           
+            await this.generateDynamicTable();
+
+            ////data location: objCompositeProfile.Items[0].objProfile.objProcessor
+            ////objCompositeProfile.Items[0].objProfile.objProcessor.outputData[0].arrXData
+            for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
+                debugger;
+                let objItem = this.objCompositeProfile.items[index];
+                //this.objData.objProfile = objItem.objProfile;
+                //this.objData.outputData = objItem.
+                this.plotChartCompositeEx(objItem);
+            }
+
+
+        } catch (error) {
+            
+        }
+    }
+
+    populateWellCombo = () => {
+        try {
+            //Load Workspace Wells into Combo FilterData
+            debugger;
+            let WellList: any = Object.values(this.objData.objWorkSpace.wells);
+            if (WellList != null || WellList.length > 0) {
+
+                let wellComboList: comboData[] = [];
+                let objCombo: comboData;
+                // wellComboList.push(new comboData("Select Main Well", "-1"));
+
+                for (let index = 0; index < WellList.length; index++) {
+                    const objWell: any = WellList[index].objWell;
+                    if (objWell == undefined) {
+                        continue;
+                    }
+                    objCombo = new comboData(objWell.name, objWell.ObjectID);
+                    wellComboList.push(objCombo);
+                }
+
+                this.setState({
+                    cboWellList: wellComboList,
+                });
+            }
+
+        } catch (error) {
+
+        }
+    }
+    plotChartCompositeEx = (paramObjItem: any) => {
+        try {
+
+            let objItem = paramObjItem;
+            this.objChart = paramObjItem.objChart;
+            let dataFilterString = "";
+            if (this.objData.FilterData == true) {
+                dataFilterString = "(";
+                switch (this.objData.FilterType) {
+                    // AllData = 0,
+                    // LastHours = 1,
+                    // DateRange = 2,
+                    // DateOnwards = 3,
+                    // DepthRange = 4,
+                    // DepthOnwards = 5,
+                    // CurrentSection = 6
+                    //                         FilterData: false
+                    // FilterMainWellID: ""
+                    // FilterType: 0
+                    // Filter_FromDate: "0001-01-01T00:00:00"
+                    // Filter_FromDepth: 0
+                    // Filter_LastHours: 0
+                    // Filter_ToDate: "0001-01-01T00:00:00"
+                    // Filter_ToDepth: 0
+
+
+
+                    case 0:
+
+                        break;
+                    case 1:
+                        dataFilterString += "Last " + this.objData.Filter_LastHours + " Hours";
+                        break;
+                    case 2:
+                        dataFilterString += "From Date " + this.objData.Filter_FromDate + " to " + this.objData.Filter_ToDate;
+                        break;
+                    case 3:
+                        dataFilterString += "From Date " + this.objData.Filter_FromDate + " onwards";
+                        break;
+                    case 4:
+                        dataFilterString += "From Depth " + this.objData.Filter_FromDepth + " to " + this.objData.Filter_ToDepth;
+                        break;
+                    case 5:
+                        dataFilterString += "From Depth " + this.objData.Filter_FromDepth + " onwards";
+                        break;
+                    case 6:
+                        dataFilterString += "Current Well Section";
+                        break;
+
+
+                    default:
+                        dataFilterString = "";
+                        break;
+                }
+
+                dataFilterString += ")";
+            }
+
+            this.setState({
+
+                ProfileName: this.objData.objProfile.ProfileName + dataFilterString,
+            });
+
+            this.objChart.CrossHairRequire = this.state.showCrossHair;
+            this.objChart.Title = objItem.objProfile.ProfileName;
+            this.objChart.MarginTop = 50;
+
+            //let objXData: any = Object.values(objItem.objProfile.objProcessor.outputData[0].arrXData);
+            let axesListArr: any = Object.values(objItem.objProfile.axesList);
+
+            if (axesListArr != null || axesListArr != undefined) {
+                this.objAxisList = Object.values(axesListArr);
+                this.setAxisPerColumnAndRow(this.objAxisList);
+
+                if (this.objChart.axisPerColumn > 1) {
+                    this.objChart.ZoomOnAxies = zoomOnAxies.x;
+                }
+
+                if (this.objChart.axisPerRow > 1) {
+                    this.objChart.ZoomOnAxies = zoomOnAxies.y;
+                }
+
+                this.objChart.Axes.clear();
+                this.objChart.DataSeries.clear();
+
+                this.objChart.MarginLeft = 50;
+                this.objChart.MarginBottom = 50;
+                this.objChart.MarginTop = 10;
+                this.objChart.MarginRight = 90;
+
+                let axisList: any = axesListArr;
+                axisList = this.getOrdersAxisListByPosition(0);//Left
+
+
+
+                for (let index = 0; index < axisList.length; index++) {
+
+                    let objSummaryAxis: any = axisList[index];
+
+                    //Create Custom Left Axis 
+                    let objAxis = new Axis();
+
+                    objAxis.DisplayOrder = index;
+                    objAxis.Id = "Y" + utilFunc.removeUnderScoreFromID(objSummaryAxis.AxisID);//NEED TO ADD ALPHABAT TO ID
+
+
+
+                    objAxis.Position = axisPosition.left;
+
+                    objAxis.IsDateTime = false;
+                    objAxis.bandScale = false; //as in Toolface
+                    //objAxis.AutoScale = objSummaryAxis.Automatic;
+                    objAxis.AutoScale = true;
+                    objAxis.Title = objSummaryAxis.AxisTitle;
+
+                    objAxis.ShowLabels = true;
+                    objAxis.ShowTitle = true;
+                    // objAxis.EndPos = objSummaryAxis.EndPosition;
+                    // objAxis.StartPos = objSummaryAxis.StartPosition;
+                    objAxis.GridVisible = false;// objSummaryAxis.ShowGrid;
+                    // objAxis.LabelFont = objSummaryAxis.FontName;
+                    // objAxis.LabelFontBold = objSummaryAxis.FontBold;
+                    // objAxis.LabelFontColor = objSummaryAxis.FontColor;
+                    // objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize; 
+                    // objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+
+                    // objAxis.Min = objSummaryAxis.MinValue;
+                    // objAxis.Max = objSummaryAxis.MaxValue;
+                    objAxis.LabelAngel = 0;
+                    objAxis.ShowSelector = false;
+                    objAxis.Visible = true;
+                    objAxis.Inverted = objSummaryAxis.Inverted;
+                    objAxis.PaddingMin = 0;
+
+
+
+                    if (this.objChart.axisPerColumn > 1) {
+                        objAxis.isAllowZooming = false;
+                        objAxis.isAllowScrolling = false;
+                    }
+                    //===============
+
+                    this.objChart.Axes.set(objAxis.Id, objAxis);
+
+
+                    //*************************************************** */
+                }
+
+
+                //// 0-left, 1-bottom, 2-right, 3-top
+                axisList = this.getOrdersAxisListByPosition(2);//Right
+                for (let index = 0; index < axisList.length; index++) {
+
+                    let objSummaryAxis: any = axisList[index];
+
+
+                    let objAxis = new Axis();
+
+                    objAxis.CustomPosition = true;
+
+                    objAxis.Id = "Y" + utilFunc.removeUnderScoreFromID(objSummaryAxis.AxisID);
+                    objAxis.Position = axisPosition.right;
+                    objAxis.AutoScale = true;// objSummaryAxis.Automatic;
+                    objAxis.IsDateTime = false;
+                    objAxis.bandScale = false;
+                    objAxis.Title = objSummaryAxis.AxisTitle;
+                    objAxis.ShowLabels = true;
+                    objAxis.ShowTitle = true;
+                    // objAxis.EndPos = objSummaryAxis.EndPosition;
+                    // objAxis.StartPos = objSummaryAxis.StartPosition;
+                    // objAxis.GridVisible = objSummaryAxis.ShowGrid;
+                    // objAxis.LabelFont = objSummaryAxis.FontName;
+                    // objAxis.LabelFontBold = objSummaryAxis.FontBold;
+                    // objAxis.LabelFontColor = objSummaryAxis.FontColor;
+                    // objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize;
+                    // objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+                    // objAxis.Min = objSummaryAxis.MinValue;
+                    // objAxis.Max = objSummaryAxis.MaxValue;
+                    objAxis.LabelAngel = 0;
+                    objAxis.ShowSelector = false;
+                    objAxis.Visible = true;
+                    objAxis.Inverted = objSummaryAxis.Inverted;
+
+                    if (this.objChart.axisPerColumn > 1) {
+                        objAxis.isAllowZooming = false;
+                        objAxis.isAllowScrolling = false;
+                    }
+                    //===============
+
+                    this.objChart.Axes.set(objAxis.Id, objAxis);
+                }
+
+                //// 0-left, 1-bottom, 2-right, 3-top
+                axisList = this.getOrdersAxisListByPosition(1);//bottom
+                for (let index = 0; index < axisList.length; index++) {
+
+                    let objSummaryAxis: any = axisList[index];
+
+                    //Create Custom Bottom Axis 
+                    let objAxis = new Axis();
+
+                    objAxis.CustomPosition = true;
+                    objAxis.Id = "X" + utilFunc.removeUnderScoreFromID(objSummaryAxis.AxisID);
+                    objAxis.Position = axisPosition.bottom;
+                    objAxis.AutoScale = true;// objSummaryAxis.Automatic;
+                    objAxis.IsDateTime = false;
+
+
+
+
+                    objAxis.Title = objSummaryAxis.AxisTitle;
+                    objAxis.ShowLabels = true;
+                    objAxis.ShowTitle = true;
+                    // objAxis.EndPos = objSummaryAxis.EndPosition;
+                    // objAxis.StartPos = objSummaryAxis.StartPosition;
+                    // objAxis.GridVisible = objSummaryAxis.ShowGrid;
+                    // objAxis.LabelFont = objSummaryAxis.FontName;
+                    // objAxis.LabelFontBold = objSummaryAxis.FontBold;
+                    // objAxis.LabelFontColor = objSummaryAxis.FontColor;
+                    objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize;
+                    objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+                    // objAxis.Min = objSummaryAxis.MinValue;
+                    // objAxis.Max = objSummaryAxis.MaxValue;
+                    objAxis.LabelAngel = 0;
+                    objAxis.ShowSelector = false;
+                    objAxis.Visible = true;
+                    objAxis.Inverted = objSummaryAxis.Inverted;
+                    //objAxis.PaddingMax = 50;
+                    this.objChart.Axes.set(objAxis.Id, objAxis);
+
+                    if (this.objChart.axisPerRow > 1) {
+                        objAxis.isAllowZooming = false;
+                        objAxis.isAllowScrolling = false;
+                    }
+                    //===============
+
+                    //*************************************************** */
+
+                }
+
+
+
+                axisList = this.getOrdersAxisListByPosition(3);//Top
+                for (let index = 0; index < axisList.length; index++) {
+
+
+                    let objSummaryAxis: any = axisList[index];
+
+                    //Create Custom Bottom Axis 
+                    let objAxis = new Axis();
+
+                    objAxis.CustomPosition = true;
+                    objAxis.Id = "X" + utilFunc.removeUnderScoreFromID(objSummaryAxis.AxisID);
+
+                    objAxis.AutoScale = objSummaryAxis.Automatic;
+                    objAxis.IsDateTime = false;
+
+                    // if (objSummaryAxis.Id == "DiffPressure") {
+                    //   objAxis.bandScale = true; //false; need to check 
+                    // } else {
+                    //   objAxis.bandScale = false;// need to check if series has Bar then True
+                    // }
+
+                    objAxis.Title = objSummaryAxis.AxisTitle;
+                    objAxis.ShowLabels = true;
+                    objAxis.ShowTitle = true;
+                    // objAxis.EndPos = objSummaryAxis.EndPosition;
+                    // objAxis.StartPos = objSummaryAxis.StartPosition;
+                    // objAxis.GridVisible = objSummaryAxis.ShowGrid;
+                    // objAxis.LabelFont = objSummaryAxis.FontName;
+                    // objAxis.LabelFontBold = objSummaryAxis.FontBold;
+                    // objAxis.LabelFontColor = objSummaryAxis.FontColor;
+                    // objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize;
+                    // objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
+                    // objAxis.Min = objSummaryAxis.MinValue;
+                    // objAxis.Max = objSummaryAxis.MaxValue;
+                    objAxis.LabelAngel = 0;
+                    objAxis.ShowSelector = false;
+                    objAxis.Visible = true;
+                    objAxis.Inverted = objSummaryAxis.Inverted;
+                    this.objChart.Axes.set(objAxis.Id, objAxis);
+                    //prath on 27-Jan-2022 wip
+                    if (this.objChart.axisPerRow > 1) {
+                        objAxis.isAllowZooming = false;
+                        objAxis.isAllowScrolling = false;
+                    }
+                    //===============
+                    //*************************************************** */
+                }
+
+                this.topAxisCount = axisList.length;
+
+                
+                //Load Series
+               debugger;
+                let SeriesList = Object.values(objItem.objProfile.objProcessor.outputData)
+                for (let index = 0; index < SeriesList.length; index++) {
+                    let objDataSeries: any = SeriesList[index];
+                    this.objDataSeries = objDataSeries;
+
+                    this.objSeries = new DataSeries();
+
+                    this.objSeries.Data.length = 0;
+                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID);
+                    this.objSeries.Title = objDataSeries.LegendTitle;
+                    this.objSeries.XAxisId = objDataSeries.XColumn;
+                    this.objSeries.YAxisId = objDataSeries.YColumn;
+
+
+                    this.objSeries.PointSize = objDataSeries.PointWidth;
+
+                    this.objSeries.Color = "rgb(" + objDataSeries.SeriesColor + ")";//Dont change position of this line
+
+                    this.objSeries.ShowInLegend = true;
+
+
+                    //objSeries.ShowRoadMap = objDataSeries.ShowRoadMap;
+                    //objSeries.RoadMapTransparency = objDataSeries.RoadMapTransparency;
+                    //objSeries.RoadMapColor = objDataSeries.RoadMapColor;
+                    //objSeries.RMColor = objDataSeries.RMColor;
+                    // objSeries.RoadmapDepth = objDataSeries.roadmapDepth;
+                    // objSeries.RoadmapMin = objDataSeries.roadmapMin;
+                    // objSeries.RoadmapMax = objDataSeries.roadmapMax;
+
+
+                    // Line = 0
+                    // HorizontalArea = 1
+                    // Area = 2
+                    // Points = 3
+                    // Histogram = 4
+                    // Pie = 5
+                    // Bar = 6
+
+                    let DataGroup = objItem.objProfile.DataGroup;
+                    let TimeUnit =  objItem.objProfile.TimeUnit;
+                    //if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
+                        if ((DataGroup = 1) && TimeUnit == 3) {
+                        this.getGroupSeriesData();
+                    } else {
+                        this.getSingleSeriesData(); //WIP
+                    }
+                    //
+
+
+                    switch (objDataSeries.SeriesType) {
+                        case 0:
+                            this.objSeries.Type = dataSeriesType.Line;
+
+                            this.objSeries.LineWidth = objDataSeries.LineWidth == 0 ? 1 : objDataSeries.LineWidth;
+                            this.objSeries.ShowPointsOnLineSeries = objDataSeries.ShowPoints;
+                            // smooth = 0,
+                            // step = 1,
+                            // normal = 2,
+                            if (objDataSeries.StepLine == true) {
+                                this.objSeries.CurveStyle = curveStyle.step;
+                            } else {
+
+                                this.objSeries.CurveStyle = curveStyle.normal;
+                            }
+                            //          this.getLineSeriesData();
+                            break;
+                        case 1://HorizontalArea
+                            this.objSeries.Type = dataSeriesType.HorizontalArea;
+                            this.objSeries.Color = objDataSeries.PointColor;
+
+                            break;
+                        case 2://Area
+                            this.objSeries.Type = dataSeriesType.Area;
+                            this.objSeries.Color = objDataSeries.PointColor;
+                            break;
+                        case 3://Points
+                            this.objSeries.Type = dataSeriesType.Point;
+
+                            this.objSeries.PointStyle = objDataSeries.PointStyle;
+
+                            //                            this.objSeries.LineWidth = objDataSeries.LineWidth == 0 ? 1 : objDataSeries.LineWidth;
+                            //     this.getGroupSeriesData();
+                            break;
+                        case 4://Histogram
+                            this.objSeries.Type = dataSeriesType.Bar;
+                            //Pending Make band scale True -99999999 pending
+                            break;
+                        case 5://Pie
+                            this.objSeries.Type = dataSeriesType.Pie;
+
+                            break;
+                        case 6://Bar
+
+                            this.objSeries.Type = dataSeriesType.Bar;
+
+                            let objBottomAxes: Axis = new Axis();
+
+                            objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
+                            objBottomAxes.bandScale = true;
+
+                            //set Y scale Min Value with Zero (0)
+                            let objYAxes = this.objChart.getAxisByID(this.objSeries.YAxisId);
+                            objYAxes.autoScaleMinValueZero = true;
+
+
+
 
 
 
@@ -1076,15 +1682,17 @@ export default class AdvKPI extends Component {
 
                 this.objChart.updateChart();
 
-                debugger;
+
 
                 this.objChart.reDraw();
-
             }
         } catch (error) {
 
         }
     }
+
+
+
 
     getGroupSeriesData = () => {
         try {
@@ -1220,7 +1828,9 @@ export default class AdvKPI extends Component {
 
         }
     }
-    runKPIReport = (paramProfileID: string, SelectedWellList: any) => {
+
+
+    runCompositeKPIReport = (paramProfileID: string, SelectedWellList: any) => {
 
         try {
 
@@ -1234,7 +1844,7 @@ export default class AdvKPI extends Component {
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "AdvKPI.Manager";
             objBrokerRequest.Broker = "AdvKPI";
-            objBrokerRequest.Function = "processAdvKPI";
+            objBrokerRequest.Function = "processCompositeAdvKPI";
 
             let objParameter = new BrokerParameter("", "");
 
@@ -1262,19 +1872,28 @@ export default class AdvKPI extends Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    // $("#loader").hide();
-                    //alert("success");
-
+                 
+                    debugger;
 
                     let objDataReeceive = JSON.parse(res.data.Response);
-                    this.objData = objDataReeceive.objProcessor;
-                    this.objProfile = objDataReeceive.objProfile;
-                    this.phaseTagList = objDataReeceive.phaseTagList;
+                    console.log("objDataReeceive", objDataReeceive);
 
-                    console.log("AdvKPI", this.objData);
+                 
+                    this.objCompositeProfile = objDataReeceive.objCompositeProfile;
+                    let objCompositeProfileItems = Object.values(objDataReeceive.objCompositeProfile.items);
+                    this.objData = objDataReeceive.objProcessor;//Old
+                    
+                    objCompositeProfileItems.sort((a: any, b: any) => {
+                        if (a.Row === b.Row) {
+                            return a.Col < b.Col ? -1 : 1
+                        } else {
+                            return a.Row < b.Row ? -1 : 1
+                        }
+                    });
+                    this.objCompositeProfile.items = objCompositeProfileItems;
 
 
-                    this.plotChart();
+                    this.plotCompositeChart();
                     //Warnings Notifications
                     let warnings: string = res.data.Warnings;
                     if (warnings.trim() != "") {
@@ -1285,6 +1904,107 @@ export default class AdvKPI extends Component {
                         });
                     }
 
+
+                    Util.StatusSuccess("Data successfully retrived,Now Ploting...");
+                    Util.StatusReady();
+
+                })
+                .catch((error) => {
+
+                    Util.StatusError(error.message);
+                 
+
+                    if (error.response) {
+
+                    } else if (error.request) {
+                    
+                        console.log("error.request");
+                    } else {
+                
+                        console.log("Error", error);
+                    }
+              
+                    console.log("rejected");
+                    this.setState({ isProcess: false });
+                });
+
+        } catch (error) {
+
+        }
+
+    }
+
+
+
+    runKPIReport = (paramProfileID: string, SelectedWellList: any) => {
+
+        try {
+
+            SelectedWellList = SelectedWellList.substring(1, SelectedWellList.length);
+            let newPanes: any = this.state.panes;
+            newPanes[0].collapsible = true;
+            newPanes[0].collapsed = true;
+
+
+
+            let objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "AdvKPI.Manager";
+            objBrokerRequest.Broker = "AdvKPI";
+            objBrokerRequest.Function = "processAdvKPI";
+
+            let objParameter = new BrokerParameter("", "");
+
+            objParameter = new BrokerParameter("UserID", _gMod._userId);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            objParameter = new BrokerParameter("ProfileID", paramProfileID);
+            objBrokerRequest.Parameters.push(objParameter);
+
+
+
+            objParameter = new BrokerParameter("WellList", SelectedWellList);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            objParameter = new BrokerParameter("objFilterData", JSON.stringify(this.state.objFilterData));
+            objBrokerRequest.Parameters.push(objParameter);
+
+
+            this.AxiosSource = axios.CancelToken.source();
+            axios
+                .get(_gMod._getData, {
+                    cancelToken: this.AxiosSource.token,
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+                .then((res) => {
+                    // $("#loader").hide();
+                    //alert("success");
+
+
+                    let objDataReeceive = JSON.parse(res.data.Response);
+
+
+                    this.objData = objDataReeceive.objProcessor;
+                    this.objProfile = objDataReeceive.objProfile;
+                    this.phaseTagList = objDataReeceive.phaseTagList;
+
+                    console.log("AdvKPI", this.objData);
+
+
+                    this.initializeChart();
+                    this.plotChart(this.objChart, false);
+                    //Warnings Notifications
+                    let warnings: string = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    }
 
                     Util.StatusSuccess("Data successfully retrived  ");
 
@@ -1415,7 +2135,7 @@ export default class AdvKPI extends Component {
 
 
     onChange = (event: SplitterOnChangeEvent) => {
-        if (this.state.runReport == false) {
+        if (this.state.runKPIReport == false) {
             return;
         }
         this.setState({
@@ -1428,7 +2148,7 @@ export default class AdvKPI extends Component {
     handleChangeDropDown = async (event: any, fieldName: string, filterObject: string) => {
 
 
-        debugger;
+
         let edited = this.state.objFilterData;
         edited[filterObject] = event.value.id;
         await this.setState({
@@ -1453,8 +2173,6 @@ export default class AdvKPI extends Component {
                 }
 
             }
-
-
 
 
             if (this.SelectedWellList == "") {
@@ -1485,12 +2203,17 @@ export default class AdvKPI extends Component {
 
             newPanes[0].size = "0%";
 
+
             //let ID: string = "";
             if (RunType == "RunKPI") {
                 this.ID = objRow.PROFILE_ID;
+                this.runKPIReport(this.ID, this.SelectedWellList);
+                this.setState({ runKPIReport: true });
             }
             if (RunType == "RunComposite") {
-                this.ID = objRow.PROFILE_ID;
+                this.ID = objRow.TEMPLATE_ID;
+                this.runCompositeKPIReport(this.ID, this.SelectedWellList);
+                this.setState({ runCompositeReport: true });
             }
 
 
@@ -1498,11 +2221,11 @@ export default class AdvKPI extends Component {
                 panes: newPanes,
                 currentRow: objRow,
                 currentProfileID: this.ID,
-                runReport: true,
+
                 //showChartDialog: false,
             });
 
-            this.runKPIReport(this.ID, this.SelectedWellList);
+
 
         } catch (error) { }
     };
@@ -1522,7 +2245,9 @@ export default class AdvKPI extends Component {
                 ProfileName: "",
                 grdProfile: profileList,
                 panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
-                runReport: false
+                runKPIReport: false,
+                runCompositeKPIReport: false,
+                runCompositeReport:false
             })
             $("#AdvKPIChart").empty();
 
@@ -1614,13 +2339,20 @@ export default class AdvKPI extends Component {
     handleChange = async (event: any, fieldName: string) => {
         try {
 
-            debugger;
+
             await this.setState({
                 [fieldName]: event.value
             });
 
             if (this.state.isRealTime) {
-                this.intervalID = setInterval(this.runKPIReport.bind(this), 15000);
+                if (this.state.runKPIReport) {
+                    this.intervalID = setInterval(this.runKPIReport.bind(this), 15000);
+                }
+
+                if (this.state.runCompositeReport) {
+                    this.intervalID = setInterval(this.runCompositeKPIReport.bind(this), 15000);
+                }
+
             } else {
                 this.AxiosSource.cancel();
                 await clearInterval(this.intervalID);
@@ -1629,7 +2361,7 @@ export default class AdvKPI extends Component {
             }
 
             if (fieldName == "showCrossHair") {
-                this.plotChart();
+                this.plotChart(this.objChart, false);
             }
 
         } catch (error) {
@@ -1641,7 +2373,7 @@ export default class AdvKPI extends Component {
     handleDataFilterChange = async (event: any, fieldName: string) => {
         try {
 
-            debugger;
+
             let edited = this.state.objFilterData;
             edited[fieldName] = event.value;
             await this.setState({
@@ -1652,6 +2384,115 @@ export default class AdvKPI extends Component {
 
         }
 
+    }
+
+
+    findRowCells = (rowNo) => {
+        try {
+
+            let nCols = 0;
+            for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
+                //const element = array[index];
+                if (this.objCompositeProfile.items[index].Row == rowNo) {
+                    nCols = nCols + 1;
+
+                }
+
+            }
+
+            //    alert("Row -" +rowNo + " Col - " + nCols);
+            return nCols;
+
+
+        } catch (error) {
+
+        }
+    }
+    generateDynamicTable() {
+        // get the reference for the body
+
+        let nRows: number = this.objCompositeProfile.Rows;
+        // let nCols: number = this.objCompositeProfile.Columns;
+
+        var dyanicDiv = document.getElementById("dynamicDiv");
+        // creates a <table> element and a <tbody> element
+        var tbl = document.createElement("table");
+        tbl.setAttribute('style', 'width:100%; height:calc(80vh)');
+
+        var tblBody = document.createElement("tbody");
+
+        // creating all cells
+        for (var i = 0; i < nRows; i++) {
+            // creates a table row
+
+            //let objItem : any = this.objCompositeProfile.items[i];
+            let objItem: any = this.objCompositeProfile.items.filter(item => item.Row == i);
+
+            // this.objCompositeProfile.items[i];
+
+
+            let rowTotalCells = this.findRowCells(i);
+
+            var row = document.createElement("tr");
+
+            let nCell = 0;
+
+            for (let cellNo = 0; cellNo < rowTotalCells; cellNo++) {
+
+                if (nCell > rowTotalCells) {
+                    continue;
+                }
+
+                let cell = document.createElement("td");
+                let cellId = "";
+
+                if (objItem[nCell].RowSpan > 1) {
+                    cell.setAttribute('rowspan', objItem[nCell].RowSpan);
+                }
+
+                if (objItem[nCell].ColSpan > 1 && nCell <= rowTotalCells) {
+                    cell.setAttribute('colspan', objItem[nCell].ColSpan);
+                    debugger;
+                    cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
+                    objItem[nCell].objChart = (this.initializeCompositeChart(cellId));
+                    nCell = nCell + objItem[nCell].ColSpan;
+                } else {
+                    cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
+                    objItem[nCell].objChart = (this.initializeCompositeChart(cellId));
+                    nCell = nCell + 1;
+                }
+
+
+                let cellText = document.createTextNode("cell in row " + i + ", Cell id " + cellId);
+
+                let chartDiv = document.createElement("div");
+
+                chartDiv.setAttribute('id', cellId);
+                chartDiv.style.backgroundColor = "transparent";
+                chartDiv.style.height = "100%";
+                chartDiv.style.width = "100%";
+                // chartDiv.setAttribute('height', "500px");
+                // chartDiv.setAttribute('width', "500px");
+                // chartDiv.setAttribute('background-color', "red");
+
+
+
+
+                // chartDiv.appendChild(cellText);
+                cell.appendChild(chartDiv);
+                row.appendChild(cell);
+            }
+
+            // add the row to the end of the table body
+            tblBody.appendChild(row);
+        }
+
+        // put the <tbody> in the <table>
+        tbl.appendChild(tblBody);
+        // appends <table> into <body>
+        dyanicDiv.appendChild(tbl);
+        // sets the border attribute of tbl to 2;
+        tbl.setAttribute("border", "2");
     }
 
     render() {
@@ -1679,7 +2520,7 @@ export default class AdvKPI extends Component {
                     style={{ height: "90vh" }}
                 >
 
-                    <div className={this.state.runReport ? "k-state-disabled" : "pane-content"}>
+                    <div className={this.state.runKPIReport || this.state.runCompositeReport ? "k-state-disabled" : "pane-content"}>
 
                         <label>Select Well from the List </label>
 
@@ -1831,14 +2672,13 @@ export default class AdvKPI extends Component {
                                             />
                                         </Grid>
                                     </TabStripTab>
-                                    {false && <TabStripTab title="Composite Templates">
+
+                                    <TabStripTab title="Composite Templates">
                                         <Grid
                                             style={{
                                                 height: "750px", width: "auto"
                                             }}
                                             data={this.state.grdComposite}
-
-
                                         >
 
                                             <GridColumn
@@ -1876,7 +2716,7 @@ export default class AdvKPI extends Component {
                                                 )}
                                             />
                                         </Grid>
-                                    </TabStripTab>}
+                                    </TabStripTab>
                                 </TabStrip>
                             </div>
 
@@ -1888,7 +2728,7 @@ export default class AdvKPI extends Component {
 
 
 
-                        <Label>{this.state.ProfileName}</Label>
+
                         <div className="row mt-2 " style={{ display: "flex", justifyContent: "flex-end" }}>
                             <FontAwesomeIcon
                                 style={{ alignSelf: "center" }}
@@ -1928,7 +2768,7 @@ export default class AdvKPI extends Component {
                                     icon={faUndo}
                                     size="lg"
                                     onClick={() => {
-                                        this.plotChart();
+                                        this.plotChart(this.objChart, false);
                                     }}
                                 />
                             </div>
@@ -1945,9 +2785,11 @@ export default class AdvKPI extends Component {
                         </div>
                         <div className="">
                             {/* <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={false} ></DataSelectorInfo> */}
-                            {this.state.runReport && (
+                            {this.state.runKPIReport && (
 
                                 <div>
+                                    <Label className="float-left">{this.state.ProfileName}</Label>
+
                                     <div
                                         id="AdvKPIChart"
                                         style={{
@@ -1957,6 +2799,7 @@ export default class AdvKPI extends Component {
                                             width: "calc(100vw - 280px)",
                                             backgroundColor: "transparent",
                                         }}
+                                        className="px-mt-2"
                                     ></div>
 
                                     <div
@@ -1976,12 +2819,41 @@ export default class AdvKPI extends Component {
 
                                     </div>
                                 </div>
-
-
-
-
                             )}
                         </div>
+
+
+
+                        {/* prath */}
+                        <div className="">
+                            {/* <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={false} ></DataSelectorInfo> */}
+                            {this.state.runCompositeReport && (
+
+                                <div>
+                                    {/* <Label className="float-left">{this.state.ProfileName}</Label> */}
+
+                                    <div
+                                        id="AdvCompositeChart"
+                                        style={{
+                                            float: "left",
+                                            //height: "calc(((100vh - 400px)*30)/100)",
+                                            height: "70vh",
+                                            width: "calc(100vw - 280px)",
+                                            backgroundColor: "transparent",
+                                        }}
+                                        className="px-mt-2"
+                                    >
+                                        <div id="dynamicDiv">
+                                           Composite Plot
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            )}
+                        </div>
+                        {/* prath */}
                     </div>
 
 
@@ -2009,6 +2881,7 @@ export default class AdvKPI extends Component {
                             id="cmdClose"
                             onClick={() => {
                                 this.setState({ showFilterDialog: false });
+                                alert("composite pending");
                                 this.runKPIReport(this.ID, this.SelectedWellList);
 
                             }}

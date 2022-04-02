@@ -1179,7 +1179,7 @@ export class Axis {
     } else {
       try {
 
-debugger;
+
 
 
         let sel = this.ChartRef.SVGRef.select("#" + this.Id).selectAll(
@@ -1430,7 +1430,7 @@ debugger;
           this.Position == axisPosition.right
         ) {
           ////added by prath for inverted axis
-          debugger;
+          
           if (!this.Inverted) {
             
             this.ScaleRef.domain([objAxisRange.Max, objAxisRange.Min]);

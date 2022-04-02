@@ -18,26 +18,29 @@ namespace eVuMax.DataBroker.AdvKPI_
     {
 
         public AdvKPIProfile objProfile;
+        public CompositeTemplate objCompositeProfile;   //prath
+        public CompositeTemplate objTemplate;           //prath
+
         public KPIProcessor objProcessor = new KPIProcessor();
       
+        [NonSerialized]
         private DataService objDataService;
         
-        //private advKPIChartAxis baseBottomAxis;
-        private int xAxisStartPosition = 0;
-        private int xAxisEndPosition = 0;
-        private int yAxisStartPosition = 0;
-        private int yAxisEndPosition = 0;
-        private int topAxisCount = 0;
-        private int bottomAxisCount = 0;
-        private int leftAxisCount = 0;
-        private int rightAxisCount = 0;
-        private int maxLeftRelativePosition = 0;
-        private int maxRightRelativePosition = 0;
-        private bool FormSizeChanged = false;
-        private int lastX = 0;
-        private int lastY = 0;
-        //private Panel panelVertical = new Panel();
-        //private Panel panelHorizontal = new Panel();
+        ////private advKPIChartAxis baseBottomAxis;
+        //private int xAxisStartPosition = 0;
+        //private int xAxisEndPosition = 0;
+        //private int yAxisStartPosition = 0;
+        //private int yAxisEndPosition = 0;
+        //private int topAxisCount = 0;
+        //private int bottomAxisCount = 0;
+        //private int leftAxisCount = 0;
+        //private int rightAxisCount = 0;
+        //private int maxLeftRelativePosition = 0;
+        //private int maxRightRelativePosition = 0;
+        //private bool FormSizeChanged = false;
+        //private int lastX = 0;
+        //private int lastY = 0;
+    
         public Dictionary<double, clsPhaseTag> phaseTagList = new Dictionary<double, clsPhaseTag>();
         public Dictionary<double, clsCustomTag> customTagList = new Dictionary<double, clsCustomTag>();
         public bool doHighlightTags = false;
@@ -129,11 +132,7 @@ namespace eVuMax.DataBroker.AdvKPI_
                     objSeries.YColumn = "Y" +getVerticalAxisByColumnID(objSeries.getDataColumnID()).Replace("_","").ToString();
                 }
 
-
-
-
                 objResponse.RequestSuccessfull = true;
-                //objResponse.Response = JsonConvert.SerializeObject(objProcessor);
                 objResponse.Response = JsonConvert.SerializeObject(this);
                 return objResponse;
             }
@@ -249,16 +248,7 @@ namespace eVuMax.DataBroker.AdvKPI_
                 foreach (AdvKPIAxis objAxis in objProcessor.objProfile.axesList.Values)
                 {
                   
-                    //if (objChart.Axes.Custom(i) is advKPIChartAxis)
-                    //{
-                    //    if (((advKPIChartAxis)objChart.Axes.Custom(i)).objAxis.ColumnID == ColumnID)
-                    //    {
-                    //        return objChart.Axes.Custom(i);
-                    //    }
-                    //}
-
-
-                    if (objAxis.ColumnID == ColumnID)
+                                   if (objAxis.ColumnID == ColumnID)
                     {
                         return objAxis.AxisID;
                     }
@@ -458,6 +448,249 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
         }
 
+
+        #region CompositeKPI
+        
+        public Broker.BrokerResponse processCompositeKPI(ref DataService paramDataService, string TemplateID)
+        {
+            try
+            {
+                //Initialize
+                objDataService = paramDataService;
+                objWorkSpace.loadWorkSpace(objDataService);
+                setWellSelection();
+                Broker.BrokerResponse objResponse = objRequest.createResponseObject();
+                //***************************
+
+                CompositeTemplate objLocalCompositeProfile = new CompositeTemplate();
+                objLocalCompositeProfile = CompositeTemplate.load(objDataService, TemplateID);
+
+                if (objLocalCompositeProfile == null)
+                {
+                    objResponse.RequestSuccessfull = false;
+                    objResponse.Response = "Unable to load Profile";
+                    return objResponse;
+                }
+                //objProcessor.objCompositeProfile = objCompositeProfile;
+                objProcessor.objWorkSpace = objWorkSpace;
+                objProcessor.objDataService = objDataService;
+                processCompositeProfile(ref objLocalCompositeProfile);
+
+                //objProcessor.processProfile();
+                //CompositeTemplate.load(objDataService, TemplateID);
+
+                objCompositeProfile = new CompositeTemplate();
+                objCompositeProfile = objLocalCompositeProfile;
+
+                JsonSerializerSettings objJsonSerializerSettings = new JsonSerializerSettings();
+                objJsonSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+
+
+                objResponse.Response = JsonConvert.SerializeObject(this,objJsonSerializerSettings);
+                return objResponse;
+            }
+            catch (Exception ex)
+            {
+                Broker.BrokerResponse objResponse = objRequest.createResponseObject();
+                objResponse.RequestSuccessfull = false;
+                objResponse.Response = ex.Message + ex.StackTrace;
+                return objResponse;
+            }
+
+        }
+
+
+        private void processCompositeProfile(ref CompositeTemplate paramCompositeProfile)
+        {
+            try
+            {
+                
+              
+
+                foreach (CompositeData objItem in paramCompositeProfile.items.Values)
+                {
+                    KPIProcessor objLocalProcessor= new KPIProcessor();
+                    AdvKPIProfile objLocalProfile = new AdvKPIProfile();
+                                   
+                    objLocalProfile = objItem.objProfile; //Copy by Reference
+              
+                    objItem.objProfile.objProcessor = objLocalProcessor; //Copy by Refrence
+                    objLocalProcessor.objDataService = objDataService;
+                    objLocalProcessor.objProfile = objItem.objProfile;
+                    objLocalProcessor.objWorkSpace = objWorkSpace;
+
+
+
+                    //objProcessor.processProfile();
+                    objLocalProcessor.processProfile();
+                    Thread.Sleep(2000);
+
+
+
+                    //foreach (AdvKPIData objItem_ in objProcessor.outputData.Values)
+                    foreach (AdvKPIData objItem_ in objLocalProcessor.outputData.Values)
+                    {
+
+                        if (objItem_.SeriesType == AdvKPIData.enAdvKPiSeriesType.Pie)
+                        {
+                            //noting to do right now..
+                        }
+                        else
+                        {
+                            if (objLocalProfile.DataGroup == AdvKPIData.enAdvKPIDataGroup.TimePeriod & objLocalProfile.TimeUnit == AdvKPIData.enAdvKPITimeUnit.CumulativeDays)
+                            {
+                                if (objLocalProfile.TagSourceID.Trim() == "")
+                                {
+                                    mapPhaseTagsWithDays(ref objItem_.arrXData, ref objItem_.arrDateData);
+                                }
+                            }
+                            else
+                            {
+                                if (objLocalProfile.HighlightTags)
+                                {
+                                    if (objLocalProfile.TagSourceID.Trim() == "")
+                                    {
+                                        mapPhaseTagsWithDays(ref objItem_.outputData);
+                                    }
+                                    else
+                                    {
+                                        mapCustomTagsWithDays(ref objItem_.outputData);
+                                    }
+
+                                    doHighlightTags = true;
+                                    doHighlightNPT = true;
+                                }
+                            }
+                        }
+
+                    }
+
+                    //update Series 
+
+
+                    this.objProcessor = objLocalProcessor;
+
+                    foreach (AdvKPIData objSeries in objLocalProcessor.outputData.Values)
+                    {
+                        objSeries.XColumn = "X" + getBottomAxis().Replace("_", "").ToString();
+                        objSeries.YColumn = "Y" + getVerticalAxisByColumnID(objSeries.getDataColumnID()).Replace("_", "").ToString();
+                    }
+                    //objItem.objProfile.objProcessor = objLocalProcessor;
+                    objItem.objProfile = objLocalProfile.getCopy();
+                    objItem.objProfile.objProcessor = objLocalProcessor;
+
+//                    objCompositeProfile.Items[0].objProfile.objProcessor.outputData[0].arrXData
+//objCompositeProfile.Items[0].objProfile.objProcessor.outputData[0].arrYData
+
+
+                }
+
+            
+            }
+            catch (Exception ex)
+            {
+                string LastError = ex.Message + ex.StackTrace;
+
+            }      
+    
+        }
+
+
+        private void processCompositeProfile()
+        {
+            try
+            {
+                AdvKPIProfile objLocalProfile;
+
+
+                foreach (CompositeData objItem in objCompositeProfile.items.Values)
+                {
+                    KPIProcessor objLocalProcessor = new KPIProcessor();
+
+                    //objItem.objProfile.objProcessor = new KPIProcessor();
+                    objLocalProfile = objItem.objProfile;
+                    //objProcessor = objItem.objProfile.objProcessor;
+                    //objProcessor.objDataService = objDataService;
+                    //objProcessor.objProfile = objItem.objProfile;
+                    //objProcessor.objWorkSpace = objWorkSpace;
+
+                    //objLocalProcessor = objItem.objProfile.objProcessor;
+                    objItem.objProfile.objProcessor = objLocalProcessor;
+                    objLocalProcessor.objDataService = objDataService;
+                    objLocalProcessor.objProfile = objItem.objProfile;
+                    objLocalProcessor.objWorkSpace = objWorkSpace;
+
+
+
+                    //objProcessor.processProfile();
+                    objLocalProcessor.processProfile();
+                    Thread.Sleep(2000);
+
+
+
+                    //foreach (AdvKPIData objItem_ in objProcessor.outputData.Values)
+                    foreach (AdvKPIData objItem_ in objLocalProcessor.outputData.Values)
+                    {
+
+                        if (objItem_.SeriesType == AdvKPIData.enAdvKPiSeriesType.Pie)
+                        {
+                            //noting to do right now..
+                        }
+                        else
+                        {
+                            if (objLocalProfile.DataGroup == AdvKPIData.enAdvKPIDataGroup.TimePeriod & objLocalProfile.TimeUnit == AdvKPIData.enAdvKPITimeUnit.CumulativeDays)
+                            {
+                                if (objLocalProfile.TagSourceID.Trim() == "")
+                                {
+                                    mapPhaseTagsWithDays(ref objItem_.arrXData, ref objItem_.arrDateData);
+                                }
+                            }
+                            else
+                            {
+                                if (objLocalProfile.HighlightTags)
+                                {
+                                    if (objLocalProfile.TagSourceID.Trim() == "")
+                                    {
+                                        mapPhaseTagsWithDays(ref objItem_.outputData);
+                                    }
+                                    else
+                                    {
+                                        mapCustomTagsWithDays(ref objItem_.outputData);
+                                    }
+
+                                    doHighlightTags = true;
+                                    doHighlightNPT = true;
+                                }
+                            }
+                        }
+
+                    }
+
+                    //update Series 
+
+
+                    this.objProcessor = objLocalProcessor;
+
+                    foreach (AdvKPIData objSeries in objLocalProcessor.outputData.Values)
+                    {
+                        objSeries.XColumn = "X" + getBottomAxis().Replace("_", "").ToString();
+                        objSeries.YColumn = "Y" + getVerticalAxisByColumnID(objSeries.getDataColumnID()).Replace("_", "").ToString();
+                    }
+                    objItem.objProfile.objProcessor = objLocalProcessor;
+
+                }
+
+                bool halt = true;
+            }
+            catch (Exception ex)
+            {
+                string LastError = ex.Message + ex.StackTrace;
+
+            }
+
+        }
+
+        #endregion
 
 
     }//class
