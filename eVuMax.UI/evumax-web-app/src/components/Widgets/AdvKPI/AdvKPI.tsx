@@ -83,9 +83,7 @@ export default class AdvKPI extends Component {
 
     componentDidMount() {
         try {
-
             this.loadWorkSpace();
-
         } catch (error) {
 
         }
@@ -101,8 +99,6 @@ export default class AdvKPI extends Component {
                 let objWell: any = objItem.objWell;
 
                 newWellList.push({ selected1: false, Selected: objItem.Selected, WellID: objWell.ObjectID, name: objWell.name, RigName: objWell.RigName, operatorName: objWell.operatorName, county: objWell.county, field: objWell.field, district: objWell.district, country: objWell.country });
-
-
             }
 
 
@@ -668,7 +664,7 @@ export default class AdvKPI extends Component {
         }
     }
 
-    plotChart = (paramObjChart: Chart, isComposite: boolean) => {
+    plotChart = (paramObjChart: Chart) => {
         try {
             this.objChart = paramObjChart;
             //Load Workspace Wells into Combo FilterData
@@ -751,9 +747,7 @@ export default class AdvKPI extends Component {
             }
 
 
-            if (isComposite == false) {
-                this.initializeChart();
-            }
+         
 
             this.objChart.CrossHairRequire = this.state.showCrossHair;
             
@@ -1283,6 +1277,7 @@ export default class AdvKPI extends Component {
 
             this.objChart.CrossHairRequire = this.state.showCrossHair;
             this.objChart.Title = objItem.objProfile.ProfileName;
+            
             this.objChart.MarginTop = 50;
 
             //let objXData: any = Object.values(objItem.objProfile.objProcessor.outputData[0].arrXData);
@@ -1332,7 +1327,7 @@ export default class AdvKPI extends Component {
                     //objAxis.AutoScale = objSummaryAxis.Automatic;
                     objAxis.AutoScale = true;
                     objAxis.Title = objSummaryAxis.AxisTitle;
-
+                    objAxis.PaddingMax=20;
                     objAxis.ShowLabels = true;
                     objAxis.ShowTitle = true;
                     // objAxis.EndPos = objSummaryAxis.EndPosition;
@@ -1995,7 +1990,7 @@ export default class AdvKPI extends Component {
 
 
                     this.initializeChart();
-                    this.plotChart(this.objChart, false);
+                    this.plotChart(this.objChart);
                     //Warnings Notifications
                     let warnings: string = res.data.Warnings;
                     if (warnings.trim() != "") {
@@ -2361,7 +2356,13 @@ export default class AdvKPI extends Component {
             }
 
             if (fieldName == "showCrossHair") {
-                this.plotChart(this.objChart, false);
+                if (this.state.selectedTab==0){
+                    this.plotChart(this.objChart);
+                }
+                if (this.state.selectedTab==1){
+                    this.plotCompositeChart();
+                }
+                
             }
 
         } catch (error) {
@@ -2768,7 +2769,8 @@ export default class AdvKPI extends Component {
                                     icon={faUndo}
                                     size="lg"
                                     onClick={() => {
-                                        this.plotChart(this.objChart, false);
+                                        this.plotChart(this.objChart);
+                                        this.plotCompositeChart();
                                     }}
                                 />
                             </div>

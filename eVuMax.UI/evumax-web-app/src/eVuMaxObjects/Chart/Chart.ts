@@ -2401,7 +2401,7 @@ export class Chart {
                 } else {
                   strText =
                     strText +
-                    " <p style='color:white;padding:0px;margin:0px'>" +
+                    " <p style='color:white;padding-bottom:0px;margin:0px'>" +
                     objAxis.Title +
                     ":  " +
                     objSeries.Data[index].x +
