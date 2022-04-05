@@ -113,10 +113,10 @@ namespace eVuMax.DataBroker.AdvKPI
                     {
                         wellListArr = strWellList.Split(',');
                     }
-                  
-                        //Composite KPI
-                        ProcessAdvKPI objProcessAdvKPI = new ProcessAdvKPI();
-                        objProcessAdvKPI.WellList = wellListArr;
+
+                    //Composite KPI
+                    ProcessAdvKPI objProcessAdvKPI = new ProcessAdvKPI();
+                     objProcessAdvKPI.WellList = wellListArr;
                         if (objDataFilter != null)
                         {
                             if (objDataFilter.FilterData)
@@ -131,7 +131,7 @@ namespace eVuMax.DataBroker.AdvKPI
                                 objProcessAdvKPI.objProcessor.Filter_LastHours = objDataFilter.Filter_LastHours;
                             }
                         }
-                        objResponse = objProcessAdvKPI.processCompositeKPI(ref paramRequest.objDataService, ProfileID);
+                        objResponse = objProcessAdvKPI.processCompositeKPI(ref paramRequest.objDataService, ProfileID, objDataFilter);
                                     
                 }
 

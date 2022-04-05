@@ -11,6 +11,7 @@ using VuMaxDR.AdvKPI;
 using VuMaxDR.Data;
 using VuMaxDR.Data.Objects;
 using Microsoft.VisualBasic;
+using eVuMax.DataBroker.AdvKPI;
 
 namespace eVuMax.DataBroker.AdvKPI_
 {
@@ -451,7 +452,7 @@ namespace eVuMax.DataBroker.AdvKPI_
 
         #region CompositeKPI
         
-        public Broker.BrokerResponse processCompositeKPI(ref DataService paramDataService, string TemplateID)
+        public Broker.BrokerResponse processCompositeKPI(ref DataService paramDataService, string TemplateID, AdvKPIDataFilter paramDataFilter)
         {
             try
             {
@@ -474,7 +475,7 @@ namespace eVuMax.DataBroker.AdvKPI_
                 //objProcessor.objCompositeProfile = objCompositeProfile;
                 objProcessor.objWorkSpace = objWorkSpace;
                 objProcessor.objDataService = objDataService;
-                processCompositeProfile(ref objLocalCompositeProfile);
+                processCompositeProfile(ref objLocalCompositeProfile, paramDataFilter);
 
                 //objProcessor.processProfile();
                 //CompositeTemplate.load(objDataService, TemplateID);
@@ -500,7 +501,7 @@ namespace eVuMax.DataBroker.AdvKPI_
         }
 
 
-        private void processCompositeProfile(ref CompositeTemplate paramCompositeProfile)
+        private void processCompositeProfile(ref CompositeTemplate paramCompositeProfile, AdvKPIDataFilter paramDataFilter)
         {
             try
             {
@@ -511,10 +512,26 @@ namespace eVuMax.DataBroker.AdvKPI_
                 {
                     KPIProcessor objLocalProcessor= new KPIProcessor();
                     AdvKPIProfile objLocalProfile = new AdvKPIProfile();
-                                   
                     objLocalProfile = objItem.objProfile; //Copy by Reference
-              
+
+                    if (paramDataFilter != null)
+                    {
+                        if (paramDataFilter.FilterData)
+                        {
+                            objLocalProcessor.FilterData = paramDataFilter.FilterData;
+                            objLocalProcessor.FilterMainWellID = paramDataFilter.FilterMainWellID;
+                            objLocalProcessor.FilterType = (VuMaxDR.AdvKPI.KPIProcessor.kpiFilterType)paramDataFilter.FilterType;
+                            objLocalProcessor.Filter_FromDate = paramDataFilter.Filter_FromDate;
+                            objLocalProcessor.Filter_ToDate = paramDataFilter.Filter_ToDate;
+                            objLocalProcessor.Filter_FromDepth = paramDataFilter.Filter_FromDepth;
+                            objLocalProcessor.Filter_ToDepth = paramDataFilter.Filter_ToDepth;
+                            objLocalProcessor.Filter_LastHours = paramDataFilter.Filter_LastHours;
+                        }
+                    }
+
+
                     objItem.objProfile.objProcessor = objLocalProcessor; //Copy by Refrence
+
                     objLocalProcessor.objDataService = objDataService;
                     objLocalProcessor.objProfile = objItem.objProfile;
                     objLocalProcessor.objWorkSpace = objWorkSpace;
