@@ -61,7 +61,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
     isRealTime: false as boolean,
     objDataSelector: this.props.objDataSelector,
     showOffsetWell: true,
-    
+
   };
 
 
@@ -75,7 +75,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
   toDate: Date = null;
   fromDepth: number = 0;
   toDepth: number = 0;
-  MatchDepthByFormationTops : boolean =true;
+  MatchDepthByFormationTops: boolean = true;
   Warnings: string = ""; //Nishant 27/08/2021
   refreshHrs: number = 24;
   randNumber = Number(Math.random() * 1000).toFixed(0);
@@ -100,7 +100,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
   async componentDidMount() {
     try {
       window.addEventListener('resize', this.loadSummary);
-      
+
       this.loadSummary();
 
       //RealTime 
@@ -115,11 +115,11 @@ export class CustomDrillingSummary extends Component<IProps>  {
   }
 
 
-  componentWillUpdate() : void{
+  componentWillUpdate(): void {
     try {
       this.state.objDataSelector.isApplyDateRange = false;
     } catch (error) {
-      
+
     }
   }
 
@@ -160,7 +160,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
       objBrokerRequest.Parameters.push(objParameter);
 
       objParameter = new BrokerParameter("FromDate", utilFunc.formateDate(this.state.objDataSelector.fromDate));
-      
+
       objBrokerRequest.Parameters.push(objParameter);
 
       objParameter = new BrokerParameter("ToDate", utilFunc.formateDate(this.state.objDataSelector.toDate));
@@ -186,9 +186,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
       objParameter = new BrokerParameter("MatchDepthByFormationTops", this.state.objDataSelector.MatchDepthByFormationTops.toString());
       objBrokerRequest.Parameters.push(objParameter);
-      
-      
-      await    axios
+
+
+      await axios
         .get(_gMod._getData, {
           headers: {
             Accept: "application/json",
@@ -198,15 +198,14 @@ export class CustomDrillingSummary extends Component<IProps>  {
             paramRequest: JSON.stringify(objBrokerRequest)
           },
         })
-     .then((res) => {
+        .then((res) => {
 
-       if (res.data.RequestSuccessfull == true) {
+          if (res.data.RequestSuccessfull == true) {
             let objData_ = JSON.parse(res.data.Response);
 
             console.log("CustomDrillSumm data", objData_);
 
             let warnings: string = res.data.Warnings;
-            // warnings = "Test Warning"; 
 
             if (warnings.trim() != "") {
               let warningList = [];
@@ -221,8 +220,8 @@ export class CustomDrillingSummary extends Component<IProps>  {
             }
             this.WellName = res.data.Category;
             this.objData = objData_;
-            
-           
+
+
 
             this.generateReport();
             Util.StatusSuccess("Data successfully retrived");
@@ -259,7 +258,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
       this.objChart = new Chart(this, "chart1" + Number(Math.random() * 1000).toFixed(0));
       this.objChart.ContainerId = "SummaryChart" + this.randNumber;
-      
+
 
 
       this.objChart.onAfterSeriesDraw.subscribe((e, i) => {
@@ -300,7 +299,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
       this.objChart.rightAxis().ShowLabels = false;
 
 
-      
+
       this.objChart.initialize();
       this.objChart.drawLegend();
       this.objChart.reDraw();
@@ -421,12 +420,12 @@ export class CustomDrillingSummary extends Component<IProps>  {
     try {
 
 
-      
+      let warningList = [];
       this.initializeChart();
       this.objChart.LegendPosition = 4;  //1 (left), 2 (right), 3 (top), 4 (bottom)
 
       //Generate Plot using state objGDSummary object
-      // console.log("objData", objData);
+
       if (this.objData.Axis != null || this.objData.Axis != undefined) {
         this.objSummaryAxisList = Object.values(this.objData.Axis);
 
@@ -449,7 +448,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
         this.objChart.MarginBottom = 10;
         this.objChart.MarginTop = 10;
         this.objChart.MarginRight = 90;
-        
+
 
         let axisList = Object.values(this.objData.Axis);
         axisList = this.getOrdersAxisListByPosition(0);//Left
@@ -470,7 +469,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
           objAxis.AutoScale = true; // as in toolface objSummaryAxis.Automatic;
           objAxis.Position = axisPosition.left;
-          
+
 
           objAxis.IsDateTime = false;
           objAxis.bandScale = false; //as in Toolface
@@ -478,7 +477,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objAxis.Title = objSummaryAxis.AxisTitle;
 
           //alert(objAxis.Id +  " Auto Scale- " + objAxis.AutoScale + " Min -"  + objSummaryAxis.MinValue + " Max -"+ objSummaryAxis.MaxValue); 
-          
+
           objAxis.ShowLabels = true;
           objAxis.ShowTitle = true;
           objAxis.EndPos = objSummaryAxis.EndPosition;
@@ -664,7 +663,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
         //Load Series
         let SeriesList = Object.values(this.objData.dataSeries);
 
-        
+
 
 
         for (let index = 0; index < SeriesList.length; index++) {
@@ -694,7 +693,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objSeries.RoadmapDepth = objDataSeries.roadmapDepth;
           objSeries.RoadmapMin = objDataSeries.roadmapMin;
           objSeries.RoadmapMax = objDataSeries.roadmapMax;
-          
+
 
 
           switch (objDataSeries.SeriesType) { // 0 - Line, 1-Points, 2-Area, 3-Histogram, 4-Pie, 5-Bar
@@ -758,9 +757,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
 
           //Populate the data series with this data
-          
+
           objSeries.Data.length = 0;
-    //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
+          //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
 
           //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
           let xMin = 0;
@@ -780,20 +779,29 @@ export class CustomDrillingSummary extends Component<IProps>  {
             autoScaleY = false;
           }
           //==========================================
-          
+
           //alert( objSeries.Name + " ----> " + objDataSeries.xDataBuffer.length);
 
-          if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
 
+          if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
+            
+            if (objDataSeries.xDataBuffer.length == 0) {
+              //No data in Series
+              warningList.push({
+                "update": "No Data for Series " + objDataSeries.SeriesName,
+                "timestamp": new Date(Date.now()).getTime()
+              });
+              this.props.updateWarnings(warningList);
+            }
             for (let i = 0; i < objDataSeries.xDataBuffer.length; i++) {
 
               //prath 04-Feb-2022  (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
-              if (objSeries.Type != dataSeriesType.Bar){
-                if (autoScaleX== false &&  !(objDataSeries.xDataBuffer[i] >= xMin && objDataSeries.xDataBuffer[i] <= xMax)){
+              if (objSeries.Type != dataSeriesType.Bar) {
+                if (autoScaleX == false && !(objDataSeries.xDataBuffer[i] >= xMin && objDataSeries.xDataBuffer[i] <= xMax)) {
                   continue;
                 }
 
-                if (autoScaleY== false && !(objDataSeries.yDataBuffer[i] >= yMin && objDataSeries.yDataBuffer[i] <= yMax)){
+                if (autoScaleY == false && !(objDataSeries.yDataBuffer[i] >= yMin && objDataSeries.yDataBuffer[i] <= yMax)) {
                   continue;
                 }
               }
@@ -829,6 +837,14 @@ export class CustomDrillingSummary extends Component<IProps>  {
             if (objDataSeries.Visible) {
               this.objChart.DataSeries.set(objSeries.Id, objSeries);
             }
+
+          } else {
+            //No data in Series
+            warningList.push({
+              "update": "No Data for Series " + objDataSeries.SeriesName,
+              "timestamp": new Date(Date.now()).getTime()
+            });
+            this.props.updateWarnings(warningList);
 
           }
         }
@@ -953,7 +969,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
     paramDataSelector.needForceReload = true;
 
     //workAround
-    if(paramDataSelector.MatchDepthByFormationTops == undefined){
+    if (paramDataSelector.MatchDepthByFormationTops == undefined) {
       paramDataSelector.MatchDepthByFormationTops = false;
     }
 
@@ -1515,11 +1531,11 @@ export class CustomDrillingSummary extends Component<IProps>  {
       this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      
+
       //prath
 
       // this.state.objDataSelector = new DataSelector_();
-      this.setState({objDataSelector : new DataSelector_()});
+      this.setState({ objDataSelector: new DataSelector_() });
 
       this.showListPanel();
     } catch (error) {
@@ -1580,9 +1596,9 @@ export class CustomDrillingSummary extends Component<IProps>  {
             marginLeft: "10px",
           }}
         ></div>
-        
+
         <div
-          id={"SummaryChart"+ this.randNumber+"_legend"}
+          id={"SummaryChart" + this.randNumber + "_legend"}
           style={{
             textAlign: "center",
             height: "40px",
@@ -1596,7 +1612,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           }}
         />
         <div className="Data">
-       <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
+          <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
         </div>
       </div>
     );

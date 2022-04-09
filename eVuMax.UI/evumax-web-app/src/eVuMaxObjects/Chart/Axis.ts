@@ -105,7 +105,7 @@ export class Axis {
 
   ScaleRef_x1: any; //for barchart
 
-  autoScaleMinValueZero : boolean = false;  //Handle AdvKPI Bar Chart
+  autoScaleMinValueZero: boolean = false;  //Handle AdvKPI Bar Chart
 
   AxisRef: any;
   __textHeight: number = 0;
@@ -158,11 +158,11 @@ export class Axis {
 
   setMin = (min: number) => {
     try {
-      if (this.bandScale)      {
+      if (this.bandScale) {
         this.Min = min;
       }
-        
-      
+
+
     } catch (error) { }
   };
 
@@ -323,21 +323,21 @@ export class Axis {
       }
 
       this.__axisWidth = titleSpace + labelSpace + 10;
-      
+
     } catch (error) {
       //alert(error + " - " + this.Id);
-     }
+    }
   };
 
   //Creates actual d3 axis on the chart
   createAxis = (pChartRef: Chart.Chart) => {
     try {
       //assign the reference
-       
-     this.Id= this.Id.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_');
-     
+
+      this.Id = this.Id.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
+
       this.ChartRef = pChartRef;
-      
+
 
       if (this.IsDateTime) {
         //We will use initial scale
@@ -420,7 +420,7 @@ export class Axis {
 
       if (this.Position == axisPosition.right) {
         this.AxisRef = d3.axisRight(this.ScaleRef);
-        
+
       }
 
       //we've created the axis, now time to append it to SVG ref
@@ -438,8 +438,8 @@ export class Axis {
         x = this.StartPos;
         y = this.IRelativePos;
       }
-      
-      
+
+
 
       this.ChartRef.SVGRef.append("g")
         .attr("transform", "translate(" + x + "," + y + ")")
@@ -450,7 +450,7 @@ export class Axis {
 
       this.__selectorStartPos = 100;
       this.__selectorEndPos = 500;
-      
+
     } catch (error) { }
   };
 
@@ -475,9 +475,9 @@ export class Axis {
   //Determines the axis tick length
   //prath
   formatAxis = () => {
-    
+
     let maxLabel = "";
-    
+
 
     if (this.IsDateTime) {
       let objRange: AxisDateRange = this.getAxisRange();
@@ -575,14 +575,14 @@ export class Axis {
 
       this.AxisRef.tickValues(ticks);
     }
-    
+
     //Add Title to the axis
     if (this.Position == axisPosition.left) {
-     
+
       let titleX = 0;
       let titleY = 0;
-      
-      
+
+
       if (this.LabelAngel == 0) {
         if (this.ShowLabels) {
           titleX = this.IRelativePos - textWidth - titleHeight;
@@ -593,7 +593,7 @@ export class Axis {
         if (this.ShowLabels) {
           //Change by prath 07-Dec-2021 (custom chart)
           //titleX = this.IRelativePos - textHeight - titleWidth; 
-          titleX = this.IRelativePos - textHeight - titleHeight; 
+          titleX = this.IRelativePos - textHeight - titleHeight;
         } else {
           titleX = this.IRelativePos - titleWidth;
         }
@@ -615,13 +615,13 @@ export class Axis {
         .attr("fill", "white")
         .attr("font-weight", this.LabelFontBold == true ? "bold" : "normal")
         .attr("font-style", this.TitleFontItalic == true ? "italic" : "normal")
-         .select("text")
+        .select("text")
         .attr("transform", "rotate(-90)")
         .text(this.Title);
 
-        //alert(this.Title + " - " + titleX);
+      //alert(this.Title + " - " + titleX);
 
-        
+
       if (!this.ShowTitle) {
         this.ChartRef.SVGRef.select("#title_" + this.Id).attr(
           "fill",
@@ -700,6 +700,7 @@ export class Axis {
             //prath 06-10-2020 wip
 
             if (this.Labels.length > 0) {
+
 
 
               if (this.Labels[0].split("~").length > 1) {
@@ -861,7 +862,13 @@ export class Axis {
       } else {
         this.AxisRef.tickFormat((d, i) => {
           if (i >= 0 && i < this.Labels.length) {
-            return this.Labels[i];
+
+            
+            //06-April-2022
+            if (this.Labels[i] != undefined) {
+              return this.Labels[i];
+            }
+
           } else {
             let formatter = d3.format(this.NumericFormat);
             return formatter(d);
@@ -1033,12 +1040,12 @@ export class Axis {
     //set the x & y position to start the axis drawing
     let x = 0;
     let y = 0;
-    
+
     if (
       this.Position == axisPosition.left ||
       this.Position == axisPosition.right
     ) {
-           
+
       //Original
       x = this.IRelativePos;
       y = this.StartPos;
@@ -1056,7 +1063,7 @@ export class Axis {
       this.Position == axisPosition.left ||
       this.Position == axisPosition.right
     ) {
-      
+
       this.ChartRef.SVGRef.select("#" + this.Id)
         .attr("transform", "translate(" + x + "," + "0" + ")")
         .call(this.AxisRef);
@@ -1120,7 +1127,7 @@ export class Axis {
         if (this.__selectorStartPos == 0 && this.__selectorEndPos == 0) {
           //calculate difference of range
           let diff = this.Max - this.Min;
-          
+
           if (diff > 0) {
             //For Not a date axes
             let addDiff = (diff * 10) / 100;
@@ -1175,7 +1182,7 @@ export class Axis {
         }
       } catch (error) {
         //alert(error);
-       }
+      }
     } else {
       try {
 
@@ -1199,7 +1206,7 @@ export class Axis {
             if (this.Labels.length > 0) {
               //Multi line labels for (bar Chart)
               if (this.bandScale) {
-                
+
                 for (let index = 0; index < this.Labels.length; index++) {
 
                   //Changes done as on 09-Dec-2021 PRATH (Custom drilling summary for Bar Chart)
@@ -1213,18 +1220,33 @@ export class Axis {
                     currentText = this.Labels[index];
                     textElement.html(currentText);
                   }
-                  
+
                   //==============
 
-               
+
                 }
               } else {
                 //Multi line labels 19-08-2021 for (number axes) - prath
                 let newText = "";
                 for (let index = 0; index < this.Labels.length; index++) {
+                  //06-April-2022
                   let arr = this.Labels[index].split("~");
                   if (eval(currentText) >= eval(arr[0])) {
-                    newText = currentText + "~" + arr[1] + "~" + arr[2];
+                    switch (arr.length) {
+                      case 1:
+                        newText = currentText;
+                        break;
+                      case 2:
+                        newText = currentText + "~" + arr[1];
+                        break;
+                      case 3:
+                        newText = currentText + "~" + arr[1] + "~" + arr[2];
+                        break;
+                      default:
+                        newText = currentText;
+                        break;
+                    }
+
                   }
                 }
                 currentText = newText;
@@ -1236,6 +1258,7 @@ export class Axis {
             //===========================
 
 
+            
 
             let s = currentText.split("~");
             if (s.length > 1) {
@@ -1309,8 +1332,8 @@ export class Axis {
 
   updateAxis = () => {
     try {
-      
-       ;
+
+      ;
       if (!this.__selectorEventsAttached) {
         let selectorElement = $("#" + this.ChartRef.Id + "__selector_rect");
 
@@ -1324,7 +1347,7 @@ export class Axis {
         let objAxisDateRange: AxisDateRange = this.getAxisRange();
         this.MinDate = objAxisDateRange.Min;
         this.MaxDate = objAxisDateRange.Max;
-        
+
         if (!this.Inverted) {
           this.ScaleRef.domain([objAxisDateRange.Min, objAxisDateRange.Max]);
         } else {
@@ -1332,11 +1355,11 @@ export class Axis {
         }
       }
 
-      
+
 
       if (this.bandScale) {
         //loop through
-        
+
         let uniqueValues: Map<string, string> = new Map();
         let uniqueDateValues: Map<Date, Date> = new Map();
 
@@ -1389,7 +1412,7 @@ export class Axis {
             }
           }
         }
-        
+
         //Determine how many axis labels can be plotted on the axis
         let maxBars = this.__axisSize / 5;
 
@@ -1415,10 +1438,10 @@ export class Axis {
       }
 
       this.ScaleRef.range([this.StartPos, this.EndPos]);
-       
+
       if (!this.IsDateTime && !this.bandScale) {
-    
-        
+
+
         let objAxisRange: AxisRange = this.getAxisRange();
         this.MaxWidthLabel = objAxisRange.MaxWidthLabel; //prath 14-08-2021 (for Multiline label)
 
@@ -1430,9 +1453,9 @@ export class Axis {
           this.Position == axisPosition.right
         ) {
           ////added by prath for inverted axis
-          
+
           if (!this.Inverted) {
-            
+
             this.ScaleRef.domain([objAxisRange.Max, objAxisRange.Min]);
           } else {
             this.ScaleRef.domain([objAxisRange.Min, objAxisRange.Max]);
@@ -1475,7 +1498,7 @@ export class Axis {
 
     } catch (error) {
       //alert("Line 1463 " + error);
-     }
+    }
   };
 
   //This is special function which is used to determine max and min of axis in case of stacked bar chart
@@ -1728,7 +1751,7 @@ export class Axis {
   //Returns range of data / scale
   getAxisRange = (): any => {
     try {
-       ;
+      ;
       if (!this.AutoScale) {
         if (this.IsDateTime) {
           let objRange = new AxisDateRange();
@@ -1804,7 +1827,7 @@ export class Axis {
           }
 
           if (!this.IsDateTime) {
-            
+
 
             //Is Multiline
             let objRange = new AxisRange();
@@ -1881,25 +1904,25 @@ export class Axis {
             objRange.Min = lMin;
             objRange.Max = lMax;
 
-           // if ((this.ChartRef.Id=="AdvKPI") && (objRange.Min == objRange.Max)){
-             if (this.autoScaleMinValueZero && objRange.Min >0){
+            // if ((this.ChartRef.Id=="AdvKPI") && (objRange.Min == objRange.Max)){
+            if (this.autoScaleMinValueZero && objRange.Min > 0) {
               objRange.Min = 0;
             }
-            
+
             if (this.PaddingMin > 0 || this.PaddingMax > 0) {
               let paddingNumber: number = objRange.Max - objRange.Min;
               objRange.Min = objRange.Min - (paddingNumber * this.PaddingMin) / 100;
               objRange.Max = objRange.Max + (paddingNumber * this.PaddingMax) / 100;
               return objRange;
             }
-            
+
             return objRange;
           }
         }
       }
     } catch (error) {
       //alert("Error 1884 get Axes range" + error);
-     }
+    }
   };
 
 

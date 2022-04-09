@@ -69,8 +69,8 @@ namespace eVuMax.DataBroker.AdvKPI
                                 objProcessAdvKPI.objProcessor.FilterData = objDataFilter.FilterData;
                                 objProcessAdvKPI.objProcessor.FilterMainWellID = objDataFilter.FilterMainWellID;
                                 objProcessAdvKPI.objProcessor.FilterType = (VuMaxDR.AdvKPI.KPIProcessor.kpiFilterType)objDataFilter.FilterType;
-                                objProcessAdvKPI.objProcessor.Filter_FromDate = objDataFilter.Filter_FromDate;
-                                objProcessAdvKPI.objProcessor.Filter_ToDate = objDataFilter.Filter_ToDate;
+                                objProcessAdvKPI.objProcessor.Filter_FromDate = objDataFilter.Filter_FromDate.ToLocalTime();
+                                objProcessAdvKPI.objProcessor.Filter_ToDate = objDataFilter.Filter_ToDate.ToLocalTime();
                                 objProcessAdvKPI.objProcessor.Filter_FromDepth = objDataFilter.Filter_FromDepth;
                                 objProcessAdvKPI.objProcessor.Filter_ToDepth = objDataFilter.Filter_ToDepth;
                                 objProcessAdvKPI.objProcessor.Filter_LastHours = objDataFilter.Filter_LastHours;
@@ -117,21 +117,22 @@ namespace eVuMax.DataBroker.AdvKPI
                     //Composite KPI
                     ProcessAdvKPI objProcessAdvKPI = new ProcessAdvKPI();
                      objProcessAdvKPI.WellList = wellListArr;
-                        if (objDataFilter != null)
-                        {
-                            if (objDataFilter.FilterData)
-                            {
-                                objProcessAdvKPI.objProcessor.FilterData = objDataFilter.FilterData;
-                                objProcessAdvKPI.objProcessor.FilterMainWellID = objDataFilter.FilterMainWellID;
-                                objProcessAdvKPI.objProcessor.FilterType = (VuMaxDR.AdvKPI.KPIProcessor.kpiFilterType)objDataFilter.FilterType;
-                                objProcessAdvKPI.objProcessor.Filter_FromDate = objDataFilter.Filter_FromDate;
-                                objProcessAdvKPI.objProcessor.Filter_ToDate = objDataFilter.Filter_ToDate;
-                                objProcessAdvKPI.objProcessor.Filter_FromDepth = objDataFilter.Filter_FromDepth;
-                                objProcessAdvKPI.objProcessor.Filter_ToDepth = objDataFilter.Filter_ToDepth;
-                                objProcessAdvKPI.objProcessor.Filter_LastHours = objDataFilter.Filter_LastHours;
-                            }
-                        }
-                        objResponse = objProcessAdvKPI.processCompositeKPI(ref paramRequest.objDataService, ProfileID, objDataFilter);
+
+                    //if (objDataFilter != null) //????
+                    //{
+                    //    if (objDataFilter.FilterData)
+                    //    {
+                    //        objProcessAdvKPI.objProcessor.FilterData = objDataFilter.FilterData;
+                    //        objProcessAdvKPI.objProcessor.FilterMainWellID = objDataFilter.FilterMainWellID;
+                    //        objProcessAdvKPI.objProcessor.FilterType = (VuMaxDR.AdvKPI.KPIProcessor.kpiFilterType)objDataFilter.FilterType;
+                    //        objProcessAdvKPI.objProcessor.Filter_FromDate = objDataFilter.Filter_FromDate.ToLocalTime();
+                    //        objProcessAdvKPI.objProcessor.Filter_ToDate = objDataFilter.Filter_ToDate.ToLocalTime();
+                    //        objProcessAdvKPI.objProcessor.Filter_FromDepth = objDataFilter.Filter_FromDepth;
+                    //        objProcessAdvKPI.objProcessor.Filter_ToDepth = objDataFilter.Filter_ToDepth;
+                    //        objProcessAdvKPI.objProcessor.Filter_LastHours = objDataFilter.Filter_LastHours;
+                    //    }
+                    //}
+                    objResponse = objProcessAdvKPI.processCompositeKPI(ref paramRequest.objDataService, ProfileID, objDataFilter);
                                     
                 }
 

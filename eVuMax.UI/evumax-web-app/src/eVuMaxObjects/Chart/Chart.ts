@@ -1261,9 +1261,10 @@ export class Chart {
 
       this.__toolTip = $("#" + "tooltip_" + this.Id);
 
-
+      
       if (this.Height == 0) {
         this.Height = document.getElementById(this.ContainerId).clientHeight;
+      
       }
       if (this.Width == 0) {
         this.Width = document.getElementById(this.ContainerId).clientWidth;
@@ -1355,7 +1356,7 @@ export class Chart {
 
       this.SVGRef.append("text")
         .attr("x", this.Width / 2)
-        .attr("y", 20)
+        .attr("y", 15)
         .attr("class", "title")
         // .attr("font-size", "10pt")
         // .attr("fill", "red")

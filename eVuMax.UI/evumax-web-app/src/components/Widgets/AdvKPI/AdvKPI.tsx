@@ -495,7 +495,7 @@ export default class AdvKPI extends Component {
     initializeCompositeChart = (chartId: string) => {
         try {
 
-            debugger;
+
             // this.objCompositeProfile.items.forEach(element => {
 
 
@@ -668,7 +668,8 @@ export default class AdvKPI extends Component {
         try {
             this.objChart = paramObjChart;
             //Load Workspace Wells into Combo FilterData
-            debugger;
+            
+
             let WellList: any = Object.values(this.objData.objWorkSpace.wells);
             if (WellList != null || WellList.length > 0) {
 
@@ -682,7 +683,16 @@ export default class AdvKPI extends Component {
                         continue;
                     }
                     objCombo = new comboData(objWell.name, objWell.ObjectID);
-                    wellComboList.push(objCombo);
+
+                    debugger;
+
+                    let found = this.state.grdWells.findIndex((item: any) =>  item["selected1"] === true && item["WellID"] == objWell.ObjectID);
+                    if(found>-1){
+                        wellComboList.push(objCombo);
+                    }
+
+
+                    //wellComboList.push(objCombo);
                 }
 
 
@@ -715,10 +725,10 @@ export default class AdvKPI extends Component {
                             dataFilterString += "Last " + this.objData.Filter_LastHours + " Hours";
                             break;
                         case 2:
-                            dataFilterString += "From Date " + this.objData.Filter_FromDate + " to " + this.objData.Filter_ToDate;
+                            dataFilterString += "From Date " + utilFunc.formateDate(this.objData.Filter_FromDate) + " to " + utilFunc.formateDate(this.objData.Filter_ToDate);
                             break;
                         case 3:
-                            dataFilterString += "From Date " + this.objData.Filter_FromDate + " onwards";
+                            dataFilterString += "From Date " + utilFunc.formateDate(this.objData.Filter_FromDate) + " onwards";
                             break;
                         case 4:
                             dataFilterString += "From Depth " + this.objData.Filter_FromDepth + " to " + this.objData.Filter_ToDepth;
@@ -741,7 +751,10 @@ export default class AdvKPI extends Component {
 
                 this.setState({
                     cboWellList: wellComboList,
-                    ProfileName: this.objData.objProfile.ProfileName + dataFilterString,
+                    ProfileName: this.state.ProfileName + dataFilterString,
+                    selectedMainWell:new comboData()
+                    //ProfileName: this.objData.objProfile.ProfileName + dataFilterString,
+
                 });
 
             }
@@ -750,6 +763,7 @@ export default class AdvKPI extends Component {
 
 
             this.objChart.CrossHairRequire = this.state.showCrossHair;
+
 
 
             if (this.objData.objProfile.axesList != null || this.objData.objProfile.axesList != undefined) {
@@ -1179,7 +1193,11 @@ export default class AdvKPI extends Component {
                         continue;
                     }
                     objCombo = new comboData(objWell.name, objWell.ObjectID);
-                    wellComboList.push(objCombo);
+                    let found = this.state.grdWells.findIndex((item: any) =>  item["selected1"] === true && item["WellID"] == objWell.ObjectID);
+                    if(found>-1){
+                        wellComboList.push(objCombo);
+                    }
+
                 }
 
 
@@ -1212,7 +1230,7 @@ export default class AdvKPI extends Component {
                             dataFilterString += "Last " + this.objData.Filter_LastHours + " Hours";
                             break;
                         case 2:
-                            dataFilterString += "From Date " + this.objData.Filter_FromDate + " to " + this.objData.Filter_ToDate;
+                            dataFilterString += "From Date " + utilFunc.formateDate(this.objData.Filter_FromDate) + " to " + utilFunc.formateDate(this.objData.Filter_ToDate);
                             break;
                         case 3:
                             dataFilterString += "From Date " + this.objData.Filter_FromDate + " onwards";
@@ -1235,10 +1253,11 @@ export default class AdvKPI extends Component {
 
                     dataFilterString += ")";
                 }
-
+                
                 this.setState({
                     cboWellList: wellComboList,
-                    ProfileName: this.objData.objProfile.ProfileName + dataFilterString,
+                    ProfileName: this.state.ProfileName + dataFilterString,
+                    selectedMainWell: new comboData("","")
                 });
 
             }
@@ -1249,7 +1268,7 @@ export default class AdvKPI extends Component {
 
             ////data location: objCompositeProfile.Items[0].objProfile.objProcessor
             ////objCompositeProfile.Items[0].objProfile.objProcessor.outputData[0].arrXData
-            debugger;
+
             let dataFilterString = "";
             if (this.objCompositeProfile.items.length > 0) {
                 let objProcessor: any = this.objCompositeProfile.items[0].objProfile.objProcessor;
@@ -1281,10 +1300,10 @@ export default class AdvKPI extends Component {
                             dataFilterString += "Last " + objProcessor.Filter_LastHours + " Hours";
                             break;
                         case 2:
-                            dataFilterString += "From Date " + objProcessor.Filter_FromDate + " to " + objProcessor.Filter_ToDate;
+                            dataFilterString += "From Date " + utilFunc.formateDate(objProcessor.Filter_FromDate) + " to " + utilFunc.formateDate(objProcessor.Filter_ToDate);
                             break;
                         case 3:
-                            dataFilterString += "From Date " + objProcessor.Filter_FromDate + " onwards";
+                            dataFilterString += "From Date " + utilFunc.formateDate(objProcessor.Filter_FromDate) + " onwards";
                             break;
                         case 4:
                             dataFilterString += "From Depth " + objProcessor.Filter_FromDepth + " to " + objProcessor.Filter_ToDepth;
@@ -1304,11 +1323,13 @@ export default class AdvKPI extends Component {
 
                     dataFilterString += ")";
                 }
-
-                this.setState({
-
-                    ProfileName: this.objCompositeProfile.items[0].objProfile.ProfileName + dataFilterString,
-                });
+                // alert(this.state.ProfileName )
+                // let profileName = this.state.ProfileName + dataFilterString;
+                // alert(profileName);
+                // // this.setState({
+                // //     //ProfileName: this.objCompositeProfile.items[0].objProfile.ProfileName + dataFilterString,
+                // //     ProfileName: profileName
+                // // });
 
             }
 
@@ -1316,7 +1337,7 @@ export default class AdvKPI extends Component {
 
 
             for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
-                debugger;
+
                 let objItem = this.objCompositeProfile.items[index];
                 //this.objData.objProfile = objItem.objProfile;
                 //this.objData.outputData = objItem.
@@ -1332,7 +1353,7 @@ export default class AdvKPI extends Component {
     populateWellCombo = () => {
         try {
             //Load Workspace Wells into Combo FilterData
-            debugger;
+
             let WellList: any = Object.values(this.objData.objWorkSpace.wells);
             if (WellList != null || WellList.length > 0) {
 
@@ -1346,7 +1367,14 @@ export default class AdvKPI extends Component {
                         continue;
                     }
                     objCombo = new comboData(objWell.name, objWell.ObjectID);
-                    wellComboList.push(objCombo);
+                    debugger;
+
+                    let found = this.state.grdWells.findIndex((item: any) =>  item["selected1"] === true && item["WELL_ID"] == objWell.ObjectID);
+                    if(found>-1){
+                        wellComboList.push(objCombo);
+                    }
+                    
+                    
                 }
 
                 this.setState({
@@ -1360,7 +1388,7 @@ export default class AdvKPI extends Component {
     }
     plotChartCompositeEx = (paramObjItem: any) => {
         try {
-            debugger;
+
             let objItem = paramObjItem;
             this.objChart = paramObjItem.objChart;
 
@@ -1597,7 +1625,7 @@ export default class AdvKPI extends Component {
 
 
                 //Load Series
-                debugger;
+
                 let SeriesList = Object.values(objItem.objProfile.objProcessor.outputData)
                 for (let index = 0; index < SeriesList.length; index++) {
                     let objDataSeries: any = SeriesList[index];
@@ -1636,15 +1664,15 @@ export default class AdvKPI extends Component {
                     // Pie = 5
                     // Bar = 6
 
-                    let DataGroup = objItem.objProfile.DataGroup;
-                    let TimeUnit = objItem.objProfile.TimeUnit;
-                    //if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
-                    if ((DataGroup = 1) && TimeUnit == 3) {
-                        this.getGroupSeriesData();
-                    } else {
-                        this.getSingleSeriesData(); //WIP
-                    }
-                    //
+                    // let DataGroup = objItem.objProfile.DataGroup;
+                    // let TimeUnit = objItem.objProfile.TimeUnit;
+                    // //if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
+                    // if ((DataGroup = 1) && TimeUnit == 3) {
+                    //     this.getGroupSeriesData();
+                    // } else {
+                    //     this.getSingleSeriesData(); //WIP
+                    // }
+                    // //
 
 
                     switch (objDataSeries.SeriesType) {
@@ -1720,6 +1748,15 @@ export default class AdvKPI extends Component {
                             break;
                     }
 
+                    let DataGroup = objItem.objProfile.DataGroup;
+                    let TimeUnit = objItem.objProfile.TimeUnit;
+                    //if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
+                    if ((DataGroup = 1) && TimeUnit == 3) {
+                        this.getGroupSeriesData();
+                    } else {
+                        this.getSingleSeriesData(); //WIP
+                    }
+                    //
 
 
 
@@ -1878,7 +1915,12 @@ export default class AdvKPI extends Component {
                 if (this.objSeries.Type == dataSeriesType.Bar) {
                     objVal.x = i + 1;
                 } else {
-                    objVal.x = Number(SeriesData[i].XValue);
+                    if (SeriesData[i].XLabel == "") {
+                        objVal.x = Number(SeriesData[i].XValue);
+                    } else {
+                        objVal.x = Number(SeriesData[i].XLabel);
+                    }
+
                 }
 
                 objVal.y = eval(Number(SeriesData[i].YValue).toFixed(2));
@@ -1918,7 +1960,7 @@ export default class AdvKPI extends Component {
     runCompositeKPIReport = (paramProfileID: string, SelectedWellList: any) => {
 
         try {
-            debugger;
+
 
             SelectedWellList = SelectedWellList.substring(1, SelectedWellList.length);
             let newPanes: any = this.state.panes;
@@ -1943,7 +1985,13 @@ export default class AdvKPI extends Component {
             objParameter = new BrokerParameter("WellList", SelectedWellList);
             objBrokerRequest.Parameters.push(objParameter);
 
-            objParameter = new BrokerParameter("objFilterData", JSON.stringify(this.state.objFilterData));
+
+            let objFilterData: ADVKPIDataFilter = utilFunc.CopyObject(this.state.objFilterData);
+
+            objFilterData.Filter_FromDate = new Date(utilFunc.formateDate(objFilterData.Filter_FromDate));
+            objFilterData.Filter_ToDate = new Date(utilFunc.formateDate(objFilterData.Filter_ToDate));
+
+            objParameter = new BrokerParameter("objFilterData", JSON.stringify(objFilterData));
             objBrokerRequest.Parameters.push(objParameter);
 
 
@@ -1959,7 +2007,7 @@ export default class AdvKPI extends Component {
                 })
                 .then((res) => {
 
-                    debugger;
+
 
                     let objDataReeceive = JSON.parse(res.data.Response);
                     console.log("objDataReeceive", objDataReeceive);
@@ -2026,6 +2074,7 @@ export default class AdvKPI extends Component {
 
         try {
 
+
             SelectedWellList = SelectedWellList.substring(1, SelectedWellList.length);
             let newPanes: any = this.state.panes;
             newPanes[0].collapsible = true;
@@ -2051,7 +2100,15 @@ export default class AdvKPI extends Component {
             objParameter = new BrokerParameter("WellList", SelectedWellList);
             objBrokerRequest.Parameters.push(objParameter);
 
-            objParameter = new BrokerParameter("objFilterData", JSON.stringify(this.state.objFilterData));
+
+
+            let objFilterData: ADVKPIDataFilter = utilFunc.CopyObject(this.state.objFilterData);
+
+            objFilterData.Filter_FromDate = new Date(utilFunc.formateDate(objFilterData.Filter_FromDate));
+            objFilterData.Filter_ToDate = new Date(utilFunc.formateDate(objFilterData.Filter_ToDate));
+
+
+            objParameter = new BrokerParameter("objFilterData", JSON.stringify(objFilterData));
             objBrokerRequest.Parameters.push(objParameter);
 
 
@@ -2295,7 +2352,11 @@ export default class AdvKPI extends Component {
             if (RunType == "RunKPI") {
                 this.ID = objRow.PROFILE_ID;
                 this.runKPIReport(this.ID, this.SelectedWellList);
-                this.setState({ runKPIReport: true });
+                this.setState({
+                    runKPIReport: true,
+                    ProfileName: objRow.PROFILE_NAME
+
+                });
             }
             if (RunType == "RunComposite") {
                 this.ID = objRow.TEMPLATE_ID;
@@ -2306,6 +2367,7 @@ export default class AdvKPI extends Component {
                     runCompositeReport: true,
                     ProfileName: objRow.TEMPLATE_NAME
                 });
+                
             }
 
 
@@ -2478,6 +2540,7 @@ export default class AdvKPI extends Component {
                 objDataFilter: edited
             });
 
+
         } catch (error) {
 
         }
@@ -2510,31 +2573,21 @@ export default class AdvKPI extends Component {
         // get the reference for the body
 
         let nRows: number = this.objCompositeProfile.Rows;
-        // let nCols: number = this.objCompositeProfile.Columns;
-
         var dyanicDiv = document.getElementById("dynamicDiv");
 
         $("#dynamicDiv").empty();
         // creates a <table> element and a <tbody> element
         var tbl = document.createElement("table");
-        tbl.setAttribute('style', 'width:100%; height:calc(80vh)');
+        tbl.setAttribute('style', 'width:100%; height:calc(70vh)');
 
         var tblBody = document.createElement("tbody");
 
         // creating all cells
         for (var i = 0; i < nRows; i++) {
             // creates a table row
-
-            //let objItem : any = this.objCompositeProfile.items[i];
             let objItem: any = this.objCompositeProfile.items.filter(item => item.Row == i);
-
-            // this.objCompositeProfile.items[i];
-
-
             let rowTotalCells = this.findRowCells(i);
-
             var row = document.createElement("tr");
-
             let nCell = 0;
 
             for (let cellNo = 0; cellNo < rowTotalCells; cellNo++) {
@@ -2544,6 +2597,9 @@ export default class AdvKPI extends Component {
                 }
 
                 let cell = document.createElement("td");
+
+                cell.setAttribute('style', 'background-color:transparent');
+
                 let cellId = "";
 
                 if (objItem[nCell].RowSpan > 1) {
@@ -2552,7 +2608,7 @@ export default class AdvKPI extends Component {
 
                 if (objItem[nCell].ColSpan > 1 && nCell <= rowTotalCells) {
                     cell.setAttribute('colspan', objItem[nCell].ColSpan);
-                    debugger;
+
                     cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
                     objItem[nCell].objChart = (this.initializeCompositeChart(cellId));
                     nCell = nCell + objItem[nCell].ColSpan;
@@ -2561,18 +2617,25 @@ export default class AdvKPI extends Component {
                     objItem[nCell].objChart = (this.initializeCompositeChart(cellId));
                     nCell = nCell + 1;
                 }
-
-
-                //let cellText = document.createTextNode("cell in row " + i + ", Cell id " + cellId);
-
+                cell.id = "td-" + cellId;
                 let chartDiv = document.createElement("div");
 
                 chartDiv.setAttribute('id', cellId);
-                chartDiv.style.backgroundColor = "transparent";
-                chartDiv.style.height = "100%";
+                chartDiv.style.backgroundColor = "transparent"; //transparent  (wip999999999999999)
+                chartDiv.style.height = "calc(100% - 25px)"; //25px is legend height
                 chartDiv.style.width = "100%";
 
-                cell.appendChild(chartDiv);
+
+
+                let mainDiv = document.createElement("div");
+                mainDiv.id = "md-" + cellId;
+                mainDiv.setAttribute('style', 'height:100%');
+
+                mainDiv.appendChild(chartDiv);
+
+
+                mainDiv.appendChild(chartDiv);
+                cell.appendChild(mainDiv);
                 row.appendChild(cell);
             }
 
@@ -2586,11 +2649,41 @@ export default class AdvKPI extends Component {
         dyanicDiv.appendChild(tbl);
         // sets the border attribute of tbl to 2;
         tbl.setAttribute("border", "2");
+
+
+        let nCols: number = this.objCompositeProfile.Columns;
+        //let parentWidth= $("#md-" + chartDivId).parent().width();   
+        let totalWidth = document.getElementsByTagName('table')[0].offsetWidth;
+        let colWidth = totalWidth / nCols;
+
+        for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
+            try {
+                const objItem = this.objCompositeProfile.items[index];
+                let chartDivId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem.ProfileID.toString());
+
+
+                let cellTD: any = document.getElementById("td-" + chartDivId);
+                let cellWidth = colWidth * cellTD.colSpan;
+
+                debugger;
+                let divStr = "<div id='" + chartDivId + "_legend" + "'  style='text-align: center; height: 25px; width: " + cellWidth + "px; background-color: transparent; display: inline-block;position: relative; padding-bottom: 10px; line-height: 1.5; font-weight: bold;' > Legend </div>"
+                $("#md-" + chartDivId).append(divStr);
+            } catch (error) {
+                alert(error);
+            }
+
+
+
+
+        }
+
+
+
     }
 
     render() {
         return (
-            <div>
+            <>
                 <div className="" style={{ display: "flex", justifyContent: "flex-end" }}>
                     <NotifyMe
 
@@ -2606,21 +2699,21 @@ export default class AdvKPI extends Component {
                     />
 
                 </div>
-
+                <label>Select Well from the List </label>
                 <Splitter
                     panes={this.state.panes}
                     onChange={this.onChange}
-                    style={{ height: "90vh" }}
+                    style={{ height: "80vh" }}
                 >
 
                     <div className={this.state.runKPIReport || this.state.runCompositeReport ? "k-state-disabled" : "pane-content"}>
 
-                        <label>Select Well from the List </label>
+
 
                         <div className="row" style={{ display: "flex" }}>
                             <div className="col-8 mt-5"> <Grid
                                 style={{
-                                    height: "750px", width: "auto"
+                                    height: "70vh", width: "auto"
                                 }}
                                 onSelectionChange={this.grid_selectionChange}
                                 onHeaderSelectionChange={this.grid_headerSelectionChange} //Nishant 26-05-2020
@@ -2718,7 +2811,7 @@ export default class AdvKPI extends Component {
                                         </div>
                                         <Grid
                                             style={{
-                                                height: "730px", width: "auto"
+                                                height: "65vh", width: "auto"
                                             }}
                                             data={this.state.grdProfile}
 
@@ -2769,7 +2862,7 @@ export default class AdvKPI extends Component {
                                     <TabStripTab title="Composite Templates">
                                         <Grid
                                             style={{
-                                                height: "750px", width: "auto"
+                                                height: "65vh", width: "auto"
                                             }}
                                             data={this.state.grdComposite}
                                         >
@@ -3155,7 +3248,7 @@ export default class AdvKPI extends Component {
                     </div>
                 </Dialog>}
 
-            </div>
+            </>
         );
     }
 }
