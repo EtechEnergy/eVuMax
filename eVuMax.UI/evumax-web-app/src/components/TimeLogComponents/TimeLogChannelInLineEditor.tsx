@@ -152,7 +152,7 @@ export default class TimeLogChannelInLineEditor extends Component<IProps> {
         //this.props.save(this.state.objChannel, this.state.editMode);
         let edited = this.state.objChannel;
         edited["VuMaxUnitID"] = this.state.objChannel.VuMaxUnitID.id;
-        alert(edited["VuMaxUnitID"]);
+        
 
         this.__parentRef.saveChannelInEdit(edited, this.state.editMode);
         return;

@@ -80,10 +80,10 @@ export class TripSpeedPlot2 extends Component {
         window.location.href = "/evumaxapp/";
         return;
       }
-      // this.objLogger.SendLog("Test Logger");
+      
       //initialize chart
       this.initilizeCharts();
-      //alert("Component Mount");
+      
       this.loadConnections();
       window.addEventListener("resize", this.refreshChart);
 
@@ -360,7 +360,7 @@ export class TripSpeedPlot2 extends Component {
 
       let lnBenchMarkWithConn =
         this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection;
-      //alert(lnBenchMarkWithConn);
+      
 
       if (lnBenchMarkWithConn > 0) {
         // if (this.objChart_BarWithConn.leftAxis().Max < lnBenchMarkWithConn) {

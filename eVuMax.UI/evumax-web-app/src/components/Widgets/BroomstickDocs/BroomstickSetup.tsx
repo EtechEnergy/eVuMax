@@ -438,10 +438,7 @@ export class BroomstickSetup extends Component<IProps> {
           params: { paramRequest: JSON.stringify(objBrokerRequest) },
         })
         .then((res) => {
-          // $("#loader").hide();
-          //alert("success");
-
-          // let objData = res.data.Response;
+         
           if (res.data.RequestSuccessfull == false) {
             //Warnings Notifications
             let warnings: string = res.data.Warnings;

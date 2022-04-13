@@ -674,7 +674,6 @@ export default class ActiveWell extends React.Component {
                                     //     //     currentWellID: props.dataItem["WELL_ID"]
                                     //     // });
                                     //     //
-                                    //     alert(this.state.currentWellID + " download Clicked");
 
                                     // }),
                                     <td className="text-center">

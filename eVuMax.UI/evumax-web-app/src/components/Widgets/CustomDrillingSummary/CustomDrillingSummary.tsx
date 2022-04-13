@@ -138,7 +138,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
     try {
 
       //Axios call API Function with PlotID
-      //  alert("Load summary" + props.objDataSelector.selectedval + " - " + this.paramDataSelector.WellID);
+     
       let objBrokerRequest = new BrokerRequest();
 
       objBrokerRequest.Module = "GenericDrillingSummary.Manager";
@@ -227,7 +227,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
             Util.StatusSuccess("Data successfully retrived");
             Util.StatusReady();
           } else {
-            // alert(res.data.Errors);
+            
           }
         })
         .catch((error) => {
@@ -461,8 +461,8 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
           //Create Custom Left Axis 
           let objAxis = new Axis();
-          //alert(objSummaryAxis.AxisTitle);
-          //objAxis.CustomPosition = true;
+          
+          
           objAxis.DisplayOrder = index;
           objAxis.Id = objSummaryAxis.ColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
 
@@ -476,7 +476,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objAxis.AutoScale = objSummaryAxis.Automatic;
           objAxis.Title = objSummaryAxis.AxisTitle;
 
-          //alert(objAxis.Id +  " Auto Scale- " + objAxis.AutoScale + " Min -"  + objSummaryAxis.MinValue + " Max -"+ objSummaryAxis.MaxValue); 
+          
 
           objAxis.ShowLabels = true;
           objAxis.ShowTitle = true;
@@ -676,13 +676,13 @@ export class CustomDrillingSummary extends Component<IProps>  {
           objSeries.Id = objDataSeries.SeriesID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');// objDataSeries.SeriesID;
           objSeries.Name = objDataSeries.SeriesName;
 
-          //alert(objSeries.Name);
+          
           objSeries.XAxisId = objDataSeries.XColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');
           objSeries.YAxisId = objDataSeries.YColumnID.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '_');;
 
           objSeries.PointSize = objDataSeries.PointWidth;
           let SeriesType: dataSeriesType = dataSeriesType.Line;
-          //////alert(objDataSeries.SeriesType);
+          
           objSeries.Color = objDataSeries.LineColor;//Dont change position of this line
 
 
@@ -759,7 +759,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           //Populate the data series with this data
 
           objSeries.Data.length = 0;
-          //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
+          
 
           //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
           let xMin = 0;
@@ -780,7 +780,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           }
           //==========================================
 
-          //alert( objSeries.Name + " ----> " + objDataSeries.xDataBuffer.length);
+          
 
 
           if (objDataSeries.xDataBuffer != null || objDataSeries.xDataBuffer != undefined) {
@@ -949,7 +949,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
 
 
     } catch (error) {
-      //alert(error);
+      
     }
   };
 
@@ -1007,7 +1007,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
     try {
 
       if (paramDataSeries.ColorPointsAsColumn) {
-        //alert(paramSeries.Name);
+        
         paramSeries.ColorEach = true;
 
         for (let index = 0; index < paramDataSeries.colorBuffer.length; index++) {
@@ -1612,7 +1612,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           }}
         />
         <div className="Data">
-          <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
+          <DataSelector refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellID} selectionChanged={this.selectionChanged} ></DataSelector>
         </div>
       </div>
     );

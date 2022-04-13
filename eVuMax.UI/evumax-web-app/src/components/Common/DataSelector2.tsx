@@ -174,21 +174,14 @@ class DataSelector extends Component<IProps, IState> {
 
   reRenderChart = () => {
     try {
-      //alert("rerender");
+      
       this.forceUpdate();
-      //window.addEventListener("resize", this.reRenderChart);
+      
 
     } catch (error) { }
   };
 
-  //Nishant
-  // selectorChanged = () => {
-  //   try {
-
-  //     this.props.selectionChanged(this.state.objDataSelector);
-  //   } catch (error) { }
-  // };
-
+ 
 
   //This method will be called by chart component when user selects the data by using chart
   selectorChanged = (

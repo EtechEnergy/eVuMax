@@ -279,10 +279,7 @@ export default class AdvKPI extends Component {
                         if ((x1 >= (lastPoint + 10))) {
 
                             let txtLabel = objPhaseTag.phaseName + (" : " + (objPhaseTag.stepName + (" : " + objPhaseTag.emphName)));
-                            // if (objPhaseTag.IsOpen) {
-                            //     alert("abcd" +txtLabel);
-                            // }
-
+                            
                             this.objChart.SVGRect.append("g")
                                 .attr("class", "text-" + this.objChart.Id)
                                 .attr(
@@ -377,7 +374,7 @@ export default class AdvKPI extends Component {
 
 
         } catch (error) {
-            //   alert(error);
+      
         }
     }
 
@@ -684,7 +681,7 @@ export default class AdvKPI extends Component {
                     }
                     objCombo = new comboData(objWell.name, objWell.ObjectID);
 
-                    debugger;
+                    
 
                     let found = this.state.grdWells.findIndex((item: any) =>  item["selected1"] === true && item["WellID"] == objWell.ObjectID);
                     if(found>-1){
@@ -1119,42 +1116,6 @@ export default class AdvKPI extends Component {
 
 
 
-                    // if (SeriesType == dataSeriesType.Area || SeriesType == dataSeriesType.Point) {
-                    //     this.objSeries.Color = objDataSeries.PointColor;
-                    // }
-                    // else if (SeriesType == dataSeriesType.Line) {
-                    //     this.objSeries.Color = objDataSeries.LineColor;
-                    // }
-
-
-
-
-
-
-                    //Populate the data series with this data
-
-
-                    //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
-
-
-
-
-
-
-
-
-
-
-
-
-                    // if (objDataSeries.ColorPointsAsColumn) {
-
-                    //     this.formatSeries(objSeries, objDataSeries);  
-                    // }
-                    // if (objDataSeries.Visible) {
-
-                    //     this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
-                    //    }
 
 
                 }
@@ -1323,13 +1284,7 @@ export default class AdvKPI extends Component {
 
                     dataFilterString += ")";
                 }
-                // alert(this.state.ProfileName )
-                // let profileName = this.state.ProfileName + dataFilterString;
-                // alert(profileName);
-                // // this.setState({
-                // //     //ProfileName: this.objCompositeProfile.items[0].objProfile.ProfileName + dataFilterString,
-                // //     ProfileName: profileName
-                // // });
+             
 
             }
 
@@ -1367,7 +1322,7 @@ export default class AdvKPI extends Component {
                         continue;
                     }
                     objCombo = new comboData(objWell.name, objWell.ObjectID);
-                    debugger;
+
 
                     let found = this.state.grdWells.findIndex((item: any) =>  item["selected1"] === true && item["WELL_ID"] == objWell.ObjectID);
                     if(found>-1){
@@ -1760,42 +1715,7 @@ export default class AdvKPI extends Component {
 
 
 
-                    // if (SeriesType == dataSeriesType.Area || SeriesType == dataSeriesType.Point) {
-                    //     this.objSeries.Color = objDataSeries.PointColor;
-                    // }
-                    // else if (SeriesType == dataSeriesType.Line) {
-                    //     this.objSeries.Color = objDataSeries.LineColor;
-                    // }
-
-
-
-
-
-
-                    //Populate the data series with this data
-
-
-                    //      alert("Series - " + objSeries.Name + " - " + objSeries.XAxisId + " - " + objSeries.YAxisId);
-
-
-
-
-
-
-
-
-
-
-
-
-                    // if (objDataSeries.ColorPointsAsColumn) {
-
-                    //     this.formatSeries(objSeries, objDataSeries);  
-                    // }
-                    // if (objDataSeries.Visible) {
-
-                    //     this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
-                    //    }
+                   
 
 
                 }
@@ -1820,7 +1740,7 @@ export default class AdvKPI extends Component {
         try {
             console.clear();
             this.objSeries.Data.length = 0;
-            //alert("Group - " + this.objSeries.Title + " --> " + this.objSeries.Stacked);
+           
             let SeriesXData: any = Object.values(this.objDataSeries.arrXData);
             let SeriesYData: any = Object.values(this.objDataSeries.arrYData);
 
@@ -1850,7 +1770,7 @@ export default class AdvKPI extends Component {
                 autoScaleY = false;
             }
             //==========================================
-            //       alert(SeriesXData.length);
+          
             for (let i = 0; i < SeriesXData.length; i++) {
                 let objVal: ChartData = new ChartData();
 
@@ -1940,7 +1860,7 @@ export default class AdvKPI extends Component {
         try {
 
             if (paramDataSeries.ColorPointsAsColumn) {
-                //alert(paramSeries.Name);
+              
                 paramSeries.ColorEach = true;
 
                 for (let index = 0; index < paramDataSeries.colorBuffer.length; index++) {
@@ -2123,9 +2043,7 @@ export default class AdvKPI extends Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    // $("#loader").hide();
-                    //alert("success");
-
+                  
 
                     let objDataReeceive = JSON.parse(res.data.Response);
 
@@ -2213,8 +2131,7 @@ export default class AdvKPI extends Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    // $("#loader").hide();
-                    //alert("success");
+                 
 
                     let objData = JSON.parse(res.data.Response);
                     console.log("AdvKPI", objData);
@@ -2561,7 +2478,7 @@ export default class AdvKPI extends Component {
 
             }
 
-            //    alert("Row -" +rowNo + " Col - " + nCols);
+           
             return nCols;
 
 
@@ -2665,7 +2582,7 @@ export default class AdvKPI extends Component {
                 let cellTD: any = document.getElementById("td-" + chartDivId);
                 let cellWidth = colWidth * cellTD.colSpan;
 
-                debugger;
+                
                 let divStr = "<div id='" + chartDivId + "_legend" + "'  style='text-align: center; height: 25px; width: " + cellWidth + "px; background-color: transparent; display: inline-block;position: relative; padding-bottom: 10px; line-height: 1.5; font-weight: bold;' > Legend </div>"
                 $("#md-" + chartDivId).append(divStr);
             } catch (error) {
@@ -2971,7 +2888,7 @@ export default class AdvKPI extends Component {
                             </Button>
                         </div>
                         <div className="">
-                            {/* <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={false} ></DataSelectorInfo> */}
+                            
                             {this.state.runKPIReport && (
 
                                 <div>
@@ -3013,7 +2930,7 @@ export default class AdvKPI extends Component {
 
                         {/* prath */}
                         <div className="">
-                            {/* <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={false} ></DataSelectorInfo> */}
+                            
                             {this.state.runCompositeReport && (
 
                                 <div>

@@ -460,7 +460,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
   };
   cmdEditDepthRange = (event: any, dataItem: any) => {
     try {
-      //alert("edit depth range");
+      
       this.setState({
         showDepthRangeEditor: true,
         currentPhaseIndex: dataItem.PHASE_INDEX,
@@ -472,34 +472,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
   };
   grdRow_Click = (e: any) => {
     try {
-      //alert("row clicked");
-      //This need to check //pending
-
-      //before selecting new DepthRange save current to object
-      // if (this.state.currentPhaseIndex > 0) {
-      //     let headerDetail: any = Object.values(utilFunc.CopyObject(this.state.objTagDepthInformation));
-      //     let index = headerDetail.findIndex((item: any) => item.PhaseIndex === this.state.currentPhaseIndex); // use unique value like ID
-      //     if (index > -1) {
-      //         headerDetail = headerDetail[index];
-      //         let index2 = this.state.grdDepthRange.findIndex((item: any) => item.PhaseIndex === this.state.currentPhaseIndex);
-      //         if (index > -1) {
-      //             let edited = this.state.objTagDepthInformation
-      //             edited[index].DepthRanges = this.state.grdDepthRange
-      //             this.setState({
-      //                 objTagDepthInformation: edited
-      //             });
-      //         }
-      //     } else {
-      //         //New Entry in Depth Range for Current Phase Index
-      //         let headerDetail: any = Object.values(utilFunc.CopyObject(this.state.objTagDepthInformation));
-      //         let index = headerDetail.findIndex((item: any) => item.PhaseIndex === this.state.currentPhaseIndex); // use unique value like ID
-      //         let edited = this.state.objTagDepthInformation
-      //         edited[index].DepthRanges = this.state.grdDepthRange
-      //         this.setState({
-      //             objTagDepthInformation: edited
-      //         });
-      //     }
-      // }
+     
 
       this.setState({
         currentPhaseIndex: e.dataItem.PHASE_INDEX,
@@ -578,7 +551,7 @@ export default class TripAnalyzerSelection extends Component<IProps> {
   };
   grdDepthRangesItemChange = (e: any) => {
     //code for inLine Editing...
-    //alert("pending to save");
+    
 
     //return;
     //

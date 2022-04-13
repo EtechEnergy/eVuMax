@@ -1376,7 +1376,7 @@ class ToolfaceSummary extends Component {
               return d.y;
             });
 
-          //alert(this.objUserSettings.ROPDrlgWindowColor);
+          
           this.objChart.SVGRef.append("g")
             .attr("class", "drlg_windowROP")
             .append("path")
@@ -1394,7 +1394,7 @@ class ToolfaceSummary extends Component {
               this.objUserSettings.ROPDrlgWindowColor
               //util.rgb2hex(this.objUserSettings.ROPDrlgWindowColor)
             )
-            //.style("opacity", (this.objUserSettings.ROPDrlgWindowTrans / 100)); //Nishant 28/07/2021
+            
             .style("filter", "opacity(" + (100 - this.objUserSettings.ROPDrlgWindowTrans) + "%)"); //Kuldip 28/08/2021
         }
       }
@@ -1451,7 +1451,7 @@ class ToolfaceSummary extends Component {
       }
       //****************** */
 
-      //alert(this.objUserSettings.ShowDrillingWindow);
+      
 
       await this.setState({
         WellName: this.objToolfaceData.WellName,
@@ -1624,7 +1624,7 @@ class ToolfaceSummary extends Component {
 
           this.objToolfaceData = JSON.parse(res.data.Response);
 
-          //alert("load data");
+          
 
 
           if (this.objToolfaceData.MTFData == null) {
@@ -2723,8 +2723,7 @@ class ToolfaceSummary extends Component {
 
 
   render() {
-    //this.objToolfaceData.adnlChannelsData.length
-    //alert("render called -" + this.state.ShowDrillingWindow);
+    
 
     let section1 = (
       <div
@@ -2988,7 +2987,7 @@ class ToolfaceSummary extends Component {
             <div style={{ padding: "20px" }}>
 
               <div className="Data">
-                <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+                <DataSelector  refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
               </div>
               <div id="warning" style={{ paddingBottom: "10px", padding: "0px", height: "20px", width: "100%", fontWeight: "normal", backgroundColor: "transparent", color: "black", position: "absolute" }}> <label id="lblWarning" style={{ color: "black", marginLeft: "10px" }} ></label> </div>
 

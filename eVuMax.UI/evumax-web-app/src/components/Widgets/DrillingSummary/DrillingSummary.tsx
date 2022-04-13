@@ -171,7 +171,7 @@ export class DrillingSummary extends Component {
     this.refreshHrs = paramDataSelector.refreshHrs;
     this.MatchDepthByFormationTops = paramDataSelector.MatchDepthByFormationTops;
 
-    //alert(this.state.isRealTime);
+    
 
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
@@ -179,43 +179,18 @@ export class DrillingSummary extends Component {
       await this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      //alert("Load connections");
+      
       this.loadDrlgSummary();
     }
 
   }
 
 
-  // selectionChanged = (
-  //   pselectedval: string,
-  //   pfromDate: Date,
-  //   ptoDate: Date,
-  //   pfromDepth: number,
-  //   ptoDepth: number,
-  //   prefreshHrs: number
-  // ) => {
-  //   try {
-
-  //     this.setState({ selectionType: pselectedval });
-  //     this.selectionType = pselectedval;
-  //     this.fromDate = pfromDate;
-  //     this.toDate = ptoDate;
-  //     this.fromDepth = pfromDepth;
-  //     this.toDepth = ptoDepth;
-  //     this.refreshHrs = prefreshHrs;
-  //     //Nishant 13-09-2021
-  //     this.setState({
-  //       isRealTime: false
-  //     });
-  //     clearInterval(this.intervalID);
-  //     this.forceUpdate();
-  //     this.loadDrlgSummary();
-  //   } catch (error) { }
-  // };
+  
 
   initilizeCharts = () => {
     this.objLogger.SendLog("initilizeCharts:this.objChart");
-    //alert("load connections");
+    
     this.objChart = new Chart(this, "ROP_RigState");
     this.objChart.ContainerId = "drlgSummary";
     this.objChart.Title = "ROP";
@@ -997,7 +972,7 @@ export class DrillingSummary extends Component {
 
   refreshChart = () => {
     try {
-      //alert("refresh chart");
+      
       this.refreshROPChart();
       this.refreshDistanceChart();
       this.refreshTimeChart();
@@ -1181,7 +1156,7 @@ export class DrillingSummary extends Component {
   handleToggleSwitch = async () => {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
-    //alert("DrillingSummary -->" + this.selectionType.toString() + " - " + this.state.isRealTime);
+    
 
     if (this.state.isRealTime) {
       //Added on 02-02-2022

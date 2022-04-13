@@ -63,7 +63,7 @@ export class StackedBarSeries {
 			//Generate unique X values from the data
 			for (let key of this.ChartRef.DataSeries.keys()) {
 				let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
-
+				
 				if (objSeries.Type == dataSeriesType.Bar) {
 					for (let d = 0; d < objSeries.Data.length; d++) {
 						let objData: ChartData = objSeries.Data[d];
@@ -71,6 +71,7 @@ export class StackedBarSeries {
 						if (xValues.find((o) => o == objData.x) == undefined) {
 							xValues.push(objData.x);
 							customLabels.push(objData.label);
+							
 						}
 					}
 				}
@@ -266,7 +267,7 @@ export class StackedBarSeries {
 								this.ChartRef.__toolTip.css('top', 0);
 								this.ChartRef.__toolTip.css('z-index', 10000); //bring tooltip on front
 
-								//alert(this.ChartRef.__mouseLastX + " - " + this.ChartRef.__mouseLastY);
+								
 								 var tooltipX = this.ChartRef.__mouseLastX;
 								 var tooltipY = this.ChartRef.__mouseLastY;
 
@@ -290,7 +291,7 @@ export class StackedBarSeries {
 								//Check if tooltip is going beyond right edge
 							})
 							.on('mousedown', (a, b, c) => {
-								//alert('You clicked button:: ' + this.ChartRef.__lastButtonClicked);
+								
 								//   let seriesId = c[0].getAttribute("seriesId");
 								//   let index=c[0].getAttribute("index");
 								//this.ChartRef.triggerSeriesClickEvent(seriesId,index);
@@ -388,6 +389,7 @@ export class StackedBarSeries {
 						if (xValues.find((o) => o == objData.datetime) == undefined) {
 							xValues.push(objData.datetime);
 							customLabels.push(objData.label);
+							
 						}
 					}
 				}
@@ -594,7 +596,7 @@ export class StackedBarSeries {
 							//Check if tooltip is going beyond right edge
 						})
 						.on('mousedown', (a, b, c) => {
-							//alert('You clicked button:: ' + this.ChartRef.__lastButtonClicked);
+							
 							//   let seriesId = c[0].getAttribute("seriesId");
 							//   let index=c[0].getAttribute("index");
 							//this.ChartRef.triggerSeriesClickEvent(seriesId,index);
@@ -604,7 +606,7 @@ export class StackedBarSeries {
 
 
 					// // Show lables on Bar //Parth 26-07-2021
-
+						
 					if (s == stackValues.length - 1 && this.ChartRef.ShowCustomComments) {
 
 

@@ -51,6 +51,8 @@ class TripConnSummary extends Component {
 
   objLogger: ClientLogger = new ClientLogger("TripConnSummary", _gMod._userId);
   state = {
+    
+    refreshDataSelector: false,
     warningMsg: [],
     WellName: "",
     showCommentDialog: false,
@@ -214,8 +216,10 @@ class TripConnSummary extends Component {
         STSBenchMark: this.objUserSettings.STSBenchMark,
         TargetTime: this.objUserSettings.TargetTime,
         RigCost: this.objUserSettings.RigCost,
+        refreshDataSelector: true
+        
       });
-
+      
       document.title = this.state.WellName + " -Trip Conn. Summary"; //Nishant 02/09/2021
 
     } catch (error) { }
@@ -475,8 +479,7 @@ class TripConnSummary extends Component {
   ////Nishant
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshStatus: boolean = false) => {
 
-    //alert("TripConnection Summary --> SelectionChanged");
-
+    
     let realtimeStatus: boolean = paramRefreshStatus;
 
     //Added on 02-02-2022
@@ -952,7 +955,7 @@ class TripConnSummary extends Component {
 
 
             <div className="Data">
-              <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+             <DataSelector refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
             </div>
           </TabStripTab>
           <TabStripTab title="Numeric Summary">
@@ -1594,7 +1597,7 @@ class TripConnSummary extends Component {
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
         //objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
 
-        objSTSPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
+        objSTSPoint.label = this.objSummaryData.connData[i]["DEPTH"];
 
 
         if (this.state.HighlightDayNight) {
@@ -1616,7 +1619,7 @@ class TripConnSummary extends Component {
             Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
           );
           objCostPoint.y = this.objSummaryData.connData[i]["COST"];
-          objCostPoint.label = this.objSummaryData.connData[i]["COMMENTS"];
+          objCostPoint.label = this.objSummaryData.connData[i]["DEPTH"];
           objCost.Data.push(objCostPoint);
         }
 
@@ -1741,6 +1744,8 @@ class TripConnSummary extends Component {
 
       //Create series for each rig state
 
+
+
       for (let i = 0; i < this.objSummaryData.rigStates.length; i++) {
         let objSeries = new DataSeries();
         objSeries.Id = this.objSummaryData.rigStates[i]["RIG_STATE"].toString();
@@ -1758,32 +1763,46 @@ class TripConnSummary extends Component {
 
       //Fill up the data for each series
 
+      
+
       for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
-        let arrRigStates: string[] = this.objSummaryData.rigStateData[i][
-          "TIMES"
-        ]
-          .toString()
-          .split(",");
+
+        let arrRigStatesInfo: string[] = this.objSummaryData.rigStateData[i]["TIMES"].toString().split(",");
 
         for (let j = 0; j < this.objSummaryData.rigStates.length; j++) {
-          let lnRigState: number =
-            this.objSummaryData.rigStates[j]["RIG_STATE"];
+
+          let lnRigState: number = this.objSummaryData.rigStates[j]["RIG_STATE"];
 
           //Find the series with this rig state
-          let objSeries: DataSeries = this.objChart.DataSeries.get(
-            lnRigState.toString()
-          );
+          let objSeries: DataSeries = this.objChart.DataSeries.get(lnRigState.toString());
 
-          if (objSeries != undefined) {
-            let objDataPoint = new ChartData();
-            objDataPoint.datetime = new Date(
-              Date.parse(this.objSummaryData.rigStateData[i]["FROM_DATE"])
-            );
-            //objDataPoint.x=this.objSummaryData.rigStateData[i]["DEPTH"];
-            objDataPoint.y = Number.parseFloat(arrRigStates[j]);
-            objDataPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
 
-            objSeries.Data.push(objDataPoint);
+          for (let c = 0; c < arrRigStatesInfo.length; c++) {
+
+            let __rigStateNo: number = Number(arrRigStatesInfo[c].split("~")[0].toString());
+            let __rigStateTime: number = Number(arrRigStatesInfo[c].split("~")[1].toString());
+
+            if (__rigStateNo == lnRigState && __rigStateTime > 0) {
+
+              if (objSeries != undefined) {
+
+                let objDataPoint = new ChartData();
+                objDataPoint.datetime = new Date(
+                  Date.parse(this.objSummaryData.rigStateData[i]["FROM_DATE"])
+                );
+
+                objDataPoint.y = __rigStateTime;
+                objDataPoint.label = this.objSummaryData.rigStateData[i]["DEPTH"].toString();
+
+                objSeries.Data.push(objDataPoint);
+                break;
+              }
+
+            }
+
+
+
+
           }
         }
       }

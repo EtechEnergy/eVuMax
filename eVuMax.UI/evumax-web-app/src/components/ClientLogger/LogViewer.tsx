@@ -120,37 +120,3 @@ export default LogViewer
 
 
 
-// // type LogListProps = {
-// //     LogList: Map<string, string>;
-// //   };
-// //   const LogViewer: React.FC<LogListProps> = ({ children, LogList }) => (
-// //     <div>
-// //       <p>Log, {LogList}</p>
-// //       {children}
-// //     </div>
-// //   );
-
-
-// import React, { useEffect } from 'react'
-
-// type LogListProps = {
-//     LogList: Map<string, string>;
-//   };
-
-// //export default function LogViewer<LogListProps>(children, LogList) {
-//    const LogViewer=(LogList:any)=> {
-//     let Name: any= "";     
-//     useEffect(() => {
-//              return () => {
-//               
-//                 Name = LogList;
-//                 alert(Name.LogList);
-//              }
-//          }, [LogList])   
-//     return (
-//         <div>
-//          {Name.LogList}
-//          </div>
-//    )
-// }
-// export default LogViewer;

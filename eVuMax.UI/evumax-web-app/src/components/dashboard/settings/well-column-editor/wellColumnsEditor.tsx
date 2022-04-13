@@ -234,9 +234,7 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
 
         e.dataItem.selected = !e.dataItem.selected;
         this.setState({ selectedItem: e.dataItem });
-        // this.forceUpdate();
-        // alert("abc");
-
+        
         let index = this.state.columnWell.findIndex((item: any) => item["COLUMN_ID"] === e.dataItem.COLUMN_ID
         );
         if (index > 0) {

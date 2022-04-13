@@ -1151,7 +1151,7 @@ export class ROPSummaryPlot extends Component {
   ////Nishant
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshStatus: boolean = false) => {
 
-    //alert("new dataSelector Data");
+    
     let realtimeStatus: boolean = paramRefreshStatus;
 
 
@@ -1598,7 +1598,7 @@ export class ROPSummaryPlot extends Component {
 
 
 
-              <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+              <DataSelector  refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
 
 
 

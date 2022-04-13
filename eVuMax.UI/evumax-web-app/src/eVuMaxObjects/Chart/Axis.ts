@@ -325,7 +325,7 @@ export class Axis {
       this.__axisWidth = titleSpace + labelSpace + 10;
 
     } catch (error) {
-      //alert(error + " - " + this.Id);
+      
     }
   };
 
@@ -461,7 +461,7 @@ export class Axis {
         x1 + Number($("#" + this.ChartRef.Id + "__selector_rect").width());
 
       if (this.IsDateTime) {
-        //alert("-- update selectorPosReverse assign start position");
+        
 
         this.__selectorStartDatePos = this.ScaleRef.invert(x1);
         this.__selectorEndDatePos = this.ScaleRef.invert(x2);
@@ -619,7 +619,7 @@ export class Axis {
         .attr("transform", "rotate(-90)")
         .text(this.Title);
 
-      //alert(this.Title + " - " + titleX);
+      
 
 
       if (!this.ShowTitle) {
@@ -704,7 +704,7 @@ export class Axis {
 
 
               if (this.Labels[0].split("~").length > 1) {
-                ////alert(this.Id);
+                
                 this.LabelMultiline = true;
               }
             } else {
@@ -1181,7 +1181,7 @@ export class Axis {
           );
         }
       } catch (error) {
-        //alert(error);
+        
       }
     } else {
       try {
@@ -1497,7 +1497,7 @@ export class Axis {
       this.formatAxis();
 
     } catch (error) {
-      //alert("Line 1463 " + error);
+      
     }
   };
 
@@ -1678,7 +1678,7 @@ export class Axis {
                 stackValues.set(key, stackedValue);
               } else {
                 //Right axis
-                //alert("new");
+               
                 //isStackedBar = false;
                 // if (this.Position == axisPosition.right) {
                 //   //for other series
@@ -1921,7 +1921,7 @@ export class Axis {
         }
       }
     } catch (error) {
-      //alert("Error 1884 get Axes range" + error);
+      
     }
   };
 

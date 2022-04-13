@@ -91,7 +91,7 @@ class CustomDrlgSummaryDataSelector extends Component<IProps> {
         try {
             //Prepare chart object
             //initialize chart
-            // alert("DataSelector didmount");
+          
 
             this.objChart = new Chart(this, "SelectorChart");
             this.objChart.ContainerId = "selector_chart";
@@ -300,34 +300,7 @@ class CustomDrlgSummaryDataSelector extends Component<IProps> {
 
     };
 
-    // handleTabSelect = (e: any) => {
-    //     if (this.objLine.Data.length <= 0) {
-    //         confirmAlert({
-    //             message: 'No Data Available',
-    //             childrenElement: () => <div />,
-    //             buttons: [
-    //                 {
-    //                     label: 'Ok',
-    //                     onClick: () => {
-    //                         return;
-    //                     }
-    //                 },
-    //                 // {
-    //                 //     label: 'No',
-    //                 //     onClick: () => null
-    //                 // }
-    //             ]
-    //         });
-    //         return;
-    //     }
-
-    //     if (e.selected == 1) {
-
-    //         this.setState({ showSettings: true });
-    //         return;
-    //     }
-    //     this.setState({ selectedTab: e.selected });
-    // };
+   
 
     handleTabSelectSettings = (e: any) => {
         this.setState({ selectedSettingsTab: e.selected });

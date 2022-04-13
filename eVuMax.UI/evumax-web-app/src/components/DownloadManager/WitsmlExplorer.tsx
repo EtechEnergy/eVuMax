@@ -228,42 +228,7 @@ export default class WitsmlExplorer extends React.Component {
 
 
 
-        // if (event.item.data.logType == "6", event.item.data.id == "mnuDownloadByRange") {
-        //     this.setState({
-        //         showDownloadLogWindow: !this.state.showDownloadLogWindow
-        //     })
-
-        // }
-
-        // if (event.item.data.logType == 3 && event.item.data.id == "mnuEditWellbores") {
-        // }
-        // if (event.itemId == "1") { //Download
-        //     console.log('Downloading...');
-
-        // }
-
-        // if (event.item.data.logType == 8 && event.item.data.id == "mnuDownloadChannelsDepth") { //DepthLog Channels
-
-        //     if (objParentNode.items == undefined) {
-        //         alert("No channels are downloaded");
-        //         let objNode = this.searchTree(objParentNode, objParentNode.text);
-        //         this.loadDepthLogChannels(objParentNode);
-        //     } else {
-        //         alert("channels are downloaded");
-        //     }
-        // }
-
-        // if (event.item.data.logType == 6 && event.item.data.id == "mnuDownloadChannels") { //TimeLogChannels
-
-        //     if (objParentNode.items == undefined) {
-        //         alert("No channels are downloaded");
-        //         let objNode = this.searchTree(objParentNode, objParentNode.text);
-        //         this.loadTimeLogChannels(objParentNode);
-
-        //     } else {
-        //         alert("channels are downloaded");
-        //     }
-        // }
+     
 
     }
     ////#region

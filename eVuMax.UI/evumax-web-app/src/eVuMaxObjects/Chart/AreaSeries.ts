@@ -63,7 +63,7 @@ export class AreaSeries {
             ) {
               this.ChartRef.isScrollingInProgress = false;
             }
-            //alert(this.ChartRef.isScrollingInProgress);
+            
 
             let dashStyle = "0";
 

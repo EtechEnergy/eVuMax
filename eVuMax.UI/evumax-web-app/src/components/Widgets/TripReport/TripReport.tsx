@@ -1429,7 +1429,7 @@ export default class DrlgStandPlot extends React.Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    //////alert("abc");
+                    
 
                     let warnings: string = "";
                     if (res.data.RequestSuccessfull == false) {

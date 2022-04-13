@@ -843,16 +843,9 @@ export default class ActiveWell extends React.Component {
                 reorderable={false}
                 orderIndex={this.getColumnOrderIndex("DOWNLOAD_STATUS")}
                 cell={(props) => (
-                  // onclick = ((event: any) => {
-                  //     // this.setState({
-                  //     //     currentWellID: props.dataItem["WELL_ID"]
-                  //     // });
-                  //     //
-                  //     alert(this.state.currentWellID + " download Clicked");
-
-                  // }),
+             
                   <td className="text-center">
-                    {/* <img src={require("../../../images/downloading-blue.gif")} key="0" style={{ width: 35, height: 10 }} />  */}
+                    
                     {props.dataItem["DOWNLOAD_STATUS"] == true ? (
                       <span
                         onClick={(e) =>

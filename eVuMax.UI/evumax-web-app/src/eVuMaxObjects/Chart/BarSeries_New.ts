@@ -33,7 +33,7 @@ export class BarSeries {
   //Draws the series, this will draw vertical bars along with X Axis
   redrawSeries = () => {
     try {
-      //////alert("BarSeries");
+      
       let isDateTimeScale = false;
       let objHorizontalAxis: any;
 
@@ -62,7 +62,7 @@ export class BarSeries {
     try {
       //Remove existing data
 
-      ////alert("Proess Start");
+      
       let xValues = new Array<number>();
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
@@ -74,7 +74,7 @@ export class BarSeries {
         }
       }
 
-      //alert("Processing....");
+      
       //Generate unique X values from the data for Number of Series...s1,s2,s3...
       let data = [];
       let keys = [];
@@ -120,7 +120,7 @@ export class BarSeries {
           }
         }
       }
-      //alert("Got all x-axis values");
+      
 
       for (let key of this.ChartRef.DataSeries.keys()) {
         let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
@@ -171,10 +171,10 @@ export class BarSeries {
       // }
 
 
-      //alert("Processing End...");
+      
       let z = d3.scaleOrdinal().range(colors);
 
-      //////alert("Data is ready in BarSeries");
+      
 
       //============================================================
 
@@ -183,9 +183,9 @@ export class BarSeries {
 
       //============================================================
 
-      ////////alert(objHorizontalAxisScaleRef_x1.bandwidth());
+      
       let barWidth = this.objHorizontalAxisScaleRef_x1.bandwidth();
-      alert(barWidth);
+      
       if (barWidth <= 1) {
         barWidth = 1;
       }
@@ -196,7 +196,7 @@ export class BarSeries {
       let height = 0;
       height = this.ChartRef.Height - this.ChartRef.MarginBottom;
 
-      //alert("Before draw Series");
+      
       let date1: any = new Date(); // 9:00 AM
 
       let HAxisScale = this.objHorizontalAxisScaleRef;
@@ -286,16 +286,14 @@ export class BarSeries {
           //Check if tooltip is going beyond right edge
         })
         .on("mousedown", (a, b, c) => {
-          ////////alert('You clicked button:: ' + this.ChartRef.__lastButtonClicked);
-          //   let seriesId = c[0].getAttribute("seriesId");
-          //   let index=c[0].getAttribute("index");
-          //this.ChartRef.triggerSeriesClickEvent(seriesId,index);
+          
+        
         });
 
       // // Show Value as lable on Bar Series //Parth 05-10-2020
 
       let date2: any = new Date(); // 9:00 AM
-      //alert("After draw Series" + ((date2 - date1) / 1000));
+      
     } catch (error) { }
   };
 
@@ -499,10 +497,7 @@ export class BarSeries {
               //Check if tooltip is going beyond right edge
             })
             .on("mousedown", (a, b, c) => {
-              ////////alert('You clicked button:: ' + this.ChartRef.__lastButtonClicked);
-              //   let seriesId = c[0].getAttribute("seriesId");
-              //   let index=c[0].getAttribute("index");
-              //this.ChartRef.triggerSeriesClickEvent(seriesId,index);
+              
             });
         }
       }

@@ -19,23 +19,19 @@ export default class DataSelectorInfo extends Component<IProps>  {
 
     componentDidUpdate() {
         try {
-          //  alert("info update -"+this.props.objDataSelector.selectedval + " " + this.props.isRealTime);
+          
 
-     //Added on 02-02-2022
-     //alert("Info " + this.props.objDataSelector.selectedval);
+ 
         
-     if (this.props.objDataSelector.selectedval=="0"){
-        //alert(this.props.objDataSelector.needForceReload + " - " + this.props.objDataSelector.fromDate + " - " + this.props.objDataSelector.toDate);
-     }
-
+     
      if (!this.props.objDataSelector.needForceReload ||this.props.objDataSelector.fromDate==null  ||this.props.objDataSelector.toDate==null)
      {
          
-       //  console.log(this.props.objDataSelector.needForceReload);
+       
          return;
      }
 
-    // alert(this.props.objDataSelector.needForceReload);
+    
             
             this.selectionType = this.props.objDataSelector.selectedval;
             this.dataSelectorPeriod = ""
@@ -67,8 +63,7 @@ export default class DataSelectorInfo extends Component<IProps>  {
                         break;
                 }
             }
-            //this.forceUpdate();
-            //alert(this.needForceReload);
+            
             if (this.props.objDataSelector.needForceReload){
                 this.needForceReload=false;
                 this.forceUpdate();
@@ -80,11 +75,11 @@ export default class DataSelectorInfo extends Component<IProps>  {
     }
 
     render() {
-        //alert("render " +  this.dataSelectorPeriod );
+        
 
         return (
             <div>
-                {/* TESTING {this.dataSelectorPeriod} */}
+                
                 <label className="dataSelectorPeriod" style={{ marginLeft: "30px" }}> Data Range:  {this.dataSelectorPeriod} </label>
             </div>
 

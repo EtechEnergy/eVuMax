@@ -657,7 +657,7 @@ class DrlgConnSummary2 extends Component {
     { label: "Time Log Remarks", value: "Time Log Remarks", className: "" },
   ];
 
-  //handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
+  
 
   handleToggleSwitch = async () => {
 
@@ -905,7 +905,7 @@ class DrlgConnSummary2 extends Component {
             </div>
 
             {/* <DataSelector {...this} /> */}
-            <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+            <DataSelector  refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
           </TabStripTab>
           <TabStripTab title="Numeric Summary">
             <div style={{ marginTop: "10px" }}>

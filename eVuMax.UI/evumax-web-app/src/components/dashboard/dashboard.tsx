@@ -76,7 +76,7 @@ export class Dashboard extends React.Component<Props> {
   loadTheme = () => {
     try {
       _gMod = new GlobalMod();
-      //alert(_gMod._userId);
+      
       objBrokerRequest = new BrokerRequest();
       let objParameter = new BrokerParameter("UserId", _gMod._userId);
       objBrokerRequest.Parameters.push(objParameter);

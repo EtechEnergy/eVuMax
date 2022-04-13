@@ -228,8 +228,7 @@ export default class BroomstickPlot extends Component {
           params: { paramRequest: JSON.stringify(objBrokerRequest) },
         })
         .then((res) => {
-          // $("#loader").hide();
-          //alert("success");
+       
           
           let objData = JSON.parse(res.data.Response);
           console.log("BroomstickDoc", objData);
@@ -278,12 +277,9 @@ export default class BroomstickPlot extends Component {
 
         })
         .catch((error) => {
-          alert("error " + error.message);
+          
           Util.StatusError(error.message);
-          // this.setState({
-          //   isProcess: false,
-          // });
-          //this.forceUpdate();
+         
 
           if (error.response) {
             // return <CustomeNotifications Key="success" Icon={false}  />

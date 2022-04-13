@@ -589,7 +589,7 @@ export class Chart {
         
         startDate = new Date( Math.max.apply(Math, objSeries.Data.map(function(o) { return o.datetime; })));
         endDate= new Date(moment(new Date(startDate)).subtract(lastHrs, 'h').toDate());
-        //alert(startDate + " -- " + endDate);
+        
       }
       
       objAxis.__selectorStartDatePos = new Date(startDate);
@@ -611,10 +611,7 @@ export class Chart {
       //this function will re-calculate everything
 
       for (let key of this.Axes.keys()) {
-        // if (key == "SelectorChart-bottom") {
-        //   
-        // }
-        //alert(key);
+        
 
         let objAxis: Axis = this.Axes.get(key);
         objAxis.updateAxis();
@@ -633,7 +630,7 @@ export class Chart {
       this.__chartRect.right = this.Width - this.MarginRight;
       this.__chartRect.bottom = this.Height - this.MarginBottom;
       
-      //alert(this.Id + " - " + this.axisPerRow  + " - " + this.axisPerColumn );
+      
       if (this.axisPerColumn < 1) {
         this.axisPerColumn = 1;
       }
@@ -1352,8 +1349,7 @@ export class Chart {
 
       //Create Title prath 01-10-2020
 
-      //alert(this.Width + " - " + this.__chartRect.width);
-
+      
       this.SVGRef.append("text")
         .attr("x", this.Width / 2)
         .attr("y", 15)
@@ -1426,7 +1422,7 @@ export class Chart {
       let ScrollAxisArrFamily = [];
 
 
-      //alert("onScroll method");
+      
       $("#" + this.ContainerId).css("cursor", "grab");
       let t = d3.event.transform;
       this.isScrollingInProgress = true;
@@ -1550,7 +1546,7 @@ export class Chart {
       d3.event.stopPropagation();
     } catch (error) {
       this.objLogger.SendLog("Error ->CHART-mouseDownZoom : " + error);
-      //alert(error);
+      
     }
   };
 
@@ -1582,7 +1578,7 @@ export class Chart {
 
   mouseUpZoom = (d: any, origin: any, rect: any) => {
     try {
-      //alert("mouse up......");
+      
       d3.select(window).on("mousemove", null).on("mouseup", null);
       d3.select(this.ContainerId).classed("noselect", false);
       var m = d3.mouse(d);
@@ -2217,7 +2213,7 @@ export class Chart {
       let barChartFound: boolean = false;
 
       for (let key of this.DataSeries.keys()) {
-        //alert("update series " + key);
+        
        
         if (this.DataSeries.get(key).Type == dataSeriesType.Bar) {
           if (this.DataSeries.get(key).Stacked) {

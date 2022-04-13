@@ -57,6 +57,7 @@ export class BarSeries {
       
       this.findUniqueBarScale();
       
+      
 
       for (let i=0; i< this.uniqueBarScale.length; i++){
 
@@ -143,7 +144,7 @@ export class BarSeries {
             this.objVerticalAxisRef = this.objVerticalAxis.AxisRef;
             
               
-            //alert(this.objVerticalAxisRef);
+            
 
             //Not allow to Scroll Axes
             this.objHorizontalAxis.isAllowScrolling = false;
@@ -159,7 +160,7 @@ export class BarSeries {
 
           for (let d = 0; d < objSeries.Data.length; d++) {
             let objData: ChartData = objSeries.Data[d];
-
+            
             let i = data.findIndex((value) => value.X == objData.x);
             if (i == -1) {
               if (objData.y !=0){
@@ -167,6 +168,8 @@ export class BarSeries {
                 let rec = {};
                 rec["X"] = objData.x;
                 rec[objSeries.Id] = objData.y;
+                rec["color"]= objData.color;
+                rec["offsetColor"]= objData.color;
                 data.push(rec);
               }
             } else {
@@ -220,7 +223,7 @@ export class BarSeries {
         .data(function (d) {
           return keys.map(function (key) {
             
-            return { key: key, value: d[key] };
+            return { key: key, value: d[key], color : d["color"] };
           });
         })
         .enter()
@@ -246,9 +249,26 @@ export class BarSeries {
           let VAxisScale = objVerticalAxis.ScaleRef;
           return height - Math.abs(VAxisScale(d.value));
         })
+        
+        //prath 11-April-2022
+        // .attr("fill", function (d) {
+        //   return z(d.key);
+        // })
+
         .attr("fill", function (d) {
-          return z(d.key);
+          //return z(d.color);
+          
+          let objSeries_  = DataSeriesKeyList.get(d.key);
+          if (objSeries_.ColorEach) {
+            return d.color;
+          }else{
+            return z(d.key);
+          }
         })
+
+
+
+
         .style("font-size", "1.25em");
 
       if (this.ShowLabelOnSeries) {
@@ -300,7 +320,7 @@ export class BarSeries {
         //=================================
       }
     } catch (error) { 
-//alert(error);
+
 
     }
   };
@@ -518,7 +538,7 @@ export class BarSeries {
               //Check if tooltip is going beyond right edge
             })
             .on("mousedown", (a, b, c) => {
-              ////alert('You clicked button:: ' + this.ChartRef.__lastButtonClicked);
+              
               //   let seriesId = c[0].getAttribute("seriesId");
               //   let index=c[0].getAttribute("index");
               //this.ChartRef.triggerSeriesClickEvent(seriesId,index);

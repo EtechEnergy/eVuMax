@@ -78,7 +78,7 @@ export default class PointChartTest extends Component {
   updateName = () => {
     let arr = this.state.name.splice(0, this.state.name.length - 1);
 
-    //alert("After update" + arr.length);
+    
 
 
 
@@ -98,8 +98,7 @@ export default class PointChartTest extends Component {
   }
 
   render() {
-    //alert(this.state.name.length);
-
+    
     return (
       <div>
         <button type="button" onClick={this.updateName}>Click Me!</button>

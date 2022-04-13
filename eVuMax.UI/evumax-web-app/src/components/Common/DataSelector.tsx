@@ -53,6 +53,7 @@ interface IProps {
   objDataSelector: DataSelector_;
   selectionChanged: any;
   wellID: string;
+  refreshDataSelector?: boolean
 }
 //=============
 
@@ -86,13 +87,18 @@ class DataSelector extends Component<IProps> {
 
   __parentRef: any;
 
+  componentWillReceiveProps() {
+
+    if (this.props.refreshDataSelector == true) {
+      this.loadData();
+    }
+  }
   //Initialize chart after component was mounted
   componentDidMount() {
     try {
       //Prepare chart object
       //initialize chart
-      
-      
+
       this.objChart = new Chart(this, "SelectorChart");
       this.objChart.ContainerId = "selector_chart";
       this.objChart.isZoomByRect = false; //No need to zoom
@@ -155,7 +161,7 @@ class DataSelector extends Component<IProps> {
       let objDataSelector: DataSelector_ = new DataSelector_();
 
       objDataSelector = this.props.objDataSelector;
-      //alert("Received --" + this.props.objDataSelector.fromDate);
+     
       objDataSelector.fromDate = null;
       objDataSelector.toDate = null;
 
@@ -166,7 +172,7 @@ class DataSelector extends Component<IProps> {
 
 
 
-      //alert(this.state.objDataSelector.fromDate);
+      
 
       this.loadData();
       this.loadExtents();  //work in progress
@@ -176,45 +182,18 @@ class DataSelector extends Component<IProps> {
 
   reRenderChart = () => {
     try {
-      //alert("rerender");
+      
       this.forceUpdate();
-      //window.addEventListener("resize", this.reRenderChart);
+      
 
     } catch (error) { }
   };
-  //This method will be called by chart component when user selects the data by using chart
-  // selectorChanged = (
-  //   ptype: string,
-  //   pfromdate: Date,
-  //   ptodate: Date,
-  //   pfromdepth: number,
-  //   ptodepth: number,
-  //   pApplyRefreshHrs?: boolean
-  // ) => {
-  //   try {
+ 
 
-  //     this.setState({
-  //       selectedval: ptype,
-  //       fromDate: pfromdate,
-  //       toDate: ptodate,
-  //       fromDepth: pfromdepth,
-  //       toDepth: ptodepth,
+  selectorChanged = async (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pMatchDepthByFormationTops?: boolean) => {
 
-  //     });
-  //     // this.__parentRef.selectionChanged(
-  //     //   this.state.selectedval,
-  //     //   this.state.fromDate,
-  //     //   this.state.toDate,
-  //     //   this.state.fromDepth,
-  //     //   this.state.toDepth
-  //     // );
-  //   } catch (error) { }
-  // };
-
-  selectorChanged =  async (ptype: string, pfromdate: Date, ptodate: Date, pfromdepth: number, ptodepth: number, pMatchDepthByFormationTops?: boolean ) => {
-    
     try {
-      
+
 
       let objDataSelector: DataSelector_ = new DataSelector_();
       objDataSelector.selectedval = ptype;
@@ -225,27 +204,22 @@ class DataSelector extends Component<IProps> {
       objDataSelector.refreshHrs = this.state.objDataSelector.refreshHrs;
       objDataSelector.fromDateS = new Date(pfromdate);
       objDataSelector.toDateS = new Date(ptodate);
-      
-      
-      if(pMatchDepthByFormationTops == undefined){
+
+
+      if (pMatchDepthByFormationTops == undefined) {
         pMatchDepthByFormationTops = false;
       }
-      objDataSelector.MatchDepthByFormationTops= pMatchDepthByFormationTops;
+      objDataSelector.MatchDepthByFormationTops = pMatchDepthByFormationTops;
 
 
       //xxxxxxxxxxxxxxxxxxxxx copyobject added
       this.setState({ objDataSelector: utilFunc.CopyObject(objDataSelector) })
 
-      //this.objChart.setSelectorDateRange(this.state.objDataSelector.fromDate, this.state.objDataSelector.toDate);
-      // if (pApplyRefreshHrs == true) {
-      //   this.props.selectionChanged(this.state.objDataSelector, true);
-      // } else {
-      //   this.props.selectionChanged(this.state.objDataSelector, false);
-      // }
+      
 
       this.props.selectionChanged(this.state.objDataSelector, false);
 
-    
+
     } catch (error) { }
   };
 
@@ -254,7 +228,7 @@ class DataSelector extends Component<IProps> {
       //Update the chart
 
       //Make comment by Prath on 03-March-2022 (Seems not playing any role )
-//      this.objChart.updateChart();
+      //      this.objChart.updateChart();
     } catch (error) { }
   }
 
@@ -282,9 +256,9 @@ class DataSelector extends Component<IProps> {
         // $("#tab3").removeClass("selected");
 
         //added by prath on 7-March-2022 
-        if (this.state.objDataSelector.selectedval=="1"){//depth range
-           this.objChart.setSelectorDepthRange( this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth);
-         }
+        if (this.state.objDataSelector.selectedval == "1") {//depth range
+          this.objChart.setSelectorDepthRange(this.state.objDataSelector.fromDepth, this.state.objDataSelector.toDepth);
+        }
         //  if (this.state.objDataSelector.selectedval=="2"){//depth range
         //   this.objChart.setSelectorLastHoursRange(this.state.objDataSelector.refreshHrs);
         // }
@@ -341,17 +315,17 @@ class DataSelector extends Component<IProps> {
 
 
   handleChange = (event: any, field: string) => {
-    
-    
+
+
     const value = event.value;
     const name = field; // target.props ? target.props.name : target.name;
     let edited: any = utilFunc.CopyObject(this.state.objDataSelector);
 
-    
+
     edited[field] = value;
 
     //edited["MatchDepthByFormationTops"] = this.state.MatchDepthByFormationTops;
-    
+
     this.setState({
       objDataSelector: edited
     });
@@ -499,7 +473,7 @@ class DataSelector extends Component<IProps> {
                   className="col-lg-4 col-xl-3 col-md-4 col-sm-4"
                   value={this.state.objDataSelector.MatchDepthByFormationTops}
                   onChange={(e) => this.handleChange(e, "MatchDepthByFormationTops")}
-                                                         
+
                   label="Match Depth By Formation Tops"
                 />
 
@@ -703,6 +677,7 @@ class DataSelector extends Component<IProps> {
   setData = (paramData: any) => {
     try {
       //Populate the data series with this data
+      this.objLine.Data.length = 0;
       this.objLine.Data.slice(0, this.objLine.Data.length);
       if (paramData.length == 0 || paramData.length == undefined || paramData.length == null) {
         this.setState({
@@ -727,7 +702,7 @@ class DataSelector extends Component<IProps> {
         //$("#lblWarning").text("");
       }
 
-      
+
       for (let i = 0; i < paramData.length; i++) {
         let objVal: ChartData = new ChartData();
         objVal.datetime = new Date(Date.parse(paramData[i]["DATETIME1"]));
@@ -737,40 +712,15 @@ class DataSelector extends Component<IProps> {
 
         this.objLine.Data.push(objVal);
       }
+   
 
-      
-      
-      // if (this.__parentRef.objDataSelector.selectedval==0){ //datewise
-      //   this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
-      // }
-      
-      // if (this.__parentRef.objDataSelector.selectedval==1){ //depthwise
-      //   this.objChart.setSelectorDepthRange(this.__parentRef.objDataSelector.fromDepth, this.__parentRef.objDataSelector.toDepth);
-      // }
-
-      // if (this.__parentRef.objDataSelector.selectedval==2){ //last hrs depth
-      //   
-      //   this.objChart.setSelectorLastHoursRange(this.__parentRef.objDataSelector.refreshHrs);
-      //   this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
-      // }
-      //alert(this.__parentRef.objDataSelector.fromDate + " - " + this.__parentRef.objDataSelector.toDate);
-      
-      //Set dataselector 
-      //alert(this.__parentRef.objDataSelector.fromDate + " - data selector - " + this.__parentRef.objDataSelector.toDate); 
-
-
-      //alert(this.__parentRef.objDataSelector.fromDate + "  " +  this.__parentRef.objDataSelector.toDate);
-      
-      //console.log("xxx" , this.__parentRef);
-      // alert(this.__parentRef.objDataSelector.isApplyDateRange + "");
-      
       //set data selector - isApplyDateRange only used to handle Custom Drilling summary
-      if ((this.__parentRef.objDataSelector.fromDate != this.__parentRef.objDataSelector.toDate) && this.__parentRef.objDataSelector.isApplyDateRange){
-        this.objChart.setSelectorDateRange( new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
+      if ((this.__parentRef.objDataSelector.fromDate != this.__parentRef.objDataSelector.toDate) && this.__parentRef.objDataSelector.isApplyDateRange) {
+        this.objChart.setSelectorDateRange(new Date(this.__parentRef.objDataSelector.fromDate), new Date(this.__parentRef.objDataSelector.toDate));
       }
-      
 
-     
+
+
       this.objChart.updateChart();
     } catch (error) { }
   };
@@ -778,7 +728,7 @@ class DataSelector extends Component<IProps> {
   loadData = () => {
     try {
 
-      Util.StatusInfo("Getting data from the server  ");
+      Util.StatusInfo("Getting data from the server...");
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Common";
       objBrokerRequest.Broker = "TimeData";
@@ -823,7 +773,7 @@ class DataSelector extends Component<IProps> {
           const objData = JSON.parse(res.data.Response);
           this.setData(objData);
           //console.log("DATA SELECTOR DATA -->" , objData);
-          Util.StatusSuccess("Data successfully retrived DataSelector ");
+         // Util.StatusSuccess("Data successfully retrived");
           Util.StatusReady();
 
         })
@@ -886,7 +836,7 @@ class DataSelector extends Component<IProps> {
         })
         .then((res) => {
           let objData = JSON.parse(res.data.Response);
-          
+
           //set the state
 
           // this.setState({
@@ -916,9 +866,9 @@ class DataSelector extends Component<IProps> {
 
 
 
-          
+
           this.setData(objData);
-          Util.StatusSuccess("Data successfully retrived  ");
+          //Util.StatusSuccess("Data successfully retrived  ");
           Util.StatusReady();
         })
         .catch((error) => {

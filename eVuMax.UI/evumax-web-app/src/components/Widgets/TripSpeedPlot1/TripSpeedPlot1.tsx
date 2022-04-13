@@ -251,22 +251,7 @@ export class TripSpeedPlot1 extends Component {
     } catch (error) { }
   };
 
-  //Nishant
-  // getRigStateColor = (number) => {
-  //     //alert(this.state.objROPSummaryData.RigStates);
-  //     if (this.state.objROPSummaryData.RigStates != undefined) {
-  //         let index = this.state.objROPSummaryData.RigStates.findIndex(
-  //             (e) => e.RIG_STATE_NUMBER === number
-  //         );
-  //         if (index > -1) {
-  //             return this.state.objROPSummaryData.RigStates[index].HEX_COLOR;
-  //         } else {
-  //             return "#000000";
-  //         }
-
-  //     }
-
-  // };
+  
 
   refreshChart = () => {
     try {
@@ -812,14 +797,10 @@ export class TripSpeedPlot1 extends Component {
 
       let lnBenchMarkWithConn =
         this.state.objUserSettings.objBenchMarks.TripSpeedWithConnection;
-      //alert(lnBenchMarkWithConn);
+      
 
       if (lnBenchMarkWithConn > 0) {
-        // if (this.objChart_BarWithConn.leftAxis().Max < lnBenchMarkWithConn) {
-        //     this.objChart_BarWithConn.leftAxis().Max = lnBenchMarkWithConn + lnBenchMarkWithConn * 0.10;
-        //
-
-        // }
+       
 
         let x1 = this.objChart_BarWithConn.__chartRect.left;
         let x2 = this.objChart_BarWithConn.__chartRect.right;

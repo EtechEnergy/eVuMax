@@ -139,11 +139,7 @@ export default class DownloadStatus extends Component<IProps> {
 
 
     expandDetailLog = (event: any) => {
-        //
-        // alert(event.dataItem.expanded);
-        // event.dataItem.expanded = !event.dataItem.expanded;
-        // this.forceUpdate();
-
+     
         let newData = this.state.grdDownloadStatus.map((item: any) => {
             if (item.OP_SEQ === event.dataItem.OP_SEQ) {
                 item.expanded = !event.dataItem.expanded
@@ -158,7 +154,7 @@ export default class DownloadStatus extends Component<IProps> {
     render() {
         return (
             <>
-                {/* style={{ height: '86vh', width: '85vw' }} */}
+                
 
                 <div id="mainContainer_" style={{ width: '85vw' }} >
                     <div className="row">

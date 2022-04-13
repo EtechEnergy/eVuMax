@@ -572,6 +572,9 @@ namespace eVuMax.DataBroker.Summary.TripConn
 
                         double connDepth = DataService.checkNumericNull(objRow["DEPTH"]);
 
+                       
+
+
                         DateTime lnFromDate = DateTime.Parse(objRow["FROM_DATE"].ToString());
                         DateTime lnToDate = DateTime.Parse(objRow["TO_DATE"].ToString());
                         string connComments = DataService.checkNull(objRow["COMMENTS"], "").ToString();
@@ -585,7 +588,9 @@ namespace eVuMax.DataBroker.Summary.TripConn
                             rigStateTimes.Add(lnKey, 0);
                         }
 
-                        strSQL = "SELECT TIME_DURATION,RIG_STATE FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL";
+                        //NITIN 12-APRIL-2022
+                        strSQL = "SELECT TIME_DURATION,RIG_STATE FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL AND RIG_STATE NOT IN (0,1,19)";
+                        //strSQL = "SELECT TIME_DURATION,RIG_STATE FROM " + objTimeLog.__dataTableName + " WHERE DATETIME>='" + lnFromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND DATETIME<='" + lnToDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND RIG_STATE IS NOT NULL";
 
                         DataTable connRigStates = paramRequest.objDataService.getTable(strSQL);
 
@@ -615,7 +620,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                                     lnTimeDuraton = Math.Round(lnTimeDuraton / 60, 2); //Converting to minutes
                                 }
 
-                                strTimes = strTimes + "," + lnTimeDuraton;
+                                strTimes = strTimes + "," + lnKey.ToString()+"~"+lnTimeDuraton.ToString();
                             }
                         }
 

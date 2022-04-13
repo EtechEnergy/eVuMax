@@ -186,9 +186,7 @@ class TripConnSummary extends Component {
         try {
             this.objUserSettings = JSON.parse(this.objSummaryData.userSettings);
 
-            // alert("xxx");
-            //
-
+            
             this.setState({
                 WellName: this.objSummaryData.WellName,
                 summaryData: this.objSummaryData.connData,
@@ -576,7 +574,7 @@ class TripConnSummary extends Component {
                             }}
                         ></div>
 
-                        <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+                        <DataSelector  refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
                     </TabStripTab>
                     <TabStripTab title="Numeric Summary">
                         <div style={{ marginTop: "10px" }}>

@@ -223,7 +223,7 @@ class DrlgConnSummary extends Component {
 
 
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefresStatus: boolean = false) => {
-    //alert(paramRefreshHrs);
+    
     
 
     let realtimeStatus: boolean = paramRefresStatus;
@@ -407,7 +407,7 @@ class DrlgConnSummary extends Component {
         "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
-      //alert(this.refreshHrs);
+      
 
       this.AxiosSource = axios.CancelToken.source();
 
@@ -1016,7 +1016,7 @@ class DrlgConnSummary extends Component {
 
                 {/* <DataSelectorOriginal {...this} /> */}
                 <div className="Data">
-                  <DataSelector objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+                  <DataSelector  refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
                 </div>
               </TabStripTab>
               <TabStripTab title="Numeric Summary">

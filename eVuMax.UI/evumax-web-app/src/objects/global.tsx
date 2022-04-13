@@ -28,15 +28,15 @@ export default class GlobalMod {
 const localUser: string = ""; // "vmx_admin"; //"ETECHPC1\\ETECH-PC-2";
 
 
-const Port = "http://localhost:49489";
-const ServiceName = "/eVuMax.asmx";
-const getData = "/getData";
-const performTask = "/performTask";
+// const Port = "http://localhost:49489";
+// const ServiceName = "/eVuMax.asmx";
+// const getData = "/getData";
+// const performTask = "/performTask";
 
 
 //for client side install
 
-// const Port = "/../evumaxapi";
-// const ServiceName = "/eVuMax.asmx";
-// const getData = "/getData";
-// const performTask = "/performTask";
+const Port = "/../evumaxapi";
+const ServiceName = "/eVuMax.asmx";
+const getData = "/getData";
+const performTask = "/performTask";

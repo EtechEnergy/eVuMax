@@ -209,7 +209,7 @@ export default class LineChart extends Component {
 
   updateZoomDropDownList = (zoomStep: string) => {
     try {
-      //alert("zoom steps from lineChart" + zoomStep);
+      
       let zoomCombo: comboData = new comboData("", "");
       zoomCombo.id = zoomStep;
       zoomCombo.text = zoomStep;
