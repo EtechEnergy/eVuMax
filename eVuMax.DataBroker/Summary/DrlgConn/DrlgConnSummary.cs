@@ -520,7 +520,78 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     }
 
 
+                    //prath added on 22-april-2022
+                    ConnectionLogPoint[] arrItems = objConnProcessor_.connectionPoints.Values.ToArray();
 
+                    for (int i = arrItems.Length - 1; i >= 0; i -= 1)
+                    {
+                        ConnectionLogPoint objItem = arrItems[i];
+
+                        // '******** Advanced KPI -- Check if connection exist in database *********************''
+
+                        ConnectionLogPoint objKPIPoint = KPIDrilingConnections.getConnection(ref paramRequest.objDataService, wellId, objItem);
+                        if (objKPIPoint is object)
+                        {
+
+                            // 'Exist in database ... Replace times ...
+                            objItem.FromDate = objKPIPoint.FromDate;
+                            objItem.ToDate = objKPIPoint.ToDate;
+                            objItem.BottomToSlips = objKPIPoint.BottomToSlips;
+                            objItem.BottomToSlipsSeconds = objKPIPoint.BottomToSlips;
+                            objItem.SlipsToSlips = objKPIPoint.SlipsToSlips;
+                            objItem.SlipsToSlipsSeconds = objKPIPoint.SlipsToSlips;
+                            objItem.SlipsToBottom = objKPIPoint.SlipsToBottom;
+                            objItem.SlipsToBottomSeconds = objKPIPoint.SlipsToBottom;
+                        }
+
+                        // '************************************************************************************''
+
+                        
+                        if (objItem.BottomToSlips > 0)
+                        {
+                            objItem.BottomToSlips = objItem.BottomToSlips / 60;
+                        }
+
+                        if (objItem.SlipsToSlips > 0)
+                        {
+                            objItem.SlipsToSlips = objItem.SlipsToSlips / 60;
+                        }
+
+                        if (objItem.SlipsToBottom > 0)
+                        {
+                            objItem.SlipsToBottom = objItem.SlipsToBottom / 60;
+                        }
+                        //if (CostPerMinute > 0)
+                        //{
+                        //    double TotalConnTimeMin = objItem.BottomToSlips + objItem.SlipsToSlips + objItem.SlipsToBottom;
+                        //    double ConnCost = Math.Round(TotalConnTimeMin * CostPerMinute, 2);
+                        //    double STSCost = Math.Round(objItem.SlipsToSlips * CostPerMinute, 2);
+                        //    Line1.Add(pointCounter, ConnCost);
+                        //    Line2.Add(pointCounter, STSCost);
+                        //}
+
+                        //if (objDataSelection.TargetTime > 0 & CostPerMinute > 0)
+                        //{
+                        //    double TotalConnTimeMin = objItem.BottomToSlips + objItem.SlipsToSlips + objItem.SlipsToBottom;
+                        //    double TargetCost = CostPerMinute * objDataSelection.TargetTime;
+                        //    double ActualCost = CostPerMinute * TotalConnTimeMin;
+                        //    double CostDiff = Math.Round(TargetCost - ActualCost, 2);
+                        //    Bar4.Add(CostDiff, Math.Round(objItem.Depth).ToString);
+                        //    if (CostDiff < 0d)
+                        //    {
+                        //        Bar4.Item(Bar4.Count - 1).Color = Color.Red;
+                        //    }
+                        //    else
+                        //    {
+                        //        Bar4.Item(Bar4.Count - 1).Color = Color.Green;
+                        //    }
+                        //}
+
+                       // pointCounter += 1;
+                    }
+
+
+                    //== prath end on 22-april-2022
 
                     foreach (ConnectionLogPoint objPoint in objConnProcessor_.connectionPoints.Values)
                     {
@@ -558,28 +629,28 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                         double bts = objPoint.BottomToSlips;// double.Parse(DataService.checkNull(objRow["BOTTOM_TO_SLIPS"], 0).ToString());
 
-                        if (bts > 0)
-                        {
-                            //bts = Math.Round(bts / 60, 2);
-                            bts = bts / 60;
-                        }
+                        //if (bts > 0)
+                        //{
+                        //    //bts = Math.Round(bts / 60, 2);
+                        //    bts = bts / 60;
+                        //}
 
                         double sts = objPoint.SlipsToSlips; // double.Parse(DataService.checkNull(objRow["SLIPS_TO_SLIPS"], 0).ToString());
 
-                        if (sts > 0)
-                        {
-                            //prath 21-april
-                            //sts = Math.Round(sts / 60, 2);
-                            sts = sts / 60;
-                        }
+                        //if (sts > 0)
+                        //{
+                        //    //prath 21-april
+                        //    //sts = Math.Round(sts / 60, 2);
+                        //    sts = sts / 60;
+                        //}
 
                         double stb = objPoint.SlipsToBottom;// double.Parse(DataService.checkNull(objRow["SLIPS_TO_BOTTOM"], 0).ToString());
 
-                        if (stb > 0)
-                        {
-                            //stb = Math.Round(stb / 60, 2);
-                            stb = stb / 60;
-                        }
+                        //if (stb > 0)
+                        //{
+                        //    //stb = Math.Round(stb / 60, 2);
+                        //    stb = stb / 60;
+                        //}
 
 
                         //Another check of max. time
@@ -1333,10 +1404,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     objDrlgConnSummary.avgSTS = 0;
                     objDrlgConnSummary.avgSTB = 0;
 
-                    if (sumConnTimes > 0 && totalConnCount > 0)
-                    {
-                        objDrlgConnSummary.avgTime = Math.Round(sumConnTimes / totalConnCount, 2);
-                    }
+                  
 
                     if (sumBTS > 0 && totalConnCount > 0)
                     {
@@ -1353,7 +1421,12 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         objDrlgConnSummary.avgSTB = Math.Round(sumSTB / totalConnCount, 2);
                     }
 
+                    //if (sumConnTimes > 0 && totalConnCount > 0)
+                    //{
+                    //    objDrlgConnSummary.avgTime = Math.Round(sumConnTimes / totalConnCount, 2);
+                    //}
 
+                    objDrlgConnSummary.avgTime =Math.Round(objDrlgConnSummary.avgBTS + objDrlgConnSummary.avgSTS + objDrlgConnSummary.avgSTB,2);
 
                     objDrlgConnSummary.avgTimeD = 0;
                     objDrlgConnSummary.avgBTSD = 0;
@@ -1361,10 +1434,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     objDrlgConnSummary.avgSTBD = 0;
 
 
-                    if (sumDayConnTimes > 0 && totalDayConnCount > 0)
-                    {
-                        objDrlgConnSummary.avgTimeD = Math.Round(sumDayConnTimes / totalDayConnCount, 2);
-                    }
+                  
 
                     if (sumDayBTS > 0 && totalDayConnCount > 0)
                     {
@@ -1382,38 +1452,42 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     }
 
 
+                    //if (sumDayConnTimes > 0 && totalDayConnCount > 0)
+                    //{
+                    //    objDrlgConnSummary.avgTimeD = Math.Round(sumDayConnTimes / totalDayConnCount, 2);
+                    //}
+                    objDrlgConnSummary.avgTimeD = Math.Round(objDrlgConnSummary.avgBTSD+ objDrlgConnSummary.avgSTSD+ objDrlgConnSummary.avgSTBD,2);
+
+
                     objDrlgConnSummary.avgTimeN = 0;
                     objDrlgConnSummary.avgBTSN = 0;
                     objDrlgConnSummary.avgSTSN = 0;
                     objDrlgConnSummary.avgSTBN = 0;
 
 
-                    if (sumNightConnTimes > 0 && totalNightConnCount > 0)
-                    {
-                           objDrlgConnSummary.avgTimeN = Math.Round(sumNightConnTimes / totalNightConnCount, 2);
-                        //objDrlgConnSummary.avgTimeN = Math.Truncate(sumNightConnTimes / totalNightConnCount * 100)/100;
-                    }
 
-                    //if (sumNightSTB > 0 && totalNightConnCount > 0)
+
                     if (sumNightBTS > 0 && totalNightConnCount > 0)
                     {
                         objDrlgConnSummary.avgBTSN = Math.Round(sumNightBTS / totalNightConnCount, 2);
-                        //objDrlgConnSummary.avgBTSN = Math.Truncate(sumNightBTS / totalNightConnCount*100)/100;
                     }
 
                     if (sumNightSTS > 0 && totalNightConnCount > 0)
                     {
                         objDrlgConnSummary.avgSTSN = Math.Round(sumNightSTS / totalNightConnCount, 2);
-                        //objDrlgConnSummary.avgSTSN = Math.Truncate(sumNightSTS / totalNightConnCount*100)/100;
                     }
 
                     if (sumNightSTB > 0 && totalNightConnCount > 0)
                     {
-                                                objDrlgConnSummary.avgSTBN = Math.Round(sumNightSTB / totalNightConnCount, 2);
-                        //objDrlgConnSummary.avgSTBN = Math.Truncate(sumNightSTB / totalNightConnCount*100)/100;
-                        //WIP 21-APRIL-2022
+                        objDrlgConnSummary.avgSTBN = Math.Round(sumNightSTB / totalNightConnCount, 2);
                     }
 
+
+                    //if (sumNightConnTimes > 0 && totalNightConnCount > 0)
+                    //{
+                    //       objDrlgConnSummary.avgTimeN = Math.Round(sumNightConnTimes / totalNightConnCount, 2);
+                    //}
+                    objDrlgConnSummary.avgTimeN = Math.Round(objDrlgConnSummary.avgBTSN + objDrlgConnSummary.avgSTSN+ objDrlgConnSummary.avgSTBN,2);
 
                     #endregion
 
