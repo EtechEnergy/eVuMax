@@ -855,7 +855,7 @@ export class Axis {
         
         let round_TickFactor = Math.ceil(tickFactor);
         this.AxisRef.tickFormat((d, i) => {
-          debugger;
+          
           if (i >= 0 && i < this.Labels.length) {
             //Following conneciton added by prath on 19-April-2022 earlier only return this.Labels[i] + " ";
             //Did this to print label based on gap (Total Connection / no of tick require)

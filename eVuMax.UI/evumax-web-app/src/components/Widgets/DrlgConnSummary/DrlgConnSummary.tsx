@@ -1904,13 +1904,15 @@ class DrlgConnSummary extends Component {
 
 
       //sort array on depth
-      this.objSummaryData.connData.sort(function (a, b) {
-        return a.DEPTH - b.DEPTH;
-      });
+      // this.objSummaryData.connData.sort(function (a, b) {
+      //   return a.DEPTH - b.DEPTH;
+      // });
 
       //Fill up the data for data series
       this.objChart.isNightConnection = false;
-      for (let i = 0; i < this.objSummaryData.connData.length; i++) {
+      
+      // for (let i = 0; i < this.objSummaryData.connData.length; i++) {
+        for (let i = this.objSummaryData.connData.length-1; i >= 0; i--) {
         let objBTSPoint = new ChartData();
         objBTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objBTSPoint.y = this.objSummaryData.connData[i]["BOTTOM_TO_SLIPS"];
@@ -2001,7 +2003,8 @@ class DrlgConnSummary extends Component {
 
       //Fill up the data for data series
 
-      for (let i = 0; i < this.objSummaryData.connData.length; i++) {
+      //for (let i = 0; i < this.objSummaryData.connData.length; i++) {
+        for (let i = this.objSummaryData.connData.length-1; i >=0 ; i--) {
         let objPoint = new ChartData();
         objPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objPoint.y = this.objSummaryData.connData[i]["DIFF"];
@@ -2068,20 +2071,25 @@ class DrlgConnSummary extends Component {
 
       //sort array on depth
 
-      this.objSummaryData.rigStateData.sort(function (a, b) {
-        return a.DEPTH - b.DEPTH;
-      });
+      // this.objSummaryData.rigStateData.sort(function (a, b) {
+      //   return a.DEPTH - b.DEPTH;
+      // });
       
 
       //Create series for each rig state
       this.objSummaryData.rigStates.sort((a, b) => a.RIG_STATE > b.RIG_STATE ? 1 : -1);
-      debugger;
+      
       for (let i = 0; i < this.objSummaryData.rigStates.length; i++) {
+        if (this.objSummaryData.rigStates[i]["RIG_STATE_NAME"].toString()==null){
+          
+          continue;
+        }
         let objSeries = new DataSeries();
         objSeries.Id = this.objSummaryData.rigStates[i]["RIG_STATE"].toString();
         objSeries.Stacked = true;
-        objSeries.Title =
-          this.objSummaryData.rigStates[i]["RIG_STATE_NAME"].toString();
+            
+        objSeries.Title = this.objSummaryData.rigStates[i]["RIG_STATE_NAME"].toString();
+         
         objSeries.Type = dataSeriesType.Bar;
         objSeries.Color = this.objSummaryData.rigStates[i]["COLOR"].toString();
         objSeries.XAxisId = this.objChart.bottomAxis().Id;
@@ -2089,14 +2097,15 @@ class DrlgConnSummary extends Component {
         this.objChart.DataSeries.set(objSeries.Id, objSeries);
       }
 
-      debugger;
+      
       //Fill up the data for each series
-      for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
+      //for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
+        for (let i = this.objSummaryData.rigStateData.length-1; i >=0 ; i--) {
         //let arrRigStates: string[] = this.objSummaryData.rigStateData[i]["TIMES"].toString().split(",");
         let arrRigStatesInfo: string[] = this.objSummaryData.rigStateData[i]["TIMES"].toString().split(",");
         //this.sortArrRigState(arrRigStatesInfo);
 
-        debugger;
+      
 
         for (let j = 0; j < this.objSummaryData.rigStates.length; j++) {
           let lnRigState: number = this.objSummaryData.rigStates[j]["RIG_STATE"];
@@ -2140,6 +2149,7 @@ class DrlgConnSummary extends Component {
       objCost.XAxisId = this.objChart.bottomAxis().Id;
       objCost.YAxisId = this.objChart.rightAxis().Id;
       objCost.LineWidth = 3;
+      objCost.CurveStyle = curveStyle.normal;
       this.objChart.DataSeries.set(objCost.Id, objCost);
 
       let objSTSCost = new DataSeries();
@@ -2150,12 +2160,13 @@ class DrlgConnSummary extends Component {
       objSTSCost.XAxisId = this.objChart.bottomAxis().Id;
       objSTSCost.YAxisId = this.objChart.rightAxis().Id;
       objSTSCost.LineWidth = 3;
+      objSTSCost.CurveStyle = curveStyle.normal;
       this.objChart.DataSeries.set(objSTSCost.Id, objSTSCost);
 
       //Fill up the data for data series
-      this.objSummaryData.connData.sort(function (a, b) {
-        return a.DEPTH - b.DEPTH;
-      });
+      // this.objSummaryData.connData.sort(function (a, b) {
+      //   return a.DEPTH - b.DEPTH;
+      // });
 
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let objCostPoint = new ChartData();

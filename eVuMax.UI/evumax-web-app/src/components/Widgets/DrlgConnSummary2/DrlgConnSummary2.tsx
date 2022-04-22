@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from "react";
 import * as d3 from "d3";
 import $ from "jquery";
-import { Chart, lineStyle } from "../../../eVuMaxObjects/Chart/Chart";
+import { Chart, curveStyle, lineStyle } from "../../../eVuMaxObjects/Chart/Chart";
 import { ChartData } from "../../../eVuMaxObjects/Chart/ChartData";
 import { formatNumber, parseDate } from "@telerik/kendo-intl";
 
@@ -1716,6 +1716,7 @@ class DrlgConnSummary2 extends Component {
       objSTB.ColorEach = true;
       objSTB.XAxisId = this.objSTBChart.bottomAxis().Id;
       objSTB.YAxisId = this.objSTBChart.leftAxis().Id;
+      
       this.objSTBChart.DataSeries.set(objSTB.Id, objSTB);
 
       let objSTSCost = new DataSeries();
@@ -1726,13 +1727,18 @@ class DrlgConnSummary2 extends Component {
       objSTSCost.XAxisId = this.objSTSChart.bottomAxis().Id;
       objSTSCost.YAxisId = this.objSTSChart.rightAxis().Id;
       objSTSCost.LineWidth = 3;
+      objSTSCost.CurveStyle = curveStyle.normal;
       this.objSTSChart.DataSeries.set(objSTSCost.Id, objSTSCost);
 
       //Fill up the data for data series
       this.objBTSChart.isNightConnection=false;
       this.objSTSChart.isNightConnection=false;
       this.objSTBChart.isNightConnection=false;
-      for (let i = 0; i < this.objSummaryData.connData.length; i++) {
+
+      debugger;
+      
+      //for (let i = 0; i < this.objSummaryData.connData.length; i++) {
+        for (let i = this.objSummaryData.connData.length-1; i >=0 ; i--) {
         let objBTSPoint = new ChartData();
         objBTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objBTSPoint.y = this.objSummaryData.connData[i]["BOTTOM_TO_SLIPS"];

@@ -348,7 +348,7 @@ namespace eVuMax.DataBroker.Summary.TripConn
                         if (!objTripConnSettings.showExcludedConn)
                         {
 
-                            if (exclList.ContainsKey(connDepth))
+                            if (exclList.ContainsKey(Math.Round(connDepth,2)))
                             {
                                 objTripConnSummary.ExcludedConns += 1;
                                 ContinueAhead = false;

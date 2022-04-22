@@ -606,7 +606,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         if (!objDrlgConnSettings.showExcludedConn)
                         {
 
-                            if (exclList.ContainsKey(connDepth))
+                            if (exclList.ContainsKey(Math.Round(connDepth, 2)))
                             {
                                 objDrlgConnSummary.ExcludedConns += 1;
                                 ContinueAhead = false;

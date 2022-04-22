@@ -1596,6 +1596,7 @@ class TripConnSummary extends Component {
 
       //Fill up the data for data series
       this.objChart.isNightConnection = false;
+      
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
 
