@@ -16,6 +16,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 {
     public class gdSummary
     {
+
+        
         public string SummaryPlotID = "";
         public string SummaryPlotName = "";
 
@@ -74,7 +76,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
 
         public Dictionary<int, string> IntervalColors = new Dictionary<int, string>();
         public string ChartTitle = "";
-
+        public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
         public gdSummary(Broker.BrokerRequest paramRequest, string paramWellID, string paramPlotID)
         {
             this.wellID = paramWellID;
@@ -82,6 +84,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             this.objRequest = paramRequest;
             this.objDataSelection.objRequest = paramRequest;
             objMnemonicMappingMgr.loadMappings(ref objRequest.objDataService);
+            
 
 
         }
@@ -2294,9 +2297,9 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
             {
                 //Pending
                 //RemoveUnUsedSeries and other functions, need to consult Nitin for that...
-
-
-                //gdSummary.loadSummaryObject(ref paramObjSummary);
+                
+                
+                
                 paramObjSummary.objMnemonicMappingMgr.loadMappings(ref paramObjSummary.objRequest.objDataService);
                 paramObjSummary.objDataSelection.WellID = paramObjSummary.wellID;
                 paramObjSummary.objDataSelection.getRange2(ref paramObjSummary.fromDate, ref paramObjSummary.toDate, ref paramObjSummary.fromDepth, ref paramObjSummary.toDepth, ref paramObjSummary.ChartTitle, paramObjSummary);
@@ -2304,6 +2307,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 //Below is commented cos User will change the data from DataSelector (Client Side)
                 //Save is pending in UserSettings
                 paramObjSummary.objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
+                
 
                 
 
@@ -2313,6 +2317,8 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 objLocalSummary.objDataSelection.WellID = paramObjSummary.wellID;
 
                 objLocalSummary = gdSummary.loadSummaryObject(ref objLocalSummary);
+
+                
 
                 ////Initialize Data Selection by default last 24 hours and create default series...
                 //objLocalSummary.objDataSelection.loadInitialData(objLocalSummary);
@@ -2347,17 +2353,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                 paramObjSummary.objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref paramObjSummary.objRequest.objDataService, paramObjSummary.wellID);
 
 
-                ////Initialize Data Selection by default last 24 hours and create default series...
-                ///
-                // Comment 1 line below - Change on 18-Feb-2022 to control (Date problem) - Prath & Nishant
-               // paramObjSummary.objDataSelection.loadInitialData(paramObjSummary);
-
-
-                //Based on the data sources... copy series to the local list
-
-                //paramObjSummary.addMissingOffsetSeries(ref paramObjSummary.objRequest.objDataService);
-                //## Time Log *****************************************************
-                //foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+             
                 string lastError = "";
                 foreach (gdsDataSeries objSeries in paramObjSummary.dataSeries.Values)
                 {
@@ -2372,13 +2368,13 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         objNewSeries.SeriesName = paramObjSummary.objWell.name + "-" + objNewSeries.SeriesName;
 
                         paramObjSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
-                        //objLocalSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
+                    
                     }
                 }
 
                 //''## Trajectory *****************************************************
 
-                //foreach (gdsDataSeries objSeries in objLocalSummary.dataSeries.Values)
+                
                 foreach (gdsDataSeries objSeries in paramObjSummary.dataSeries.Values)
 
                 {
@@ -2387,11 +2383,15 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                         DataSelection objDataSelection = new DataSelection(paramObjSummary.wellID, paramObjSummary.objRequest);
                         //objDataSelection.loadDataSelection(paramObjSummary.SummaryPlotID);
                         objDataSelection.loadInitialData(paramObjSummary);
+                        
+                        try
+                        {
 
-                        //foreach (string strKey in objLocalSummary.objDataSelection.trajList.Keys)
+                       
                         foreach (string strKey in objDataSelection.trajList.Keys)
                         {
-                            string WellboreID = strKey.Split('~')[0];
+                            
+                           string WellboreID = strKey.Split('~')[0];
                             string TrajID = strKey.Split('~')[1];
                             Trajectory objTrajectory = paramObjSummary.objWell.wellbores[WellboreID].trajectories[TrajID];
                             gdsDataSeries objNewSeries = objSeries.getCopy();
@@ -2400,6 +2400,12 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                             objNewSeries.ObjectID = strKey;
                             paramObjSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
                             //objLocalSummary.localSeries.Add(objNewSeries.SeriesID, objNewSeries.getCopy());
+                        }
+                        }
+                        catch (Exception ex)
+                        {
+
+                            
                         }
                     }
                 }
@@ -2479,14 +2485,17 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     if (objSeries.DataSource == 1)
                     {
                         paramObjSummary.generateTrajData(objSeries.SeriesID);//dataSeries copied with data
+                        
                     }
                 }
                 objResponse.Response = JsonConvert.SerializeObject(paramObjSummary);
+                
                 return objResponse;
             }
             catch (Exception ex)
             {
 
+                paramObjSummary.objLogger.LogMessage("Error: " + ex.Message + ex.StackTrace);
                 Broker.BrokerResponse objBadResponse = paramObjSummary.objRequest.createResponseObject();
                 objBadResponse.RequestSuccessfull = false;
                 objBadResponse.Errors = "Error in LoadSummaryData " + ex.Message + ex.StackTrace;

@@ -51,7 +51,7 @@ class TripConnSummary extends Component {
 
   objLogger: ClientLogger = new ClientLogger("TripConnSummary", _gMod._userId);
   state = {
-    
+
     refreshDataSelector: false,
     warningMsg: [],
     WellName: "",
@@ -162,9 +162,15 @@ class TripConnSummary extends Component {
 
 
       this.objChart.reDraw();
+
       this.objChart.onBeforeSeriesDraw.subscribe((e, i) => {
         this.onBeforeDrawSeries(e, i);
       });
+
+      // this.objChart.onAfterSeriesDraw.subscribe((e, i) => {
+      //   this.onAfterDrawSeries(e, i);
+      // });
+
       window.addEventListener("resize", this.refreshChart);
 
       this.loadConnections();
@@ -217,9 +223,9 @@ class TripConnSummary extends Component {
         TargetTime: this.objUserSettings.TargetTime,
         RigCost: this.objUserSettings.RigCost,
         refreshDataSelector: true
-        
+
       });
-      
+
       document.title = this.state.WellName + " -Trip Conn. Summary"; //Nishant 02/09/2021
 
     } catch (error) { }
@@ -340,8 +346,9 @@ class TripConnSummary extends Component {
         })
         .then((res) => {
 
-          this.objSummaryData = JSON.parse(res.data.Response);
 
+          this.objSummaryData = JSON.parse(res.data.Response);
+          console.log("Summary data", this.objSummaryData);
           //Warnings Notifications
           let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {
@@ -396,7 +403,11 @@ class TripConnSummary extends Component {
           }
           // return <CustomeNotifications Key="success" Icon={false}  />
           console.log("rejected");
-          this.setState({ isProcess: false });
+          let warningList = [];
+          warningList.push({ "update": "Network Error or rejected from Server coz of error", "timestamp": new Date(Date.now()).getTime() });
+          this.setState({
+            warningMsg: warningList
+          });
         });
     } catch (error) { }
   };
@@ -479,7 +490,7 @@ class TripConnSummary extends Component {
   ////Nishant
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshStatus: boolean = false) => {
 
-    
+
     let realtimeStatus: boolean = paramRefreshStatus;
 
     //Added on 02-02-2022
@@ -955,7 +966,7 @@ class TripConnSummary extends Component {
 
 
             <div className="Data">
-             <DataSelector refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+              <DataSelector refreshDataSelector={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
             </div>
           </TabStripTab>
           <TabStripTab title="Numeric Summary">
@@ -1596,10 +1607,11 @@ class TripConnSummary extends Component {
         );
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
         //objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
+        objSTSPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
+        
 
-        objSTSPoint.label = this.objSummaryData.connData[i]["DEPTH"];
-
-
+        //objSTSPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
+        
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00e676";
@@ -1619,11 +1631,13 @@ class TripConnSummary extends Component {
             Date.parse(this.objSummaryData.connData[i]["FROM_DATE"])
           );
           objCostPoint.y = this.objSummaryData.connData[i]["COST"];
-          objCostPoint.label = this.objSummaryData.connData[i]["DEPTH"];
+    //      objCostPoint.label = this.objSummaryData.connData[i]["DEPTH"];
+
           objCost.Data.push(objCostPoint);
         }
 
       }
+
 
 
       this.objChart.reDraw();
@@ -1763,8 +1777,10 @@ class TripConnSummary extends Component {
 
       //Fill up the data for each series
 
-      
 
+      
+      console.log("rigstatedata = " , this.objSummaryData.rigStateData);
+      
       for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
 
         let arrRigStatesInfo: string[] = this.objSummaryData.rigStateData[i]["TIMES"].toString().split(",");
@@ -1790,19 +1806,19 @@ class TripConnSummary extends Component {
                 objDataPoint.datetime = new Date(
                   Date.parse(this.objSummaryData.rigStateData[i]["FROM_DATE"])
                 );
+                
+                objDataPoint.datetime = new Date(utilFunctions.formateDate( objDataPoint.datetime));
+
 
                 objDataPoint.y = __rigStateTime;
-                objDataPoint.label = this.objSummaryData.rigStateData[i]["DEPTH"].toString();
 
+                 objDataPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
                 objSeries.Data.push(objDataPoint);
+                
                 break;
               }
 
             }
-
-
-
-
           }
         }
       }
@@ -1810,11 +1826,14 @@ class TripConnSummary extends Component {
       this.objChart.bottomAxis().Labels = [];
 
       //Fill up the data for data series
+
+     
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
         this.objChart.bottomAxis().Labels.push(Depth.toString());
       }
 
+      
       let objCost = new DataSeries();
       objCost.Id = "Cost";
       objCost.Title = "Cost";
@@ -1904,11 +1923,49 @@ class TripConnSummary extends Component {
     } catch (error) { }
   };
 
+  //Nishant
+  // onAfterDrawSeries = (e: ChartEventArgs, i: number) => {
+  //   try {
+
+  //     d3.select(".comments").remove();
+
+
+  //     // if (this.state.CurrentView == 0) {
+  //     //   if (this.state.ShowComments) {
+
+  //     //     for (let i = 0; i < this.objSummaryData.connData.length; i++) {
+  //     //       let Depth: number = this.objSummaryData.connData[i]["DEPTH"];
+  //     //       let Comment: string = this.objSummaryData.connData[i]["COMMENTS"];
+  //     //       let x1 = this.objChart.__chartRect.left;
+  //     //       let x2 = this.objChart.__chartRect.right;
+  //     //       let y1 = this.objChart.leftAxis().ScaleRef(Depth);
+  //     //       let y2 = y1 + 4;
+
+  //     //       this.objChart.SVGRef.append("g")
+  //     //         .attr("transform", "translate(" + x + "," + y + ")")
+  //     //         .attr("id", this.Id)
+  //     //         //.attr("fill", this.LabelFontColor)
+  //     //         .attr("stroke", "white")
+  //     //         .call(this.AxisRef);
+
+  //     //     }
+
+
+
+  //     //   }
+
+  //     // }
+
+  //   } catch (error) {
+
+  //   }
+  // }
+
   onBeforeDrawSeries = (e: ChartEventArgs, i: number) => {
     try {
 
 
-      //return;
+
 
       d3.select(".sts_benchmark").remove();
       d3.select(".trip_highlight").remove();

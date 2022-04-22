@@ -6,12 +6,17 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eVuMax.API", "eVuMax.API\eVuMax.API.csproj", "{C0646829-198B-4764-A52A-BDA16BDC686E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eVuMax.DataBroker", "eVuMax.DataBroker\eVuMax.DataBroker.csproj", "{D410EF8D-47ED-4B64-A70D-F1B32037F791}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0} = {F6576DD9-E362-4645-B2E9-1FE5CE979BF0}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eVuMax.UI", "eVuMax.UI\eVuMax.UI.csproj", "{8FBC4A01-34B5-409C-A439-5BF6B9D4FD1E}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "eVumax.Installer", "eVumax.Installer\eVumax.Installer.wixproj", "{EA3F799F-1BBB-4375-BC1E-762A5595FA40}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionStringEncryption", "ConnectionStringEncryption\ConnectionStringEncryption.csproj", "{38D1BA9C-32A8-4F5A-A769-3679D225EBA2}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VuMaxDR.Data.Objects", "E:\LatestVuMax Data Objects\VuMaxDR.Data.Objects\VuMaxDR.Data.Objects\VuMaxDR.Data.Objects.vbproj", "{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +83,18 @@ Global
 		{38D1BA9C-32A8-4F5A-A769-3679D225EBA2}.Release|Any CPU.Build.0 = Release|x86
 		{38D1BA9C-32A8-4F5A-A769-3679D225EBA2}.Release|x86.ActiveCfg = Release|x86
 		{38D1BA9C-32A8-4F5A-A769-3679D225EBA2}.Release|x86.Build.0 = Release|x86
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.ApiTesting|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.ApiTesting|Any CPU.Build.0 = Debug|Any CPU
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.ApiTesting|x86.ActiveCfg = Debug|x86
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.ApiTesting|x86.Build.0 = Debug|x86
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.Debug|x86.ActiveCfg = Debug|x86
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.Debug|x86.Build.0 = Debug|x86
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.Release|x86.ActiveCfg = Release|x86
+		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

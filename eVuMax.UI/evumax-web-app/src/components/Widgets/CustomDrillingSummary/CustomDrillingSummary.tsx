@@ -199,7 +199,7 @@ export class CustomDrillingSummary extends Component<IProps>  {
           },
         })
         .then((res) => {
-
+          console.log("res data", res);
           if (res.data.RequestSuccessfull == true) {
             let objData_ = JSON.parse(res.data.Response);
 

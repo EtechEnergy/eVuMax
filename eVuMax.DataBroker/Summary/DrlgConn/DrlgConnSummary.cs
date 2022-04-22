@@ -9,8 +9,7 @@ using VuMaxDR.Data.Objects;
 using System.Data;
 using Newtonsoft.Json;
 using System.Drawing;
-
-
+using eVuMax.DataBroker.Summary.DrlgStand;
 
 namespace eVuMax.DataBroker.Summary.DrlgConn
 {
@@ -389,8 +388,14 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                                 __logToDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
                             }
 
-                            ConnectionLogProcessor objConnProcessor = new ConnectionLogProcessor();
-                            objConnProcessor.ProcessPoints(ref paramRequest.objDataService, wellId, ref objTimeLog, __logFromDate, __logToDate);
+                            //Change by prath on 20-April-2022
+                            //VuMaxDR.Data.Objects.ConnectionLogProcessor objConnProcessor = new VuMaxDR.Data.Objects.ConnectionLogProcessor();
+                            //objConnProcessor.ProcessPoints(ref paramRequest.objDataService, wellId, ref objTimeLog, __logFromDate, __logToDate);
+
+
+                            eVuMax.DataBroker.Summary.DrlgStand.ConnectionLogProcessor objConnProcessor = new eVuMax.DataBroker.Summary.DrlgStand.ConnectionLogProcessor(ref paramRequest, wellId);
+                            objConnProcessor.ProcessPoints(ref objTimeLog, __logFromDate, __logToDate);
+                            //==============================
 
                         }
 
@@ -399,9 +404,15 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                 }
 
+                //Process points regardless ...
+                VuMaxDR.Data.Objects.ConnectionLogProcessor objConnProcessor_ = new VuMaxDR.Data.Objects.ConnectionLogProcessor();
+                //DrlgStand.ConnectionLogProcessor objConnProcessor_ = new DrlgStand.ConnectionLogProcessor(ref paramRequest, wellId);
                 if (selectionType == "0")
                 {
                     strSQL = "SELECT * FROM VMX_AKPI_DRLG_CONNECTIONS WHERE WELL_ID='" + wellId + "' AND FROM_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND FROM_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE>='" + fromDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' AND TO_DATE<='" + toDate.ToString("dd-MMM-yyyy HH:mm:ss") + "' ORDER BY FROM_DATE";
+                    //New Code 
+                    // objConnProcessor_.ProcessPoints(ref objTimeLog, fromDate, toDate);
+                    objConnProcessor_.ProcessPoints(ref paramRequest.objDataService, wellId, ref objTimeLog, fromDate, toDate);
                 }
                 else
                 {
@@ -411,7 +422,15 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                     fromDate = objTimeLog.getDateTimeFromDepthBegining(ref paramRequest.objDataService, fromDepth);
                     toDate = objTimeLog.getDateTimeFromDepthEnding(ref paramRequest.objDataService, toDepth);
 
+                    //New Code 
+                    //objConnProcessor_.ProcessPoints( ref objTimeLog, fromDate, toDate);
+                    objConnProcessor_.ProcessPoints(ref paramRequest.objDataService, wellId, ref objTimeLog, fromDate, toDate);
+
                 }
+                //////
+
+
+
 
                 DataTable objData = paramRequest.objDataService.getTable(strSQL);
 
@@ -419,20 +438,28 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 {
 
                     //Check if any connection was found. If not then process it
+                    //// processPointBulk is deleting comments and coz of this comments added/ Edited from eVumax are lost
+                    /// to overcome this we are not using processPointsBulk hence commented.
                     if (objData.Rows.Count == 0)
                     {
-                        ConnectionLogProcessor objConnProcessor = new ConnectionLogProcessor();
-                        objConnProcessor.processPointsBulk(ref paramRequest.objDataService, wellId);
+                        //VuMaxDR.Data.Objects.ConnectionLogProcessor objConnProcessor = new VuMaxDR.Data.Objects.ConnectionLogProcessor();
+                        //objConnProcessor.processPointsBulk(ref paramRequest.objDataService, wellId);
 
-                        //Run the query again
-                        objData = paramRequest.objDataService.getTable(strSQL);
+                        ////Run the query again
+                        //objData = paramRequest.objDataService.getTable(strSQL);
 
-                        if (objData == null)
-                        {
-                            objResponse.RequestSuccessfull = false;
-                            objResponse.Errors = "Error retrieving data";
-                            objResponse.Response = "";
-                        }
+                        //if (objData == null)
+                        //{
+                        //    objResponse.RequestSuccessfull = false;
+                        //    objResponse.Errors = "Error retrieving data";
+                        //    objResponse.Response = "";
+                        //}
+
+                        objResponse.RequestSuccessfull = false;
+                        objResponse.Errors = "No Connections found";
+                        objResponse.Warnings += "No Connections found";
+                        objResponse.Response = JsonConvert.SerializeObject(objDrlgConnSummary);
+
                     }
 
                     DataTable objExclConn = paramRequest.objDataService.getTable("SELECT DEPTH FROM VMX_CONN_INFO WHERE WELL_ID='" + wellId + "'");
@@ -466,14 +493,42 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                     #region Connection List
                     //Copy connection list
-                    foreach (DataRow objRow in objData.Rows)
-                    {
+                    //New Code
 
+                    //// ===== Now run another check and remove duplicate connections.This happens mostly in the beginning of the well ============= ''
+                    Dictionary<double, int> uniqueList = new Dictionary<double, int>();
+                    Dictionary<int, int> removalList = new Dictionary<int, int>();
+                    foreach (int lnKey in objConnProcessor_.connectionPoints.Keys)
+                    {
+                        if (uniqueList.ContainsKey(Math.Round(objConnProcessor_.connectionPoints[lnKey].Depth, 2)))
+                        {
+                            // 'add it to the removal list
+                            removalList.Add(lnKey, lnKey);
+                        }
+                        else
+                        {
+                            uniqueList.Add(Math.Round(objConnProcessor_.connectionPoints[lnKey].Depth, 2), lnKey);
+                        }
+                    }
+
+                    foreach (int lnKey in removalList.Keys)
+                    {
+                        if (objConnProcessor_.connectionPoints.ContainsKey(lnKey))
+                        {
+                            objConnProcessor_.connectionPoints.Remove(lnKey);
+                        }
+                    }
+
+
+
+
+                    foreach (ConnectionLogPoint objPoint in objConnProcessor_.connectionPoints.Values)
+                    {
                         DataRow newRow = connData.NewRow();
 
 
 
-                        double connDepth = DataService.checkNumericNull(objRow["DEPTH"]);
+                        double connDepth = objPoint.Depth;// DataService.checkNumericNull(objRow["DEPTH"]);
 
                         bool ContinueAhead = true;
 
@@ -499,27 +554,31 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                         connDepth = Math.Round(connDepth, 2);
 
-                        newRow["DEPTH"] = Math.Round(double.Parse(objRow["DEPTH"].ToString()));
+                        newRow["DEPTH"] = Math.Round(objPoint.Depth);// Math.Round(double.Parse(objRow["DEPTH"].ToString()));
 
-                        double bts = double.Parse(DataService.checkNull(objRow["BOTTOM_TO_SLIPS"], 0).ToString());
+                        double bts = objPoint.BottomToSlips;// double.Parse(DataService.checkNull(objRow["BOTTOM_TO_SLIPS"], 0).ToString());
 
                         if (bts > 0)
                         {
-                            bts = Math.Round(bts / 60, 2);
+                            //bts = Math.Round(bts / 60, 2);
+                            bts = bts / 60;
                         }
 
-                        double sts = double.Parse(DataService.checkNull(objRow["SLIPS_TO_SLIPS"], 0).ToString());
+                        double sts = objPoint.SlipsToSlips; // double.Parse(DataService.checkNull(objRow["SLIPS_TO_SLIPS"], 0).ToString());
 
                         if (sts > 0)
                         {
-                            sts = Math.Round(sts / 60, 2);
+                            //prath 21-april
+                            //sts = Math.Round(sts / 60, 2);
+                            sts = sts / 60;
                         }
 
-                        double stb = double.Parse(DataService.checkNull(objRow["SLIPS_TO_BOTTOM"], 0).ToString());
+                        double stb = objPoint.SlipsToBottom;// double.Parse(DataService.checkNull(objRow["SLIPS_TO_BOTTOM"], 0).ToString());
 
                         if (stb > 0)
                         {
-                            stb = Math.Round(stb / 60, 2);
+                            //stb = Math.Round(stb / 60, 2);
+                            stb = stb / 60;
                         }
 
 
@@ -542,7 +601,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
 
                         if (!ContinueAhead)
-                        
+
                         {
                             //skip this connection
                             continue;
@@ -552,21 +611,28 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         newRow["SLIPS_TO_SLIPS"] = sts;
                         newRow["SLIPS_TO_BOTTOM"] = stb;
 
-                        DateTime connFromDate = DateTime.Parse(DataService.checkNull(objRow["FROM_DATE"], new DateTime()).ToString());
-                        DateTime connToDate = DateTime.Parse(DataService.checkNull(objRow["TO_DATE"], new DateTime()).ToString());
+                        DateTime connFromDate = objPoint.FromDate;// DateTime.Parse(DataService.checkNull(objRow["FROM_DATE"], new DateTime()).ToString());
+                        DateTime connToDate = objPoint.ToDate;// DateTime.Parse(DataService.checkNull(objRow["TO_DATE"], new DateTime()).ToString());
 
                         double totalSeconds = Math.Abs((connFromDate - connToDate).TotalSeconds);
                         TimeSpan objSpan = new TimeSpan(0, 0, (int)totalSeconds);
 
-                        newRow["COMMENTS"] = DataService.checkNull(objRow["USER_COMMENT"], "").ToString();
-                        //newRow["FROM_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
-                        //newRow["TO_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
+                        newRow["COMMENTS"] = ConnectionLabel.getComment(wellId,ref paramRequest.objDataService, objPoint.Depth);//  DataService.checkNull(objRow["USER_COMMENT"], "").ToString();
+                        
 
                         newRow["FROM_DATE"] = connFromDate.ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
                         newRow["TO_DATE"] = connToDate.ToString("MMM-dd-yyyy HH:mm:ss");
 
                         newRow["TOTAL_TIME"] = "[" + objSpan.Hours.ToString() + ":" + objSpan.Minutes.ToString() + ":" + objSpan.Seconds.ToString() + "]";
-                        newRow["DAY_NIGHT"] = DataService.checkNull(objRow["TIME"], "D").ToString();
+                        // newRow["DAY_NIGHT"] = DataService.checkNull(objRow["TIME"], "D").ToString();
+                        if (objPoint.DayNightStatus == ConnectionLogPoint.cnDayNightTime.DayTime)
+                        {
+                            newRow["DAY_NIGHT"] = "D";// DataService.checkNull(objRow["TIME"], "D").ToString();
+                        }
+                        else
+                        {
+                            newRow["DAY_NIGHT"] = "N";
+                        }
 
                         double connTimeMinutes = Math.Abs((connFromDate - connToDate).TotalMinutes);
 
@@ -630,8 +696,183 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                         objDrlgConnSummary.ConnCount += 1;
 
                         connData.Rows.Add(newRow);
-
                     }
+
+
+
+                    // New Code Ends here
+                    #endregion
+
+                    #region OldCode
+
+
+                    //foreach (DataRow objRow in objData.Rows)
+                    //{
+
+                    //    DataRow newRow = connData.NewRow();
+
+
+
+                    //    double connDepth = DataService.checkNumericNull(objRow["DEPTH"]);
+
+                    //    bool ContinueAhead = true;
+
+                    //    if (!objDrlgConnSettings.showExcludedConn)
+                    //    {
+
+                    //        if (exclList.ContainsKey(connDepth))
+                    //        {
+                    //            objDrlgConnSummary.ExcludedConns += 1;
+                    //            ContinueAhead = false;
+                    //        }
+
+                    //    }
+
+
+
+                    //    if (!ContinueAhead)
+                    //    {
+                    //        //skip this connection
+                    //        continue;
+                    //    }
+
+
+                    //    connDepth = Math.Round(connDepth, 2);
+
+                    //    newRow["DEPTH"] = Math.Round(double.Parse(objRow["DEPTH"].ToString()));
+
+                    //    double bts = double.Parse(DataService.checkNull(objRow["BOTTOM_TO_SLIPS"], 0).ToString());
+
+                    //    if (bts > 0)
+                    //    {
+                    //        bts = Math.Round(bts / 60, 2);
+                    //    }
+
+                    //    double sts = double.Parse(DataService.checkNull(objRow["SLIPS_TO_SLIPS"], 0).ToString());
+
+                    //    if (sts > 0)
+                    //    {
+                    //        sts = Math.Round(sts / 60, 2);
+                    //    }
+
+                    //    double stb = double.Parse(DataService.checkNull(objRow["SLIPS_TO_BOTTOM"], 0).ToString());
+
+                    //    if (stb > 0)
+                    //    {
+                    //        stb = Math.Round(stb / 60, 2);
+                    //    }
+
+
+                    //    //Another check of max. time
+                    //    if (objDrlgConnSettings.MaxConnTime > 0 && objDrlgConnSettings.SkipConnMaxTime)
+                    //    {
+                    //        double lnTotalConnTime = bts + sts + stb;
+
+                    //        if (lnTotalConnTime > objDrlgConnSettings.MaxConnTime)
+                    //        {
+                    //            ContinueAhead = false;
+                    //        }
+
+                    //    }
+
+                    //    if ((bts + sts + stb) <= 0)
+                    //    {
+                    //        ContinueAhead = false;
+                    //    }
+
+
+                    //    if (!ContinueAhead)
+
+                    //    {
+                    //        //skip this connection
+                    //        continue;
+                    //    }
+
+                    //    newRow["BOTTOM_TO_SLIPS"] = bts;
+                    //    newRow["SLIPS_TO_SLIPS"] = sts;
+                    //    newRow["SLIPS_TO_BOTTOM"] = stb;
+
+                    //    DateTime connFromDate = DateTime.Parse(DataService.checkNull(objRow["FROM_DATE"], new DateTime()).ToString());
+                    //    DateTime connToDate = DateTime.Parse(DataService.checkNull(objRow["TO_DATE"], new DateTime()).ToString());
+
+                    //    double totalSeconds = Math.Abs((connFromDate - connToDate).TotalSeconds);
+                    //    TimeSpan objSpan = new TimeSpan(0, 0, (int)totalSeconds);
+
+                    //    newRow["COMMENTS"] = DataService.checkNull(objRow["USER_COMMENT"], "").ToString();
+                    //    //newRow["FROM_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
+                    //    //newRow["TO_DATE"] = connFromDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
+
+                    //    newRow["FROM_DATE"] = connFromDate.ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
+                    //    newRow["TO_DATE"] = connToDate.ToString("MMM-dd-yyyy HH:mm:ss");
+
+                    //    newRow["TOTAL_TIME"] = "[" + objSpan.Hours.ToString() + ":" + objSpan.Minutes.ToString() + ":" + objSpan.Seconds.ToString() + "]";
+                    //    newRow["DAY_NIGHT"] = DataService.checkNull(objRow["TIME"], "D").ToString();
+
+                    //    double connTimeMinutes = Math.Abs((connFromDate - connToDate).TotalMinutes);
+
+                    //    double Cost = 0;
+
+                    //    if (CostPerMinute > 0)
+                    //    {
+                    //        Cost = Math.Round(connTimeMinutes * CostPerMinute, 2);
+                    //    }
+
+                    //    newRow["COST"] = Cost;
+
+                    //    double STSCost = 0;
+
+                    //    if (CostPerMinute > 0 && sts > 0)
+                    //    {
+                    //        STSCost = Math.Round(CostPerMinute * sts, 2);
+                    //    }
+
+                    //    if (TargetCost > 0)
+                    //    {
+                    //        newRow["TARGET_COST"] = Math.Round(TargetCost, 2);
+                    //    }
+                    //    else
+                    //    {
+                    //        newRow["TARGET_COST"] = 0;
+                    //    }
+
+                    //    double actualCost = 0;
+
+                    //    if (CostPerMinute > 0 && connTimeMinutes > 0)
+                    //    {
+                    //        actualCost = connTimeMinutes * CostPerMinute;
+                    //    }
+
+                    //    double costDiff = 0;
+
+                    //    if (actualCost > 0 && TargetCost > 0)
+                    //    {
+                    //        costDiff = Math.Round(TargetCost - actualCost, 2);
+                    //    }
+
+                    //    double stsCostDiff = 0;
+
+                    //    double actualSTSCost = 0;
+
+                    //    if (CostPerMinute > 0 && connTimeMinutes > 0 && sts > 0)
+                    //    {
+                    //        actualSTSCost = Math.Round(sts * CostPerMinute, 2);
+                    //    }
+
+                    //    if (actualSTSCost > 0 && STSTargetCost > 0)
+                    //    {
+                    //        stsCostDiff = Math.Round(STSTargetCost - actualSTSCost, 2);
+                    //    }
+
+                    //    newRow["DIFF"] = costDiff;
+                    //    newRow["STS_COST"] = actualSTSCost;
+                    //    newRow["STS_DIFF"] = stsCostDiff;
+
+                    //    objDrlgConnSummary.ConnCount += 1;
+
+                    //    connData.Rows.Add(newRow);
+
+                    //}
+
                     #endregion
 
                     #region Standwise Analysis
@@ -912,11 +1153,25 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                             double lnRigState = double.Parse(DataService.checkNull(connTimeRow["RIG_STATE"], 0).ToString());
                             double lnTimeDuration = double.Parse(DataService.checkNull(connTimeRow["TIME_DURATION"], 0).ToString());
 
-                            if (rigStateTimes.ContainsKey(lnRigState))
+                           
+
+                            if (lnRigState != 0 & lnRigState != 1 & lnRigState != 19)
                             {
+                                //if (objPoint.BottomToSlipsRigStates.ContainsKey(lnRigState))
+                                //{
+                                //    objPoint.BottomToSlipsRigStates(lnRigState) = objPoint.BottomToSlipsRigStates(lnRigState) + lnTime;
+                                //}
+                                //else
+                                //{
+                                //    objPoint.BottomToSlipsRigStates.Add(lnRigState, lnTime);
+                                //}
+
+
                                 //Sum up time duration
-                                rigStateTimes[lnRigState] = rigStateTimes[lnRigState] + lnTimeDuration;
+                                  rigStateTimes[lnRigState] = rigStateTimes[lnRigState] + lnTimeDuration;
                             }
+
+
 
                         }
 
@@ -933,7 +1188,8 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                                     lnTimeDuraton = Math.Round(lnTimeDuraton / 60, 2); //Converting to minutes
                                 }
 
-                                strTimes = strTimes + "," + lnTimeDuraton;
+                                //Nishant 18/04/2022 ( Original : strTimes = strTimes + ","   + lnTimeDuraton;)
+                                strTimes = strTimes + "," + lnKey + "~"  + lnTimeDuraton;
                             }
                         }
 
@@ -950,12 +1206,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                             rigStateData.Rows.Add(newRow);
                         }
-                        ////=================
-                        //newRow["DEPTH"] = Math.Round(connDepth, 2);
-                        //newRow["TIMES"] = strTimes;
-                        //newRow["COMMENTS"] = connComments;
-
-                        //rigStateData.Rows.Add(newRow);
+                     
 
                     }
 
@@ -1139,24 +1390,28 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                     if (sumNightConnTimes > 0 && totalNightConnCount > 0)
                     {
-                        objDrlgConnSummary.avgTimeN = Math.Round(sumNightConnTimes / totalNightConnCount, 2);
+                           objDrlgConnSummary.avgTimeN = Math.Round(sumNightConnTimes / totalNightConnCount, 2);
+                        //objDrlgConnSummary.avgTimeN = Math.Truncate(sumNightConnTimes / totalNightConnCount * 100)/100;
                     }
 
                     //if (sumNightSTB > 0 && totalNightConnCount > 0)
                     if (sumNightBTS > 0 && totalNightConnCount > 0)
                     {
-                        //objDrlgConnSummary.avgBTSN = Math.Round(sumNightSTB / totalNightConnCount, 2);
                         objDrlgConnSummary.avgBTSN = Math.Round(sumNightBTS / totalNightConnCount, 2);
+                        //objDrlgConnSummary.avgBTSN = Math.Truncate(sumNightBTS / totalNightConnCount*100)/100;
                     }
 
                     if (sumNightSTS > 0 && totalNightConnCount > 0)
                     {
                         objDrlgConnSummary.avgSTSN = Math.Round(sumNightSTS / totalNightConnCount, 2);
+                        //objDrlgConnSummary.avgSTSN = Math.Truncate(sumNightSTS / totalNightConnCount*100)/100;
                     }
 
                     if (sumNightSTB > 0 && totalNightConnCount > 0)
                     {
-                        objDrlgConnSummary.avgSTBN = Math.Round(sumNightSTB / totalNightConnCount, 2);
+                                                objDrlgConnSummary.avgSTBN = Math.Round(sumNightSTB / totalNightConnCount, 2);
+                        //objDrlgConnSummary.avgSTBN = Math.Truncate(sumNightSTB / totalNightConnCount*100)/100;
+                        //WIP 21-APRIL-2022
                     }
 
 
@@ -1357,7 +1612,7 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
                 //Delete existing settings
                 strSQL = "UPDATE   VMX_AKPI_DRLG_CONNECTIONS SET USER_COMMENT='" + Comments + "' WHERE WELL_ID ='" + wellId + "' AND ROUND(DEPTH,0)=" + Depth;
-                paramRequest.objDataService.executeNonQuery(strSQL);
+                //paramRequest.objDataService.executeNonQuery(strSQL);
 
 
 
@@ -1385,6 +1640,9 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
                 return objBadResponse;
             }
         }
+
+
+
 
     }
 }

@@ -59,7 +59,7 @@ namespace eVuMax.DataBroker.GenericDrillingSummary
                     bool showOffsetWell = bool.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("showOffsetWell")).FirstOrDefault().ParamValue.ToString());
                     bool MatchDepthByFormationTops = bool.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("MatchDepthByFormationTops")).FirstOrDefault().ParamValue.ToString());
                     string SideTrackKey = "-999";
-
+                    
 
                     DateTime fromDate = DateTime.Now;
                     DateTime toDate = DateTime.Now;

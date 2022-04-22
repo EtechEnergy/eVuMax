@@ -12,7 +12,7 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
 {
     public class ConnectionLogProcessor
     {
-
+        
         eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
         public Dictionary<int, ConnectionLogPoint> connectionPoints = new Dictionary<int, ConnectionLogPoint>();
             public int ProcessStatus = 0;
@@ -286,6 +286,11 @@ namespace eVuMax.DataBroker.Summary.DrlgStand
                 double lnHKldCutOff = objRigState.HookloadCutOff;
                 double lnInSlipsDepth = Convert.ToDouble( objData.Rows[currentRowIndex]["DEPTH"]);
                 double lnHoleDepth =Convert.ToDouble(objData.Rows[currentRowIndex]["HDTH"]);
+
+                if (lnHoleDepth == 5681)
+                {
+                    bool hault = true;
+                }
                 int lnInSlipsRowIndex = currentRowIndex;
                 //VuMaxLogger.logConnMsg("Looking for Connection @" + lnHoleDepth.ToString());
                 bool rotateDataFound = false;

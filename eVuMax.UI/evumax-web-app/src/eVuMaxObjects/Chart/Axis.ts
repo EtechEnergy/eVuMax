@@ -9,6 +9,7 @@ import { DateRange } from "@progress/kendo-react-scheduler/dist/npm/models";
 import { EventDispatcher } from "strongly-typed-events";
 import * as utilFunc from "../../utilFunctions/utilFunctions";
 import { exit } from "process";
+import { Util } from "../../Models/eVuMax";
 ///"/utilFunctions/utilFunctions";
 
 
@@ -190,7 +191,7 @@ export class Axis {
   getLongestLableValue = (lblArr: any) => {
     try {
       if (lblArr.length > 0) {
-        let longest = this.Labels.sort(
+        let longest = lblArr.sort(
           function (a, b) {
             return b.length - a.length;
           }
@@ -217,7 +218,8 @@ export class Axis {
 
         //added by prath on 28-08-2021 (to resolve trip speed plot spacing between legend & bottom axes title)
         if (this.Labels.length > 0) {
-          maxLabel = this.getLongestLableValue(this.Labels).toString();
+          let localLables: any = JSON.parse(JSON.stringify(this.Labels));
+          maxLabel = this.getLongestLableValue(localLables).toString();
         }
 
 
@@ -686,7 +688,7 @@ export class Axis {
       let titleY = 0;
 
       titleX = this.StartPos + (this.EndPos - this.StartPos) / 2;
-
+      
 
       if (this.IsDateTime) {
         if (this.ShowTitle) {
@@ -850,9 +852,19 @@ export class Axis {
       this.AxisRef.tickSize(-tickSize);
 
       if (this.IsDateTime) {
+        
+        let round_TickFactor = Math.ceil(tickFactor);
         this.AxisRef.tickFormat((d, i) => {
+          debugger;
           if (i >= 0 && i < this.Labels.length) {
-            return this.Labels[i] + " ";
+            //Following conneciton added by prath on 19-April-2022 earlier only return this.Labels[i] + " ";
+            //Did this to print label based on gap (Total Connection / no of tick require)
+            if (requiredTicks < this.Labels.length){
+              return this.Labels[i*round_TickFactor] + " ";
+            }else{
+              return this.Labels[i] + " ";
+            }
+            
           } else {
             return d;
             //let formatter = d3.timeFormat(this.DateFormat);

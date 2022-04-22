@@ -157,24 +157,26 @@ export class BarSeries {
               .range([0, this.objHorizontalAxisScaleRef.bandwidth()]);
           //   findBarSeries = true;
            //}
-
+           
           for (let d = 0; d < objSeries.Data.length; d++) {
             let objData: ChartData = objSeries.Data[d];
             
             let i = data.findIndex((value) => value.X == objData.x);
             if (i == -1) {
               if (objData.y !=0){
+             
                 xValues.push(objData.x);
                 let rec = {};
                 rec["X"] = objData.x;
                 rec[objSeries.Id] = objData.y;
-                rec["color"]= objData.color;
-                rec["offsetColor"]= objData.color;
+                //rec["color"]= objData.color;
+                rec[objSeries.Id+"~color"]= objData.color;
                 data.push(rec);
               }
             } else {
               if (i > -1) {
                 data[i][objSeries.Id] = objData.y;
+                data[i][objSeries.Id + "~color"] = objData.color;
               }
             }
           }
@@ -221,9 +223,9 @@ export class BarSeries {
         .selectAll("rect")
         //Use map function with the subCategories array and the Econ2 array
         .data(function (d) {
+          
           return keys.map(function (key) {
-            
-            return { key: key, value: d[key], color : d["color"] };
+            return { key: key, value: d[key], color : d[key +"~color"] };
           });
         })
         .enter()

@@ -32,9 +32,9 @@ import {
 import {
   Grid,
   GridColumn as Column,
-  GridColumn,
+
   GridSelectionChangeEvent,
-  GridToolbar,
+
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab, Button, Dialog } from "@progress/kendo-react-all";
 
@@ -44,13 +44,14 @@ import { ChartEventArgs } from "../../../eVuMaxObjects/Chart/ChartEventArgs";
 
 import GlobalMod from "../../../objects/global";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComment, faEraser, faListAlt, faMoon, faPencilAlt, faPencilRuler, faSun } from "@fortawesome/free-solid-svg-icons";
+import { faListAlt, faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { confirmAlert } from "react-confirm-alert";
 import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
 import NotifyMe from 'react-notification-timeline';
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
+import * as utilFunctions from "../../../utilFunctions/utilFunctions";
 
 
 let _gMod = new GlobalMod();
@@ -223,8 +224,8 @@ class DrlgConnSummary extends Component {
 
 
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefresStatus: boolean = false) => {
-    
-    
+
+
 
     let realtimeStatus: boolean = paramRefresStatus;
     //Added on 02-02-2022
@@ -407,7 +408,7 @@ class DrlgConnSummary extends Component {
         "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramLastHrs);
-      
+
 
       this.AxiosSource = axios.CancelToken.source();
 
@@ -425,7 +426,7 @@ class DrlgConnSummary extends Component {
           Util.StatusReady();
           this.objSummaryData = JSON.parse(res.data.Response);
 
-          
+
           //Warnings Notifications
           let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {
@@ -802,7 +803,7 @@ class DrlgConnSummary extends Component {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
 
-    
+
 
     if (this.state.isRealTime) {
       //Added 1 line on 02-02-2022
@@ -1009,14 +1010,14 @@ class DrlgConnSummary extends Component {
                     display: "inline-block",
                   }}
                 >
-                  
+
                 </div>
 
-          
+
 
                 {/* <DataSelectorOriginal {...this} /> */}
                 <div className="Data">
-                  <DataSelector  refreshDataSelector ={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
+                  <DataSelector refreshDataSelector={this.state.isRealTime} objDataSelector={this.state.objDataSelector} wellID={this.WellId} selectionChanged={this.selectionChanged} ></DataSelector>
                 </div>
               </TabStripTab>
               <TabStripTab title="Numeric Summary">
@@ -1908,7 +1909,7 @@ class DrlgConnSummary extends Component {
       });
 
       //Fill up the data for data series
-      this.objChart.isNightConnection=false;
+      this.objChart.isNightConnection = false;
       for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         let objBTSPoint = new ChartData();
         objBTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
@@ -1919,16 +1920,16 @@ class DrlgConnSummary extends Component {
         let objSTSPoint = new ChartData();
         objSTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objSTSPoint.y = this.objSummaryData.connData[i]["SLIPS_TO_SLIPS"];
-        
-        
+
+
         if (this.state.HighlightDayNight) {
           if (this.objSummaryData.connData[i]["DAY_NIGHT"] == "D") {
             objSTSPoint.color = "#00E676";
           } else {
             objSTSPoint.color = "black";// "#bcbab8";
-            this.objChart.isNightConnection=true;
+            this.objChart.isNightConnection = true;
           }
-        } 
+        }
 
         objSTS.Data.push(objSTSPoint);
 
@@ -2019,6 +2020,23 @@ class DrlgConnSummary extends Component {
     } catch (error) { }
   };
 
+  // sortArrRigState = (arrRigStatesInfo : any) =>{
+  //   try {
+      
+  //     for (let index = 0; index < arrRigStatesInfo.length; index++) {
+  //       const element = arrRigStatesInfo[index].split("~");
+  //       if (element[0].length==1){
+  //         element[0] ="0"+ element[0];
+  //         arrRigStatesInfo[index]= element[0] +"~" + element[1];
+  //       }
+  //     }
+
+  //     arrRigStatesInfo.sort();
+  //     debugger;
+  //   } catch (error) {
+  //     alert(error);
+  //   }
+  // }
   //This method redraws the chart for rig state view,
   plotChartRigStateView = () => {
     try {
@@ -2053,7 +2071,11 @@ class DrlgConnSummary extends Component {
       this.objSummaryData.rigStateData.sort(function (a, b) {
         return a.DEPTH - b.DEPTH;
       });
+      
+
       //Create series for each rig state
+      this.objSummaryData.rigStates.sort((a, b) => a.RIG_STATE > b.RIG_STATE ? 1 : -1);
+      debugger;
       for (let i = 0; i < this.objSummaryData.rigStates.length; i++) {
         let objSeries = new DataSeries();
         objSeries.Id = this.objSummaryData.rigStates[i]["RIG_STATE"].toString();
@@ -2067,30 +2089,46 @@ class DrlgConnSummary extends Component {
         this.objChart.DataSeries.set(objSeries.Id, objSeries);
       }
 
+      debugger;
       //Fill up the data for each series
       for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
-        let arrRigStates: string[] = this.objSummaryData.rigStateData[i][
-          "TIMES"
-        ]
-          .toString()
-          .split(",");
+        //let arrRigStates: string[] = this.objSummaryData.rigStateData[i]["TIMES"].toString().split(",");
+        let arrRigStatesInfo: string[] = this.objSummaryData.rigStateData[i]["TIMES"].toString().split(",");
+        //this.sortArrRigState(arrRigStatesInfo);
+
+        debugger;
 
         for (let j = 0; j < this.objSummaryData.rigStates.length; j++) {
-          let lnRigState: number =
-            this.objSummaryData.rigStates[j]["RIG_STATE"];
+          let lnRigState: number = this.objSummaryData.rigStates[j]["RIG_STATE"];
 
-          //Find the series with this rig state
-          let objSeries: DataSeries = this.objChart.DataSeries.get(
-            lnRigState.toString()
-          );
+          let objSeries: DataSeries = this.objChart.DataSeries.get(lnRigState.toString());
+          for (let c = 0; c < arrRigStatesInfo.length; c++) {
 
-          if (objSeries != undefined) {
-            let objDataPoint = new ChartData();
-            objDataPoint.x = this.objSummaryData.rigStateData[i]["DEPTH"];
-            objDataPoint.y = Number.parseFloat(arrRigStates[j]);
-            objDataPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
-            objSeries.Data.push(objDataPoint);
+            let __rigStateNo: number = Number(arrRigStatesInfo[c].split("~")[0].toString());
+            let __rigStateTime: number = Number(arrRigStatesInfo[c].split("~")[1].toString());
+
+            if (__rigStateNo == lnRigState && __rigStateTime > 0) {
+
+              if (objSeries != undefined) {
+
+                let objDataPoint = new ChartData();
+                // objDataPoint.datetime = new Date(Date.parse(this.objSummaryData.rigStateData[i]["FROM_DATE"]) );
+                // objDataPoint.datetime = new Date(utilFunctions.formateDate(objDataPoint.datetime));
+                objDataPoint.x = Number(this.objSummaryData.rigStateData[i]["DEPTH"]);
+
+
+                objDataPoint.y = __rigStateTime;
+
+                objDataPoint.label = this.objSummaryData.rigStateData[i]["COMMENTS"];
+                objSeries.Data.push(objDataPoint);
+
+                break;
+              }
+
+            }
           }
+
+
         }
       }
 

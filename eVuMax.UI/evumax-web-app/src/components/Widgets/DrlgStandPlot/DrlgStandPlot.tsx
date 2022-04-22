@@ -561,7 +561,7 @@ export default class DrlgStandPlot extends React.Component {
 
 
 
-
+                
                 if (this.state.objDrlgStandUserSettings.HighlightDayNight == true) {
                     //if (chartData[i].DayNightStatus == 1) {
                     //if (chartData[i].DayNightStatus == "Day") {
