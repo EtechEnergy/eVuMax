@@ -1836,6 +1836,7 @@ class DrlgConnSummary extends Component {
       this.objChart.bottomAxis().ShowSelector = false;
       this.objChart.bottomAxis().ShowTitle = true;
       this.objChart.bottomAxis().Visible = true;
+      
 
       this.objChart.rightAxis().ShowLabels = true;
       this.objChart.rightAxis().ShowTitle = true;
@@ -1911,7 +1912,7 @@ class DrlgConnSummary extends Component {
       //Fill up the data for data series
       this.objChart.isNightConnection = false;
       
-      // for (let i = 0; i < this.objSummaryData.connData.length; i++) {
+       
         for (let i = this.objSummaryData.connData.length-1; i >= 0; i--) {
         let objBTSPoint = new ChartData();
         objBTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
@@ -2035,7 +2036,7 @@ class DrlgConnSummary extends Component {
   //     }
 
   //     arrRigStatesInfo.sort();
-  //     debugger;
+  
   //   } catch (error) {
   //     alert(error);
   //   }

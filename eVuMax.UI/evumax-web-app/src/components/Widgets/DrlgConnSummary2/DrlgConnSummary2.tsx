@@ -1735,7 +1735,7 @@ class DrlgConnSummary2 extends Component {
       this.objSTSChart.isNightConnection=false;
       this.objSTBChart.isNightConnection=false;
 
-      debugger;
+      
       
       //for (let i = 0; i < this.objSummaryData.connData.length; i++) {
         for (let i = this.objSummaryData.connData.length-1; i >=0 ; i--) {

@@ -32,7 +32,9 @@
 --base-status-background:#007bff;
 --base-status-color:white; */
 }
-
+/* .bg-status{
+z-index: 21001 !important;
+} */
 body {
   background: var(--base-work-area) !important;
   /* font-family: Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif !important;

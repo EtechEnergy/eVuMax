@@ -138,7 +138,7 @@ export default class LineChart extends Component {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
 
-  handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
+  // handleSubmit = (dataItem: any) => alert(JSON.stringify(dataItem, null, 2));
 
   render() {
     return (

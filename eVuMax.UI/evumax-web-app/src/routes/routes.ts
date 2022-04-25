@@ -2,9 +2,11 @@ import Home from "../components/dashboard/home/home";
 import DahboardSettings from "../components/dashboard/settings/settings";
 import Themes from "../components/dashboard/settings/themes/themes";
 import UserPrefs from "../components/dashboard/user-prefs/user-prefs";
+
 import WellColumnsEditor from "../components/dashboard/settings/well-column-editor/wellColumnsEditor";
 import ManageDashboardWell from "../components/dashboard/settings/add-well/manageDashboardWell";
 import ManageThemes from "../components/dashboard/settings/themes/manage-theme/manage-theme";
+
 import WellEditorForm from "../components/wellObjectComponent/wellEditorForm";
 import DrlgConnSummary from "../components/Widgets/DrlgConnSummary/DrlgConnSummary";
 import DrlgConnSummary2 from "../components/Widgets/DrlgConnSummary2/DrlgConnSummary2";
@@ -27,7 +29,6 @@ import DrlgStandPlot from "../components/Widgets/DrlgStandPlot/DrlgStandPlot";
 import TripReport from "../components/Widgets/TripReport/TripReport";
 import  BroomstickPlot from "../components/Widgets/BroomstickDocs/BroomstickPlot";
 import AdvKPI from "../components/Widgets/AdvKPI/AdvKPI";
-
 
 
 //DrlgConnSummary2

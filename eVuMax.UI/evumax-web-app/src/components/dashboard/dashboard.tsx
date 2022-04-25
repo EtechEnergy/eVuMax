@@ -8,7 +8,7 @@ import "./dashboard.css";
 import VuMaxLogo from "../../images/VuMaxLogo_Small.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faCog, faListAlt, faHome, faDownload, faInfo, faSignOutAlt, faKey } from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle, faCog, faListAlt, faHome, faDownload, faInfo, faSignOutAlt, faKey,  faClock, faGlobe, faCalendarTimes, faBookOpen, faSpinner  } from "@fortawesome/free-solid-svg-icons";
 import { Route, NavLink, Switch } from "react-router-dom";
 import { AppState } from "../../redux/store/configureStore";
 import { connect } from "react-redux";
@@ -26,9 +26,6 @@ import BrokerRequest from "../../broker/BrokerRequest";
 import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
 import { Util } from "../../Models/eVuMax";
-
-
-
 
 
 type Props = LinkStateProps & LinkDispatchProps;
@@ -209,20 +206,50 @@ export class Dashboard extends React.Component<Props> {
   }
 
   getMenu = (e: any) => {
-    if (e.target != document.getElementById("leftSidePopup")) {
-      console.log("You clicked outside");
-    } else {
-      console.log("You clicked inside");
-    }
+    debugger;
 
-    $(".LeftSidePopUp").toggle();
+    // if (e.target != document.getElementById("leftSidePopup")) {
+    //   console.log("You clicked outside");
+    // } else {
+    //   console.log("You clicked inside");
+    // }
+
+
+    switch (e.target.id) {
+      case "DataMenu":
+        $(".LeftSidePopUp").toggle();    
+        break;
+        case "DSSetupMenu" :
+        case "LeftDSSetupPopup":
+          //alert("hello");
+          $(".LeftDSSetupPopup").toggle();    
+          break;
+  
+      default:
+        break;
+    }
+    //$(".LeftSidePopUp").toggle();
     // let showMenu = this.state.showPopupMenu;
     // this.setState({
     //   showPopupMenu: !showMenu
     // });
   };
 
+  // getDSSetupMenu = (e : any) =>{
+  //   debugger;
+  //   if (e.target != document.getElementById("leftDSSetupPopup")) {
+  //     console.log("You clicked outside");
+  //   } else {
+  //     console.log("You clicked inside");
+  //   }
+
+  //   $(".LeftDSSetupPopup").toggle();
+
+  // }
+
   toggleMenu = (e: any) => {
+    debugger;
+    
     // if (e.target != document.getElementById("leftSidePopup")) {
     //   console.log("You clicked outside");
     // } else {
@@ -394,8 +421,14 @@ export class Dashboard extends React.Component<Props> {
                   data-leftmenu="settings"
                   //onClick={this.getMenu}
                   onMouseEnter={this.getMenu}
+                  //onMouseOut={  $(".LeftSidePopUp").hide()} //vimal
+                  // onMouseOut= {function(){
+                  //   //alert("prath");
+                  //   $(".LeftSidePopUp").hide();
+                  // }}
                   //onMouseOut={this.getMenu} //vimal
                   //To auto hide menu vimal
+                  id="DataMenu"                  
                   className="nav-link"
                 >
                   <FontAwesomeIcon icon={faCog} />
@@ -414,6 +447,42 @@ export class Dashboard extends React.Component<Props> {
               </li>
 
               <li className="nav-item">
+             
+
+<a
+                  data-leftmenu="setup"
+                  onMouseEnter={this.getMenu}
+                  //onMouseOut={this.getMenu} //vimal
+                  //To auto hide menu vimal
+                  id="DSSetupMenu"     
+                  className="nav-link"
+                >
+                  <FontAwesomeIcon icon={faSpinner} />
+                </a>
+
+              </li>
+
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  exact
+                  to="/dashboard/AlarmSettings"
+                >
+                  <FontAwesomeIcon icon={faClock} />
+                </NavLink>
+              </li>
+
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  exact
+                  to="/dashboard/KPI"
+                >
+                  <FontAwesomeIcon icon={faBookOpen} />
+                  
+                </NavLink>
+              </li>
+              {/* <li className="nav-item">
                 <NavLink
                   className="nav-link"
                   exact
@@ -422,7 +491,7 @@ export class Dashboard extends React.Component<Props> {
                   <FontAwesomeIcon icon={faKey} />
                   
                 </NavLink>
-              </li>
+              </li> */}
               
 
               {/* Nishant 27-11-2020 Witsml Explorer */}
@@ -461,9 +530,15 @@ export class Dashboard extends React.Component<Props> {
         {/* Side menu */}
 
         <div
-          id="leftSidePopup"
+          id="LeftSidePopup"
           className="LeftSidePopUp"
-          onMouseLeave={this.getMenu}
+          //onMouseLeave={this.getMenu}
+          //onMouseOver={this.getMenu}
+          onMouseLeave={function(){
+            debugger;
+           
+              $("#LeftSidePopup").hide();
+          }}
         >
           <ul className="nav flex-column">
             <li>
@@ -503,6 +578,7 @@ export class Dashboard extends React.Component<Props> {
                   Add Wells
                 </NavLink>
               </li>
+            
               {/* <li>
                 <NavLink
                   onClick={this.getMenu}
@@ -531,6 +607,39 @@ export class Dashboard extends React.Component<Props> {
                         <Route exact path="/dashboard/settings" component={DahboardSettings}></Route>
                     </Switch> */}
         </div>
+      
+      
+        <div
+          id="LeftDSSetupPopup"
+          className="LeftDSSetupPopup"
+          onMouseLeave={this.getMenu}
+          // onMouseLeave={function(){
+          //     $("#LeftDSSetupPopup").hide();
+          // }}
+        >
+          <ul className="nav flex-column">
+         
+            <li>
+              <a>
+                <b>Setup</b>
+              </a>{" "}
+            </li>
+            <ol className="list-unstyled ml-2">
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/qcrules">
+                  {/* <a onClick={this.ManageTheme} > */}
+                  QC Rules
+                </NavLink>
+              </li>
+            </ol>
+          </ul>
+
+          {/* <Switch>
+                        <Route exact path="/dashboard/settings" component={DahboardSettings}></Route>
+                    </Switch> */}
+        </div>
+
+      
       </div>
     );
   }
