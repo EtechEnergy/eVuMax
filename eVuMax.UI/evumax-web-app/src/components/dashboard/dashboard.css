@@ -193,7 +193,7 @@ a.nav-link {
 
 
 
-.LeftDSSetupPopup{
+.DSSetupPopup{
   height: 93%;
   width: 0;
   position: fixed;
@@ -208,7 +208,7 @@ a.nav-link {
   display: none;
 }
 
-.LeftDSSetupPopup a {
+.DSSetupPopup a {
   padding: 8px 8px 8px 32px;
   text-decoration: none;
   font-size: 12px;
@@ -217,11 +217,11 @@ a.nav-link {
   transition: 0.3s;
 }
 
-.LeftDSSetupPopup a:hover {
+.DSSetupPopup a:hover {
   color: #f1f1f1;
 }
 
-.LeftDSSetupPopup .closebtn {
+.DSSetupPopup .closebtn {
   position: absolute;
   top: 0;
   right: 25px;

@@ -207,7 +207,7 @@ export class Dashboard extends React.Component<Props> {
 
   getMenu = (e: any) => {
     debugger;
-
+    //alert(e.target.id);
     // if (e.target != document.getElementById("leftSidePopup")) {
     //   console.log("You clicked outside");
     // } else {
@@ -219,10 +219,15 @@ export class Dashboard extends React.Component<Props> {
       case "DataMenu":
         $(".LeftSidePopUp").toggle();    
         break;
+        case "LeftSidePopUp":
+          $(".LeftSidePopUp").toggle();    
+          break;
         case "DSSetupMenu" :
-        case "LeftDSSetupPopup":
-          //alert("hello");
-          $(".LeftDSSetupPopup").toggle();    
+          $(".DSSetupPopup").toggle();    
+          break;
+        case "DSSetupPopup":
+
+          $(".DSSetupPopup").toggle();    
           break;
   
       default:
@@ -235,18 +240,7 @@ export class Dashboard extends React.Component<Props> {
     // });
   };
 
-  // getDSSetupMenu = (e : any) =>{
-  //   debugger;
-  //   if (e.target != document.getElementById("leftDSSetupPopup")) {
-  //     console.log("You clicked outside");
-  //   } else {
-  //     console.log("You clicked inside");
-  //   }
-
-  //   $(".LeftDSSetupPopup").toggle();
-
-  // }
-
+  
   toggleMenu = (e: any) => {
     debugger;
     
@@ -311,6 +305,16 @@ export class Dashboard extends React.Component<Props> {
     } catch (error) { }
 
 
+  }
+
+
+  hidePopupMenu =()=>{
+    try {
+      $(".LeftSidePopUp").hide();    
+      $(".DSSetupPopup").hide();    
+    } catch (error) {
+      
+    }
   }
   render() {
     return (
@@ -410,7 +414,7 @@ export class Dashboard extends React.Component<Props> {
                 </NavLink>
               </li> */}
               <li className="nav-item">
-                <NavLink className="nav-link" exact to="/dashboard/user-prefs">
+                <NavLink className="nav-link" exact to="/dashboard/user-prefs" onMouseOver={this.hidePopupMenu}>
                   <FontAwesomeIcon icon={faListAlt} />
                 </NavLink>
               </li>
@@ -441,6 +445,7 @@ export class Dashboard extends React.Component<Props> {
                   className="nav-link"
                   exact
                   to="/dashboard/WitsmlExplorer"
+                  onMouseOver={this.hidePopupMenu}
                 >
                   <FontAwesomeIcon icon={faDownload} />
                 </NavLink>
@@ -453,6 +458,10 @@ export class Dashboard extends React.Component<Props> {
                   data-leftmenu="setup"
                   onMouseEnter={this.getMenu}
                   //onMouseOut={this.getMenu} //vimal
+                  // onMouseOut={ function(){
+                  //   $("#DSSetupPopup").hide();
+                  // }
+                  // } //prath
                   //To auto hide menu vimal
                   id="DSSetupMenu"     
                   className="nav-link"
@@ -467,6 +476,7 @@ export class Dashboard extends React.Component<Props> {
                   className="nav-link"
                   exact
                   to="/dashboard/AlarmSettings"
+                  onMouseOver={this.hidePopupMenu}
                 >
                   <FontAwesomeIcon icon={faClock} />
                 </NavLink>
@@ -477,6 +487,7 @@ export class Dashboard extends React.Component<Props> {
                   className="nav-link"
                   exact
                   to="/dashboard/KPI"
+                  onMouseOver={this.hidePopupMenu}
                 >
                   <FontAwesomeIcon icon={faBookOpen} />
                   
@@ -533,12 +544,13 @@ export class Dashboard extends React.Component<Props> {
           id="LeftSidePopup"
           className="LeftSidePopUp"
           //onMouseLeave={this.getMenu}
-          //onMouseOver={this.getMenu}
-          onMouseLeave={function(){
-            debugger;
-           
+          onMouseLeave={
+            function(){
               $("#LeftSidePopup").hide();
-          }}
+            }
+
+          }
+
         >
           <ul className="nav flex-column">
             <li>
@@ -610,12 +622,12 @@ export class Dashboard extends React.Component<Props> {
       
       
         <div
-          id="LeftDSSetupPopup"
-          className="LeftDSSetupPopup"
-          onMouseLeave={this.getMenu}
-          // onMouseLeave={function(){
-          //     $("#LeftDSSetupPopup").hide();
-          // }}
+          id="DSSetupPopup"
+          className="DSSetupPopup"
+          onMouseLeave={
+            function(){
+              $("#DSSetupPopup").hide();
+            }}
         >
           <ul className="nav flex-column">
          
