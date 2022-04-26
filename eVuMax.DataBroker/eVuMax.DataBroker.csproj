@@ -116,6 +116,9 @@
     <Compile Include="Config\UserPreferences\UserPreferences.cs" />
     <Compile Include="DataObject.Manager\DownloadManager.cs" />
     <Compile Include="DataObject.Manager\WellBroker.cs" />
+    <Compile Include="DataServiceManager\DataServiceBroker.cs" />
+    <Compile Include="DataServiceManager\DataServiceMgr.cs" />
+    <Compile Include="DataServiceManager\Settings\SystemSettings.cs" />
     <Compile Include="DownloadManager\DownloadBroker.cs" />
     <Compile Include="DownloadManager\DownloadManagerBroker.cs" />
     <Compile Include="DownloadManager\ServerLogEvent.cs" />
@@ -191,6 +194,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
