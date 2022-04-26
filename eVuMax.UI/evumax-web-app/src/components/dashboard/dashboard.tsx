@@ -206,7 +206,7 @@ export class Dashboard extends React.Component<Props> {
   }
 
   getMenu = (e: any) => {
-    debugger;
+    
     //alert(e.target.id);
     // if (e.target != document.getElementById("leftSidePopup")) {
     //   console.log("You clicked outside");
@@ -242,7 +242,7 @@ export class Dashboard extends React.Component<Props> {
 
   
   toggleMenu = (e: any) => {
-    debugger;
+    
     
     // if (e.target != document.getElementById("leftSidePopup")) {
     //   console.log("You clicked outside");

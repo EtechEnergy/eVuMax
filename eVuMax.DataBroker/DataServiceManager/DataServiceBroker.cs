@@ -22,8 +22,8 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                 if (paramRequest.Broker == Global.Brk_Setup_QCRules)
                 {
-                    //CommonSettingsMgr objMgr = new CommonSettingsMgr();
-                    //return objMgr.getData(paramRequest);
+                    QCRulesMgr objQCRulesMgr = new QCRulesMgr();
+                    return objQCRulesMgr.getData(paramRequest);
                 }
 
 

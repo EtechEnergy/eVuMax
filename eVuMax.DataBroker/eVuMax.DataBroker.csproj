@@ -117,6 +117,8 @@
     <Compile Include="DataObject.Manager\DownloadManager.cs" />
     <Compile Include="DataObject.Manager\WellBroker.cs" />
     <Compile Include="DataServiceManager\DataServiceBroker.cs" />
+    <Compile Include="DataServiceManager\Setup\QCRules\eQCRules.cs" />
+    <Compile Include="DataServiceManager\Setup\QCRules\QCRulesMgr.cs" />
     <Compile Include="DataServiceManager\Setup\Settings\CommonSettingsMgr.cs" />
     <Compile Include="DataServiceManager\Setup\Settings\SystemSettings.cs" />
     <Compile Include="DownloadManager\DownloadBroker.cs" />
@@ -194,9 +196,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataServiceManager\Setup\QCRules\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
