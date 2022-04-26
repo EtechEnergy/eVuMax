@@ -40,8 +40,8 @@ export default class QcRules extends Component {
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "DataService";
-      objBrokerRequest.Broker = "SetupQcRules";
-      objBrokerRequest.Function = "getQcCRules";
+      objBrokerRequest.Broker = "SetupQCRules";
+      objBrokerRequest.Function = "getQCRules";
 
       let paramuserid: BrokerParameter = new BrokerParameter(
         "UserId",

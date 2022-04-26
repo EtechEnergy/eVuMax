@@ -4,17 +4,15 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VuMaxDR.Common;
 
 namespace eVuMax.DataBroker.DataServiceManager
 {
-    public class DataServiceMgr:IBroker
+    public class CommonSettingsMgr : IBroker
     {
         const string loadSystemSettings = "loadSystemSettings";
         const string SaveSystemSettings = "SaveSystemSettings";
-        
+
 
         public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
 
@@ -24,12 +22,12 @@ namespace eVuMax.DataBroker.DataServiceManager
 
 
             {
-               BrokerResponse objResponse = paramRequest.createResponseObject();
+                BrokerResponse objResponse = paramRequest.createResponseObject();
 
                 if (paramRequest.Function == loadSystemSettings)
                 {
                     VuMaxDR.Common.SystemSettings objSystemSettings = new VuMaxDR.Common.SystemSettings();
-                    objSystemSettings =  SystemSettings.loadSystemSettings(ref paramRequest.objDataService);
+                    objSystemSettings = SystemSettings.loadSystemSettings(ref paramRequest.objDataService);
                     objResponse.RequestSuccessfull = true;
                     objResponse.Response = JsonConvert.SerializeObject(objSystemSettings);
                     return objResponse;
@@ -46,7 +44,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                 objResponse.Warnings = ex.Message;
                 objResponse.Response = ex.Message + ex.StackTrace;
                 return objResponse;
-                
+
             }
         }
 
@@ -68,8 +66,8 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                     userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
                     strSetings = paramRequest.Parameters.Where(x => x.ParamName.Contains("Settings")).FirstOrDefault().ParamValue.ToString();
-                    
-                    if(strSetings != "")
+
+                    if (strSetings != "")
                     {
                         try
                         {
@@ -82,7 +80,7 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                         }
                     }
-                                     
+
                     SystemSettings.saveSystemSettings(ref paramRequest.objDataService, objSettings);
                     objResponse.RequestSuccessfull = true;
                     objResponse.Response = "";
@@ -102,5 +100,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                 return objResponse;
             }
         }
+
+
     }
 }

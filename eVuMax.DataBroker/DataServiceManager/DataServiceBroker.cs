@@ -14,18 +14,20 @@ namespace eVuMax.DataBroker.DataServiceManager
             try
             {
 
-                if (paramRequest.Broker == Global.Brk_DataServie)
+                if (paramRequest.Broker == Global.Brk_Setup_CommonSetting)
                 {
-
-
-                    DataServiceMgr objMgr = new DataServiceMgr();
+                    CommonSettingsMgr objMgr = new CommonSettingsMgr();
                     return objMgr.getData(paramRequest);
+                }
 
-                   
+                if (paramRequest.Broker == Global.Brk_Setup_QCRules)
+                {
+                    //CommonSettingsMgr objMgr = new CommonSettingsMgr();
+                    //return objMgr.getData(paramRequest);
                 }
 
 
-                Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
+                BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";
                 return objResponse;
@@ -47,16 +49,17 @@ namespace eVuMax.DataBroker.DataServiceManager
             try
             {
 
-                if (paramRequest.Broker == Global.Brk_DataServie)
+                if (paramRequest.Broker == Global.Brk_Setup_CommonSetting)
                 {
-
-
-                    DataServiceMgr objMgr = new DataServiceMgr();
+                    CommonSettingsMgr objMgr = new CommonSettingsMgr();
                     return objMgr.performTask(paramRequest);
-
-
                 }
 
+                if (paramRequest.Broker == Global.Brk_Setup_QCRules)
+                {
+                    //CommonSettingsMgr objMgr = new CommonSettingsMgr();
+                    //return objMgr.performTask(paramRequest);
+                }
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
