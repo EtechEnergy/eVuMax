@@ -31,6 +31,10 @@ import  BroomstickPlot from "../components/Widgets/BroomstickDocs/BroomstickPlot
 import AdvKPI from "../components/Widgets/AdvKPI/AdvKPI";
 
 
+//DS
+import QcRules from "../components/dashboard/dataservice/setup/qcrules/QcRules";
+
+
 //DrlgConnSummary2
 const dashbordRoutes = [
   {
@@ -242,7 +246,17 @@ const dashbordRoutes = [
     layout: "/dashboard",
   },
 
+
+  // Data Services
+  {
+    path: "/QcRules",
+    name: "QcRules",
+    icon: "",
+    component: QcRules,
+    layout: "/dashboard",
+  },
   
+  //==================
 ];
 
 export default dashbordRoutes;

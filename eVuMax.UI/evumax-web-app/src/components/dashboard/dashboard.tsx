@@ -638,7 +638,7 @@ export class Dashboard extends React.Component<Props> {
             </li>
             <ol className="list-unstyled ml-2">
               <li>
-                <NavLink onClick={this.toggleMenu} exact to="/dashboard/qcrules">
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/QcRules">
                   {/* <a onClick={this.ManageTheme} > */}
                   QC Rules
                 </NavLink>
