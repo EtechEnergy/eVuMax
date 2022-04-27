@@ -38,6 +38,45 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                 }
 
+
+                if (paramRequest.Function == loadRigSpecificRigStateSetup)
+                {
+
+                    string userID = "";
+                    string RigID = "";
+                  
+
+                    try
+                    {
+                        RigID = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
+                        userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                      
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
+
+                    if (RigID == "")
+                    {
+                        objResponse = paramRequest.createResponseObject();
+                        objResponse.RequestSuccessfull = false;
+                        objResponse.Warnings = "RigName is Blank";
+                        objResponse.Response = "";
+                        return objResponse;
+                    }
+
+
+                    VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
+                    objRigState = VuMaxDR.Data.Objects.rigState.loadRigRigStateSetup(ref paramRequest.objDataService,RigID);
+
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Response = JsonConvert.SerializeObject(objRigState);
+                    return objResponse;
+
+                }
+
                 return objResponse;
 
             }
@@ -54,7 +93,149 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
         public BrokerResponse performTask(BrokerRequest paramRequest)
         {
-            throw new NotImplementedException();
+            try
+
+
+            {
+                BrokerResponse objResponse = paramRequest.createResponseObject();
+
+                if (paramRequest.Function == saveCommonRigStateSetup)
+                {
+                    VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
+
+                    string userID = "";
+                    string strObjRigStateSetup = "";
+                    
+                    userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                    strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
+
+                    if (strObjRigStateSetup != "")
+                    {
+                        try
+                        {
+                            objRigState = JsonConvert.DeserializeObject<VuMaxDR.Data.Objects.rigState>(strObjRigStateSetup);
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject ObjRigState";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+
+
+
+
+                    string LastError = "";
+
+                    if (VuMaxDR.Data.Objects.rigState.SaveCommonRigStateSetup(ref paramRequest.objDataService, objRigState, ref LastError))
+                    {
+                        objResponse.RequestSuccessfull = true;
+                        objResponse.Response = JsonConvert.SerializeObject(objRigState);
+                        return objResponse;
+                    }
+                    else
+                    {
+                        objResponse = paramRequest.createResponseObject();
+                        objResponse.RequestSuccessfull = false;
+                        objResponse.Warnings = LastError;
+                        objResponse.Response = LastError;
+                        return objResponse;
+                    }
+
+                    
+
+                }
+
+
+
+                if (paramRequest.Function == saveRigSpecificRigStateSetup)
+                {
+                    VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
+
+                    string userID = "";
+                    string RigID = "";
+                    string strObjRigStateSetup = "";
+
+                    try
+                    {
+                        RigID = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
+                        userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                        strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        
+                    }
+
+                    if (RigID == "")
+                    {
+                        objResponse = paramRequest.createResponseObject();
+                        objResponse.RequestSuccessfull = false;
+                        objResponse.Warnings = "RigID is Blank";
+                        objResponse.Response = "";
+                        return objResponse;
+                    }
+
+                    if (strObjRigStateSetup != "")
+                    {
+                        try
+                        {
+                            objRigState = JsonConvert.DeserializeObject<VuMaxDR.Data.Objects.rigState>(strObjRigStateSetup);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject ObjRigState";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+
+
+                    string LastError = "";
+
+                    if (VuMaxDR.Data.Objects.rigState.SaveRigRigStateSetup(ref paramRequest.objDataService,RigID, objRigState, ref LastError))
+                    {
+                        objResponse.RequestSuccessfull = true;
+                        objResponse.Response = JsonConvert.SerializeObject(objRigState);
+                        return objResponse;
+                    }
+                    else
+                    {
+                        objResponse = paramRequest.createResponseObject();
+                        objResponse.RequestSuccessfull = false;
+                        objResponse.Warnings = LastError;
+                        objResponse.Response = LastError;
+                        return objResponse;
+                    }
+
+
+
+                }
+
+                return objResponse;
+
+            }
+            catch (Exception ex)
+            {
+                BrokerResponse objResponse = paramRequest.createResponseObject();
+                objResponse.RequestSuccessfull = false;
+                objResponse.Warnings = ex.Message;
+                objResponse.Response = ex.Message + ex.StackTrace;
+                return objResponse;
+
+            }
         }
     }
 }
