@@ -1,9 +1,6 @@
 ﻿using eVuMax.DataBroker.Broker;
+using eVuMax.DataBroker.DataServiceManager.Setup;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace eVuMax.DataBroker.DataServiceManager
 {
@@ -25,6 +22,20 @@ namespace eVuMax.DataBroker.DataServiceManager
                     QCRulesMgr objQCRulesMgr = new QCRulesMgr();
                     return objQCRulesMgr.getData(paramRequest);
                 }
+
+                if (paramRequest.Broker == Global.Brk_Setup_CommonRigStateSetup)
+                {
+                    RigStateSetupMgr objRigStateSetup = new RigStateSetupMgr();
+                    return objRigStateSetup.getData(paramRequest);
+                }
+
+                if (paramRequest.Broker == Global.Brk_Setup_RigSpecificRigStateSetup)
+                {
+                    RigStateSetupMgr objRigStateSetup = new RigStateSetupMgr();
+                    return objRigStateSetup.getData(paramRequest);
+                }
+
+
 
 
                 BrokerResponse objResponse = paramRequest.createResponseObject();
