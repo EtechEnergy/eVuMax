@@ -71,8 +71,8 @@ namespace eVuMax.DataBroker.DataServiceManager
                     {
                         try
                         {
-                            //objSettings = JsonConvert.DeserializeObject<SettingValue>(strSetings);
-                            objSettings = (Dictionary<string, SettingValue>)JsonConvert.DeserializeObject(strSetings);
+                            objSettings = JsonConvert.DeserializeObject<Dictionary<string, SettingValue>>(strSetings);
+                            //objSettings = (Dictionary<string, SettingValue>)JsonConvert.DeserializeObject(strSetings);
                         }
                         catch (Exception ex)
                         {

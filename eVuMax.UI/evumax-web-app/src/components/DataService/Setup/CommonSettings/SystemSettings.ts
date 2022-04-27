@@ -104,10 +104,12 @@ export class SystemSettings {
 
     constructor() {
         
+        
+        this.setDefaultSetting(enumSettingsIDs.LogWITSMLTransactions, "false");
         this.setDefaultSetting(enumSettingsIDs.AlarmAcknowledgement, "");
         this.setDefaultSetting(enumSettingsIDs.LogFolder, "");
         this.setDefaultSetting(enumSettingsIDs.DigitSignificance, "");
-        this.setDefaultSetting(enumSettingsIDs.IgnoreNegative, "");
+        this.setDefaultSetting(enumSettingsIDs.IgnoreNegative, "true");
         this.setDefaultSetting(enumSettingsIDs.DepthLogFrequency, "");
         this.setDefaultSetting(enumSettingsIDs.TimeLogFrequency, "");
         this.setDefaultSetting(enumSettingsIDs.TrajectoryFrequency, "");

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ComboBox, DropDownList, Input, Label, TabStrip, TabStripSelectEventArguments, TabStripTab, TimePicker } from '@progress/kendo-react-all'
+import { DropDownList, Input, Label, TabStrip, TabStripSelectEventArguments, TabStripTab } from '@progress/kendo-react-all'
 import { Checkbox, MaskedTextBox, NumericTextBox } from '@progress/kendo-react-inputs'
 import React, { Component } from 'react'
 import "./CommonSettings.css"
@@ -11,24 +11,16 @@ import BrokerRequest from '../../../../broker/BrokerRequest'
 import BrokerParameter from '../../../../broker/BrokerParameter'
 import GlobalMod from "../../../../objects/global";
 import { Util } from "../../../../Models/eVuMax";
-import { SchedulerEditTaskShowRemoveDialogContext } from "@progress/kendo-react-scheduler/dist/npm/context";
+import { convertMapToDictionaryJSON } from "../../../../utilFunctions/utilFunctions";
+
 
 
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
 
 export default class CommonSettings extends Component {
-  state = {
-    selectedTab: 0,
-    objSettings: new SystemSettings(),
-    objSettings_: [] as SettingValue[],
-    Image: {} as any,
-    cmbPageSize: new comboData(),
-    cmbOrientation: new comboData(),
-    cmbTimeZone: new comboData(),
-    DayTimeFrom: "",
-    DayTimeTo: "",
-  }
+  SystemSettingsList = new Map();
+
   AxiosSource = axios.CancelToken.source();
   AxiosConfig = { cancelToken: this.AxiosSource.token };
 
@@ -36,45 +28,115 @@ export default class CommonSettings extends Component {
   OrientationList: comboData[] = [];
   TimeZoneList: comboData[] = [];
 
+  state = {
+    selectedTab: 0,
+    // objSettings: new SystemSettings(),
+    objSettings_: this.SystemSettingsList,
+    Image: {} as any,
+    cmbPageSize: new comboData(),
+    cmbOrientation: new comboData(),
+    cmbTimeZone: new comboData(),
+    DayTimeFrom: "",
+    DayTimeTo: "",
+  }
+
+  
+  componentWillMount(): void {
+    debugger;
+    if (_gMod._userId == "" || _gMod._userId == undefined) {
+      window.location.href = "/evumaxapp/";
+      return;
+  }
+    this.initializeSystemSettings();
+  }
+
   componentDidMount() {
-    
-    
+
+
     this.generateCombo();
     this.LoadSetting();
   };
 
-  setdata=async (objData: any)=>{
-  try {
-    let edited: any = {};
-    edited.settings = Object.values(objData.settings);
-    await  this.setState({
-      objSettings: edited,
-    });
-
-     console.log("state",this.state.objSettings.settings);
-
-    //set Combodata
-
-    
-    for (let index = 0; index < this.pageSizeList.length; index++) {
+  initializeSystemSettings = () => {
+    try {
+      let objSystemSettings: SystemSettings = new SystemSettings();
       debugger;
-      const element = this.pageSizeList[index];
-      if(element.id == this.state.objSettings.settings[10].Value){
-        
-        this.setState({
-          cmbPageSize:element
-        });
-        break;
-        
-      }
-      
-    }
+      Object.values(objSystemSettings.settings).forEach((objItem: SettingValue) => {
+        this.SystemSettingsList.set(objItem.SettingID, objItem);
+      });
 
-    
-  } catch (error) {
-    
+    } catch (error) {
+
+    }
   }
-}
+
+  setdata = async (objData: any) => {
+    try {
+      // let edited: any = {};
+      // edited.settings = Object.values(objData.settings);
+      let objMap = new Map();
+      Object.values(objData.settings).forEach((objItem: SettingValue) => {
+        objMap.set(objItem.SettingID, objItem);
+      });
+
+
+      // await this.setState({
+      //   //objSettings: edited,
+      //   objSettings_: new Map()
+      // });
+
+      await this.setState({
+        objSettings_: objMap
+      });
+
+
+
+
+
+      //set Combodata
+      //pageSizeList
+      for (let index = 0; index < this.pageSizeList.length; index++) {
+        const element = this.pageSizeList[index];
+
+        if (element.id == this.state.objSettings_.get(enumSettingsIDs.PageSize).Value) {
+          this.setState({
+            cmbPageSize: element
+          });
+          break;
+        }
+      }
+
+      //OrientationList
+      for (let index = 0; index < this.OrientationList.length; index++) {
+        const element = this.OrientationList[index];
+
+        if (element.id == this.state.objSettings_.get(enumSettingsIDs.Orientation).Value) {
+
+          this.setState({
+            cmbOrientation: element
+          });
+          break;
+        }
+      }
+
+      //TimeZoneList
+      for (let index = 0; index < this.TimeZoneList.length; index++) {
+        const element = this.TimeZoneList[index];
+
+        if (element.id == this.state.objSettings_.get(enumSettingsIDs.TimeZone).Value) {
+
+          this.setState({
+            cmbTimeZone: element
+          });
+          break;
+        }
+      }
+
+
+    } catch (error) {
+
+    }
+  }
 
   LoadSetting = () => {
     try {
@@ -90,42 +152,42 @@ export default class CommonSettings extends Component {
       //objBrokerRequest.Parameters.push(objParameter);
 
       axios
-      .get(_gMod._getData, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-        params: { paramRequest: JSON.stringify(objBrokerRequest) },
-      })
-      .then((res) => {
-        const objData = JSON.parse(res.data.Response);
-        debugger;
-        console.log(objData);
-        if (res.data.RequestSuccessfull) {
-          if(objData!=undefined || objData !=""){
-            
-            this.setdata(objData);
+        .get(_gMod._getData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+        })
+        .then((res) => {
+          const objData = JSON.parse(res.data.Response);
+          debugger;
+          console.log(objData);
+          if (res.data.RequestSuccessfull) {
+            if (objData != undefined || objData != "") {
+
+              this.setdata(objData);
+            }
+
+          } else {
+            // Error
           }
-         
-        } else {
-          // Error
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
+        })
+        .catch((error) => {
+          if (error.response) {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            // this.errors(error.response.message);
+          } else if (error.request) {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            console.log("error.request");
+          } else {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            console.log("Error", error);
+          }
           // return <CustomeNotifications Key="success" Icon={false}  />
-          // this.errors(error.response.message);
-        } else if (error.request) {
-          // return <CustomeNotifications Key="success" Icon={false}  />
-          console.log("error.request");
-        } else {
-          // return <CustomeNotifications Key="success" Icon={false}  />
-          console.log("Error", error);
-        }
-        // return <CustomeNotifications Key="success" Icon={false}  />
-        console.log("rejected");
-        this.setState({ isProcess: false });
-      });
+          console.log("rejected");
+          this.setState({ isProcess: false });
+        });
 
 
     } catch (error) {
@@ -269,77 +331,158 @@ export default class CommonSettings extends Component {
     });
   }
 
-  handleChangeDropDown = (event: any, fieldName: string) => {
+  handleChangeDropDown = (objItem: any, fieldName: string) => {
 
 
     debugger;
 
-    let edited = this.state.objSettings;
-    let value = event.value;
+    let edited = this.state.objSettings_;
+    let value = objItem.value;
     let index: number = 0;
 
     if (fieldName == enumSettingsIDs.PageSize) {
-      index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
-      if (index > -1) {
-        edited.settings[index].Value = value.id;
+      //index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
+      // if (index > -1) {
+      //   edited.settings[index].Value = value.id;
 
+      //   this.setState({
+      //     cmbPageSize: value,
+      //     objSettings: edited
+
+      //   });
+      // }
+      if (edited.has(fieldName)) {
+        let objSetting: SettingValue = edited.get(fieldName);
+        objSetting.Value = value.id;
+        edited.set(fieldName, objSetting);
         this.setState({
+          objSettings_: edited,
           cmbPageSize: value,
-          objSettings: edited
-
         });
       }
+
+
+
     }
     if (fieldName == enumSettingsIDs.Orientation) {
-      index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
-      if (index > -1) {
-        edited.settings[index].Value = value.id;
+      // index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
+      // if (index > -1) {
+      //   edited.settings[index].Value = value.id;
 
+      //   this.setState({
+      //     cmbOrientation: value,
+      //     objSettings: edited
+
+      //   });
+      // }
+
+      if (edited.has(fieldName)) {
+        let objSetting: SettingValue = edited.get(fieldName);
+        objSetting.Value = value.id;
+        edited.set(fieldName, objSetting);
         this.setState({
+          objSettings_: edited,
           cmbOrientation: value,
-          objSettings: edited
-
         });
       }
     }
 
     if (fieldName == enumSettingsIDs.TimeZone) {
-      index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
-      if (index > -1) {
-        edited.settings[index].Value = value.id;
+      debugger;
+      // index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
+      // if (index > -1) {
+      //   edited.settings[index].Value = value.id;
 
+      //   this.setState({
+      //     cmbTimeZone: value,
+      //     objSettings: edited
+
+      //   });
+      // }
+      if (edited.has(fieldName)) {
+        let objSetting: SettingValue = edited.get(fieldName);
+        objSetting.Value = value.id;
+        edited.set(fieldName, objSetting);
         this.setState({
+          objSettings_: edited,
           cmbTimeZone: value,
-          objSettings: edited
-
         });
       }
+
     }
 
   }
 
   handleChange = (objItem: any, fieldName: string) => {
 
+
+    // let edited: any = this.state.objSettings;
+    // let index: number = 0;
+    // index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
+    // if (index > -1) {
+    //   edited.settings[index].Value = objItem.value;
+    //   this.setState({
+    //     objSettings: edited
+    //   });
+    // }
+
     debugger;
-    let edited: any = this.state.objSettings;
+    let edited = new Map();
+    edited = this.state.objSettings_;
     let index: number = 0;
-    index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
-    if (index > -1) {
-      edited.settings[index].Value = objItem.value;
+    //index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);
+    if (edited.has(fieldName)) {
+      let objSetting: SettingValue = edited.get(fieldName);
+      objSetting.Value = objItem.value;
+      edited.set(fieldName, objSetting);
       this.setState({
-        objSettings: edited
+        objSettings_: edited
       });
     }
+
+
   }
 
-  save = () => {
-    //console.log("save Settings", this.state.objSettings);
+  cancel=()=>{
     try {
+      
+      window.location.href = "/evumaxapp/dashboard/home";
+
+    } catch (error) {
+      
+    }
+  }
+  save = () => {
+
+    try {
+      ;
+      let objBrokerRequest = new BrokerRequest();
+      objBrokerRequest.Module = "DataService";
+      objBrokerRequest.Broker = "SetupCommonSetting";
+      objBrokerRequest.Function = "SaveSystemSettings";
+
+     
+
+      let LocalSettings = [];
+
+      for (let key of this.state.objSettings_.keys()) {
+        
+        let objSettingValue: SettingValue = this.state.objSettings_.get(key);
+        LocalSettings.push(objSettingValue);
+      }
+
+      debugger;
+
+      LocalSettings = convertMapToDictionaryJSON(LocalSettings);
+
+
+      let objParameter: BrokerParameter = new BrokerParameter("Settings", JSON.stringify(LocalSettings));
+      objBrokerRequest.Parameters.push(objParameter);
+
+      objParameter = new BrokerParameter("UserID", _gMod._userId);
+      objBrokerRequest.Parameters.push(objParameter);
+
       this.AxiosSource = axios.CancelToken.source();
-
-
-
-
       axios
         .get(_gMod._performTask, {
           cancelToken: this.AxiosSource.token,
@@ -405,21 +548,21 @@ export default class CommonSettings extends Component {
   getFiles(Image: any, FieldName: string) {
 
 
-    this.setState({ Image: Image });
+    // this.setState({ Image: Image });
 
-    let edited: any = this.state.objSettings;
-    //"data:image/jpeg;base64,"
+    // let edited: any = this.state.objSettings;
+    // //"data:image/jpeg;base64,"
 
-    let index: number = 0;
-    index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === FieldName);
+    // let index: number = 0;
+    // index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === FieldName);
 
-    if (index > -1) {
+    // if (index > -1) {
 
-      edited.settings[index].Value = Image.base64.substr(23);
-      this.setState({
-        objSettings: edited
-      });
-    }
+    //   edited.settings[index].Value = Image.base64.substr(23);
+    //   this.setState({
+    //     objSettings: edited
+    //   });
+    // }
 
   }
 
@@ -446,11 +589,11 @@ export default class CommonSettings extends Component {
               </button>
               <button
                 type="button"
-                // onClick={this.Cancel}
+                 onClick={this.cancel}
                 className="btn-custom btn-custom-primary ml-1"
               >
                 {/* <FontAwesomeIcon icon={faTimes} className="mr-2" /> */}
-                Cancel
+                Close
               </button>
             </span>
           </div>
@@ -462,15 +605,17 @@ export default class CommonSettings extends Component {
             <TabStripTab title="Logging">
               <div className="m-3 p-1">
                 <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Log Folder</Label>
-                <Input type="File" style={{ width: "500px" }} 
-                // value={this.state.objSettings.settings[1].Value}
-                onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LogFolder) }} />
+                <Input style={{ width: "500px" }}
+                  // value={this.state.objSettings.settings[1].Value}
+                  value={this.state.objSettings_.get(enumSettingsIDs.LogFolder.toString()).Value}
+                  onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LogFolder) }} />
 
                 <div className="row pt-3 ml-1">
                   <span className="mr-3">
                     <Checkbox
-                     // value={this.state.objSettings.settings[0].Value}
-                      //value={this.state.objSettings_[0].Value}
+                      // value={this.state.objSettings.settings[0].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.LogWITSMLTransactions.toString()).Value == "true" ? true : false}
+
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LogWITSMLTransactions) }}
                       label={"Log WITSML Transactions"}
                     />
@@ -483,11 +628,15 @@ export default class CommonSettings extends Component {
               <div className='m-2 p-2'>
                 <label className='mr-2'>Digit Significance in Data Tooltip
                 </label>
-                <Input value={this.state.objSettings.settings[2].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DigitSignificance) }} type='number'></Input>
+                <Input
+                  //value={this.state.objSettings.settings[2].Value} 
+                  value={this.state.objSettings_.get(enumSettingsIDs.DigitSignificance.toString()).Value}
+                  onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DigitSignificance) }} type='number'></Input>
                 <div className="row ml-1">
                   <span className="mt-3">
                     <Checkbox
-                      value={this.state.objSettings.settings[3].Value}
+                      //value={this.state.objSettings.settings[3].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.IgnoreNegative.toString()).Value == "true" ? true : false}
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.IgnoreNegative) }}
                       label={"Ignore Negative Values"}
                     />
@@ -500,44 +649,70 @@ export default class CommonSettings extends Component {
               <div className='m-2 p-2'>
                 <div className="row">
                   <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Data Services Server IP</Label>
-                  <Input type='text' value={this.state.objSettings.settings[22].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DServerIP) }}></Input>
+                  <Input type='text'
+                    //value={this.state.objSettings.settings[22].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.DServerIP.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DServerIP) }}>
+
+                  </Input>
                 </div>
                 <div className="row mt-2">
                   <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Time Log Range Download Threshold</Label>
-                  <Input type='text' value={this.state.objSettings.settings[24].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DownloadChunkSize) }}></Input>
+                  <Input type='text'
+                    //  value={this.state.objSettings.settings[24].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.DownloadChunkSize.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DownloadChunkSize) }}></Input>
                   <Label style={{ alignSelf: "flex-end" }}>Seconds</Label>
                 </div>
 
                 <div className="row mt-4 mb-2" style={{ fontSize: "large" }}><Label>Depth Log __________________________________________________</Label></div>
 
                 <div className="row"><Label className='mr-2' style={{ alignSelf: "flex-end" }}>Depth Offset</Label>
-                  <Input type='text' value={this.state.objSettings.settings[8].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DepthOffset) }}></Input>
+                  <Input type='text'
+                    //value={this.state.objSettings.settings[8].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.DepthOffset.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DepthOffset) }}></Input>
                   <Label style={{ alignSelf: "flex-end" }}>ft</Label> </div>
 
                 <div className="row mt-4 mb-2" style={{ fontSize: "large" }}>Realtime Download ___________________________________________</div>
 
                 <div className="row mt-2"><Label className='mr-5' style={{ alignSelf: "flex-end" }}>Time Log Download Frequency</Label>
-                  <Input type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[5].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.TimeLogFrequency) }} />
+                  <Input type='number' style={{ width: "70px" }}
+                    //value={this.state.objSettings.settings[5].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.TimeLogFrequency.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.TimeLogFrequency) }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>Seconds</Label> </div>
 
                 <div className="row mt-2"><Label className='mr-5' style={{ alignSelf: "flex-end" }}>Depth Log Download Frequency</Label>
-                  <Input type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[4].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DepthLogFrequency) }} />
+                  <Input type='number' style={{ width: "70px" }}
+                    //value={this.state.objSettings.settings[4].Value}
+                    value={this.state.objSettings_.get(enumSettingsIDs.DepthLogFrequency.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DepthLogFrequency) }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>Seconds</Label> </div>
 
                 <div className="row mt-2"><Label className='mr-3' style={{ alignSelf: "flex-end" }}>Trajectory Log Download Frequency</Label>
 
                   {/* see this as ref To Vimal */}
-                  <Input value={this.state.objSettings.settings[6].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.TrajectoryFrequency) }} type='number' style={{ width: "70px" }} />
+                  <Input
+                    //value={this.state.objSettings.settings[6].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.TrajectoryFrequency.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.TrajectoryFrequency) }} type='number' style={{ width: "70px" }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>Seconds</Label> </div>
 
                 <div className="row mt-4 mb-2" style={{ fontSize: "large" }}>Realtime Download ___________________________________________</div>
 
                 <div className="row"><Label className='mr-5' style={{ alignSelf: "flex-end" }}>Trigger Alarm if no time data is received for</Label>
-                  <Input type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[9].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.TimeDataAlarmTime) }} />
+                  <Input type='number' style={{ width: "70px" }}
+                    //value={this.state.objSettings.settings[9].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.TimeDataAlarmTime.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.TimeDataAlarmTime) }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>Minutes</Label> </div>
 
                 <div className="row"><Label className='mr-5' style={{ alignSelf: "flex-end" }}>Trigger Alarm if no Depth data is received for</Label>
-                  <Input type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[10].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DepthDataAlarmTime) }} />
+                  <Input type='number' style={{ width: "70px" }}
+                    //value={this.state.objSettings.settings[10].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.DepthDataAlarmTime.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DepthDataAlarmTime) }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>Minutes</Label> </div>
 
                 {/* <div className="row mr-2"><Label className='mr-5' style={{ alignSelf: "flex-end" }}>Stop download if no data is coming for</Label>
@@ -550,7 +725,9 @@ export default class CommonSettings extends Component {
                 <div className="row">
                   <span className="mt-3">
                     <Checkbox
-                      value={this.state.objSettings.settings[20].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.OptimizeDisplay) }}
+                      //value={this.state.objSettings.settings[20].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.OptimizeDisplay.toString()).Value == "" ? false : this.state.objSettings_.get(enumSettingsIDs.OptimizeDisplay.toString()).Value}
+                      onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.OptimizeDisplay) }}
                       // onChange={this.tglRemoveWells}
                       //checked={this.state.removeWells}
                       label={"Optimize display for speed"}
@@ -561,7 +738,9 @@ export default class CommonSettings extends Component {
                 <div className="row">
                   <span className="mt-3">
                     <Checkbox
-                      value={this.state.objSettings.settings[21].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.UseDataPaging) }}
+                      //value={this.state.objSettings.settings[21].Value} 
+                      value={this.state.objSettings_.get(enumSettingsIDs.UseDataPaging.toString()).Value == "" ? false : this.state.objSettings_.get(enumSettingsIDs.UseDataPaging.toString()).Value}
+                      onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.UseDataPaging) }}
                       // onChange={this.tglRemoveWells}
                       //checked={this.state.removeWells}
                       label={"Use Paging in the Rig State Documents"}
@@ -569,9 +748,17 @@ export default class CommonSettings extends Component {
                   </span>
 
                 </div>
-                <div className="row mt-2"><Label className='mr-2' style={{ alignSelf: "flex-end" }}>Data Page Size </Label><Input className='ml-4' type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[11].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DataPageSize) }} />
+                <div className="row mt-2"><Label className='mr-2' style={{ alignSelf: "flex-end" }}>Data Page Size </Label>
+                  <Input className='ml-4' type='number' style={{ width: "70px" }}
+                    //value={this.state.objSettings.settings[11].Value}
+                    value={this.state.objSettings_.get(enumSettingsIDs.DataPageSize.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DataPageSize) }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>days</Label> </div>
-                <div className="row"><Label>Overlap Size  </Label><Input className='ml-5' type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[12].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.OverlapSize) }} />
+                <div className="row"><Label>Overlap Size  </Label>
+                  <Input className='ml-5' type='number' style={{ width: "70px" }}
+                    //value={this.state.objSettings.settings[12].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.OverlapSize.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.OverlapSize) }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>days</Label> </div>
               </div>
             </TabStripTab>
@@ -616,19 +803,35 @@ export default class CommonSettings extends Component {
                 <div className="row mt-4 mb-2" style={{ fontSize: "large" }}>Margins : </div>
                 <div className="row">
                   <div className="col-12 mt-2 mb-2" style={{ display: "flex", justifyContent: "center" }}>
-                    <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Top</Label><Input className='ml-4' type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[17].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.TopMargin) }} />
+                    <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Top</Label>
+                    <Input className='ml-4' type='number' style={{ width: "70px" }}
+                      //  value={this.state.objSettings.settings[17].Value} 
+                      value={this.state.objSettings_.get(enumSettingsIDs.TopMargin.toString()).Value}
+                      onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.TopMargin) }} />
                   </div>
                   <div className="col-12 mt-2 mb-2" style={{ display: "flex", justifyContent: "end" }}>
                     <div className="col-6">
-                      <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Left</Label><Input className='ml-4' type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[16].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LeftMargin) }} />
+                      <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Left</Label>
+                      <Input className='ml-4' type='number' style={{ width: "70px" }}
+                        //                       value={this.state.objSettings.settings[16].Value} 
+                        value={this.state.objSettings_.get(enumSettingsIDs.LeftMargin.toString()).Value}
+                        onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LeftMargin) }} />
                     </div>
                     <div className="col-4">
-                      <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Right</Label><Input className='ml-4' type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[18].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.RightMargin) }} />
+                      <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Right</Label>
+                      <Input className='ml-4' type='number' style={{ width: "70px" }}
+                        //value={this.state.objSettings.settings[18].Value} 
+                        value={this.state.objSettings_.get(enumSettingsIDs.RightMargin.toString()).Value}
+                        onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.RightMargin) }} />
                     </div>
 
                   </div>
                   <div className="col-12 mt-2 mb-2" style={{ display: "flex", justifyContent: "center" }}>
-                    <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Bottom</Label><Input className='ml-4' type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[19].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.BottomMargin) }} />
+                    <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Bottom</Label>
+                    <Input className='ml-4' type='number' style={{ width: "70px" }}
+                      //value={this.state.objSettings.settings[19].Value} 
+                      value={this.state.objSettings_.get(enumSettingsIDs.BottomMargin.toString()).Value}
+                      onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.BottomMargin) }} />
                   </div>
                 </div>
               </div>
@@ -662,24 +865,35 @@ export default class CommonSettings extends Component {
                   <Label>Sound File for Red Alarm State</Label>
                 </div>
                 <div className="row">
-                  <Input type="File" style={{ width: "500px" }} value={this.state.objSettings.settings[25].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SoundFileRed) }} />
+                  <Input type="text" style={{ width: "500px" }}
+                    //value={this.state.objSettings.settings[25].Value}
+                    value={this.state.objSettings_.get(enumSettingsIDs.SoundFileRed.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SoundFileRed) }} />
                 </div>
                 <div className="row mt-3">
                   <Label>Sound File for Yellow Alarm State</Label>
                 </div>
                 <div className="row">
-                  <Input type="File" style={{ width: "500px" }} value={this.state.objSettings.settings[26].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SoundFileYellow) }} />
+                  <Input type="text" style={{ width: "500px" }}
+                    //value={this.state.objSettings.settings[26].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.SoundFileYellow.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SoundFileYellow) }} />
                 </div>
                 <div className="row mt-3">
                   <Label>Sound File forRemarks</Label>
                 </div>
                 <div className="row">
-                  <Input type="File" style={{ width: "500px" }} value={this.state.objSettings.settings[27].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SoundFileRemarks) }} />
+                  <Input type="text" style={{ width: "500px" }}
+                    //value={this.state.objSettings.settings[27].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.SoundFileRemarks.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SoundFileRemarks) }} />
                 </div>
                 <div className="row">
                   <span className="mt-3">
                     <Checkbox
-                      value={this.state.objSettings.settings[28].Value}
+                      //value={this.state.objSettings.settings[28].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.WellCheckEnabled.toString()).Value == "" ? false : this.state.objSettings_.get(enumSettingsIDs.WellCheckEnabled.toString()).Value}
+
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.WellCheckEnabled) }}
 
 
@@ -691,7 +905,8 @@ export default class CommonSettings extends Component {
                 <div className="row">
                   <span className="mt-3">
                     <Checkbox
-                      value={this.state.objSettings.settings[29].Value}
+                      //value={this.state.objSettings.settings[29].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.AlarmAcknowledgement.toString()).Value}
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.AlarmAcknowledgement) }}
                       label={"Alarm Acknowledgement"}
                     />
@@ -706,20 +921,34 @@ export default class CommonSettings extends Component {
 
                 <div className="row">
                   <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Chat Server Domain </Label>
-                  <Input type='text' value={this.state.objSettings.settings[34].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.ChatServerDomain) }}></Input></div>
+                  <Input type='text'
+                    //value={this.state.objSettings.settings[34].Value}
+                    value={this.state.objSettings_.get(enumSettingsIDs.ChatServerDomain.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.ChatServerDomain) }}>
+                  </Input></div>
                 <div className="row">
                   <Label className='mr-5' style={{ alignSelf: "flex-end" }}>Support Email </Label>
-                  <Input type='text' value={this.state.objSettings.settings[35].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SupportEmail) }}></Input></div>
+                  <Input type='text'
+                    //value={this.state.objSettings.settings[35].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.SupportEmail.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SupportEmail) }}></Input></div>
                 <div className="row">
                   <Label className='mr-5' style={{ alignSelf: "flex-end", marginLeft: "26px" }}>Host Name  </Label>
-                  <Input type='text' value={this.state.objSettings.settings[37].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.chatHostName) }}></Input></div>
+                  <Input type='text'
+                    //value={this.state.objSettings.settings[37].Value}
+                    value={this.state.objSettings_.get(enumSettingsIDs.chatHostName.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.chatHostName) }}></Input></div>
                 <div className="row">
                   <Label className='mr-5' style={{ alignSelf: "flex-end", marginLeft: "65px" }}>Port</Label>
-                  <Input type='text' value={this.state.objSettings.settings[38].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.chatPort) }}></Input></div>
+                  <Input type='text'
+                    //value={this.state.objSettings.settings[38].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.chatPort.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.chatPort) }}></Input></div>
                 <div className="row">
                   <span className="mt-3">
                     <Checkbox
-                      value={this.state.objSettings.settings[39].Value}
+                      //value={this.state.objSettings.settings[39].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.chatUseSSL.toString()).Value == "" ? true : this.state.objSettings_.get(enumSettingsIDs.chatUseSSL.toString()).Value}
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.chatUseSSL) }}
                       label={"Use SSL"}
                     />
@@ -733,7 +962,8 @@ export default class CommonSettings extends Component {
                 <div className="row">
                   <span className="mt-3">
                     <Checkbox
-                      value={this.state.objSettings.settings[40].Value}
+                      //value={this.state.objSettings.settings[40].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.ShareBroomstickDouments.toString()).Value == "" ? false : this.state.objSettings_.get(enumSettingsIDs.ShareBroomstickDouments.toString()).Value}
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.ShareBroomstickDouments) }}
                       label={"Share Documents with all users"}
                     />
@@ -742,12 +972,18 @@ export default class CommonSettings extends Component {
                 </div>
                 <div className="row">
                   <Label className='mr-2' style={{ alignSelf: "flex-end" }}>RigState recalculation wait period RigState recalculation wait period </Label>
-                  <Input className='ml-4' type='number' style={{ width: "70px" }} value={this.state.objSettings.settings[41].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.WaitTime) }} />
+                  <Input className='ml-4' type='number' style={{ width: "70px" }}
+                    //value={this.state.objSettings.settings[41].Value} 
+                    value={this.state.objSettings_.get(enumSettingsIDs.WaitTime.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.WaitTime) }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>Milliseconds</Label>
                 </div>
                 <div className="row">
-                  {/* <Label className='mr-2' style={{alignSelf:"flex-end"}}>Company Logo </Label> */}
-                  <FileInputComponent
+                  <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Company Logo </Label>
+                  <Input className='ml-4' type='number' style={{ width: "70px" }}
+                    value={this.state.objSettings_.get(enumSettingsIDs.CompanyLogo.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.CompanyLogo) }} />
+                  {/* <FileInputComponent
                     labelText="Company Logo"
                     labelStyle={{ fontSize: 14 }}
                     multiple={false}
@@ -755,11 +991,14 @@ export default class CommonSettings extends Component {
                     callbackFunction={(file_arr) => { this.getFiles(file_arr, enumSettingsIDs.CompanyLogo) }}
                     accept="image/jpeg"
 
-                  />
+                  /> */}
                 </div>
                 <div className="row">
-                  {/* <Label className='mr-2' style={{alignSelf:"flex-end"}}>Company Logo 2</Label>  */}
-                  <FileInputComponent
+                  <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Company Logo 2</Label>
+                  <Input className='ml-4' type='number' style={{ width: "70px" }}
+                    value={this.state.objSettings_.get(enumSettingsIDs.CompanyLogo2.toString()).Value}
+                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.CompanyLogo2) }} />
+                  {/* <FileInputComponent
                     labelText="Company Logo 2"
                     labelStyle={{ fontSize: 14 }}
                     multiple={false}
@@ -767,7 +1006,7 @@ export default class CommonSettings extends Component {
                     callbackFunction={(file_arr) => { this.getFiles(file_arr, enumSettingsIDs.CompanyLogo2) }}
                     accept="image/jpeg"
 
-                  />
+                  /> */}
                 </div>
                 <div className="row">
                   <Label className='mr-2' style={{ alignSelf: "flex-end" }}>DayTime Hours From</Label>
@@ -776,7 +1015,8 @@ export default class CommonSettings extends Component {
                       mask="00:00"
                       defaultValue='06:00'
                       width="50px"
-                      value={this.state.objSettings.settings[44].Value}
+                      // value={this.state.objSettings.settings[44].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.DayTimeFrom.toString()).Value}
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DayTimeFrom) }}
 
                     />
@@ -787,7 +1027,8 @@ export default class CommonSettings extends Component {
                       mask="00:00"
                       defaultValue='18:00'
                       width="50px"
-                      value={this.state.objSettings.settings[45].Value}
+                      //value={this.state.objSettings.settings[45].Value}
+                      value={this.state.objSettings_.get(enumSettingsIDs.DayTimeTo.toString()).Value}
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DayTimeTo) }}
                     />
                     HH: MM
