@@ -72,9 +72,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\VuMaxDR.Data.dll</HintPath>
     </Reference>
-    <Reference Include="VuMaxDR.Data.Objects, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>E:\LatestVuMax Data Objects\VuMaxDR.Data.Objects\VuMaxDR.Data.Objects\bin\Debug\VuMaxDR.Data.Objects.dll</HintPath>
+    <Reference Include="VuMaxDR.Data.Objects">
+      <HintPath>..\lib\VuMaxDR.Data.Objects.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

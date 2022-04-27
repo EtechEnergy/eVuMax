@@ -60,7 +60,7 @@
     "file-base64": "^1.0.0",
     "guid-typescript": "^1.0.9",
     "jquery": "^3.5.1",
-    "moment": "^2.27.0",
+    "moment": "^2.29.3",
     "node-sass": "^4.14.1",
     "popper.js": "^1.16.1",
     "react": "^16.13.1",

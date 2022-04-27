@@ -27,6 +27,7 @@ import DrlgStandPlot from "../components/Widgets/DrlgStandPlot/DrlgStandPlot";
 import TripReport from "../components/Widgets/TripReport/TripReport";
 import  BroomstickPlot from "../components/Widgets/BroomstickDocs/BroomstickPlot";
 import AdvKPI from "../components/Widgets/AdvKPI/AdvKPI";
+import CommonSettings from "../components/DataService/Setup/CommonSettings/CommonSettings";
 
 
 
@@ -241,7 +242,13 @@ const dashbordRoutes = [
     layout: "/dashboard",
   },
 
-  
+  {
+    path: "/CommonSettings",
+    name: "CommonSettings",
+    icon: "",
+    component: CommonSettings,
+    layout: "/dashboard",
+  },
 ];
 
 export default dashbordRoutes;

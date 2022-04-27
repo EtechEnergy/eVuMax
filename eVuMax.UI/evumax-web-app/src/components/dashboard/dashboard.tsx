@@ -8,7 +8,7 @@ import "./dashboard.css";
 import VuMaxLogo from "../../images/VuMaxLogo_Small.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faCog, faListAlt, faHome, faDownload, faInfo, faSignOutAlt, faKey } from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle, faCog, faListAlt, faHome, faDownload, faInfo, faSignOutAlt, faKey, faDatabase } from "@fortawesome/free-solid-svg-icons";
 import { Route, NavLink, Switch } from "react-router-dom";
 import { AppState } from "../../redux/store/configureStore";
 import { connect } from "react-redux";
@@ -221,7 +221,19 @@ export class Dashboard extends React.Component<Props> {
     //   showPopupMenu: !showMenu
     // });
   };
+  getDataBaseMenu = (e: any) => {
+    if (e.target != document.getElementById("leftSidePopup1")) {
+      console.log("You clicked outside");
+    } else {
+      console.log("You clicked inside");
+    }
 
+    $(".LeftSidePopUp1").toggle();
+    // let showMenu = this.state.showPopupMenu;
+    // this.setState({
+    //   showPopupMenu: !showMenu
+    // });
+  };
   toggleMenu = (e: any) => {
     // if (e.target != document.getElementById("leftSidePopup")) {
     //   console.log("You clicked outside");
@@ -233,10 +245,12 @@ export class Dashboard extends React.Component<Props> {
     //   showPopupMenu: false
     // });
     $(".LeftSidePopUp").hide();
+    $(".LeftSidePopUp1").hide();
   };
 
   ManageTheme = () => {
     $(".LeftSidePopUp").toggle();
+    $(".LeftSidePopUp1").toggle();
     // window.location.href = '/dashboard/manage-theme';
   };
 
@@ -424,7 +438,17 @@ export class Dashboard extends React.Component<Props> {
                 </NavLink>
               </li>
               
-
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  exact
+                  to="/dashboard/CommonSettings"
+                >
+                  <FontAwesomeIcon icon={faDatabase} />
+                  
+                </NavLink>
+              </li>
+              
               {/* Nishant 27-11-2020 Witsml Explorer */}
               {/* <li className="nav-item">
                 <NavLink
@@ -531,6 +555,7 @@ export class Dashboard extends React.Component<Props> {
                         <Route exact path="/dashboard/settings" component={DahboardSettings}></Route>
                     </Switch> */}
         </div>
+      
       </div>
     );
   }
