@@ -602,7 +602,7 @@ export default class CommonSettings extends Component {
         <br />
         <div className="row">
           <TabStrip selected={this.state.selectedTab} onSelect={this.handleSelectTab} tabPosition="left">
-            <TabStripTab title="Logging">
+            {/* <TabStripTab title="Logging">
               <div className="m-3 p-1">
                 <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Log Folder</Label>
                 <Input style={{ width: "500px" }}
@@ -623,7 +623,7 @@ export default class CommonSettings extends Component {
                 </div>
 
               </div>
-            </TabStripTab>
+            </TabStripTab> */}
             <TabStripTab title="Formatting">
               <div className='m-2 p-2'>
                 <label className='mr-2'>Digit Significance in Data Tooltip
@@ -861,7 +861,7 @@ export default class CommonSettings extends Component {
             <TabStripTab title="Alarms">
               <div className="m-2 p-2">
 
-                <div className="row mt-3">
+                {/* <div className="row mt-3">
                   <Label>Sound File for Red Alarm State</Label>
                 </div>
                 <div className="row">
@@ -887,7 +887,7 @@ export default class CommonSettings extends Component {
                     //value={this.state.objSettings.settings[27].Value} 
                     value={this.state.objSettings_.get(enumSettingsIDs.SoundFileRemarks.toString()).Value}
                     onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.SoundFileRemarks) }} />
-                </div>
+                </div> */}
                 <div className="row">
                   <span className="mt-3">
                     <Checkbox
@@ -978,36 +978,20 @@ export default class CommonSettings extends Component {
                     onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.WaitTime) }} />
                   <Label className='ml-2' style={{ alignSelf: "flex-end" }}>Milliseconds</Label>
                 </div>
-                <div className="row">
+                {/* <div className="row">
                   <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Company Logo </Label>
                   <Input className='ml-4' type='number' style={{ width: "70px" }}
                     value={this.state.objSettings_.get(enumSettingsIDs.CompanyLogo.toString()).Value}
                     onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.CompanyLogo) }} />
-                  {/* <FileInputComponent
-                    labelText="Company Logo"
-                    labelStyle={{ fontSize: 14 }}
-                    multiple={false}
-                    imagePreview={true}
-                    callbackFunction={(file_arr) => { this.getFiles(file_arr, enumSettingsIDs.CompanyLogo) }}
-                    accept="image/jpeg"
-
-                  /> */}
+                 
                 </div>
                 <div className="row">
                   <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Company Logo 2</Label>
                   <Input className='ml-4' type='number' style={{ width: "70px" }}
                     value={this.state.objSettings_.get(enumSettingsIDs.CompanyLogo2.toString()).Value}
                     onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.CompanyLogo2) }} />
-                  {/* <FileInputComponent
-                    labelText="Company Logo 2"
-                    labelStyle={{ fontSize: 14 }}
-                    multiple={false}
-                    imagePreview={false}
-                    callbackFunction={(file_arr) => { this.getFiles(file_arr, enumSettingsIDs.CompanyLogo2) }}
-                    accept="image/jpeg"
-
-                  /> */}
-                </div>
+               
+                </div> */}
                 <div className="row">
                   <Label className='mr-2' style={{ alignSelf: "flex-end" }}>DayTime Hours From</Label>
                   <span style={{ marginLeft: "10px", marginRight: "10px" }}>
