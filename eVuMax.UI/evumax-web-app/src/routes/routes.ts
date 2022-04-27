@@ -34,6 +34,9 @@ import AdvKPI from "../components/Widgets/AdvKPI/AdvKPI";
 //DS
 import QcRules from "../components/dashboard/dataservice/setup/qcrules/QcRules";
 
+import CommonSettings from "../components/DataService/Setup/CommonSettings/CommonSettings"
+
+
 
 //DrlgConnSummary2
 const dashbordRoutes = [
@@ -256,7 +259,18 @@ const dashbordRoutes = [
     layout: "/dashboard",
   },
   
+
+  {
+    path: "/CommonSettings",
+    name: "CommonSettings",
+    icon: "",
+    component: CommonSettings,
+    layout: "/dashboard",
+  },
   //==================
+
+
+
 ];
 
 export default dashbordRoutes;

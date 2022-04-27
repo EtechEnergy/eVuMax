@@ -11,6 +11,7 @@ import BrokerRequest from '../../../../broker/BrokerRequest'
 import BrokerParameter from '../../../../broker/BrokerParameter'
 import GlobalMod from "../../../../objects/global";
 import { Util } from "../../../../Models/eVuMax";
+import { SchedulerEditTaskShowRemoveDialogContext } from "@progress/kendo-react-scheduler/dist/npm/context";
 
 
 let _gMod = new GlobalMod();
@@ -20,6 +21,7 @@ export default class CommonSettings extends Component {
   state = {
     selectedTab: 0,
     objSettings: new SystemSettings(),
+    objSettings_: [] as SettingValue[],
     Image: {} as any,
     cmbPageSize: new comboData(),
     cmbOrientation: new comboData(),
@@ -35,14 +37,50 @@ export default class CommonSettings extends Component {
   TimeZoneList: comboData[] = [];
 
   componentDidMount() {
+    
+    
     this.generateCombo();
     this.LoadSetting();
   };
+
+  setdata=async (objData: any)=>{
+  try {
+    let edited: any = {};
+    edited.settings = Object.values(objData.settings);
+    await  this.setState({
+      objSettings: edited,
+    });
+
+     console.log("state",this.state.objSettings.settings);
+
+    //set Combodata
+
+    
+    for (let index = 0; index < this.pageSizeList.length; index++) {
+      debugger;
+      const element = this.pageSizeList[index];
+      if(element.id == this.state.objSettings.settings[10].Value){
+        
+        this.setState({
+          cmbPageSize:element
+        });
+        break;
+        
+      }
+      
+    }
+
+    
+  } catch (error) {
+    
+  }
+}
+
   LoadSetting = () => {
     try {
       let objBrokerRequest = new BrokerRequest();
-      objBrokerRequest.Module = "DataService.Manager";
-      objBrokerRequest.Broker = "DataService";
+      objBrokerRequest.Module = "DataService";
+      objBrokerRequest.Broker = "SetupCommonSetting";
       objBrokerRequest.Function = "loadSystemSettings";
 
       //let objParameter: BrokerParameter = new BrokerParameter("objSetup", JSON.stringify(this.state.se));
@@ -50,6 +88,44 @@ export default class CommonSettings extends Component {
 
       //objParameter = new BrokerParameter("WellID", this.WellId);
       //objBrokerRequest.Parameters.push(objParameter);
+
+      axios
+      .get(_gMod._getData, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+        params: { paramRequest: JSON.stringify(objBrokerRequest) },
+      })
+      .then((res) => {
+        const objData = JSON.parse(res.data.Response);
+        debugger;
+        console.log(objData);
+        if (res.data.RequestSuccessfull) {
+          if(objData!=undefined || objData !=""){
+            
+            this.setdata(objData);
+          }
+         
+        } else {
+          // Error
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          // return <CustomeNotifications Key="success" Icon={false}  />
+          // this.errors(error.response.message);
+        } else if (error.request) {
+          // return <CustomeNotifications Key="success" Icon={false}  />
+          console.log("error.request");
+        } else {
+          // return <CustomeNotifications Key="success" Icon={false}  />
+          console.log("Error", error);
+        }
+        // return <CustomeNotifications Key="success" Icon={false}  />
+        console.log("rejected");
+        this.setState({ isProcess: false });
+      });
 
 
     } catch (error) {
@@ -386,12 +462,15 @@ export default class CommonSettings extends Component {
             <TabStripTab title="Logging">
               <div className="m-3 p-1">
                 <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Log Folder</Label>
-                <Input type="File" style={{ width: "500px" }} value={this.state.objSettings.settings[1].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LogFolder) }} />
+                <Input type="File" style={{ width: "500px" }} 
+                // value={this.state.objSettings.settings[1].Value}
+                onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LogFolder) }} />
 
                 <div className="row pt-3 ml-1">
                   <span className="mr-3">
                     <Checkbox
-                      value={this.state.objSettings.settings[0].Value}
+                     // value={this.state.objSettings.settings[0].Value}
+                      //value={this.state.objSettings_[0].Value}
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LogWITSMLTransactions) }}
                       label={"Log WITSML Transactions"}
                     />

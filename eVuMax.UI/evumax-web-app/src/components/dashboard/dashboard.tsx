@@ -8,7 +8,7 @@ import "./dashboard.css";
 import VuMaxLogo from "../../images/VuMaxLogo_Small.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faCog, faListAlt, faHome, faDownload, faInfo, faSignOutAlt, faKey,  faClock, faGlobe, faCalendarTimes, faBookOpen, faSpinner  } from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle, faCog, faListAlt, faHome, faDownload, faInfo, faSignOutAlt, faKey,  faClock, faGlobe, faCalendarTimes, faBookOpen, faSpinner, faDatabase  } from "@fortawesome/free-solid-svg-icons";
 import { Route, NavLink, Switch } from "react-router-dom";
 import { AppState } from "../../redux/store/configureStore";
 import { connect } from "react-redux";
@@ -26,6 +26,7 @@ import BrokerRequest from "../../broker/BrokerRequest";
 import BrokerParameter from "../../broker/BrokerParameter";
 import axios from "axios";
 import { Util } from "../../Models/eVuMax";
+ import DataServiceICO from "../../images/dataService.png"
 
 
 type Props = LinkStateProps & LinkDispatchProps;
@@ -466,7 +467,8 @@ export class Dashboard extends React.Component<Props> {
                   id="DSSetupMenu"     
                   className="nav-link"
                 >
-                  <FontAwesomeIcon icon={faSpinner} />
+                  <FontAwesomeIcon icon={faDatabase} />
+                  {/* <img src={require('../../images/dataService.png')} /> */}
                 </a>
 
               </li>
@@ -641,6 +643,12 @@ export class Dashboard extends React.Component<Props> {
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/QcRules">
                   {/* <a onClick={this.ManageTheme} > */}
                   QC Rules
+                </NavLink>
+              </li>
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/CommonSettings">
+                  {/* <a onClick={this.ManageTheme} > */}
+                  Commom Settings
                 </NavLink>
               </li>
             </ol>
