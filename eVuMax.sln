@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eVuMax.API", "eVuMax.API\eVuMax.API.csproj", "{C0646829-198B-4764-A52A-BDA16BDC686E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eVuMax.DataBroker", "eVuMax.DataBroker\eVuMax.DataBroker.csproj", "{D410EF8D-47ED-4B64-A70D-F1B32037F791}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F6576DD9-E362-4645-B2E9-1FE5CE979BF0} = {F6576DD9-E362-4645-B2E9-1FE5CE979BF0}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eVuMax.UI", "eVuMax.UI\eVuMax.UI.csproj", "{8FBC4A01-34B5-409C-A439-5BF6B9D4FD1E}"
 EndProject

@@ -21,6 +21,7 @@ namespace eVuMax.DataBroker
         public const string Mod_DataObject_Manager = "DataObject.Manager";
         public const string Mod_Broomstick_Manager = "Broomstick.Manager";
         public const string Mod_AdvKPI = "AdvKPI.Manager";  //11-March-2022 Prath
+        
 
 
         //Nishant
@@ -34,6 +35,7 @@ namespace eVuMax.DataBroker
         public const int ServerLogMaxLimit = 100; //Nishant 27-11-2020
         public const string DRLG_STAND_PLOT = "DrlgStandPlot";
         public const string TripReportBroker = "TripReportBroker"; //Nishant 18-01-2022
+        
 
         #endregion
 
@@ -93,6 +95,13 @@ namespace eVuMax.DataBroker
         #endregion
 
 
+
+        #region DataService
+        public const string Mod_DataService = "DataService";// Nisahnt 25-04-2022
+        public const string Brk_Setup_QCRules = "SetupQCRules";  //Nisahnt 25-04-2022
+        public const string Brk_Setup_CommonSetting = "SetupCommonSetting";  //Nisahnt 25-04-2022
+
+        #endregion
         /// <summary>
         /// Extracts Parameter list from request object and returns it
         /// </summary>
