@@ -23,7 +23,7 @@ export default class CommonSettings extends Component {
     Image: {} as any,
     cmbPageSize: new comboData(),
     cmbOrientation: new comboData(),
-    cmbTimeZone:new comboData(),
+    cmbTimeZone: new comboData(),
     DayTimeFrom: "",
     DayTimeTo: "",
   }
@@ -31,18 +31,19 @@ export default class CommonSettings extends Component {
   AxiosConfig = { cancelToken: this.AxiosSource.token };
 
   pageSizeList: comboData[] = [];
-  OrientationList: comboData[]=[];
-  TimeZoneList:comboData[]=[];
+  OrientationList: comboData[] = [];
+  TimeZoneList: comboData[] = [];
 
   componentDidMount() {
     this.generateCombo();
+    this.LoadSetting();
   };
-LoadSetting=()=>{
-  try {
-    let objBrokerRequest = new BrokerRequest();
-      objBrokerRequest.Module = "Broomstick.Manager";
-      objBrokerRequest.Broker = "DataManager";
-      objBrokerRequest.Function = "SaveSetup";
+  LoadSetting = () => {
+    try {
+      let objBrokerRequest = new BrokerRequest();
+      objBrokerRequest.Module = "DataService.Manager";
+      objBrokerRequest.Broker = "DataService";
+      objBrokerRequest.Function = "loadSystemSettings";
 
       //let objParameter: BrokerParameter = new BrokerParameter("objSetup", JSON.stringify(this.state.se));
       //objBrokerRequest.Parameters.push(objParameter);
@@ -51,13 +52,13 @@ LoadSetting=()=>{
       //objBrokerRequest.Parameters.push(objParameter);
 
 
-  } catch (error) {
-    
+    } catch (error) {
+
+    }
   }
-}
   generateCombo = () => {
     try {
-     
+
       this.pageSizeList.length = 0;
       this.pageSizeList.push(new comboData("A0", "0"));
       this.pageSizeList.push(new comboData("A1", "1"));
@@ -74,11 +75,11 @@ LoadSetting=()=>{
       this.pageSizeList.push(new comboData("Legal", "12"));
       this.pageSizeList.push(new comboData("Letter", "13"));
 
-      this.OrientationList.length=0;
+      this.OrientationList.length = 0;
       this.OrientationList.push(new comboData("Portrait", "0"));
       this.OrientationList.push(new comboData("Landscape", "1"));
-     
-      this.TimeZoneList.length=0;
+
+      this.TimeZoneList.length = 0;
       this.TimeZoneList.push(new comboData("-12:00:00 Dateline Standard Time", "Dateline Standard Time"));
       this.TimeZoneList.push(new comboData("-11:00:00 UTC-11", "UTC-11"));
       this.TimeZoneList.push(new comboData("-10:00:00 Hawaiian Standard Time", "Hawaiian Standard Time"));
@@ -184,10 +185,10 @@ LoadSetting=()=>{
 
     }
     this.setState({
-     
+
       DayTimeFrom: this.state.DayTimeFrom,
       DayTimeTo: this.state.DayTimeTo,
-    
+
 
     });
   }
@@ -257,68 +258,68 @@ LoadSetting=()=>{
 
   save = () => {
     //console.log("save Settings", this.state.objSettings);
-try {
-  this.AxiosSource = axios.CancelToken.source();
-
-  
-
-
-  axios
-    .get(_gMod._performTask, {
-      cancelToken: this.AxiosSource.token,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-      params: { paramRequest: JSON.stringify(objBrokerRequest) },
-    })
-    .then((res) => {
-     
-      if (res.data.RequestSuccessfull == false) {
-        //Warnings Notifications
-        let warnings: string = res.data.Warnings;
-        if (warnings.trim() != "") {
-          let warningList = [];
-          warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
-          this.setState({
-            warningMsg: warningList
-          });
-        }
-      }
+    try {
+      this.AxiosSource = axios.CancelToken.source();
 
 
 
 
-      Util.StatusSuccess("Data successfully retrived  ");
-     
+      axios
+        .get(_gMod._performTask, {
+          cancelToken: this.AxiosSource.token,
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+        })
+        .then((res) => {
+
+          if (res.data.RequestSuccessfull == false) {
+            //Warnings Notifications
+            let warnings: string = res.data.Warnings;
+            if (warnings.trim() != "") {
+              let warningList = [];
+              warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+              this.setState({
+                warningMsg: warningList
+              });
+            }
+          }
 
 
-    })
-    .catch((error) => {
-      alert("error " + error.message);
-      Util.StatusError(error.message);
-      // this.setState({
-      //   isProcess: false,
-      // });
-      //this.forceUpdate();
 
-      if (error.response) {
-        // return <CustomeNotifications Key="success" Icon={false}  />
-        // this.errors(error.response.message);
-      } else if (error.request) {
-        // return <CustomeNotifications Key="success" Icon={false}  />
-        console.log("error.request");
-      } else {
-        // return <CustomeNotifications Key="success" Icon={false}  />
-        console.log("Error", error);
-      }
-      // return <CustomeNotifications Key="success" Icon={false}  />
-      console.log("rejected");
-      this.setState({ isProcess: false });
-    });
-} catch (error) {
-  
-}
+
+          Util.StatusSuccess("Data successfully retrived  ");
+
+
+
+        })
+        .catch((error) => {
+          alert("error " + error.message);
+          Util.StatusError(error.message);
+          // this.setState({
+          //   isProcess: false,
+          // });
+          //this.forceUpdate();
+
+          if (error.response) {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            // this.errors(error.response.message);
+          } else if (error.request) {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            console.log("error.request");
+          } else {
+            // return <CustomeNotifications Key="success" Icon={false}  />
+            console.log("Error", error);
+          }
+          // return <CustomeNotifications Key="success" Icon={false}  />
+          console.log("rejected");
+          this.setState({ isProcess: false });
+        });
+    } catch (error) {
+
+    }
 
 
 
@@ -384,8 +385,8 @@ try {
           <TabStrip selected={this.state.selectedTab} onSelect={this.handleSelectTab} tabPosition="left">
             <TabStripTab title="Logging">
               <div className="m-3 p-1">
-              <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Log Folder</Label>
-              <Input type="File" style={{ width: "500px" }} value={this.state.objSettings.settings[1].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LogFolder) }} />
+                <Label className='mr-2' style={{ alignSelf: "flex-end" }}>Log Folder</Label>
+                <Input type="File" style={{ width: "500px" }} value={this.state.objSettings.settings[1].Value} onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.LogFolder) }} />
 
                 <div className="row pt-3 ml-1">
                   <span className="mr-3">
@@ -521,7 +522,7 @@ try {
                 </div>
                 <div className="row">
                   <Label className='mr-4' style={{ alignSelf: "flex-end" }}>Orientation</Label>
-                 
+
                   <DropDownList
                     name="Orientation"
                     //label='Page Size'
@@ -559,8 +560,8 @@ try {
                   <Label>Time Zone </Label>
                 </div>
                 <div className="row">
-                <DropDownList
-                style={{width:"500px"}}
+                  <DropDownList
+                    style={{ width: "500px" }}
                     name="TimeZone"
                     //label='Page Size'
                     data={this.TimeZoneList}
@@ -698,7 +699,7 @@ try {
                       width="50px"
                       value={this.state.objSettings.settings[44].Value}
                       onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DayTimeFrom) }}
-                    
+
                     />
                     To
                   </span>
@@ -708,7 +709,7 @@ try {
                       defaultValue='18:00'
                       width="50px"
                       value={this.state.objSettings.settings[45].Value}
-                    onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DayTimeTo) }}
+                      onChange={(e: any) => { this.handleChange(e, enumSettingsIDs.DayTimeTo) }}
                     />
                     HH: MM
                   </span>
