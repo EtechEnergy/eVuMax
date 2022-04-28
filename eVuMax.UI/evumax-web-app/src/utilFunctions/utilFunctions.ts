@@ -318,3 +318,14 @@ export function removeUnderScoreFromID(pValue: string){
     
   }
 }
+
+export function HEXToVBColor(rrggbb) {
+  var bbggrr = rrggbb.substr(4, 2) + rrggbb.substr(2, 2) + rrggbb.substr(0, 2);
+  return parseInt(bbggrr, 16);
+}
+
+export function VBColorToHEX(i) {
+  var bbggrr =  ("000000" + i.toString(16)).slice(-6);
+  var rrggbb = bbggrr.substring(4, 2) + bbggrr.substring(2, 2) + bbggrr.substring(0, 2);
+  return "#" + rrggbb;
+}
