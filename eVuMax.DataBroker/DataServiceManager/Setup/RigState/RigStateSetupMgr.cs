@@ -1,7 +1,9 @@
 ﻿using eVuMax.DataBroker.Broker;
+using eVuMax.DataBroker.DataServiceManager.Setup.RigState;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +33,10 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                 {
                     VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
                     objRigState = VuMaxDR.Data.Objects.rigState.loadCommonRigStateSetup(ref paramRequest.objDataService);
+
+                    RigState.eRigStateItem objItem = new RigState.eRigStateItem();
                     
+
                     objResponse.RequestSuccessfull = true;
                     objResponse.Response = JsonConvert.SerializeObject(objRigState);
                     return objResponse;
@@ -102,12 +107,15 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                 if (paramRequest.Function == saveCommonRigStateSetup)
                 {
                     VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
+                    Dictionary<int, eRigStateItem> objRigStateItems = new Dictionary<int, eRigStateItem>();
 
                     string userID = "";
                     string strObjRigStateSetup = "";
+                    string strRigStateItems = "";
                     
                     userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
                     strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
+                    strRigStateItems = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateItems")).FirstOrDefault().ParamValue.ToString();
 
                     if (strObjRigStateSetup != "")
                     {
@@ -127,8 +135,32 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                         }
                     }
 
+                    if (strRigStateItems != "")
+                    {
+                        try
+                        {
+                            objRigStateItems = JsonConvert.DeserializeObject<Dictionary<int, eRigStateItem>>(strRigStateItems);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject objRigStateItems";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
 
 
+                    foreach (eRigStateItem objItem in objRigStateItems.Values)
+                    {
+                        foreach (VuMaxDR.Data.Objects.rigStateItem objItem1 in objRigState.rigStates.Values)
+                        {
+                            objItem1.Color = ColorTranslator.FromHtml(objItem.Color).ToArgb();
+                        }
+                    }
 
 
                     string LastError = "";
