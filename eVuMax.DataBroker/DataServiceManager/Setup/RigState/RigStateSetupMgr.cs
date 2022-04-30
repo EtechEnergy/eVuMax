@@ -230,7 +230,8 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                     string strObjRigStateSetup = "";
                     string strRigStateItems = "";
                     string strUnknownColor = "";
-                    string RigID = "";
+                    string RigName = "";
+                    string EditMode = "";
 
 
                     try
@@ -239,7 +240,8 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                         strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
                         strRigStateItems = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateItems")).FirstOrDefault().ParamValue.ToString();
                         strUnknownColor = paramRequest.Parameters.Where(x => x.ParamName.Contains("UnknownColor")).FirstOrDefault().ParamValue.ToString();
-                        RigID = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
+                        RigName = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
+                        EditMode = paramRequest.Parameters.Where(x => x.ParamName.Contains("EditMode")).FirstOrDefault().ParamValue.ToString();
                     }
                     catch (Exception ex)
                     {
@@ -328,8 +330,13 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
 
                     string LastError = "";
+                    
+                    if(EditMode == "A")
+                    {
+                        objRigState.ID = Guid.NewGuid().ToString(); // eVuMax.DataBroker.Common.ObjectIDFactory.getObjectID();
+                    }
 
-                    if (VuMaxDR.Data.Objects.rigState.SaveRigRigStateSetup(ref paramRequest.objDataService, RigID, objRigState, ref LastError))
+                    if (VuMaxDR.Data.Objects.rigState.SaveRigRigStateSetup(ref paramRequest.objDataService, RigName, objRigState, ref LastError))
                     {
                         objResponse.RequestSuccessfull = true;
                         objResponse.Response = JsonConvert.SerializeObject(objRigState);
