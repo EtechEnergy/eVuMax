@@ -112,11 +112,16 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                     string userID = "";
                     string strObjRigStateSetup = "";
                     string strRigStateItems = "";
-                    
+                    string strUnknownColor = "";
+
+
                     userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
                     strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
                     strRigStateItems = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateItems")).FirstOrDefault().ParamValue.ToString();
+                    strUnknownColor = paramRequest.Parameters.Where(x => x.ParamName.Contains("UnknownColor")).FirstOrDefault().ParamValue.ToString();
 
+
+                  
                     if (strObjRigStateSetup != "")
                     {
                         try
@@ -134,6 +139,26 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                         }
                     }
+
+
+                    if (strUnknownColor != "")
+                    {
+                        try
+                        {
+                            objRigState.UnknownColor = ColorTranslator.FromHtml(strUnknownColor).ToArgb();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject ObjRigState";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
 
                     if (strRigStateItems != "")
                     {
@@ -158,7 +183,14 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                     {
                         foreach (VuMaxDR.Data.Objects.rigStateItem objItem1 in objRigState.rigStates.Values)
                         {
-                            objItem1.Color = ColorTranslator.FromHtml(objItem.Color).ToArgb();
+
+                            
+                            if(objItem1.Number == objItem.Number)
+                            {
+                                objItem1.Color = ColorTranslator.FromHtml(objItem.Color).ToArgb();
+                                break;
+                            }
+                            
                         }
                     }
 
@@ -180,7 +212,10 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                         return objResponse;
                     }
 
-                    
+                    objResponse.RequestSuccessfull = true;
+                        objResponse.Response = JsonConvert.SerializeObject(objRigState);
+                        return objResponse;
+
 
                 }
 
