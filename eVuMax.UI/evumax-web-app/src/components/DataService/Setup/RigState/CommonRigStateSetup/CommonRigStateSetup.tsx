@@ -18,6 +18,7 @@ export default class CommonRigStateSetup extends Component {
         grdRigState: [] as any,
         objRigStateSetup: {} as any,
         warningMsg: [],
+        
     }
     AxiosSource = axios.CancelToken.source();
 
@@ -424,7 +425,7 @@ debugger;
                                             onChange={(e: any) => { this.handleChange(e, "HookloadCutOff") }}
                                         />
                                         <label className="valueLabelBack" >
-                                            --
+                                            {/* {this.state.objRigStateSetup.} */}
                                         </label>
                                     </div>
                                     <div className="">

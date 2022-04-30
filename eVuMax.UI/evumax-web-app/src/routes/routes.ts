@@ -36,6 +36,7 @@ import QcRules from "../components/dashboard/dataservice/setup/qcrules/QcRules";
 
 import CommonSettings from "../components/DataService/Setup/CommonSettings/CommonSettings"
 import CommonRigStateSetup from "../components/DataService/Setup/RigState/CommonRigStateSetup/CommonRigStateSetup";
+import RigSpecficRigStateSetup from "../components/DataService/Setup/RigState/RigSpecficRigStateSetup/RigSpecficRigStateSetup";
 
 
 
@@ -273,6 +274,13 @@ const dashbordRoutes = [
     name: "CommonRigStateSetup",
     icon: "",
     component: CommonRigStateSetup,
+    layout: "/dashboard",
+  },
+  {
+    path: "/RigSpecficRigStateSetup",
+    name: "RigSpecficRigStateSetup",
+    icon: "",
+    component: RigSpecficRigStateSetup,
     layout: "/dashboard",
   },
   //==================

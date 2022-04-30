@@ -236,7 +236,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                     try
                     {
-                        ID = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
+                        ID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ID")).FirstOrDefault().ParamValue.ToString();
                         strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
                         strRigStateItems = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateItems")).FirstOrDefault().ParamValue.ToString();
                         strUnknownColor = paramRequest.Parameters.Where(x => x.ParamName.Contains("UnknownColor")).FirstOrDefault().ParamValue.ToString();

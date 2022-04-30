@@ -651,6 +651,18 @@ export class Dashboard extends React.Component<Props> {
                   Commom Settings
                 </NavLink>
               </li>
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/CommonRigStateSetup">
+                  {/* <a onClick={this.ManageTheme} > */}
+                  Common RigState Setup
+                </NavLink>
+              </li>
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/RigSpecficRigStateSetup">
+                  {/* <a onClick={this.ManageTheme} > */}
+                  Rig Specfic RigState Setup
+                </NavLink>
+              </li>
             </ol>
           </ul>
 
