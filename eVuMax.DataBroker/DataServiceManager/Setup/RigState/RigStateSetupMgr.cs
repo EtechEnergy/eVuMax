@@ -226,22 +226,22 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                     VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
                     Dictionary<int, eRigStateItem> objRigStateItems = new Dictionary<int, eRigStateItem>();
 
-                    string userID = "";
+                    string ID = "";
                     string strObjRigStateSetup = "";
                     string strRigStateItems = "";
                     string strUnknownColor = "";
                     string RigName = "";
-                    string EditMode = "";
+                    //string EditMode = "";
 
 
                     try
                     {
-                        userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                        ID = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
                         strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
                         strRigStateItems = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateItems")).FirstOrDefault().ParamValue.ToString();
                         strUnknownColor = paramRequest.Parameters.Where(x => x.ParamName.Contains("UnknownColor")).FirstOrDefault().ParamValue.ToString();
-                        RigName = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
-                        EditMode = paramRequest.Parameters.Where(x => x.ParamName.Contains("EditMode")).FirstOrDefault().ParamValue.ToString();
+                        RigName = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigName")).FirstOrDefault().ParamValue.ToString();
+                        //EditMode = paramRequest.Parameters.Where(x => x.ParamName.Contains("EditMode")).FirstOrDefault().ParamValue.ToString();
                     }
                     catch (Exception ex)
                     {
@@ -331,9 +331,21 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                     string LastError = "";
                     
-                    if(EditMode == "A")
+                    if(ID == "")
                     {
                         objRigState.ID = Guid.NewGuid().ToString(); // eVuMax.DataBroker.Common.ObjectIDFactory.getObjectID();
+                    }
+                    else
+                    {
+                        if(paramRequest.objDataService.IsRecordExist("SELECT ID FROM VMX_RIG_RIGSTATE_SETUP WHERE LTRIM(RTRIM(UPPER(RIG_NAME)))='" + RigName.Trim().ToUpper() + "' AND ID<>'" + ID.Trim() + "'"))
+                        {
+                            
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Rig State setup of this rig already exist. Please enter different rig name";
+                            objResponse.Response = "";
+                            return objResponse;
+                        }
                     }
 
                     if (VuMaxDR.Data.Objects.rigState.SaveRigRigStateSetup(ref paramRequest.objDataService, RigName, objRigState, ref LastError))
