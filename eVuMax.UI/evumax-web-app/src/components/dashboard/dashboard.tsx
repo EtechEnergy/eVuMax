@@ -495,7 +495,7 @@ export class Dashboard extends React.Component<Props> {
                   
                 </NavLink>
               </li>
-              {/* <li className="nav-item">
+              <li className="nav-item">
                 <NavLink
                   className="nav-link"
                   exact
@@ -504,7 +504,7 @@ export class Dashboard extends React.Component<Props> {
                   <FontAwesomeIcon icon={faKey} />
                   
                 </NavLink>
-              </li> */}
+              </li>
               
 
               {/* Nishant 27-11-2020 Witsml Explorer */}

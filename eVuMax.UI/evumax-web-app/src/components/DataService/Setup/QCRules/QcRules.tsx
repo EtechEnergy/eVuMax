@@ -7,17 +7,21 @@ import {
   GridSelectionChangeEvent,
 
 } from "@progress/kendo-react-grid";
-import { BrokerRequest, Util } from '../../../../../Models/eVuMax';
-import { ClientLogger } from '../../../../ClientLogger/ClientLogger';
-import BrokerParameter from '../../../../../broker/BrokerParameter';
-import GlobalMod from '../../../../../objects/global';
+
+
 import { Button, Dialog } from '@progress/kendo-react-all';
-import { QCRule } from '../../../../../eVuMaxObjects/dataObjects/dataObjects';
-import QCRuleDialog from './QCRuleDialog';
 import { exit } from 'process';
 import { util } from 'typescript-collections';
-import * as utilFunc from '../../../../../utilFunctions/utilFunctions';
+
+import * as utilFunc from '../../../../../src/utilFunctions/utilFunctions';
 import { confirmAlert } from 'react-confirm-alert';
+import BrokerRequest from '../../../../broker/BrokerRequest';
+import { Util } from '../../../../Models/eVuMax';
+import { ClientLogger } from '../../../ClientLogger/ClientLogger';
+import BrokerParameter from '../../../../broker/BrokerParameter';
+import GlobalMod from '../../../../objects/global';
+import { QCRule } from '../../../../eVuMaxObjects/dataObjects/dataObjects';
+import QCRuleDialog from './QCRuleDialog';
 
 let _gMod = new GlobalMod();
 

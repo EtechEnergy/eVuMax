@@ -32,7 +32,7 @@ import AdvKPI from "../components/Widgets/AdvKPI/AdvKPI";
 
 
 //DS
-import QcRules from "../components/dashboard/dataservice/setup/qcrules/QcRules";
+import QcRules from "../components/DataService/Setup/QCRules/QcRules";// "../components/dashboard/dataservice/setup/qcrules/QcRules";
 
 import CommonSettings from "../components/DataService/Setup/CommonSettings/CommonSettings"
 import CommonRigStateSetup from "../components/DataService/Setup/RigState/CommonRigStateSetup/CommonRigStateSetup";
@@ -279,6 +279,13 @@ const dashbordRoutes = [
   {
     path: "/RigSpecficRigStateSetup",
     name: "RigSpecficRigStateSetup",
+    icon: "",
+    component: RigSpecficRigStateSetup,
+    layout: "/dashboard",
+  },
+  {
+    path: "/AlertSettings",
+    name: "AlertSettings",
     icon: "",
     component: RigSpecficRigStateSetup,
     layout: "/dashboard",
