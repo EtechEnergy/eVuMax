@@ -68,8 +68,8 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                 if (paramRequest.Broker == Global.Brk_Setup_QCRules)
                 {
-                    //CommonSettingsMgr objMgr = new CommonSettingsMgr();
-                    //return objMgr.performTask(paramRequest);
+                    QCRulesMgr objQCRulesMgr = new QCRulesMgr();
+                    return objQCRulesMgr.performTask(paramRequest);
                 }
 
                 if (paramRequest.Broker == Global.Brk_Setup_CommonRigStateSetup)
