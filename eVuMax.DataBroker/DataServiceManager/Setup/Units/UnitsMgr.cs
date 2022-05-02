@@ -44,13 +44,13 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
 
 
-//        Public objUnitDictionary As New UnitDictionary
-//Public objUnitConversion As New UnitConverter
-//    Public objUnitMappingDictionary As New UnitMappingDictionary
-//    Public objMappingManager As New mappingManager
+        //        Public objUnitDictionary As New UnitDictionary
+        //Public objUnitConversion As New UnitConverter
+        //    Public objUnitMappingDictionary As New UnitMappingDictionary
+        //    Public objMappingManager As New mappingManager
 
 
-        BrokerResponse IBroker.getData(BrokerRequest paramRequest)
+        public BrokerResponse getData(BrokerRequest paramRequest)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
 
 
-        BrokerResponse IBroker.performTask(BrokerRequest paramRequest)
+        public BrokerResponse performTask(BrokerRequest paramRequest)
         {
             BrokerResponse objResponse = paramRequest.createResponseObject();
 
