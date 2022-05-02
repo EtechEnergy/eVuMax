@@ -103,6 +103,9 @@ namespace eVuMax.DataBroker
         public const string Brk_Setup_CommonRigStateSetup = "CommonRigStateSetup";  //Nisahnt 25-04-2022
         public const string Brk_Setup_RigSpecificRigStateSetup = "RigSpecificRigStateSetup";  //Nisahnt 25-04-2022
 
+        public const string Brk_Setup_Units = "UnitSetup";  //Nisahnt 25-04-2022
+
+
 
         #endregion
         /// <summary>
