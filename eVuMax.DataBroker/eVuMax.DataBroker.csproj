@@ -72,7 +72,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\VuMaxDR.Data.dll</HintPath>
     </Reference>
-    <Reference Include="VuMaxDR.Data.Objects">
+    <Reference Include="VuMaxDR.Data.Objects, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\VuMaxDR.Data.Objects.dll</HintPath>
     </Reference>
   </ItemGroup>

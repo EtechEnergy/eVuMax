@@ -35,6 +35,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objRigStateSetup.getData(paramRequest);
                 }
 
+                
+                    if (paramRequest.Broker == Global.Brk_Setup_Units)
+                {
+                    UnitsMgr objUnitMgr = new UnitsMgr();
+                    return objUnitMgr.getData(paramRequest);
+                }
 
 
 
@@ -83,6 +89,14 @@ namespace eVuMax.DataBroker.DataServiceManager
                     RigStateSetupMgr objMgr = new RigStateSetupMgr();
                     return objMgr.performTask(paramRequest);
                 }
+
+
+                if (paramRequest.Broker == Global.Brk_Setup_Units)
+                {
+                    UnitsMgr objUnitMgr = new UnitsMgr();
+                    return objUnitMgr.performTask(paramRequest);
+                }
+
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
