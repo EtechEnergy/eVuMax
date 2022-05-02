@@ -2752,7 +2752,6 @@ export default class AdvKPI extends Component {
                                                 field="NOTES"
                                                 title="Notes"
                                                 width={50}
-
                                             />
 
                                             <GridColumn
