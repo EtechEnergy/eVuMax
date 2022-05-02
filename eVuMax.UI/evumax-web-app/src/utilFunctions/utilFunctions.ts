@@ -296,6 +296,7 @@ export function intToColor(num) {
   return "rgba(" + [r, g, b, a].join(",") + ")";
 }
 
+//Not used anywhere as on 29-04-2022
 export function ConvertRGBtoHex(RGB:string) {
   let colorArr = RGB.split(",");
 

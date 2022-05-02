@@ -1,7 +1,9 @@
 ﻿using eVuMax.DataBroker.Broker;
+using eVuMax.DataBroker.DataServiceManager.Setup.RigState;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +33,10 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                 {
                     VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
                     objRigState = VuMaxDR.Data.Objects.rigState.loadCommonRigStateSetup(ref paramRequest.objDataService);
+
+                   // RigState.eRigStateItem objItem = new RigState.eRigStateItem();
                     
+
                     objResponse.RequestSuccessfull = true;
                     objResponse.Response = JsonConvert.SerializeObject(objRigState);
                     return objResponse;
@@ -102,13 +107,21 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                 if (paramRequest.Function == saveCommonRigStateSetup)
                 {
                     VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
+                    Dictionary<int, eRigStateItem> objRigStateItems = new Dictionary<int, eRigStateItem>();
 
                     string userID = "";
                     string strObjRigStateSetup = "";
-                    
+                    string strRigStateItems = "";
+                    string strUnknownColor = "";
+
+
                     userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
                     strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
+                    strRigStateItems = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateItems")).FirstOrDefault().ParamValue.ToString();
+                    strUnknownColor = paramRequest.Parameters.Where(x => x.ParamName.Contains("UnknownColor")).FirstOrDefault().ParamValue.ToString();
 
+
+                  
                     if (strObjRigStateSetup != "")
                     {
                         try
@@ -128,7 +141,58 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                     }
 
 
+                    if (strUnknownColor != "")
+                    {
+                        try
+                        {
+                            objRigState.UnknownColor = ColorTranslator.FromHtml(strUnknownColor).ToArgb();
 
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject ObjRigState";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+
+                    if (strRigStateItems != "")
+                    {
+                        try
+                        {
+                            objRigStateItems = JsonConvert.DeserializeObject<Dictionary<int, eRigStateItem>>(strRigStateItems);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject objRigStateItems";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+
+                    foreach (eRigStateItem objItem in objRigStateItems.Values)
+                    {
+                        foreach (VuMaxDR.Data.Objects.rigStateItem objItem1 in objRigState.rigStates.Values)
+                        {
+
+                            
+                            if(objItem1.Number == objItem.Number)
+                            {
+                                objItem1.Color = ColorTranslator.FromHtml(objItem.Color).ToArgb();
+                                break;
+                            }
+                            
+                        }
+                    }
 
 
                     string LastError = "";
@@ -148,7 +212,10 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                         return objResponse;
                     }
 
-                    
+                    objResponse.RequestSuccessfull = true;
+                        objResponse.Response = JsonConvert.SerializeObject(objRigState);
+                        return objResponse;
+
 
                 }
 
@@ -157,31 +224,37 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                 if (paramRequest.Function == saveRigSpecificRigStateSetup)
                 {
                     VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
+                    Dictionary<int, eRigStateItem> objRigStateItems = new Dictionary<int, eRigStateItem>();
 
-                    string userID = "";
-                    string RigID = "";
+                    string ID = "";
                     string strObjRigStateSetup = "";
+                    string strRigStateItems = "";
+                    string strUnknownColor = "";
+                    string RigName = "";
+                    //string EditMode = "";
+
 
                     try
                     {
-                        RigID = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
-                        userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                        ID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ID")).FirstOrDefault().ParamValue.ToString();
                         strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
+                        strRigStateItems = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateItems")).FirstOrDefault().ParamValue.ToString();
+                        strUnknownColor = paramRequest.Parameters.Where(x => x.ParamName.Contains("UnknownColor")).FirstOrDefault().ParamValue.ToString();
+                        RigName = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigName")).FirstOrDefault().ParamValue.ToString();
+                        //EditMode = paramRequest.Parameters.Where(x => x.ParamName.Contains("EditMode")).FirstOrDefault().ParamValue.ToString();
                     }
                     catch (Exception ex)
                     {
-
-                        
-                    }
-
-                    if (RigID == "")
-                    {
                         objResponse = paramRequest.createResponseObject();
                         objResponse.RequestSuccessfull = false;
-                        objResponse.Warnings = "RigID is Blank";
+                        objResponse.Warnings = "Error Parameters not Proper";
                         objResponse.Response = "";
                         return objResponse;
+
+
                     }
+
+
 
                     if (strObjRigStateSetup != "")
                     {
@@ -202,10 +275,80 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                     }
 
 
+                    if (strUnknownColor != "")
+                    {
+                        try
+                        {
+                            objRigState.UnknownColor = ColorTranslator.FromHtml(strUnknownColor).ToArgb();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject ObjRigState";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+
+                    if (strRigStateItems != "")
+                    {
+                        try
+                        {
+                            objRigStateItems = JsonConvert.DeserializeObject<Dictionary<int, eRigStateItem>>(strRigStateItems);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject objRigStateItems";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+
+                    foreach (eRigStateItem objItem in objRigStateItems.Values)
+                    {
+                        foreach (VuMaxDR.Data.Objects.rigStateItem objItem1 in objRigState.rigStates.Values)
+                        {
+
+
+                            if (objItem1.Number == objItem.Number)
+                            {
+                                objItem1.Color = ColorTranslator.FromHtml(objItem.Color).ToArgb();
+                                break;
+                            }
+
+                        }
+                    }
+
 
                     string LastError = "";
+                    
+                    if(ID == "")
+                    {
+                        objRigState.ID = Guid.NewGuid().ToString(); // eVuMax.DataBroker.Common.ObjectIDFactory.getObjectID();
+                    }
+                    else
+                    {
+                        if(paramRequest.objDataService.IsRecordExist("SELECT ID FROM VMX_RIG_RIGSTATE_SETUP WHERE LTRIM(RTRIM(UPPER(RIG_NAME)))='" + RigName.Trim().ToUpper() + "' AND ID<>'" + ID.Trim() + "'"))
+                        {
+                            
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Rig State setup of this rig already exist. Please enter different rig name";
+                            objResponse.Response = "";
+                            return objResponse;
+                        }
+                    }
 
-                    if (VuMaxDR.Data.Objects.rigState.SaveRigRigStateSetup(ref paramRequest.objDataService,RigID, objRigState, ref LastError))
+                    if (VuMaxDR.Data.Objects.rigState.SaveRigRigStateSetup(ref paramRequest.objDataService, RigName, objRigState, ref LastError))
                     {
                         objResponse.RequestSuccessfull = true;
                         objResponse.Response = JsonConvert.SerializeObject(objRigState);
@@ -219,6 +362,70 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                         objResponse.Response = LastError;
                         return objResponse;
                     }
+
+                    //VuMaxDR.Data.Objects.rigState objRigState = new VuMaxDR.Data.Objects.rigState();
+
+                    //string userID = "";
+                    //string RigID = "";
+                    //string strObjRigStateSetup = "";
+
+                    //try
+                    //{
+                    //    RigID = paramRequest.Parameters.Where(x => x.ParamName.Contains("RigID")).FirstOrDefault().ParamValue.ToString();
+                    //    userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                    //    strObjRigStateSetup = paramRequest.Parameters.Where(x => x.ParamName.Contains("objRigStateSetup")).FirstOrDefault().ParamValue.ToString();
+                    //}
+                    //catch (Exception ex)
+                    //{
+
+
+                    //}
+
+                    //if (RigID == "")
+                    //{
+                    //    objResponse = paramRequest.createResponseObject();
+                    //    objResponse.RequestSuccessfull = false;
+                    //    objResponse.Warnings = "RigID is Blank";
+                    //    objResponse.Response = "";
+                    //    return objResponse;
+                    //}
+
+                    //if (strObjRigStateSetup != "")
+                    //{
+                    //    try
+                    //    {
+                    //        objRigState = JsonConvert.DeserializeObject<VuMaxDR.Data.Objects.rigState>(strObjRigStateSetup);
+
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        objResponse = paramRequest.createResponseObject();
+                    //        objResponse.RequestSuccessfull = false;
+                    //        objResponse.Warnings = "Error DeserializeObject ObjRigState";
+                    //        objResponse.Response = "";
+                    //        return objResponse;
+
+                    //    }
+                    //}
+
+
+
+                    //string LastError = "";
+
+                    //if (VuMaxDR.Data.Objects.rigState.SaveRigRigStateSetup(ref paramRequest.objDataService,RigID, objRigState, ref LastError))
+                    //{
+                    //    objResponse.RequestSuccessfull = true;
+                    //    objResponse.Response = JsonConvert.SerializeObject(objRigState);
+                    //    return objResponse;
+                    //}
+                    //else
+                    //{
+                    //    objResponse = paramRequest.createResponseObject();
+                    //    objResponse.RequestSuccessfull = false;
+                    //    objResponse.Warnings = LastError;
+                    //    objResponse.Response = LastError;
+                    //    return objResponse;
+                    //}
 
 
 

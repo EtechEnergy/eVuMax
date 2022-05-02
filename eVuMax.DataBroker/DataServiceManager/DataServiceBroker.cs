@@ -72,6 +72,18 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objQCRulesMgr.performTask(paramRequest);
                 }
 
+                if (paramRequest.Broker == Global.Brk_Setup_CommonRigStateSetup)
+                {
+                    RigStateSetupMgr objMgr = new RigStateSetupMgr();
+                    return objMgr.performTask(paramRequest);
+                }
+
+                if (paramRequest.Broker == Global.Brk_Setup_RigSpecificRigStateSetup)
+                {
+                    RigStateSetupMgr objMgr = new RigStateSetupMgr();
+                    return objMgr.performTask(paramRequest);
+                }
+
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";
