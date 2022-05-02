@@ -32,7 +32,7 @@ export default class RigSpecficRigStateSetup extends Component {
         // objSettings: new AutoSlideSettings(),
     }
     ID = "";
-    rigNameList: [];
+    rigNameList: string[] = [];
     AxiosSource = axios.CancelToken.source();
 
     componentDidMount = () => {
@@ -45,8 +45,9 @@ export default class RigSpecficRigStateSetup extends Component {
 
     }
 
-    loadRigSetupList = () => {
+    loadRigSetupList = async () => {
         try {
+            //
 
             objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "DataObject.Manager";
@@ -57,39 +58,101 @@ export default class RigSpecficRigStateSetup extends Component {
             objParameter.ParamValue = "SELECT ID, RIG_NAME FROM VMX_RIG_RIGSTATE_SETUP ORDER BY RIG_NAME";
             objBrokerRequest.Parameters.push(objParameter);
 
-            axios
-                .get(_gMod._getData, {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json;charset=UTF-8",
-                    },
-                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
-                })
+            const axiosrequest1 = axios.get(_gMod._getData, {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json;charset=UTF-8",
+                },
+                params: { paramRequest: JSON.stringify(objBrokerRequest) },
+            });
 
-                .then((res) => {
-                    debugger;
-                    const objData = JSON.parse(res.data.Response);
-                    // let unitComboData: comboData = new comboData("", "");
-                    // let unitList: comboData[] = [];
+            objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "DataObject.Manager";
+            objBrokerRequest.Function = "getTable";
+            objBrokerRequest.Broker = "WellBroker";
 
-                    this.setState({ grdRigNameList: objData });
+            objParameter.ParamName = "strSQL";
+            objParameter.ParamValue = "SELECT DISTINCT(RIG_NAME) FROM VMX_WELL WHERE RIG_NAME<>'' ORDER BY RIG_NAME";
+            objBrokerRequest.Parameters.push(objParameter);
 
-                })
-                .catch((error) => {
-                    if (error.response) {
-                        // return <CustomeNotifications Key="success" Icon={false}  />
-                        // this.errors(error.response.message);
-                    } else if (error.request) {
-                        // return <CustomeNotifications Key="success" Icon={false}  />
-                        console.log("error.request");
-                    } else {
-                        // return <CustomeNotifications Key="success" Icon={false}  />
-                        console.log("Error", error);
-                    }
-                    // return <CustomeNotifications Key="success" Icon={false}  />
-                    console.log("rejected");
-                    this.setState({ isProcess: false });
-                });
+
+            const axiosrequest2 = axios.get(_gMod._getData, {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json;charset=UTF-8",
+                },
+                params: { paramRequest: JSON.stringify(objBrokerRequest) },
+            });
+
+
+
+            axios.all([axiosrequest1, axiosrequest2]).then(axios.spread((...res) => {
+                debugger;
+                console.log(res[0]);
+                console.log(res[1]);
+
+                const objData = JSON.parse(res[0].data.Response);
+                let rigNameList = Object.values(objData);
+                console.log(rigNameList);
+
+                this.setState({ grdRigNameList: rigNameList });
+
+                const objData2 = JSON.parse(res[1].data.Response);
+                let rigNameList_: string[] = [];
+                for (let index = 0; index < objData2.length; index++) {
+                    const element = objData2[index];
+                    rigNameList_.push(element.RIG_NAME);
+
+                }
+
+                this.rigNameList = rigNameList_
+
+
+            }));
+
+
+            // objBrokerRequest = new BrokerRequest();
+            // objBrokerRequest.Module = "DataObject.Manager";
+            // objBrokerRequest.Function = "getTable";
+            // objBrokerRequest.Broker = "WellBroker";
+
+            // objParameter.ParamName = "strSQL";
+            // objParameter.ParamValue = "SELECT ID, RIG_NAME FROM VMX_RIG_RIGSTATE_SETUP ORDER BY RIG_NAME";
+            // objBrokerRequest.Parameters.push(objParameter);
+
+            // axios
+            //     .get(_gMod._getData, {
+            //         headers: {
+            //             Accept: "application/json",
+            //             "Content-Type": "application/json;charset=UTF-8",
+            //         },
+            //         params: { paramRequest: JSON.stringify(objBrokerRequest) },
+            //     })
+
+            //     .then((res) => {
+            //         debugger;
+            //         const objData = JSON.parse(res.data.Response);
+
+            //         this.setState({ grdRigNameList: objData });
+
+            //     })
+            //     .catch((error) => {
+            //         if (error.response) {
+            //             // return <CustomeNotifications Key="success" Icon={false}  />
+            //             // this.errors(error.response.message);
+            //         } else if (error.request) {
+            //             // return <CustomeNotifications Key="success" Icon={false}  />
+            //             console.log("error.request");
+            //         } else {
+            //             // return <CustomeNotifications Key="success" Icon={false}  />
+            //             console.log("Error", error);
+            //         }
+            //         // return <CustomeNotifications Key="success" Icon={false}  />
+            //         console.log("rejected");
+            //         this.setState({ isProcess: false });
+            //     });
+
+
 
 
 
@@ -100,7 +163,6 @@ export default class RigSpecficRigStateSetup extends Component {
 
     handleChange = (objItem: any, fieldName: string) => {
 
-
         let edited: any = this.state.objRigStateSetup;
 
         edited[fieldName] = objItem.value;
@@ -108,6 +170,12 @@ export default class RigSpecficRigStateSetup extends Component {
         this.setState({
             objRigStateSetup: edited
         });
+
+        if (fieldName == "rigName") {
+            this.setState({
+                rigName: objItem.value
+            });
+        }
 
         // let index: number = 0;
         // index = this.state.objRigStateSetup.settings.findIndex((d: any) => d.SettingID === fieldName);
@@ -269,13 +337,13 @@ export default class RigSpecficRigStateSetup extends Component {
             //Convert RGB Color to Hexa for each RigState Color
 
 
-         
+
 
             debugger;
-            let autoSlideSetupList :AutoSlideSettings[]=[];
+            let autoSlideSetupList: AutoSlideSettings[] = [];
             for (let index = 0; index < this.state.grdRigDepth.length; index++) {
-                const objItem:any = this.state.grdRigDepth[index];
-                
+                const objItem: any = this.state.grdRigDepth[index];
+
                 let objAutoSlide: AutoSlideSettings = new AutoSlideSettings();
                 objAutoSlide.FromDepth = objItem.FromDepth;
                 objAutoSlide.ToDepth = objItem.ToDepth;
@@ -285,7 +353,7 @@ export default class RigSpecficRigStateSetup extends Component {
 
             }
 
-            
+
 
 
             let localRigStateList: any = utilFunctions.CopyObject(this.state.grdRigState);
@@ -509,10 +577,10 @@ export default class RigSpecficRigStateSetup extends Component {
                                     }}  >Add</Button>
                                 </span>
                             </GridToolbar>
-                            <GridColumn
+                            {false &&  <GridColumn
                                 field="ID"
                                 title="ID"
-                            />
+                            />}
                             <GridColumn
                                 field="RIG_NAME"
                                 title="Rig Name"
@@ -561,7 +629,7 @@ export default class RigSpecficRigStateSetup extends Component {
                                     style={{ width: "300px" }}
                                     data={this.rigNameList}
                                     value={this.state.rigName}
-                                    //onChange={this.onChange}
+                                    onChange={(e: any) => { this.handleChange(e, "rigName") }}
                                     allowCustom={true}
                                 />
                             </div>
