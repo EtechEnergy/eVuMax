@@ -343,7 +343,7 @@ export default class RigSpecficRigStateSetup extends Component {
                 })
                 .then((res) => {
                     debugger;
-                    let objResponse = JSON.parse(res.data);
+                    let objResponse = JSON.parse(res.data.Response);
 
                     if (objResponse.RequestSuccessfull == false) {
                         //Warnings Notifications

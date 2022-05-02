@@ -350,9 +350,11 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                     if (VuMaxDR.Data.Objects.rigState.SaveRigRigStateSetup(ref paramRequest.objDataService, RigName, objRigState, ref LastError))
                     {
+                        objRigState= VuMaxDR.Data.Objects.rigState.loadRigRigStateSetup(ref paramRequest.objDataService, RigName);
                         objResponse.RequestSuccessfull = true;
-                        objResponse.Response = JsonConvert.SerializeObject(objRigState);
+                        objResponse.Response = "";
                         return objResponse;
+
                     }
                     else
                     {

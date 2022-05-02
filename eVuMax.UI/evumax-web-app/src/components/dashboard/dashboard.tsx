@@ -663,6 +663,12 @@ export class Dashboard extends React.Component<Props> {
                   Rig Specfic RigState Setup
                 </NavLink>
               </li>
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/UnitDictionary">
+                  {/* <a onClick={this.ManageTheme} > */}
+                  Unit Dictionary
+                </NavLink>
+              </li>
             </ol>
           </ul>
 
