@@ -4,6 +4,7 @@ import {
   Grid,
   GridColumn as Column,
   GridRow as Row,
+  GridSelectionChangeEvent,
 
 } from "@progress/kendo-react-grid";
 import { BrokerRequest, Util } from '../../../../../Models/eVuMax';
@@ -13,6 +14,10 @@ import GlobalMod from '../../../../../objects/global';
 import { Button, Dialog } from '@progress/kendo-react-all';
 import { QCRule } from '../../../../../eVuMaxObjects/dataObjects/dataObjects';
 import QCRuleDialog from './QCRuleDialog';
+import { exit } from 'process';
+import { util } from 'typescript-collections';
+import * as utilFunc from '../../../../../utilFunctions/utilFunctions';
+import { confirmAlert } from 'react-confirm-alert';
 
 let _gMod = new GlobalMod();
 
@@ -20,10 +25,12 @@ export default class QcRules extends Component {
   state = {
     grdData: [] as any,
     objQCRule: new QCRule,
-    showQCRuleDialog: false
+    showQCRuleDialog: false,
+    editMode: "",
+    selectedRuleID: ""
   }
 
-  objLogger: ClientLogger = new ClientLogger("DrillingSummary", _gMod._userId);
+  objLogger: ClientLogger = new ClientLogger("QCRules", _gMod._userId);
 
   componentDidMount = () => {
     try {
@@ -31,6 +38,31 @@ export default class QcRules extends Component {
     } catch (error) { }
   }
 
+
+  closeQCRuleDialog = () => {
+    try {
+
+      this.setState({ showQCRuleDialog: false });
+
+    } catch (error) {
+
+    }
+  }
+
+
+  okQCRuleDialog = async (objQCRule_: QCRule) => {
+    try {
+      debugger;
+      this.setState({ objQCRule: objQCRule_, showQCRuleDialog: false });
+
+      await this.loadQCRules();
+
+
+
+    } catch (error) {
+
+    }
+  }
 
   loadQCRules = () => {
     try {
@@ -68,7 +100,6 @@ export default class QcRules extends Component {
 
 
           let objData = JSON.parse(res.data.Response);
-          console.log("Drlg Summary data  -->", objData);
 
           //Warnings Notifications
           let warnings: string = res.data.Warnings;
@@ -85,8 +116,15 @@ export default class QcRules extends Component {
           }
 
 
-          debugger;
 
+
+          objData = Object.values(objData);
+          for (let index = 0; index < objData.length; index++) {
+            objData[index].RuleTypeName = objData[index].RuleName.split("~")[1];
+            objData[index].RuleName = objData[index].RuleName.split("~")[0];
+
+
+          }
           this.setState({
             grdData: Object.values(objData),
           });
@@ -169,7 +207,7 @@ export default class QcRules extends Component {
           }
 
 
-          debugger;
+
 
           this.setState({
             grdData: Object.values(objData),
@@ -196,21 +234,124 @@ export default class QcRules extends Component {
 
     }
   }
-  editQCRule = () => {
+  editQCRule = async () => {
     try {
+
+      let objRule_: QCRule;
+      for (let index = 0; index < this.state.grdData.length; index++) {
+        if (this.state.grdData[index].RuleID == this.state.selectedRuleID) {
+          objRule_ = this.state.grdData[index];
+          objRule_.Channels = Object.values(objRule_.Channels);
+          break;
+        }
+
+      }
+      await this.setState({ objQCRule: objRule_, showQCRuleDialog: true, editMode: "E" });
+
+      debugger;
 
     } catch (error) {
 
     }
   }
 
-  removeQCRules = () => {
+  removeQCRules = async () => {
     try {
+
+
+      if (this.state.selectedRuleID == "") {
+        alert("Please select the row from grid ");
+        return;
+      }
+
+
+
+      confirmAlert({
+        //title: 'eVuMax',
+        message: 'Are you sure want to delete Rule ?',
+        childrenElement: () => <div />,
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: async () => {
+
+
+
+              let objBrokerRequest = new BrokerRequest();
+              objBrokerRequest.Module = "DataService";
+              objBrokerRequest.Broker = "SetupQCRules";
+              objBrokerRequest.Function = "removeQCRule";
+              debugger;
+
+
+              let paramuserid: BrokerParameter = new BrokerParameter(
+                "UserId",
+                _gMod._userId
+              );
+              objBrokerRequest.Parameters.push(paramuserid);
+
+
+              let paramobjRule: BrokerParameter = new BrokerParameter(
+                "RuleID",
+                this.state.selectedRuleID
+              );
+              objBrokerRequest.Parameters.push(paramobjRule);
+
+              axios.get(_gMod._performTask, {
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json;charset=UTF-8",
+                },
+                params: { paramRequest: JSON.stringify(objBrokerRequest) },
+
+              })
+                .then((res) => {
+
+                  debugger;
+                  Util.StatusSuccess("Data successfully retrived  ");
+
+
+                  this.loadQCRules();
+
+                })
+                .catch((error) => {
+
+                  Util.StatusError(error.message);
+
+                  if (error.response) {
+
+                  } else if (error.request) {
+                    console.log("error.request");
+                  } else {
+                    console.log("Error", error);
+                  }
+                  console.log("rejected");
+                  this.setState({ isProcess: false });
+                });
+            }
+
+          },
+          {
+            label: 'No',
+            onClick: () => null
+          }
+        ]
+      });
 
     } catch (error) {
 
     }
   }
+
+  grdRowClick = async (event: GridSelectionChangeEvent) => {
+    try {
+      debugger;
+      await this.setState({ selectedRuleID: event.dataItem.RuleID })
+    } catch (error) {
+
+    }
+  }
+
   render() {
     return (
       <div>
@@ -240,9 +381,19 @@ export default class QcRules extends Component {
               scrollable={"scrollable"}
               sortable={false}
 
-              data={this.state.grdData}
+              //data={this.state.grdData}
+
+              selectedField="selected"
+              data={
+                this.state.grdData != null ? this.state.grdData.map((item: any) => ({
+                  ...item,
+                  selected: item.RuleID === this.state.selectedRuleID,
+                }))
+                  : null
+              }
+              onRowClick={this.grdRowClick}
             >
-              {false &&
+              {true &&
                 <Column
                   headerClassName="text-center"
                   className="qcRuleHeader"
@@ -289,9 +440,9 @@ export default class QcRules extends Component {
           <div className="mb-3 col-xl-2 col-lg-2 col-md-2 col-sm-2">
             <span className="btn-group-vertical">
               <Button style={{ width: '120px' }} className="mt-3 k-button k-primary mr-4" onClick={
-                 () =>{
-                   
-                  this.setState({objQCRule : new QCRule(), showQCRuleDialog : true});
+                () => {
+                  let objQCRule_ = new QCRule()
+                  this.setState({ objQCRule: objQCRule_, showQCRuleDialog: true, editMode: "A" });
                 }
               }>
                 Add New Rule
@@ -312,9 +463,9 @@ export default class QcRules extends Component {
         {this.state.showQCRuleDialog && (
           //style={{ height: '100%', width: '500px', top: 0, left: 0 }}
           <Dialog title={"QC Rule"}
-          width={"700px"}
-          height={"400px"}
-          onClose={(e: any) => {
+            width={"700px"}
+            height={"400px"}
+            onClose={(e: any) => {
               this.setState({
                 showQCRuleDialog: false
               })
@@ -323,7 +474,7 @@ export default class QcRules extends Component {
             <div className="row" >
               <div className="col-9">
                 {/* <QCRuleDialog save={this.saveInEdit} cancel={this.cancelInEdit} dataItem={this.state.objQCRule}  ></QCRuleDialog> */}
-                <QCRuleDialog objQCRule={this.state.objQCRule}> </QCRuleDialog>
+                <QCRuleDialog parent={this} objQCRule={this.state.objQCRule} EditMode={this.state.editMode}> </QCRuleDialog>
               </div>
 
             </div>
