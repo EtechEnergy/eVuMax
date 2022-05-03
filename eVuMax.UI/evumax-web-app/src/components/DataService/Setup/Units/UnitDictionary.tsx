@@ -1,7 +1,7 @@
 import axios from "axios";
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from '@progress/kendo-react-all';
+import { Button, ComboBox, Dialog, DialogActionsBar, Input, Label } from '@progress/kendo-react-all';
 import { Grid, GridToolbar, GridColumn } from '@progress/kendo-react-grid';
 import React, { Component } from 'react'
 import { confirmAlert } from 'react-confirm-alert';
@@ -14,26 +14,32 @@ let objBrokerRequest = new BrokerRequest();
 let objParameter = new BrokerParameter("odata", "odata");
 
 export default class UnitDictionary extends Component {
+
+    // UnitCategory: ""
+    // UnitID: "0.01 deg/ft"
+    // UnitName: "0.01 deg/ft"
     state = {
         grdUnit: [] as any,
+        UnitCategory: "",
         UnitID: "",
+        UnitName: "",
+        ShowUnitEditor: true,
+        selectedRow: {},
+        editID: "",
+        UnitCatList:new Map()
     }
-    ID = "";
+
     cmdEditUnit = async (event: any, rowData: any) => {
         try {
-            debugger;
 
-            this.ID = rowData.ID;
-            await this.setState({
+            this.setState({
+                UnitCategory: rowData.UnitCategory,
+                UnitID: rowData.UnitID,
+                UnitName: rowData.UnitName,
+                ShowUnitEditor: true,
+                editID: rowData.UnitID
 
-
-
-
-                //showChartDialog: false,
             });
-
-            //this.LoadSetting();
-
 
         } catch (error) {
 
@@ -42,6 +48,47 @@ export default class UnitDictionary extends Component {
     }
     componentDidMount() {
         this.LoadUnitList();
+    }
+
+    handleChange = (objItem: any, fieldName: string) => {
+        this.setState({
+            [fieldName]: objItem.value
+        });
+
+    }
+
+    grdRowClick = (event: any) => {
+        this.setState({
+            editID: event.dataItem.UnitID
+        });
+    };
+
+
+    SaveUnit = () => {
+        debugger;
+        //UnitCategory: ""
+        //UnitID: "0.01 deg/ft"
+        //UnitName: "0.01 deg/ft"
+
+
+        let objUnit = { UnitID: "", UnitName: "", UnitCategory: "" };
+        objUnit.UnitID = this.state.UnitID;
+        objUnit.UnitName = this.state.UnitName;
+        objUnit.UnitCategory = this.state.UnitCategory;
+
+
+        this.setState({
+            grdUnit: this.state.grdUnit.map((item: any) => {
+                debugger;
+                if (this.state.editID === item.UnitID) {
+                    item = { ...objUnit };
+                }
+                return item;
+            }),
+            ShowUnitEditor: false,
+            editID: ""
+        });
+
 
 
     }
@@ -78,7 +125,21 @@ export default class UnitDictionary extends Component {
                     //UnitCategory: ""
                     //UnitID: "0.01 deg/ft"
                     //UnitName: "0.01 deg/ft"
-                    this.setState({ grdUnit: UnitList });
+                    
+                    let catList = new Map();
+                    catList.clear();
+
+                    for (let index = 0; index < UnitList.length; index++) {
+                        const objUnit:any = UnitList[index];
+                        if(catList.has(objUnit.UnitCategory) == false){
+                            catList.set(objUnit.UnitCategory,objUnit.UnitCategory);
+                        }
+                        
+                    }
+                    
+                    this.setState({ grdUnit: UnitList ,
+                        UnitCatList:catList
+                    });
 
 
                 })
@@ -103,6 +164,11 @@ export default class UnitDictionary extends Component {
 
         }
     }
+
+
+
+
+
     cmdRemoveUnit = (event: any, rowData: any) => {
 
         confirmAlert({
@@ -139,8 +205,12 @@ export default class UnitDictionary extends Component {
             <>
                 <div className="col-6">
                     <Grid
-                        // data={[{ SetupId: 'Rig2' }, { RigName: 'Shelf Drilling 0' }, { RigName: 'Rig2' }]}
-                        data={this.state.grdUnit}
+                        data={this.state.grdUnit != null ? (this.state.grdUnit.map((item: any) =>
+                            ({ ...item, inEdit: item.UnitID === this.state.editID })
+                        )) : null}
+                        onRowClick={this.grdRowClick}
+                        //editField="inEdit"
+                        selectedField="inEdit"
                     >
                         <GridToolbar>
                             <span>
@@ -196,7 +266,8 @@ export default class UnitDictionary extends Component {
                                     className={"text-center k-command-cell " + props.className}
                                 >
                                     {/* <td className={this.props.className + " k-command-cell"} style={this.props.style}> */}
-                                    <span onClick={e => this.cmdEditUnit(e, props.dataItem)}>
+                                    <span onClick={e =>
+                                        this.cmdEditUnit(e, props.dataItem)}>
                                         <FontAwesomeIcon icon={faPen} />
                                     </span>
 
@@ -222,6 +293,55 @@ export default class UnitDictionary extends Component {
 
                     </Grid>
                 </div>
+
+                {this.state.ShowUnitEditor && <Dialog
+                    title="Unit Properties"
+                    height={250}
+                    width={450}
+                    onClose={() => this.setState({ ShowUnitEditor: false })}
+                >
+                    <DialogActionsBar>
+                        <Button
+                            className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
+                            onClick={this.SaveUnit}
+                        >   Save
+                        </Button>
+                        <Button
+                            className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
+                            onClick={() => this.setState({ DialogUnit: false })}
+                        >
+                            Cancel
+                        </Button>
+                    </DialogActionsBar>
+                    <div className="col-12 p-2" >
+
+                        <div className="row">
+                            <Label className='mr-4' style={{ alignSelf: "flex-end" }}>Unit ID</Label>
+                            <Input type="text"
+                                value={this.state.UnitID}
+                                onChange={(event) => this.handleChange(event, "UnitID")}
+                            ></Input>
+                        </div>
+                        <div className="row">
+                            <Label className='mr-4' style={{ alignSelf: "flex-end" }}>Unit Name</Label>
+                            <Input type="text"
+                                value={this.state.UnitName}
+                                onChange={(event) => this.handleChange(event, "UnitName")}
+                            ></Input>
+                        </div>
+                        <div className="row">
+                            <Label className='mr-4' style={{ alignSelf: "flex-end" }}>Unit Category</Label>
+                            <ComboBox
+                                style={{ width: "200px" }}
+                                data={Object.values(this.state.UnitCatList.keys())}
+                                value={this.state.UnitCategory}
+                                onChange={(e: any) => { this.handleChange(e, "UnitCategory") }}
+                                allowCustom={true}
+                            />
+                        </div>
+
+                    </div>
+                </Dialog>}
 
             </>
         )
