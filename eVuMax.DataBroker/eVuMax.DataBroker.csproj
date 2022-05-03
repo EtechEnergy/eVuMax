@@ -117,6 +117,8 @@
     <Compile Include="DataObject.Manager\DownloadManager.cs" />
     <Compile Include="DataObject.Manager\WellBroker.cs" />
     <Compile Include="DataServiceManager\DataServiceBroker.cs" />
+    <Compile Include="DataServiceManager\Setup\AlertSettings\AlertSettings.cs" />
+    <Compile Include="DataServiceManager\Setup\AlertSettings\AlertSettingsMgr.cs" />
     <Compile Include="DataServiceManager\Setup\QCRules\eQCRules.cs" />
     <Compile Include="DataServiceManager\Setup\QCRules\QCRulesMgr.cs" />
     <Compile Include="DataServiceManager\Setup\RigState\eRigStateItem.cs" />

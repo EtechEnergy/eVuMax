@@ -663,6 +663,11 @@ export class Dashboard extends React.Component<Props> {
                   Rig Specfic RigState Setup
                 </NavLink>
               </li>
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/AlertSettings">
+                  Alert Settings
+                </NavLink>
+              </li>
             </ol>
           </ul>
 

@@ -248,7 +248,7 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                 Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
                 objBadResponse.RequestSuccessfull = false;
-                objBadResponse.Errors = "Error saving user settings " + ex.StackTrace;
+                objBadResponse.Errors = "Error saving user settings " + ex.Message + ex.StackTrace;
                 return objBadResponse;
             }
         }

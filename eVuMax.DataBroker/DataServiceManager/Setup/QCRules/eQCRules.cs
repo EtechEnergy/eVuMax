@@ -20,14 +20,7 @@ namespace eVuMax.DataBroker.DataServiceManager
         {
             objDataService = pObjDataService;
 
-            //QCRulesList.Clear();
-            //QCRulesList.Columns.Add("RuleID");
-            //QCRulesList.Columns.Add("RuleName");
-            //QCRulesList.Columns.Add("RuleType");
-            //QCRulesList.Columns.Add("RuleTypeName");
-            //QCRulesList.Columns.Add("TolerancePercentage");
-            //QCRulesList.Columns.Add("MinValue");
-            //QCRulesList.Columns.Add("MaxValue");
+         
         }
         public Dictionary<string, QCRule> getRuleList()
         {
@@ -49,9 +42,9 @@ namespace eVuMax.DataBroker.DataServiceManager
                 return objQCRulesList;
                 //return QCRulesList;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                
+                this.LastError = ex.StackTrace + ex.Message + ex.StackTrace;
                 return   new Dictionary<string, QCRule>();
                 //return QCRulesList;
             }
@@ -78,6 +71,7 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
             catch (Exception ex)
             {
+                this.LastError = ex.StackTrace + ex.Message + ex.StackTrace;
                 return new DataTable();
             }
         }
@@ -96,7 +90,7 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
             catch (Exception ex)
             {
-
+                this.LastError = ex.StackTrace + ex.Message + ex.StackTrace;
                 return new DataTable();
             }
 
@@ -143,6 +137,7 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
             catch (Exception ex)
             {
+                this.LastError = ex.StackTrace + ex.Message + ex.StackTrace;
                 return false;
                 
             }
