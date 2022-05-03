@@ -9,6 +9,7 @@ import BrokerParameter from '../../../../broker/BrokerParameter';
 import BrokerRequest from '../../../../broker/BrokerRequest';
 import GlobalMod from '../../../../objects/global';
 
+
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
 let objParameter = new BrokerParameter("odata", "odata");
@@ -23,10 +24,11 @@ export default class UnitDictionary extends Component {
         UnitCategory: "",
         UnitID: "",
         UnitName: "",
-        ShowUnitEditor: true,
+        ShowUnitEditor: false,
         selectedRow: {},
         editID: "",
-        UnitCatList:new Map()
+        UnitCatList: [] as any,
+
     }
 
     cmdEditUnit = async (event: any, rowData: any) => {
@@ -71,10 +73,68 @@ export default class UnitDictionary extends Component {
         //UnitName: "0.01 deg/ft"
 
 
+
+
+
+
         let objUnit = { UnitID: "", UnitName: "", UnitCategory: "" };
         objUnit.UnitID = this.state.UnitID;
         objUnit.UnitName = this.state.UnitName;
         objUnit.UnitCategory = this.state.UnitCategory;
+
+
+        if (objUnit.UnitID == "") {
+
+            confirmAlert({
+                //title: 'eVuMax',
+                message: 'Unit ID should not be blank',
+                childrenElement: () => <div />,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        onClick: () => {
+
+                        }
+
+                    },
+                    // {
+                    //     label: 'No',
+                    //     onClick: () => null
+                    // }
+                ]
+            });
+
+            return;
+        }
+
+        if (objUnit.UnitName == "") {
+
+            confirmAlert({
+                //title: 'eVuMax',
+                message: 'Unit Name should not be blank',
+                childrenElement: () => <div />,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        onClick: () => {
+
+                        }
+
+                    },
+                    // {
+                    //     label: 'No',
+                    //     onClick: () => null
+                    // }
+                ]
+            });
+
+            return;
+        }
+
+
+
+
+        let editeMode = this.state.editID;
 
 
         this.setState({
@@ -89,14 +149,42 @@ export default class UnitDictionary extends Component {
             editID: ""
         });
 
+        let BrokerFunction: string = "";
+        if (this.state.editID == "") {
+            BrokerFunction = "AddUnit";
+        } else {
+            BrokerFunction = "EditUnit";
+        }
+        objBrokerRequest = new BrokerRequest();
+        objBrokerRequest.Module = "DataService";
+        objBrokerRequest.Broker = "UnitSetup";
+        objBrokerRequest.Function = BrokerFunction;
+
+        objParameter = new BrokerParameter("UserID", _gMod._userId);
+        objBrokerRequest.Parameters.push(objParameter);
+
+
+
+        objParameter = new BrokerParameter("objUnit", JSON.stringify(objUnit));
+        objBrokerRequest.Parameters.push(objParameter);
+
+        axios.post(_gMod._performTask, {
+            paramRequest: JSON.stringify(objBrokerRequest),
+        }).then((response) => {
+            alert(editeMode);
+            this.LoadUnitList();
+        })
+            .catch((error) => {
+                console.log(error);
+            });
 
 
     }
     LoadUnitList = () => {
         //LoadUnitList
         try {
-            debugger
-            let objBrokerRequest = new BrokerRequest();
+
+            objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "UnitSetup";
             objBrokerRequest.Function = "LoadUnitList";
@@ -125,20 +213,22 @@ export default class UnitDictionary extends Component {
                     //UnitCategory: ""
                     //UnitID: "0.01 deg/ft"
                     //UnitName: "0.01 deg/ft"
-                    
+
                     let catList = new Map();
+                    let catArr = [];
                     catList.clear();
 
                     for (let index = 0; index < UnitList.length; index++) {
-                        const objUnit:any = UnitList[index];
-                        if(catList.has(objUnit.UnitCategory) == false){
-                            catList.set(objUnit.UnitCategory,objUnit.UnitCategory);
+                        const objUnit: any = UnitList[index];
+                        if (catList.has(objUnit.UnitCategory) == false) {
+                            catList.set(objUnit.UnitCategory, objUnit.UnitCategory);
+                            catArr.push(objUnit.UnitCategory);
                         }
-                        
                     }
-                    
-                    this.setState({ grdUnit: UnitList ,
-                        UnitCatList:catList
+
+                    this.setState({
+                        grdUnit: UnitList,
+                        UnitCatList: catArr
                     });
 
 
@@ -171,23 +261,48 @@ export default class UnitDictionary extends Component {
 
     cmdRemoveUnit = (event: any, rowData: any) => {
 
+        // this.setState({
+        //     editID: rowData.UnitID
+        // });
         confirmAlert({
             //title: 'eVuMax',
-            message: 'Are you sure you want to remove?',
+            message: "Are you sure you want to remove unit " +  rowData.UnitID + "?",
             childrenElement: () => <div />,
             buttons: [
                 {
                     label: 'Yes',
                     onClick: () => {
-                        debugger;
                         let UnitList = this.state.grdUnit;
                         let objRow = rowData;
-                        let SrNo = objRow.SrNo;// MNEMONIC;
-                        let index = UnitList.findIndex((d: any) => d.SrNo === SrNo); //find index in your array
+                        let UnitID = objRow.UnitID
+                        let index = UnitList.findIndex((d: any) => d.UnitID === UnitID); //find index in your array
                         UnitList.splice(index, 1);//remove element from array
                         this.setState({
                             grdUnit: UnitList
                         });
+
+                        objBrokerRequest = new BrokerRequest();
+                        objBrokerRequest.Module = "DataService";
+                        objBrokerRequest.Broker = "UnitSetup";
+                        objBrokerRequest.Function = "RemoveUnit";
+
+                 
+                        objParameter = new BrokerParameter("UnitID", objRow.UnitID);
+                        objBrokerRequest.Parameters.push(objParameter);
+
+                        axios.post(_gMod._performTask, {
+                            paramRequest: JSON.stringify(objBrokerRequest),
+                        }).then((response) => {
+                            //this.LoadUnitList();
+                        })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+
+
+
+
+
                     }
 
                 },
@@ -216,30 +331,16 @@ export default class UnitDictionary extends Component {
                             <span>
                                 <Button onClick={() => {
                                     {
-                                        let Edited = this.state.grdUnit;
-
-                                        // let newRow = {
-                                        //     SetupId: 0,
-                                        //     RigName: 0,
-                                        //     SrNo: 0,
-                                        // };
-                                        // UnitCategory: ""
-                                        // UnitID: "0.01 deg/ft"
-                                        // UnitName: "0.01 deg/ft"
 
 
-                                        // if (this.state.grdRigNameList.length > 0) {
-                                        //     // newRow.StartMD = editData[this.state.GeoDrlgWindowData.length-1].StartMD+1;
-                                        //     newRow.SrNo = this.state.grdRigNameList.length + 1;
-                                        // } else {
-                                        //     newRow.SrNo = 1;
 
-                                        // }
-                                        // Edited.push(newRow);
-                                        // this.setState({
-                                        //     grdRigNameList: Edited
-                                        // })
-
+                                        this.setState({
+                                            editID: "",
+                                            ShowUnitEditor: true,
+                                            UnitCategory: "",
+                                            UnitID: "",
+                                            UnitName: ""
+                                        });
                                     }
                                 }}  >Add</Button>
                             </span>
@@ -308,7 +409,7 @@ export default class UnitDictionary extends Component {
                         </Button>
                         <Button
                             className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
-                            onClick={() => this.setState({ DialogUnit: false })}
+                            onClick={() => this.setState({ ShowUnitEditor: false })}
                         >
                             Cancel
                         </Button>
@@ -320,6 +421,7 @@ export default class UnitDictionary extends Component {
                             <Input type="text"
                                 value={this.state.UnitID}
                                 onChange={(event) => this.handleChange(event, "UnitID")}
+                                readOnly={this.state.editID == "" ? false : true}
                             ></Input>
                         </div>
                         <div className="row">
@@ -333,7 +435,8 @@ export default class UnitDictionary extends Component {
                             <Label className='mr-4' style={{ alignSelf: "flex-end" }}>Unit Category</Label>
                             <ComboBox
                                 style={{ width: "200px" }}
-                                data={Object.values(this.state.UnitCatList.keys())}
+                                //data={Object.values(this.state.UnitCatList.keys())}
+                                data={this.state.UnitCatList}
                                 value={this.state.UnitCategory}
                                 onChange={(e: any) => { this.handleChange(e, "UnitCategory") }}
                                 allowCustom={true}
