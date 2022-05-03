@@ -668,6 +668,12 @@ export class Dashboard extends React.Component<Props> {
                   Alert Settings
                 </NavLink>
               </li>
+
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/MaintainStdChannels">
+                  Maintain Standard Channels
+                </NavLink>
+              </li>
             </ol>
           </ul>
 

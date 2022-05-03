@@ -1,20 +1,11 @@
 import { Button, Dialog, DropDownList, Grid, GridColumn, GridSelectionChangeEvent, Label } from '@progress/kendo-react-all';
 import { Input } from '@progress/kendo-react-inputs'
 import React, { Component } from 'react'
-// import BrokerParameter from '../../../../../broker/BrokerParameter';
-// import BrokerRequest from '../../../../../broker/BrokerRequest';
-
 import BrokerParameter from '../../../../broker/BrokerParameter';
 import BrokerRequest from '../../../../broker/BrokerRequest';
-
-//import { comboData } from '../../../../../eVuMaxObjects/UIObjects/comboData';
-//import * as utilFunc from '../../../../../utilFunctions/utilFunctions';
 import * as utilFunc from '../../../../../src/utilFunctions/utilFunctions';
-//import GlobalMod from '../../../../../objects/global';
 import axios from "axios";
 import { type } from 'os';
-//import { Util } from '../../../../../Models/eVuMax';
-//import { QCRule } from '../../../../../eVuMaxObjects/dataObjects/dataObjects';
 import { comboData } from '../../../../eVuMaxObjects/UIObjects/comboData';
 import GlobalMod from '../../../../objects/global';
 import { Util } from '../../../../Models/eVuMax';

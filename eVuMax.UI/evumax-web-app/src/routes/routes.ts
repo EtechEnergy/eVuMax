@@ -38,8 +38,8 @@ import CommonSettings from "../components/DataService/Setup/CommonSettings/Commo
 import CommonRigStateSetup from "../components/DataService/Setup/RigState/CommonRigStateSetup/CommonRigStateSetup";
 import RigSpecficRigStateSetup from "../components/DataService/Setup/RigState/RigSpecficRigStateSetup/RigSpecficRigStateSetup";
 import AlertSettings from "../components/DataService/Setup/AlertSettings/AlertSettings";
-
-
+import MaintainStdChannels from "../components/DataService/Setup/MaintainStdChannels/MaintainStdChannels";
+       
 
 //DrlgConnSummary2
 const dashbordRoutes = [
@@ -289,6 +289,13 @@ const dashbordRoutes = [
     name: "AlertSettings",
     icon: "",
     component: AlertSettings,
+    layout: "/dashboard",
+  },
+  {
+    path: "/MaintainStdChannels",
+    name: "MaintainStdChannels",
+    icon: "",
+    component: MaintainStdChannels,
     layout: "/dashboard",
   },
   //==================
