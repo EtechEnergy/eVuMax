@@ -1,4 +1,5 @@
-﻿using eVuMax.DataBroker.Broker;
+﻿
+using eVuMax.DataBroker.Broker;
 using eVuMax.DataBroker.DataServiceManager.Setup;
 using System;
 
@@ -36,12 +37,17 @@ namespace eVuMax.DataBroker.DataServiceManager
                 }
 
                 
-                    if (paramRequest.Broker == Global.Brk_Setup_Units)
+               if (paramRequest.Broker == Global.Brk_Setup_Units)
                 {
                     UnitsMgr objUnitMgr = new UnitsMgr();
                     return objUnitMgr.getData(paramRequest);
                 }
 
+                if (paramRequest.Broker == Global.Brk_Setup_AlertSettings)
+                {
+                    AlertSettingsMgr objAlertSettingsMgr = new AlertSettingsMgr();
+                    return objAlertSettingsMgr.getData(paramRequest);
+                }
 
 
                 BrokerResponse objResponse = paramRequest.createResponseObject();
@@ -95,6 +101,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
                     UnitsMgr objUnitMgr = new UnitsMgr();
                     return objUnitMgr.performTask(paramRequest);
+                }
+
+                if (paramRequest.Broker == Global.Brk_Setup_AlertSettings)
+                {
+                    AlertSettingsMgr objAlertSettingsMgr = new AlertSettingsMgr();
+                    return objAlertSettingsMgr.performTask(paramRequest);
                 }
 
 

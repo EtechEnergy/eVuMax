@@ -37,10 +37,9 @@ import QcRules from "../components/DataService/Setup/QCRules/QcRules";// "../com
 import CommonSettings from "../components/DataService/Setup/CommonSettings/CommonSettings"
 import CommonRigStateSetup from "../components/DataService/Setup/RigState/CommonRigStateSetup/CommonRigStateSetup";
 import RigSpecficRigStateSetup from "../components/DataService/Setup/RigState/RigSpecficRigStateSetup/RigSpecficRigStateSetup";
-import UnitDictionary from "../components/DataService/Setup/Units/UnitDictionary";
-import UnitConversion from "../components/DataService/Setup/UnitsConversion/UnitConversion";
-
-
+import AlertSettings from "../components/DataService/Setup/AlertSettings/AlertSettings";
+import MaintainStdChannels from "../components/DataService/Setup/MaintainStdChannels/MaintainStdChannels";
+       
 
 //DrlgConnSummary2
 const dashbordRoutes = [
@@ -289,25 +288,18 @@ const dashbordRoutes = [
     path: "/AlertSettings",
     name: "AlertSettings",
     icon: "",
-    component: RigSpecficRigStateSetup,
+    component: AlertSettings,
     layout: "/dashboard",
   },
   {
-    path: "/UnitDictionary",
-    name: "UnitDictionary",
+    path: "/MaintainStdChannels",
+    name: "MaintainStdChannels",
     icon: "",
-    component: UnitDictionary,
-    layout: "/dashboard",
-  },
-  {
-    path: "/UnitConversion",
-    name: "UnitConversion",
-    icon: "",
-    component: UnitConversion,
+    component: MaintainStdChannels,
     layout: "/dashboard",
   },
   //==================
-  
+
 
 
 ];

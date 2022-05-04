@@ -664,9 +664,14 @@ export class Dashboard extends React.Component<Props> {
                 </NavLink>
               </li>
               <li>
-                <NavLink onClick={this.toggleMenu} exact to="/dashboard/UnitDictionary">
-                  {/* <a onClick={this.ManageTheme} > */}
-                  Unit Dictionary
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/AlertSettings">
+                  Alert Settings
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/MaintainStdChannels">
+                  Maintain Standard Channels
                 </NavLink>
               </li>
               <li>

@@ -98,12 +98,13 @@ namespace eVuMax.DataBroker
 
         #region DataService
         public const string Mod_DataService = "DataService";// Nisahnt 25-04-2022
-        public const string Brk_Setup_QCRules = "SetupQCRules";  //Nisahnt 25-04-2022
+        public const string Brk_Setup_QCRules = "SetupQCRules";   
         public const string Brk_Setup_CommonSetting = "SetupCommonSetting";  //Nisahnt 25-04-2022
         public const string Brk_Setup_CommonRigStateSetup = "CommonRigStateSetup";  //Nisahnt 25-04-2022
         public const string Brk_Setup_RigSpecificRigStateSetup = "RigSpecificRigStateSetup";  //Nisahnt 25-04-2022
 
         public const string Brk_Setup_Units = "UnitSetup";  //Nisahnt 25-04-2022
+        public const string Brk_Setup_AlertSettings = "SetupAlertSettings";
 
 
 
