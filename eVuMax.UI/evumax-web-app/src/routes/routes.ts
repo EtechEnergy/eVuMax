@@ -39,6 +39,10 @@ import CommonRigStateSetup from "../components/DataService/Setup/RigState/Common
 import RigSpecficRigStateSetup from "../components/DataService/Setup/RigState/RigSpecficRigStateSetup/RigSpecficRigStateSetup";
 import AlertSettings from "../components/DataService/Setup/AlertSettings/AlertSettings";
 import MaintainStdChannels from "../components/DataService/Setup/MaintainStdChannels/MaintainStdChannels";
+
+import UnitDictionary from "../components/DataService/Setup/Units/UnitDictionary";
+import UnitConversion from "../components/DataService/Setup/UnitsConversion/UnitConversion";
+
        
 
 //DrlgConnSummary2
@@ -299,8 +303,21 @@ const dashbordRoutes = [
     layout: "/dashboard",
   },
   //==================
+  {
+    path: "/UnitDictionary",
+    name: "UnitDictionary",
+    icon: "",
+    component: UnitDictionary,
+    layout: "/dashboard",
+  },
 
-
+  {
+    path: "/UnitConversion",
+    name: "UnitConversion",
+    icon: "",
+    component: UnitConversion,
+    layout: "/dashboard",
+  },
 
 ];
 
