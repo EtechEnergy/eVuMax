@@ -98,7 +98,7 @@ export default class QcRules extends Component {
 
         })
         .then((res) => {
-
+          Util.StatusSuccess("Data successfully retrived  ");
           this.objLogger.SendLog("load QC Rules Data Received...");
 
 

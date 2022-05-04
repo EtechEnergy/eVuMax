@@ -1245,6 +1245,7 @@ export class Chart {
   }
 
   reDraw = async () => {
+
     try {
       $("#" + this.ContainerId).empty();
 

@@ -50,6 +50,13 @@ namespace eVuMax.DataBroker.DataServiceManager
                 }
 
 
+                if (paramRequest.Broker== Global.Brk_Setup_MaintainStdChannels)
+                {
+                    MaintainStdChannelsMgr objMaintainStdChannelsMgr = new MaintainStdChannelsMgr();
+                    return objMaintainStdChannelsMgr.getData(paramRequest);
+                }
+
+
                 BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";
@@ -109,6 +116,11 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objAlertSettingsMgr.performTask(paramRequest);
                 }
 
+                if (paramRequest.Broker == Global.Brk_Setup_MaintainStdChannels)
+                {
+                    MaintainStdChannelsMgr objMaintainStdChannelsMgr = new MaintainStdChannelsMgr();
+                    return objMaintainStdChannelsMgr.performTask(paramRequest);
+                }
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;

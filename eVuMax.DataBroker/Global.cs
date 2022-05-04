@@ -105,7 +105,8 @@ namespace eVuMax.DataBroker
 
         public const string Brk_Setup_Units = "UnitSetup";  //Nisahnt 25-04-2022
         public const string Brk_Setup_AlertSettings = "SetupAlertSettings";
-
+        public const string Brk_Setup_MaintainStdChannels = "SetupMaintainStdChannels";
+        
 
 
         #endregion
