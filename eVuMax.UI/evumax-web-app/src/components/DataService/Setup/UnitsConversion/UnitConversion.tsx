@@ -95,7 +95,7 @@ export default class UnitConversion extends Component {
 
 
         this.setState({
-            grdUnit: this.state.grdConversion.map((item: any) => {
+            grdConversion: this.state.grdConversion.map((item: any) => {
                 debugger;
                 if (this.state.editID === item.conversionID) {
                     item = { ...objUnit };
