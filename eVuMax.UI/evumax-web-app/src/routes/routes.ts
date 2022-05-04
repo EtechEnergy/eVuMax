@@ -38,6 +38,7 @@ import CommonSettings from "../components/DataService/Setup/CommonSettings/Commo
 import CommonRigStateSetup from "../components/DataService/Setup/RigState/CommonRigStateSetup/CommonRigStateSetup";
 import RigSpecficRigStateSetup from "../components/DataService/Setup/RigState/RigSpecficRigStateSetup/RigSpecficRigStateSetup";
 import UnitDictionary from "../components/DataService/Setup/Units/UnitDictionary";
+import UnitConversion from "../components/DataService/Setup/UnitsConversion/UnitConversion";
 
 
 
@@ -298,8 +299,15 @@ const dashbordRoutes = [
     component: UnitDictionary,
     layout: "/dashboard",
   },
+  {
+    path: "/UnitConversion",
+    name: "UnitConversion",
+    icon: "",
+    component: UnitConversion,
+    layout: "/dashboard",
+  },
   //==================
-
+  
 
 
 ];
