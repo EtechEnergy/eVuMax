@@ -680,6 +680,13 @@ export class Dashboard extends React.Component<Props> {
                   Unit Conversion
                 </NavLink>
               </li>
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/UnitMappings">
+                  {/* <a onClick={this.ManageTheme} > */}
+                  Unit Mapping
+                </NavLink>
+              </li>
+             
             </ol>
           </ul>
 
