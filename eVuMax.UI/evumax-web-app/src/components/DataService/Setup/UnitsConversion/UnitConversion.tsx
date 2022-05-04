@@ -16,31 +16,54 @@ let objParameter = new BrokerParameter("odata", "odata");
 
 export default class UnitConversion extends Component {
 
-    // UnitCategory: ""
-    // UnitID: "0.01 deg/ft"
-    // UnitName: "0.01 deg/ft"
+    // ConversionFormula: "unit * 57.29578"
+    // ConversionID: "cnv_185_183_804_307"
+    // FromUnitID: "rad"
+    // ToUnitID
     state = {
         grdConversion: [] as any,
-        ShowUnitEditor: true,
+        ShowUnitEditor: false,
         selectedRow: {},
         editID: "",
-        FromUnit: "",
-        ToUnit: "",
-        Conversion: ""
+        FromUnitID: "",
+        ToUnitID: "",
+        ConversionFormula: "",
+        ConversionID: ""
 
     }
 
     UnitIDList: string[] = [];
 
+
+    cmdAdd = async () => {
+        try {
+            debugger;
+            this.setState({
+                FromUnitID: "",
+                ToUnitID: "",
+                ConversionFormula: "Unit ",
+                ShowUnitEditor: true,
+                editID: "",
+                ConversionID: ""
+            });
+
+        } catch (error) {
+
+        }
+
+    }
+
+
     cmdEditUnit = async (event: any, rowData: any) => {
         try {
-
+            debugger;
             this.setState({
-                UnitCategory: rowData.UnitCategory,
-                UnitID: rowData.UnitID,
-                UnitName: rowData.UnitName,
+                FromUnitID: rowData.FromUnitID,
+                ToUnitID: rowData.ToUnitID,
+                ConversionFormula: rowData.ConversionFormula,
                 ShowUnitEditor: true,
-                editID: rowData.UnitID
+                editID: rowData.ConversionID,
+                ConversionID: rowData.ConversionID
 
             });
 
@@ -58,7 +81,7 @@ export default class UnitConversion extends Component {
             [fieldName]: objItem.value
         });
 
-        
+
 
     }
 
@@ -69,50 +92,89 @@ export default class UnitConversion extends Component {
     };
 
 
-    SaveUnitConversion = () => {
+    SaveUnitConversion = async () => {
         debugger;
-        let newData: any =this.UnitIDList;
-        let index = newData.findIndex((item: any) => item === this.state.FromUnit); // use unique value like ID
+        let newData: any = this.UnitIDList;
+        let index = newData.findIndex((item: any) => item === this.state.FromUnitID); // use unique value like ID
         if (index <= 0) {
             alert("Please select Unit form the list");
             return;
         }
-        let index1 = newData.findIndex((item: any) => item === this.state.ToUnit); // use unique value like ID
+        let index1 = newData.findIndex((item: any) => item === this.state.ToUnitID); // use unique value like ID
         if (index1 <= 0) {
             alert("Please select Unit form the list");
             return;
         }
-       
-      
-        //this.setState({ grdConversion: newData })
+
+
+        let objUnitConversion = { ConversionFormula: "", ConversionID: "", FromUnitID: "", ToUnitID: "" };
+        // ConversionFormula: "unit * 57.29578"
+        // ConversionID: "cnv_185_183_804_307"
+        // FromUnitID: "rad"
+        // ToUnitID
+        objUnitConversion.ConversionID = this.state.ConversionID;
+        objUnitConversion.FromUnitID = this.state.FromUnitID;
+        objUnitConversion.ToUnitID = this.state.ToUnitID;
+        objUnitConversion.ConversionFormula = this.state.ConversionFormula;
+
+        let functionName = "";
+        if (this.state.ConversionID == "") {
+            functionName = "AddUnitConversion"
+        }
+        else {
+            functionName = "EditUnitConversion"
+        }
+
+        objBrokerRequest = new BrokerRequest();
+        objBrokerRequest.Module = "DataService";
+        objBrokerRequest.Broker = "UnitSetup";
+        objBrokerRequest.Function = functionName;
 
 
 
-        let objUnit = { UnitID: "", UnitName: "", UnitCategory: "" };
-        // objUnit.UnitID = this.state.UnitID;
-        // objUnit.UnitName = this.state.UnitName;
-        // objUnit.UnitCategory = this.state.UnitCategory;
+        objParameter = new BrokerParameter('objUnitConversion', JSON.stringify(objUnitConversion));
+        objBrokerRequest.Parameters.push(objParameter);
+
+        await axios.post(_gMod._performTask, {
+            paramRequest: JSON.stringify(objBrokerRequest),
+        })
+            .then((response) => {
+
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
 
 
         this.setState({
             grdConversion: this.state.grdConversion.map((item: any) => {
                 debugger;
                 if (this.state.editID === item.conversionID) {
-                    item = { ...objUnit };
+                    item = { ...objUnitConversion };
                 }
                 return item;
             }),
             ShowUnitEditor: false,
-            editID: ""
+            editID: "",
+            FromUnitID: "",
+            ToUnitID: "",
+            ConversionFormula: "",
+            ConversionID: ""
         });
+
+
 
 
 
     }
     LoadUnitList = () => {
         //LoadUnitList
+
+
         try {
             debugger
+
             objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "DataObject.Manager";
             objBrokerRequest.Function = "getTable";
@@ -166,7 +228,7 @@ export default class UnitConversion extends Component {
                     const objItem: any = objData[index];
                     this.UnitIDList.push(objItem.UNIT_ID);
                 }
-                //this.UnitIDList = Object.values(objData);
+
 
 
                 const objData2 = JSON.parse(res[1].data.Response);
@@ -197,16 +259,42 @@ export default class UnitConversion extends Component {
             buttons: [
                 {
                     label: 'Yes',
-                    onClick: () => {
+                    onClick: async () => {
                         debugger;
-                        let UnitList = this.state.grdConversion;
                         let objRow = rowData;
-                        let SrNo = objRow.SrNo;// MNEMONIC;
-                        let index = UnitList.findIndex((d: any) => d.SrNo === SrNo); //find index in your array
-                        UnitList.splice(index, 1);//remove element from array
-                        this.setState({
-                            grdUnit: UnitList
-                        });
+
+                        objBrokerRequest = new BrokerRequest();
+                        objBrokerRequest.Module = "DataService";
+                        objBrokerRequest.Broker = "UnitSetup";
+                        objBrokerRequest.Function = "RemoveUnitConversion";
+
+
+                        objParameter = new BrokerParameter('ConversionID', objRow.ConversionID);
+                        objBrokerRequest.Parameters.push(objParameter);
+
+                        await axios.post(_gMod._performTask, {
+                            paramRequest: JSON.stringify(objBrokerRequest),
+                        })
+                            .then((response) => {
+
+
+
+                                let UnitConversionList = this.state.grdConversion;
+
+                                let ConversionID = objRow.ConversionID;
+                                let index = UnitConversionList.findIndex((d: any) => d.ConversionID === ConversionID); //find index in your array
+                                UnitConversionList.splice(index, 1);//remove element from array
+                                this.setState({
+                                    grdConversion: UnitConversionList
+                                });
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+
+
+
+
                     }
 
                 },
@@ -239,7 +327,7 @@ export default class UnitConversion extends Component {
                                 <Button onClick={() => {
                                     {
 
-
+                                        this.cmdAdd();
                                     }
                                 }}  >Add</Button>
                             </span>
@@ -319,8 +407,8 @@ export default class UnitConversion extends Component {
                             <ComboBox
                                 style={{ width: "200px" }}
                                 data={this.UnitIDList}
-                                value={this.state.FromUnit}
-                                onChange={(e: any) => { this.handleChange(e, "FromUnit") }}
+                                value={this.state.FromUnitID}
+                                onChange={(e: any) => { this.handleChange(e, "FromUnitID") }}
                                 allowCustom={true}
                             />
                         </div>      <div className="row">
@@ -328,19 +416,19 @@ export default class UnitConversion extends Component {
                             <ComboBox
                                 style={{ width: "200px" }}
                                 data={this.UnitIDList}
-                                value={this.state.ToUnit}
+                                value={this.state.ToUnitID}
 
-                                onChange={(e: any) => { this.handleChange(e, "ToUnit") }}
+                                onChange={(e: any) => { this.handleChange(e, "ToUnitID") }}
                                 allowCustom={true}
-                                
+
                             />
                         </div>
 
                         <div className="row">
                             <Label className='mr-4' style={{ alignSelf: "flex-end" }}>Conversion Formula</Label>
                             <Input type="text"
-                                value={this.state.Conversion}
-                                onChange={(event) => this.handleChange(event, "Conversion")}
+                                value={this.state.ConversionFormula}
+                                onChange={(event) => this.handleChange(event, "ConversionFormula")}
                             ></Input>
                         </div>
                         <div className="row mt-3">

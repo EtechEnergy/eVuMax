@@ -222,7 +222,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                 string strUnitConversion = "";
                 UnitConversion objUnitConversion = new UnitConversion();
-                Unit objUnit = new Unit();
+                
                 strUnitConversion = paramRequest.Parameters.Where(x => x.ParamName.Contains("objUnitConversion")).FirstOrDefault().ParamValue.ToString();
                 if (strUnitConversion != "")
                 {
@@ -252,7 +252,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                 string strUnitConversion = "";
                 UnitConversion objUnitConversion = new UnitConversion();
-                Unit objUnit = new Unit();
+                
                 strUnitConversion = paramRequest.Parameters.Where(x => x.ParamName.Contains("objUnitConversion")).FirstOrDefault().ParamValue.ToString();
                 if (strUnitConversion != "")
                 {
@@ -281,7 +281,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                 string ConversionID = "";
                 UnitConversion objUnitConversion = new UnitConversion();
-                Unit objUnit = new Unit();
+                
                 ConversionID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ConversionID")).FirstOrDefault().ParamValue.ToString();
                 
 
@@ -366,7 +366,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
             }
 
 
-            if (paramRequest.Function == EditUnitConversion)
+            if (paramRequest.Function == EditUnitConversionProfile)
             {
 
                 string strProfile = "";
@@ -395,7 +395,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
             }
 
 
-            if (paramRequest.Function == RemoveUnitConversion)
+            if (paramRequest.Function == RemoveUnitConversionProfile)
             {
 
                 string ProfileID = "";

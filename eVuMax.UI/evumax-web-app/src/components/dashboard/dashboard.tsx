@@ -681,12 +681,11 @@ export class Dashboard extends React.Component<Props> {
                 </NavLink>
               </li>
               <li>
-                <NavLink onClick={this.toggleMenu} exact to="/dashboard/UnitMappings">
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/UnitDictionary">
                   {/* <a onClick={this.ManageTheme} > */}
-                  Unit Mapping
+                  Unit Dictionary
                 </NavLink>
               </li>
-             
             </ol>
           </ul>
 
