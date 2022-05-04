@@ -8,11 +8,14 @@ import { confirmAlert } from 'react-confirm-alert';
 import BrokerParameter from '../../../../broker/BrokerParameter';
 import BrokerRequest from '../../../../broker/BrokerRequest';
 import GlobalMod from '../../../../objects/global';
-import { convertCompilerOptionsFromJson } from "typescript";
+import { filterBy } from "@progress/kendo-data-query";
+
+import * as utilFunc from "../../../../utilFunctions/utilFunctions";
 
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
 let objParameter = new BrokerParameter("odata", "odata");
+let grdConversion_: any[] = [];
 
 export default class UnitConversion extends Component {
 
@@ -33,6 +36,7 @@ export default class UnitConversion extends Component {
     }
 
     UnitIDList: string[] = [];
+    
 
 
     cmdAdd = async () => {
@@ -145,7 +149,9 @@ export default class UnitConversion extends Component {
                 console.log(error);
             });
 
-
+        if (functionName = "AddUnitConversion") {
+            this.LoadUnitList();
+        }
 
         this.setState({
             grdConversion: this.state.grdConversion.map((item: any) => {
@@ -163,8 +169,7 @@ export default class UnitConversion extends Component {
             ConversionID: ""
         });
 
-
-
+        
 
 
     }
@@ -219,8 +224,7 @@ export default class UnitConversion extends Component {
 
             axios.all([axiosrequest1, axiosrequest2]).then(axios.spread((...res) => {
                 debugger;
-                console.log(res[0]);
-                console.log(res[1]);
+            
 
                 const objData = JSON.parse(res[0].data.Response);
 
@@ -235,7 +239,9 @@ export default class UnitConversion extends Component {
 
                 this.setState({
                     grdConversion: Object.values(objData2.unitConversions)
-                })
+                });
+
+                grdConversion_ = Object.values(objData2.unitConversions);
 
             }));
 
@@ -310,9 +316,38 @@ export default class UnitConversion extends Component {
     // FromUnitID: "rad"
     // ToUnitID: 
 
+    filterData = (e: any) => {
+        let value = e.target.value;
+        let filter: any = {
+            logic: "or",
+            filters: [
+                { field: "FromUnitID", operator: "contains", value: value },
+                { field: "ToUnitID", operator: "contains", value: value },
+
+            ],
+        };
+
+        this.setState({
+            grdConversion: filterBy(grdConversion_, filter),
+        });
+    };
+
+
+
+
     render() {
         return (
             <>
+                <div className="k-textbox k-space-right serachStyle">
+                    <input
+                        type="text"
+                        onChange={this.filterData}
+                        placeholder="Search"
+                    />
+                    <a className="k-icon k-i-search" style={{ right: "10px" }}>
+                        &nbsp;
+                    </a>
+                </div>
                 <div className="col-6">
                     <Grid
                         data={this.state.grdConversion != null ? (this.state.grdConversion.map((item: any) =>
