@@ -8,11 +8,13 @@ import { confirmAlert } from 'react-confirm-alert';
 import BrokerParameter from '../../../../broker/BrokerParameter';
 import BrokerRequest from '../../../../broker/BrokerRequest';
 import GlobalMod from '../../../../objects/global';
+import { filterBy } from "@progress/kendo-data-query";
 
 
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
 let objParameter = new BrokerParameter("odata", "odata");
+let grdUnit_: any[] = [];
 
 export default class UnitDictionary extends Component {
 
@@ -171,7 +173,7 @@ export default class UnitDictionary extends Component {
         axios.post(_gMod._performTask, {
             paramRequest: JSON.stringify(objBrokerRequest),
         }).then((response) => {
-            alert(editeMode);
+            
             this.LoadUnitList();
         })
             .catch((error) => {
@@ -231,6 +233,7 @@ export default class UnitDictionary extends Component {
                         UnitCatList: catArr
                     });
 
+                grdUnit_ = UnitList;
 
                 })
                 .catch((error) => {
@@ -314,10 +317,35 @@ export default class UnitDictionary extends Component {
         });
     }
 
+    filterData = (e: any) => {
+        let value = e.target.value;
+        let filter: any = {
+            logic: "or",
+            filters: [
+                { field: "UnitID", operator: "contains", value: value },
+                { field: "UnitName", operator: "contains", value: value },
+                { field: "UnitCategory", operator: "contains", value: value },
+            ],
+        };
+
+        this.setState({
+            grdUnit: filterBy(grdUnit_, filter),
+        });
+    };
 
     render() {
         return (
             <>
+                 <div className="k-textbox k-space-right serachStyle">
+                    <input
+                        type="text"
+                        onChange={this.filterData}
+                        placeholder="Search"
+                    />
+                    <a className="k-icon k-i-search" style={{ right: "10px" }}>
+                        &nbsp;
+                    </a>
+                </div>
                 <div className="col-6">
                     <Grid
                         data={this.state.grdUnit != null ? (this.state.grdUnit.map((item: any) =>

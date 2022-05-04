@@ -36,7 +36,7 @@ export default class UnitConversion extends Component {
     }
 
     UnitIDList: string[] = [];
-    
+
 
 
     cmdAdd = async () => {
@@ -91,22 +91,68 @@ export default class UnitConversion extends Component {
 
     grdRowClick = (event: any) => {
         this.setState({
-            editID: event.dataItem.UnitID
+            editID: event.dataItem.ConversionID
         });
     };
 
+    cancel = () => {
+        try {
+            this.setState({
+                ShowUnitEditor: false,
+                editID: "",
+                FromUnitID: "",
+                ToUnitID: "",
+                ConversionFormula: "",
+                ConversionID: ""
+            });
 
+        } catch (error) {
+
+        }
+    }
     SaveUnitConversion = async () => {
         debugger;
         let newData: any = this.UnitIDList;
         let index = newData.findIndex((item: any) => item === this.state.FromUnitID); // use unique value like ID
         if (index <= 0) {
-            alert("Please select Unit form the list");
+
+
+            confirmAlert({
+                //title: 'eVuMax',
+                message: "Please select Unit form the list",
+                childrenElement: () => <div />,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        onClick: () => {
+                            return;
+
+                        }
+
+                    },
+
+                ]
+            });
+
             return;
         }
         let index1 = newData.findIndex((item: any) => item === this.state.ToUnitID); // use unique value like ID
         if (index1 <= 0) {
-            alert("Please select Unit form the list");
+            confirmAlert({
+                //title: 'eVuMax',
+                message: "Please select Unit form the list",
+                childrenElement: () => <div />,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        onClick: () => {
+                            return;
+
+                        }
+                    },
+                ]
+            });
+
             return;
         }
 
@@ -169,7 +215,7 @@ export default class UnitConversion extends Component {
             ConversionID: ""
         });
 
-        
+
 
 
     }
@@ -224,7 +270,7 @@ export default class UnitConversion extends Component {
 
             axios.all([axiosrequest1, axiosrequest2]).then(axios.spread((...res) => {
                 debugger;
-            
+
 
                 const objData = JSON.parse(res[0].data.Response);
 
@@ -333,8 +379,6 @@ export default class UnitConversion extends Component {
     };
 
 
-
-
     render() {
         return (
             <>
@@ -367,10 +411,10 @@ export default class UnitConversion extends Component {
                                 }}  >Add</Button>
                             </span>
                         </GridToolbar>
-                        <GridColumn
+                        {false && <GridColumn
                             field="ConversionID"
                             title="Conversion ID"
-                        />
+                        />}
                         <GridColumn
                             field="FromUnitID"
                             title="From Unit"
@@ -388,12 +432,10 @@ export default class UnitConversion extends Component {
                                     style={props.style}
                                     className={"text-center k-command-cell " + props.className}
                                 >
-                                    {/* <td className={this.props.className + " k-command-cell"} style={this.props.style}> */}
                                     <span onClick={e =>
                                         this.cmdEditUnit(e, props.dataItem)}>
                                         <FontAwesomeIcon icon={faPen} />
                                     </span>
-
                                 </td>
                             )}
                         />
@@ -431,7 +473,7 @@ export default class UnitConversion extends Component {
                         </Button>
                         <Button
                             className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
-                            onClick={() => this.setState({ DialogUnit: false })}
+                            onClick={this.cancel}
                         >
                             Cancel
                         </Button>
