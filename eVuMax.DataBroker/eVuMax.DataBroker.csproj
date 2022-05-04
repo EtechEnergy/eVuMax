@@ -128,6 +128,7 @@
     <Compile Include="DataServiceManager\Setup\RigState\RigStateSetupMgr.cs" />
     <Compile Include="DataServiceManager\Setup\Settings\CommonSettingsMgr.cs" />
     <Compile Include="DataServiceManager\Setup\Settings\SystemSettings.cs" />
+    <Compile Include="DataServiceManager\Setup\Units\UnitMapping.cs" />
     <Compile Include="DataServiceManager\Setup\Units\UnitsMgr.cs" />
     <Compile Include="DownloadManager\DownloadBroker.cs" />
     <Compile Include="DownloadManager\DownloadManagerBroker.cs" />

@@ -89,10 +89,55 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                     
                     UnitMappingDictionary objUnitMappingDictionary = new UnitMappingDictionary();
                     objUnitMappingDictionary.loadMappingDictionary(ref paramRequest.objDataService);
-                    if(objUnitMappingDictionary.unitMappings.Count > 0)
+                    DataTable grdUnit = new DataTable();
+                    grdUnit.Columns.Add("key");
+                    grdUnit.Columns.Add("WITSML_UNIT_ID");
+                    grdUnit.Columns.Add("VUMAX_UNIT_ID");
+
+                    
+                    if (objUnitMappingDictionary.unitMappings.Count > 0)
+                    {
+                        //grdUnit.Rows.Add(objUnitMappingDictionary.unitMappings.Count);
+
+                        int rowCounter = 0;
+
+                        UnitMapping objUnit = new UnitMapping();
+                        Dictionary<string, string> unitList = new Dictionary<string, string>();
+
+                        foreach (string objKey in objUnitMappingDictionary.unitMappings.Keys)
+                        {
+
+                            grdUnit.Rows.Add();
+                            objUnit = new UnitMapping();
+                            objUnit = objUnitMappingDictionary.unitMappings[objKey];
+
+                            if (!unitList.ContainsKey(objUnit.WITSMLUnit))
+                            {
+                                unitList.Add(objUnit.WITSMLUnit, objUnit.WITSMLUnit);
+                                //cmbFromUnit.Items.Add(objUnit.WITSMLUnit);
+
+                            }
+
+                            if (!unitList.ContainsKey(objUnit.VuMaxUnitID))
+                            {
+                                unitList.Add(objUnit.VuMaxUnitID, objUnit.VuMaxUnitID);
+                                //cmbFromUnit.Items.Add(objUnit.VuMaxUnitID);
+
+                            }
+
+
+                            grdUnit.Rows[rowCounter]["key"] = objKey;
+                            grdUnit.Rows[rowCounter]["WITSML_UNIT_ID"] = objUnit.WITSMLUnit;
+                            grdUnit.Rows[rowCounter]["VUMAX_UNIT_ID"] = objUnit.VuMaxUnitID;
+
+                            rowCounter += 1;
+                        }
+                    }
+
+                    if (objUnitMappingDictionary.unitMappings.Count > 0)
                     {
                         objResponse.RequestSuccessfull = true;
-                        objResponse.Response = JsonConvert.SerializeObject(objUnitMappingDictionary);
+                        objResponse.Response = JsonConvert.SerializeObject(grdUnit);
                         return objResponse;
 
                     }
@@ -222,7 +267,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                 string strUnitConversion = "";
                 UnitConversion objUnitConversion = new UnitConversion();
-                Unit objUnit = new Unit();
+                
                 strUnitConversion = paramRequest.Parameters.Where(x => x.ParamName.Contains("objUnitConversion")).FirstOrDefault().ParamValue.ToString();
                 if (strUnitConversion != "")
                 {
@@ -252,7 +297,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                 string strUnitConversion = "";
                 UnitConversion objUnitConversion = new UnitConversion();
-                Unit objUnit = new Unit();
+                
                 strUnitConversion = paramRequest.Parameters.Where(x => x.ParamName.Contains("objUnitConversion")).FirstOrDefault().ParamValue.ToString();
                 if (strUnitConversion != "")
                 {
@@ -281,7 +326,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
 
                 string ConversionID = "";
                 UnitConversion objUnitConversion = new UnitConversion();
-                Unit objUnit = new Unit();
+                
                 ConversionID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ConversionID")).FirstOrDefault().ParamValue.ToString();
                 
 
@@ -366,7 +411,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
             }
 
 
-            if (paramRequest.Function == EditUnitConversion)
+            if (paramRequest.Function == EditUnitConversionProfile)
             {
 
                 string strProfile = "";
@@ -395,7 +440,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
             }
 
 
-            if (paramRequest.Function == RemoveUnitConversion)
+            if (paramRequest.Function == RemoveUnitConversionProfile)
             {
 
                 string ProfileID = "";
