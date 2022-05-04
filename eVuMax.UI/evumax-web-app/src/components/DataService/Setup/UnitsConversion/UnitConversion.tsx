@@ -8,11 +8,14 @@ import { confirmAlert } from 'react-confirm-alert';
 import BrokerParameter from '../../../../broker/BrokerParameter';
 import BrokerRequest from '../../../../broker/BrokerRequest';
 import GlobalMod from '../../../../objects/global';
-import { convertCompilerOptionsFromJson } from "typescript";
+import { filterBy } from "@progress/kendo-data-query";
+
+import * as utilFunc from "../../../../utilFunctions/utilFunctions";
 
 let _gMod = new GlobalMod();
 let objBrokerRequest = new BrokerRequest();
 let objParameter = new BrokerParameter("odata", "odata");
+let grdConversion_: any[] = [];
 
 export default class UnitConversion extends Component {
 
@@ -33,6 +36,7 @@ export default class UnitConversion extends Component {
     }
 
     UnitIDList: string[] = [];
+
 
 
     cmdAdd = async () => {
@@ -87,22 +91,68 @@ export default class UnitConversion extends Component {
 
     grdRowClick = (event: any) => {
         this.setState({
-            editID: event.dataItem.UnitID
+            editID: event.dataItem.ConversionID
         });
     };
 
+    cancel = () => {
+        try {
+            this.setState({
+                ShowUnitEditor: false,
+                editID: "",
+                FromUnitID: "",
+                ToUnitID: "",
+                ConversionFormula: "",
+                ConversionID: ""
+            });
 
+        } catch (error) {
+
+        }
+    }
     SaveUnitConversion = async () => {
         debugger;
         let newData: any = this.UnitIDList;
         let index = newData.findIndex((item: any) => item === this.state.FromUnitID); // use unique value like ID
         if (index <= 0) {
-            alert("Please select Unit form the list");
+
+
+            confirmAlert({
+                //title: 'eVuMax',
+                message: "Please select Unit form the list",
+                childrenElement: () => <div />,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        onClick: () => {
+                            return;
+
+                        }
+
+                    },
+
+                ]
+            });
+
             return;
         }
         let index1 = newData.findIndex((item: any) => item === this.state.ToUnitID); // use unique value like ID
         if (index1 <= 0) {
-            alert("Please select Unit form the list");
+            confirmAlert({
+                //title: 'eVuMax',
+                message: "Please select Unit form the list",
+                childrenElement: () => <div />,
+                buttons: [
+                    {
+                        label: 'Ok',
+                        onClick: () => {
+                            return;
+
+                        }
+                    },
+                ]
+            });
+
             return;
         }
 
@@ -145,7 +195,9 @@ export default class UnitConversion extends Component {
                 console.log(error);
             });
 
-
+        if (functionName = "AddUnitConversion") {
+            this.LoadUnitList();
+        }
 
         this.setState({
             grdConversion: this.state.grdConversion.map((item: any) => {
@@ -162,7 +214,6 @@ export default class UnitConversion extends Component {
             ConversionFormula: "",
             ConversionID: ""
         });
-
 
 
 
@@ -219,8 +270,7 @@ export default class UnitConversion extends Component {
 
             axios.all([axiosrequest1, axiosrequest2]).then(axios.spread((...res) => {
                 debugger;
-                console.log(res[0]);
-                console.log(res[1]);
+
 
                 const objData = JSON.parse(res[0].data.Response);
 
@@ -235,7 +285,9 @@ export default class UnitConversion extends Component {
 
                 this.setState({
                     grdConversion: Object.values(objData2.unitConversions)
-                })
+                });
+
+                grdConversion_ = Object.values(objData2.unitConversions);
 
             }));
 
@@ -310,9 +362,36 @@ export default class UnitConversion extends Component {
     // FromUnitID: "rad"
     // ToUnitID: 
 
+    filterData = (e: any) => {
+        let value = e.target.value;
+        let filter: any = {
+            logic: "or",
+            filters: [
+                { field: "FromUnitID", operator: "contains", value: value },
+                { field: "ToUnitID", operator: "contains", value: value },
+
+            ],
+        };
+
+        this.setState({
+            grdConversion: filterBy(grdConversion_, filter),
+        });
+    };
+
+
     render() {
         return (
             <>
+                <div className="k-textbox k-space-right serachStyle">
+                    <input
+                        type="text"
+                        onChange={this.filterData}
+                        placeholder="Search"
+                    />
+                    <a className="k-icon k-i-search" style={{ right: "10px" }}>
+                        &nbsp;
+                    </a>
+                </div>
                 <div className="col-6">
                     <Grid
                         data={this.state.grdConversion != null ? (this.state.grdConversion.map((item: any) =>
@@ -332,10 +411,10 @@ export default class UnitConversion extends Component {
                                 }}  >Add</Button>
                             </span>
                         </GridToolbar>
-                        <GridColumn
+                        {false && <GridColumn
                             field="ConversionID"
                             title="Conversion ID"
-                        />
+                        />}
                         <GridColumn
                             field="FromUnitID"
                             title="From Unit"
@@ -353,12 +432,10 @@ export default class UnitConversion extends Component {
                                     style={props.style}
                                     className={"text-center k-command-cell " + props.className}
                                 >
-                                    {/* <td className={this.props.className + " k-command-cell"} style={this.props.style}> */}
                                     <span onClick={e =>
                                         this.cmdEditUnit(e, props.dataItem)}>
                                         <FontAwesomeIcon icon={faPen} />
                                     </span>
-
                                 </td>
                             )}
                         />
@@ -396,7 +473,7 @@ export default class UnitConversion extends Component {
                         </Button>
                         <Button
                             className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
-                            onClick={() => this.setState({ DialogUnit: false })}
+                            onClick={this.cancel}
                         >
                             Cancel
                         </Button>
