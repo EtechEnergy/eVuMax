@@ -559,7 +559,7 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
         });
     }
     grdItemChange = (e: any) => {
-
+        debugger;
         e.dataItem[e.field] = e.value;
         this.setState({
             grdLogCurves: [...this.state.grdLogCurves]

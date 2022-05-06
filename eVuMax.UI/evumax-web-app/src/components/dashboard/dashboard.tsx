@@ -693,6 +693,13 @@ export class Dashboard extends React.Component<Props> {
                   Unit Mappings
                 </NavLink>
               </li>
+
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/UnitConversionProfile">
+                  {/* <a onClick={this.ManageTheme} > */}
+                  Unit Conversion Profile
+                </NavLink>
+              </li>
             </ol>
           </ul>
 

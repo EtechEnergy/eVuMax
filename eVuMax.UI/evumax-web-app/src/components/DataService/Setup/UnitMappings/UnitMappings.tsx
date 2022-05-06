@@ -32,7 +32,7 @@ export default class UnitMappings extends Component {
         this.LoadUnitList();
     }
 
-  
+
     grdRowClick = (event: any) => {
         this.setState({
             editID: event.dataItem.key
@@ -122,7 +122,7 @@ export default class UnitMappings extends Component {
                         objBrokerRequest.Broker = "UnitSetup";
                         objBrokerRequest.Function = "RemoveUnitMapping";
 
-                 
+
                         objParameter = new BrokerParameter("MappingKey", objRow.key);
                         objBrokerRequest.Parameters.push(objParameter);
 
@@ -153,8 +153,8 @@ export default class UnitMappings extends Component {
     filterData = (e: any) => {
 
         // VUMAX_UNIT_ID: ""
-    // WITSML_UNIT_ID: ""
-    // key: "877_649_461_341_808"
+        // WITSML_UNIT_ID: ""
+        // key: "877_649_461_341_808"
 
         let value = e.target.value;
         let filter: any = {
@@ -175,7 +175,7 @@ export default class UnitMappings extends Component {
     render() {
         return (
             <>
-             <div className="k-textbox k-space-right serachStyle">
+                <div className="k-textbox k-space-right serachStyle">
                     <input
                         type="text"
                         onChange={this.filterData}
@@ -194,7 +194,7 @@ export default class UnitMappings extends Component {
                         //editField="inEdit"
                         selectedField="inEdit"
                     >
-                       {false && <GridColumn
+                        {false && <GridColumn
                             field="key"
                             title="key"
                         />}
