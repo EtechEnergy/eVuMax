@@ -39,6 +39,7 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
         const string AddUnitConversionProfile = "AddUnitConversionProfile";
         const string EditUnitConversionProfile = "EditUnitConversionProfile";
         const string RemoveUnitConversionProfile = "RemoveUnitConversionProfile";
+        const string LoadProfile = "LoadProfile";
 
         #endregion
 
@@ -152,13 +153,29 @@ namespace eVuMax.DataBroker.DataServiceManager.Setup
                     //Dim objData As DataTable = objDataService.getTable("SELECT PROFILE_ID,PROFILE_NAME FROM VMX_UNIT_PROFILE_HEADER ORDER BY PROFILE_NAME")
                     DataTable objData = new DataTable();
 
-                    objData = paramRequest.objDataService.getTable("SELECT PROFILE_ID,PROFILE_NAME FROM VMX_UNIT_PROFILE_HEADER ORDER BY PROFILE_NAME");
+                    objData = paramRequest.objDataService.getTable("SELECT PROFILE_ID, PROFILE_NAME FROM VMX_UNIT_PROFILE_HEADER WHERE PROFILE_ID != '' ORDER BY PROFILE_NAME");
+                    
+                        //SELECT PROFILE_ID,PROFILE_NAME FROM VMX_UNIT_PROFILE_HEADER ORDER BY PROFILE_NAME
 
                     objResponse.RequestSuccessfull = true;
                     objResponse.Response = JsonConvert.SerializeObject(objData);
                     return objResponse;
                 }
 
+
+                if (paramRequest.Function == LoadProfile)
+                {
+                    string ProfileID = "";
+                    ProfileID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ProfileID")).FirstOrDefault().ParamValue.ToString();
+
+                    UnitProfile objProfile = new UnitProfile();
+                    objProfile =  UnitProfile.loadProfile(ref paramRequest.objDataService, ProfileID);
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Response = JsonConvert.SerializeObject(objProfile);
+                    return objResponse;
+
+
+                }
 
                 return new BrokerResponse();
             }

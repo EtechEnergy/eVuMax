@@ -43,6 +43,7 @@ import MaintainStdChannels from "../components/DataService/Setup/MaintainStdChan
 import UnitDictionary from "../components/DataService/Setup/Units/UnitDictionary";
 import UnitConversion from "../components/DataService/Setup/UnitsConversion/UnitConversion";
 import UnitMappings from "../components/DataService/Setup/UnitMappings/UnitMappings";
+import UnitConversionProfile from "../components/DataService/Setup/UnitConversionProfile/UnitConversionProfile";
 
        
 
@@ -327,6 +328,16 @@ const dashbordRoutes = [
     component: UnitMappings,
     layout: "/dashboard",
   },
+
+  {
+    path: "/UnitConversionProfile",
+    name: "UnitConversionProfile",
+    icon: "",
+    component: UnitConversionProfile,
+    layout: "/dashboard",
+  },
+
+  
 
 ];
 
