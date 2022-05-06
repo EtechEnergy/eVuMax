@@ -35,14 +35,13 @@ export default class UnitConversionProfile extends Component {
         selectedRow: {},
         editID: "",
         editID2: "",
-
-        ConversionID: "",
-        FromUnitID: "",
-        ToUnitID: "",
-        ConversionFormula: "",
+        // ConversionID: "",
+        // FromUnitID: "",
+        // ToUnitID: "",
+        // ConversionFormula: "",
         objProfile: {} as any,
         UnitIDList: [] = [new comboData()],
-        ProfileName: ""
+        // ProfileName: ""
 
     }
 
@@ -188,6 +187,7 @@ export default class UnitConversionProfile extends Component {
     }
 
     handleChange = (objItem: any, fieldName: string) => {
+        debugger;
         let newData: any = this.state.objProfile;
         newData[fieldName] = objItem.value;
         this.setState({
@@ -228,7 +228,7 @@ export default class UnitConversionProfile extends Component {
         debugger;
 
         let objProfile: any = {};
-        objProfile = { ProfileID: "", ProfileName: this.state.ProfileName, Conversions: [] };
+        //objProfile = { ProfileID: "", ProfileName: "", Conversions: [] };
         objProfile = this.state.objProfile;
         let objConversionList: any[] = [];
 
