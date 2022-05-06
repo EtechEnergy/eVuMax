@@ -11,7 +11,7 @@ import * as utilFunc from "../../utilFunctions/utilFunctions";
 import { exit } from "process";
 import { Util } from "../../Models/eVuMax";
 ///"/utilFunctions/utilFunctions";
-
+import { ClientLogger } from "../../components/ClientLogger/ClientLogger";
 
 export enum axisPosition {
   left = 0,
@@ -126,6 +126,7 @@ export class Axis {
   __axisWidth: number = 0;
 
   private _onAxisDraw = new EventDispatcher<string, string>();
+  objLogger: ClientLogger;
 
   get onAxisDraw() {
     return this._onAxisDraw.asEvent();
@@ -1449,6 +1450,11 @@ export class Axis {
         }
       }
 
+      //Added by prath on 05-05-2022
+      if (this.ScaleRef ==undefined){
+        return;
+      }
+      
       this.ScaleRef.range([this.StartPos, this.EndPos]);
 
       if (!this.IsDateTime && !this.bandScale) {
@@ -1509,7 +1515,7 @@ export class Axis {
       this.formatAxis();
 
     } catch (error) {
-      
+      this.objLogger.SendLog("Error ->Axis-updateAxis : " + error.message);
     }
   };
 

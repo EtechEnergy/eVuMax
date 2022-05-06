@@ -69,7 +69,7 @@ export default class UnitDictionary extends Component {
 
 
     SaveUnit = () => {
-        debugger;
+        
         //UnitCategory: ""
         //UnitID: "0.01 deg/ft"
         //UnitName: "0.01 deg/ft"
@@ -141,7 +141,7 @@ export default class UnitDictionary extends Component {
 
         this.setState({
             grdUnit: this.state.grdUnit.map((item: any) => {
-                debugger;
+                
                 if (this.state.editID === item.UnitID) {
                     item = { ...objUnit };
                 }
@@ -207,9 +207,9 @@ export default class UnitDictionary extends Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     const objData = JSON.parse(res.data.Response);
-                    debugger;
+                    
                     let UnitList = Object.values(objData.units);
                     console.log(objData);
                     //UnitCategory: ""

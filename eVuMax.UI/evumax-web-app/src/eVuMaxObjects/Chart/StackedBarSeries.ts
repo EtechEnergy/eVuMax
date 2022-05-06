@@ -9,16 +9,22 @@ import { text } from '@fortawesome/fontawesome-svg-core';
 import { DataSeries, dataSeriesType } from './DataSeries';
 import { ChartData } from './ChartData';
 import { ChartSeriesDefaults } from '@progress/kendo-react-all';
-import { debug } from 'console';
+import { debug, timeStamp } from 'console';
+import { ClientLogger } from '../../components/ClientLogger/ClientLogger';
 
 //This file contains logic of generating stacked bar chart on the plot
 export class StackedBarSeries {
 	//External References
 	ChartRef: Chart.Chart;
+	objLogger: ClientLogger;
+
+
 
 	//Draws the series, this will draw vertical bars along with X Axis
 	redrawSeries = () => {
 		try {
+			this.objLogger = this.ChartRef.objLogger;
+			this.ChartRef.objLogger.SendLog("StackedBarSeries.ts called------------------------------->" + this.ChartRef.DataSeries.size);
 			let isDateTimeScale = false;
 			let objHorizontalAxis: any;
 
@@ -41,7 +47,10 @@ export class StackedBarSeries {
 			} else {
 				this.redrawNumeric();
 			}
-		} catch (error) { }
+		} catch (error) { 
+			this.objLogger.SendLog("Error --> StackedBarSeries.ts line 51 --> redrawSeries function --> : " + error.message);
+
+		}
 	};
 
 	redrawNumeric = () => {
@@ -360,7 +369,10 @@ export class StackedBarSeries {
 					////********************************* */
 				}
 			}
-		} catch (error) { }
+		} catch (error) { 
+			this.objLogger.SendLog("Error --> StackedBarSeries.ts line 373 --> redrawNumeric function --> : " + error.message);
+
+		}
 	};
 
 	redrawDateTime = () => {
@@ -637,7 +649,9 @@ export class StackedBarSeries {
 					}
 				}
 			}
-		} catch (error) { }
+		} catch (error) { 
+			this.objLogger.SendLog("Error --> StackedBarSeries.ts line 653--> redrawDateTime function --> : " + error.message);
+		}
 	};
 
 	isBarClicked = (x: number, y: number) => {

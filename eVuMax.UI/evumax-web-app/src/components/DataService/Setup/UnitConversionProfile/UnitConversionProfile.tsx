@@ -38,7 +38,7 @@ export default class UnitConversionProfile extends Component {
 
     cmdAdd = async () => {
         try {
-            debugger;
+            
             this.setState({
                 FromUnitID: "",
                 ToUnitID: "",
@@ -57,7 +57,7 @@ export default class UnitConversionProfile extends Component {
 
     cmdEditUnit = async (event: any, rowData: any) => {
         try {
-            debugger;
+            
             this.setState({
                 FromUnitID: rowData.FromUnitID,
                 ToUnitID: rowData.ToUnitID,
@@ -94,7 +94,7 @@ export default class UnitConversionProfile extends Component {
 
 
     SaveUnitConversion = async () => {
-        debugger;
+        
         let newData: any = this.UnitIDList;
         let index = newData.findIndex((item: any) => item === this.state.FromUnitID); // use unique value like ID
         if (index <= 0) {
@@ -150,7 +150,7 @@ export default class UnitConversionProfile extends Component {
 
         this.setState({
             grdConversion: this.state.grdConversionProfile.map((item: any) => {
-                debugger;
+                
                 if (this.state.editID === item.conversionID) {
                     item = { ...objUnitConversion };
                 }
@@ -219,7 +219,7 @@ export default class UnitConversionProfile extends Component {
 
 
             axios.all([axiosrequest1, axiosrequest2]).then(axios.spread((...res) => {
-                debugger;
+                
                 console.log(res[0]);
                 console.log(res[1]);
 
@@ -261,7 +261,7 @@ export default class UnitConversionProfile extends Component {
                 {
                     label: 'Yes',
                     onClick: async () => {
-                        debugger;
+                        
                         let objRow = rowData;
 
                         objBrokerRequest = new BrokerRequest();

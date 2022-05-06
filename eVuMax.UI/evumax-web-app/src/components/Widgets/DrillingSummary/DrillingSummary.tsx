@@ -97,7 +97,7 @@ export class DrillingSummary extends Component {
   //Cancel all Axios Request
   AxiosSource = axios.CancelToken.source();
   AxiosConfig = { cancelToken: this.AxiosSource.token };
-  MatchDepthByFormationTops : boolean =true;
+  MatchDepthByFormationTops: boolean = true;
 
   componentWillUnmount() {
     this.AxiosSource.cancel();
@@ -120,7 +120,7 @@ export class DrillingSummary extends Component {
   //==============
 
   async componentDidMount() {
-    
+
     //this.objLogger.SendLog("Component did Mount")
     this.initilizeCharts();
 
@@ -153,11 +153,11 @@ export class DrillingSummary extends Component {
 
   ////Nishant
   selectionChanged = async (paramDataSelector: DataSelector_, paramRefreshStatus: boolean = false) => {
-    
+
     let realtimeStatus: boolean = paramRefreshStatus;
 
     //Added on 02-02-2022
-    paramDataSelector.needForceReload= true;
+    paramDataSelector.needForceReload = true;
 
     await this.setState({
       objDataSelector: paramDataSelector,
@@ -171,7 +171,7 @@ export class DrillingSummary extends Component {
     this.refreshHrs = paramDataSelector.refreshHrs;
     this.MatchDepthByFormationTops = paramDataSelector.MatchDepthByFormationTops;
 
-    
+
 
     if (this.state.isRealTime) {
       this.intervalID = setInterval(this.loadDrlgSummary.bind(this), 15000);
@@ -179,18 +179,18 @@ export class DrillingSummary extends Component {
       await this.AxiosSource.cancel();
       await clearInterval(this.intervalID);
       this.intervalID = null;
-      
+
       this.loadDrlgSummary();
     }
 
   }
 
 
-  
+
 
   initilizeCharts = () => {
     this.objLogger.SendLog("initilizeCharts:this.objChart");
-    
+
     this.objChart = new Chart(this, "ROP_RigState");
     this.objChart.ContainerId = "drlgSummary";
     this.objChart.Title = "ROP";
@@ -226,6 +226,8 @@ export class DrillingSummary extends Component {
     this.objChart.MarginRight = 10;
 
     this.objChart.initialize();
+    this.objLogger.SendLog("Redraw Chart Start objChart -");    
+    
     this.objChart.reDraw();
 
     //************************************************************ */
@@ -583,10 +585,11 @@ export class DrillingSummary extends Component {
       }
 
       this.objChart_ROPLine.drawLegend();
+      this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart_ROPLine.ContainerId);
 
       this.objChart_ROPLine.reDraw();
     } catch (error) {
-      this.objLogger.SendLog("refreshROPLineChart: TryCatch Error:" + error);
+      this.objLogger.SendLog("refreshROPLineChart: TryCatch Error:" + error.message);
     }
   };
   refreshRigStateSummaryChart = () => {
@@ -676,7 +679,7 @@ export class DrillingSummary extends Component {
 
         objSeries.Data.push(objDataPoint);
       }
-
+      this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart_RigStateSummary.ContainerId);
       this.objChart_RigStateSummary.reDraw();
 
 
@@ -768,6 +771,7 @@ export class DrillingSummary extends Component {
       objDistance.Data.push(objDistancePoint);
       this.objChart_Distance.bottomAxis().Labels.push("Slide Offset");
 
+      this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart_Distance.ContainerId);
       this.objChart_Distance.reDraw();
     } catch (error) {
       this.objLogger.SendLog("refreshDistanceChart: TryCatch Error:" + error);
@@ -855,7 +859,8 @@ export class DrillingSummary extends Component {
       this.objChart.bottomAxis().Labels.push("Slide Offset");
 
       objROP.Data.push(objROPPoint);
-
+      
+      this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart.ContainerId);
       this.objChart.reDraw();
     } catch (error) {
       this.objLogger.SendLog("refreshROPChart: TryCatch Error:" + error);
@@ -964,6 +969,7 @@ export class DrillingSummary extends Component {
       this.objChart_Time.bottomAxis().Labels.push("Slide Offset");
 
       objTime.Data.push(objROPPoint);
+      this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart_Time.ContainerId);
       this.objChart_Time.reDraw();
     } catch (error) {
       this.objLogger.SendLog("refreshTimeChart: TryCatch Error:" + error);
@@ -973,6 +979,7 @@ export class DrillingSummary extends Component {
   refreshChart = () => {
     try {
       
+
       this.refreshROPChart();
       this.refreshDistanceChart();
       this.refreshTimeChart();
@@ -986,7 +993,8 @@ export class DrillingSummary extends Component {
       this.refreshOffsetPieChart1();
       this.refreshOffsetPieChart2();
     } catch (error) {
-      this.objLogger.SendLog("refreshChart: TryCatch Error:" + error);
+      
+      this.objLogger.SendLog("refreshChart: TryCatch Error:" + error.message);
     }
   };
 
@@ -1025,7 +1033,7 @@ export class DrillingSummary extends Component {
 
     objPieData1.color = this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData1);
-
+    this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart_Pie1.ContainerId);
     this.objChart_Pie1.reDraw();
   };
 
@@ -1064,7 +1072,7 @@ export class DrillingSummary extends Component {
 
     objPieData2.color = "blue"; //this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData2);
-
+    this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart_Pie2.ContainerId);
     this.objChart_Pie2.reDraw();
   };
 
@@ -1104,7 +1112,7 @@ export class DrillingSummary extends Component {
 
     objPieData1.color = this.getRigStateColor(1);
     objPieSeries.Data.push(objPieData1);
-
+    this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart_OffsetPie1.ContainerId);
     this.objChart_OffsetPie1.reDraw();
   };
 
@@ -1146,7 +1154,7 @@ export class DrillingSummary extends Component {
 
     objPieData1.color = "blue";
     objPieSeries.Data.push(objPieData1);
-
+    this.objLogger.SendLog("MainBody Started --> DrillingSummary --> Before redraw Function called ->" + this.objChart_OffsetPie2.ContainerId);
     this.objChart_OffsetPie2.reDraw();
   };
   handleSelect = (e: any) => {
@@ -1156,7 +1164,7 @@ export class DrillingSummary extends Component {
   handleToggleSwitch = async () => {
 
     await this.setState({ isRealTime: !this.state.isRealTime });
-    
+
 
     if (this.state.isRealTime) {
       //Added on 02-02-2022
@@ -1225,13 +1233,13 @@ export class DrillingSummary extends Component {
   loadDrlgSummary = () => {
     try {
 
-      
+
       Util.StatusInfo("Getting data from server   ");
       this.setState({
         isProcess: true,
       });
 
-      this.objLogger.SendLog("loadDrlgSummary");
+      this.objLogger.SendLog("loadDrlgSummary started");
 
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "Summary.Manager";
@@ -1296,7 +1304,7 @@ export class DrillingSummary extends Component {
         "refreshHrs", this.refreshHrs.toString()
       );
       objBrokerRequest.Parameters.push(paramRefreshHrs);
-    
+
       let objParameter = new BrokerParameter("MatchDepthByFormationTops", this.state.objDataSelector.MatchDepthByFormationTops.toString());
       objBrokerRequest.Parameters.push(objParameter);
 
@@ -1304,7 +1312,7 @@ export class DrillingSummary extends Component {
 
       //axios.get(endpointUrl, config).then((res) => {})
 
-      
+
 
       this.AxiosSource = axios.CancelToken.source();
       axios
@@ -1317,11 +1325,11 @@ export class DrillingSummary extends Component {
           params: { paramRequest: JSON.stringify(objBrokerRequest) },
 
         })
-        .then((res) => {
+        .then(async (res) => {
 
           this.objLogger.SendLog("loadDrlgSummary Data Received...");
-          
-          
+
+
           let objData = JSON.parse(res.data.Response);
           console.log("Drlg Summary data  -->", objData);
 
@@ -1343,9 +1351,10 @@ export class DrillingSummary extends Component {
           if (objData.offSetWellNumericData.length > 0) {
             offSetWellNumericData = objData.offSetWellNumericData[0];
           }
+          this.objLogger.SendLog("Inside loadDrlgSummary Function  Rigstate Object :" + JSON.stringify( objData.RigStates));
 
-
-          this.setState({
+          
+     await  this.setState({
             objSummaryData: objData,
             objNumericData: objData.NumericData[0],
             objRigStateSummaryData: objData.rigStateSummaryData,
@@ -1357,16 +1366,26 @@ export class DrillingSummary extends Component {
             isProcess: false,
           });
 
-
+          
           this.prepareGrdNumericTable(); //Vimal 06-02-2021
           this.prepareOffsetNumericTable(); //vimal
           document.title = this.state.objSummaryData.WellName + " -Drilling Summary"; //Nishant 02/09/2021
           this.objLogger.SendLog("Well Id :" + this.WellId + " - " + this.state.objSummaryData.WellName);
+          this.objLogger.SendLog("*********loadDrlgSummary Data Received length...********");
 
+          this.objLogger.SendLog("ROP Data = " + objData.ROPData.length);
+          this.objLogger.SendLog("ROPDataOffset Data = " + objData.ROPDataOffset.length);
+          this.objLogger.SendLog("RigStates Data = " + objData.RigStates.length);
+          this.objLogger.SendLog("NumericData Data = " + objData.NumericData.length);
+          this.objLogger.SendLog("offSetWellNumericData Data = " + objData.offSetWellNumericData.length);
+          this.objLogger.SendLog("rigStateSummaryData Data = " + objData.rigStateSummaryData.length);
+          this.objLogger.SendLog("****************************");
 
           this.refreshChart();
         })
         .catch((error) => {
+
+          this.objLogger.SendLog("*********loadDrlgSummary Data Error Catch ==>" + error.message);
 
           Util.StatusError(error.message);
 
@@ -1593,14 +1612,26 @@ export class DrillingSummary extends Component {
 
   //Nishant
   getRigStateColor = (number) => {
-    let index = this.state.objRigStates.findIndex(
-      (e) => e.RIG_STATE_NUMBER === number
-    );
-    if (index > -1) {
-      return this.state.objRigStates[index].HEX_COLOR;
-    } else {
-      return "#000000";
+    try {
+      // this.objLogger.SendLog("Inside Function getRigStateColor :" + JSON.stringify( this.state.objRigStates));
+      
+      let index = this.state.objRigStates.findIndex(
+        (e) => e.RIG_STATE_NUMBER === number
+      );
+      if (index > -1) {
+        return this.state.objRigStates[index].HEX_COLOR;
+      } else {
+        return "#000000";
+      }
+    } catch (error) {
+      //alert("aaa " + number);
+      
+      this.objLogger.SendLog("TryCatch: DrillingSummary.tsx getRigStateColor Function  Error rigStates length =:" + this.state.objRigStates.length);
+      this.objLogger.SendLog("TryCatch: DrillingSummary.tsx getRigStateColor Function  Error:" + error.message);
+      this.objLogger.SendLog("TryCatch: DrillingSummary.tsx Inside Function getRigStateColor :" + JSON.stringify( this.state.objRigStates));
     }
+
+
   };
 
 
@@ -1674,7 +1705,7 @@ export class DrillingSummary extends Component {
 
           </div>
           <div className="form-inline m-1">
-         
+
             <div className="eVumaxPanelController" style={{ width: this.objLogger.LogList.length > 0 ? "380px" : "255px" }}>
               <label className=" mr-1">Realtime</label> <Switch onChange={this.handleToggleSwitch} value={this.state.isRealTime} checked={this.state.isRealTime}></Switch>
               <label className=" ml-5 mr-1" onClick={() => { this.refreshROPLineChart(); }} style={{ cursor: "pointer" }}>Undo Zoom</label>
@@ -1708,7 +1739,7 @@ export class DrillingSummary extends Component {
         </div>
 
 
-    
+
         <div className="row">
           <TabStrip
             selected={this.state.selected}
@@ -1718,7 +1749,7 @@ export class DrillingSummary extends Component {
             <TabStripTab title="Drilling Summary">
               <div id="tabDrlgSummary">
                 <div className="row">
-                 
+
                 </div>
 
                 <div className="clearfix"></div>

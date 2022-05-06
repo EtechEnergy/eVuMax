@@ -36,6 +36,7 @@ namespace eVuMax.DataBroker.DataServiceManager
         {
             try
             {
+                                 //SELECT MNEMONIC, CURVE_NAME FROM VMX_CURVE_DICTIONARY                                                                                                                                                         WHERE LOG_TYPE = " + logType.ToString + " AND USER_VISIBLE = 1 ORDER BY MNEMONIC
                 string strSQL = "SELECT Mnemonic,CURVE_NAME as ChannelName,DATA_TYPE as DataType,LOG_TYPE as LogType,CURVE_ID,(CASE WHEN LOG_TYPE=1 THEN 'Time Log' WHEN LOG_TYPE=2 THEN 'Depth Log' END) AS LogName FROM VMX_CURVE_DICTIONARY WHERE USER_VISIBLE=1 ORDER BY LOG_TYPE,MNEMONIC";
                 DataTable objData = objDataService.getTable(strSQL);
                 return objData;
@@ -47,6 +48,21 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
         }
 
+        //Memonic Mapping
+        public DataTable generateMMStandardChannels(string logType)
+        {
+            try
+            {
+                string strSQL = "SELECT MNEMONIC,CURVE_NAME FROM VMX_CURVE_DICTIONARY WHERE LOG_TYPE=" + logType + " AND USER_VISIBLE=1 ORDER BY MNEMONIC";
+                DataTable objData = objDataService.getTable(strSQL);
+                return objData;
+            }
+            catch (Exception ex)
+            {
+
+                return new DataTable();
+            }
+        }
         public bool addStdChannels(ref eMaintainStdChannels objeMaintainStdChannels)
         {
             try

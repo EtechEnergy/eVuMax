@@ -62,7 +62,7 @@ export default class AlertSettings extends Component {
 
         })
         .then((res) => {
-          debugger;
+          
           Util.StatusSuccess("Data successfully retrived  ");
           this.objLogger.SendLog("load Alert Setting Rules Data Received...");
 
@@ -150,7 +150,7 @@ export default class AlertSettings extends Component {
 
         })
         .then((res) => {
-          debugger;
+          
           this.objLogger.SendLog("Saved Alert Settings successfully...");
 
 

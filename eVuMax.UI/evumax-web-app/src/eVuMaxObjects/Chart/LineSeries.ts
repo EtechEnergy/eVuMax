@@ -12,15 +12,17 @@ import { DataSeries, dataSeriesType, pointStyle } from "./DataSeries";
 import { ChartData } from "./ChartData";
 import { debug } from "console";
 import moment from "moment";
+import { ClientLogger } from '../../components/ClientLogger/ClientLogger';
 
 //This file contains logic of generating line chart on the plot
 export class LineSeries {
   //External References
   ChartRef: Chart.Chart;
-
+  objLogger: ClientLogger;
 
   drawPoint = (px, py,pColor, objSeries) => {
     try {
+        this.objLogger = this.ChartRef.objLogger;
         this.ChartRef.CanvasContext.fillStyle = pColor; //Nishant 22-12-2021
      
 
@@ -71,7 +73,7 @@ export class LineSeries {
 
 
                 } catch (error) {
-
+                  this.objLogger.SendLog("LineSeries.ts --> drawPoint function line 76 --> : " + error.message);                  
                 }
 
 
@@ -138,7 +140,7 @@ export class LineSeries {
 
 
     } catch (error) {
-
+      this.objLogger.SendLog("LineSeries.ts --> drawPoint ** function line 143--> : " + error.message);    
     }
 
 }
@@ -155,6 +157,7 @@ export class LineSeries {
       //plotOn = this.ChartRef.SVGRef;
 
       //Remove existing data
+      this.objLogger = this.ChartRef.objLogger;
       let xValues = new Array<number>();
 
       for (let key of this.ChartRef.DataSeries.keys()) {
@@ -192,7 +195,10 @@ export class LineSeries {
               verticalAxisID: objSeries.YAxisId,
             });
             //============
-          } catch (error) { }
+          } catch (error) {
+            this.objLogger.SendLog("LineSeries.ts --> redrawSeries line 199 function --> : " + error.message);             
+             
+           }
         }
       }
 
@@ -494,7 +500,9 @@ export class LineSeries {
             }
               //*********************************** */
 
-          } catch (error) { }
+          } catch (error) {
+            this.objLogger.SendLog("LineSeries.ts --> redrawSeries function line 504 --> : " + error.message);
+           }
         }
 
 
@@ -742,7 +750,9 @@ export class LineSeries {
                 );
               });
             //prath code end for Crosshair Cursor
-          } catch (error) { }
+          } catch (error) {
+            this.objLogger.SendLog("LineSeries.ts --> redrawSeries line 754 function --> : " + error.message);
+           }
         }
 
 
@@ -752,6 +762,9 @@ export class LineSeries {
        
 
       }
-    } catch (error) { }
+    } catch (error) {
+
+      this.objLogger.SendLog("LineSeries.ts --> redrawSeries function line 767 --> : " + error.message);
+     }
   };
 }

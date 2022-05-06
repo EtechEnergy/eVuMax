@@ -55,7 +55,7 @@ export default class QcRules extends Component {
 
   okQCRuleDialog = async (objQCRule_: QCRule) => {
     try {
-      debugger;
+      
       this.setState({ objQCRule: objQCRule_, showQCRuleDialog: false });
 
       await this.loadQCRules();
@@ -251,7 +251,7 @@ export default class QcRules extends Component {
       }
       await this.setState({ objQCRule: objRule_, showQCRuleDialog: true, editMode: "E" });
 
-      debugger;
+      
 
     } catch (error) {
 
@@ -284,7 +284,7 @@ export default class QcRules extends Component {
               objBrokerRequest.Module = "DataService";
               objBrokerRequest.Broker = "SetupQCRules";
               objBrokerRequest.Function = "removeQCRule";
-              debugger;
+              
 
 
               let paramuserid: BrokerParameter = new BrokerParameter(
@@ -310,7 +310,7 @@ export default class QcRules extends Component {
               })
                 .then((res) => {
 
-                  debugger;
+                  
                   Util.StatusSuccess("Data successfully retrived  ");
 
 
@@ -348,7 +348,7 @@ export default class QcRules extends Component {
 
   grdRowClick = async (event: GridSelectionChangeEvent) => {
     try {
-      debugger;
+      
       await this.setState({ selectedRuleID: event.dataItem.RuleID })
     } catch (error) {
 

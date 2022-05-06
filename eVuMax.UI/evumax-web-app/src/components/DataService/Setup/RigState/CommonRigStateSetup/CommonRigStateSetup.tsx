@@ -81,7 +81,7 @@ export default class CommonRigStateSetup extends Component {
 
             let objRigStates = utilFunctions.CopyObject(Object.values(objData.rigStates));
             let grdRigState = [];
-debugger;
+
             if (objRigStates.length > 0) {
                 for (let index = 0; index < objRigStates.length; index++) {
                     let objItem: any = objRigStates[index];
@@ -118,14 +118,14 @@ debugger;
             //Color: -16711936
             //Name: "Rotary Drill"
             //Number: 0
-            // debugger;
+            // 
             // let reactColor = utilFunctions.intToColor(-16711936);
             // let Hexa = utilFunctions.rgb2hex(reactColor);
             // let HEXtoVB = this.HEXToVBColor(Hexa);
             // let VBToHexa = this.VBColorToHEX(-16711936);
             // let hexatoVB1 = this.HEXToVBColor(VBToHexa);
 
-            debugger;
+            
             let localRigStateList: any = utilFunctions.CopyObject(this.state.grdRigState);
 
             for (let index = 0; index < localRigStateList.length; index++) {
@@ -174,7 +174,7 @@ debugger;
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let objResponse = JSON.parse(res.data);
 
                     if (objResponse.RequestSuccessfull == false) {
@@ -244,7 +244,7 @@ debugger;
                 })
                 .then((res) => {
                     const objData = JSON.parse(res.data.Response);
-                    debugger;
+                    
                     console.log(objData);
                     if (res.data.RequestSuccessfull) {
                         if (objData != undefined || objData != "") {
@@ -366,7 +366,7 @@ debugger;
 
                                                                 value={props.dataItem[props.field]}
                                                                 onChange={e => {
-                                                                    debugger;
+                                                                    
                                                                     props.onChange({
                                                                         dataItem: props.dataItem,
                                                                         dataIndex: props.dataIndex,

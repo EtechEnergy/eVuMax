@@ -57,7 +57,7 @@ export default class CommonSettings extends Component {
 
     
     for (let index = 0; index < this.pageSizeList.length; index++) {
-      debugger;
+      
       const element = this.pageSizeList[index];
       if(element.id == this.state.objSettings.settings[26].Value){
         
@@ -99,7 +99,7 @@ export default class CommonSettings extends Component {
       })
       .then((res) => {
         const objData = JSON.parse(res.data.Response);
-        debugger;
+        
         console.log(objData);
         if (res.data.RequestSuccessfull) {
           if(objData!=undefined || objData !=""){
@@ -272,7 +272,7 @@ export default class CommonSettings extends Component {
   handleChangeDropDown = (event: any, fieldName: string) => {
 
 
-    debugger;
+    
 
     let edited = this.state.objSettings;
     let value = event.value;
@@ -320,7 +320,7 @@ export default class CommonSettings extends Component {
 
   handleChange = (objItem: any, fieldName: string) => {
 
-    debugger;
+    
     let edited: any = this.state.objSettings;
     let index: number = 0;
     index = this.state.objSettings.settings.findIndex((d: any) => d.SettingID === fieldName);

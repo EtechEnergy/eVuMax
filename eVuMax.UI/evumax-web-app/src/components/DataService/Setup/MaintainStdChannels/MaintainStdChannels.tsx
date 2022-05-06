@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Button, Dialog, DropDownList, Grid, GridColumn as Column, GridSelectionChangeEvent, Label } from '@progress/kendo-react-all';
-import { Input } from '@progress/kendo-react-inputs'
+import { Checkbox, Input } from '@progress/kendo-react-inputs'
 import BrokerParameter from '../../../../broker/BrokerParameter';
 import BrokerRequest from '../../../../broker/BrokerRequest';
 import * as utilFunc from '../../../../../src/utilFunctions/utilFunctions';
@@ -29,7 +29,17 @@ export default class MaintainStdChannels extends Component {
         selectedDataType: new comboData("Double", "Double"),
         cboLogTypeList: [] as any,
         selectedLogType: new comboData("Time Log", "1"),
+
+        grdMMData: [] as any,
+        showMnemonicMapping: false,
+        cboMMLogTypeList: [] as any,
         
+        selectedMMLogType: new comboData("Time Log", "1"),
+        cboMMVuMaxChannelList: [] as any,
+        selectedMMVuMaxChannel: new comboData("", "1"),
+        selectedMMDataMapping: ""
+
+
     }
     componentDidMount = async () => {
         try {
@@ -53,7 +63,7 @@ export default class MaintainStdChannels extends Component {
             logTypeList.push(new comboData("Time Log", "1"));
             logTypeList.push(new comboData("Depth Log", "2"));
 
-            this.setState({ cboDataTypeList: dataTypeList, cboLogTypeList: logTypeList })
+            this.setState({ cboDataTypeList: dataTypeList, cboLogTypeList: logTypeList, cboMMLogTypeList : logTypeList });
 
 
         } catch (error) {
@@ -64,12 +74,12 @@ export default class MaintainStdChannels extends Component {
     loadData = () => {
         try {
 
-            debugger;
+            
             Util.StatusInfo("Getting data from server   ");
 
 
             this.objLogger.SendLog("load Maint Std Channels");
-            debugger;
+            
 
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "DataService";
@@ -118,7 +128,106 @@ export default class MaintainStdChannels extends Component {
                         grdData: Object.values(objData),
                     });
 
-                    debugger;
+                    
+                })
+                .catch((error) => {
+
+                    Util.StatusError(error.message);
+
+                    if (error.response) {
+
+                    } else if (error.request) {
+                        console.log("error.request");
+                    } else {
+                        console.log("Error", error);
+                    }
+                    console.log("rejected");
+                    this.setState({ isProcess: false });
+                });
+
+        } catch (error) {
+
+        }
+    }
+
+
+    
+    loadMnemonicMappingData = () => {
+        try {
+
+            
+            Util.StatusInfo("Getting data from server   ");
+
+
+            this.objLogger.SendLog("load Memonic Mapping Channels");
+            
+
+            let objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "DataService";
+            objBrokerRequest.Broker = "SetupMaintainStdChannels";
+            objBrokerRequest.Function = "generateMMStandardChannels";
+
+            let paramuserid: BrokerParameter = new BrokerParameter(
+                "UserId",
+                _gMod._userId
+            );
+            objBrokerRequest.Parameters.push(paramuserid);
+
+            let paraLogType: BrokerParameter = new BrokerParameter(
+                "LogType", this.state.selectedMMLogType.id               
+            );
+            objBrokerRequest.Parameters.push(paraLogType);
+
+            axios
+                .get(_gMod._getData, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+
+                })
+                .then((res) => {
+                    Util.StatusSuccess("Data successfully retrived  ");
+                    this.objLogger.SendLog("loaded Memonic mapping Data Received...");
+
+                    let objData = JSON.parse(res.data.Response);
+                    
+
+                    //Warnings Notifications
+                    let warnings: string = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    } else {
+                        this.setState({
+                            warningMsg: []
+                        });
+                    }
+
+                    
+                    let cboData = new comboData();
+                    let cboMMVuMaxChannelList_= [];
+                    let selectedMMVuMaxChannel_ = new comboData();
+                    for (let index = 0; index < objData.length; index++) {
+                        cboData = new comboData("[" + objData[index].MNEMONIC + "]  " + objData[index].CURVE_NAME , objData[index].MNEMONIC);
+                        
+                        if (index==0){
+                            selectedMMVuMaxChannel_ = cboData;
+                        }
+                        cboMMVuMaxChannelList_.push(cboData);
+                    }
+                    
+                    
+                    
+                    this.setState({
+                        cboMMVuMaxChannelList: cboMMVuMaxChannelList_,  selectedMMVuMaxChannel : selectedMMVuMaxChannel_
+                    });
+
+                    
                 })
                 .catch((error) => {
 
@@ -144,16 +253,16 @@ export default class MaintainStdChannels extends Component {
     editStdChannels = async () => {
         try {
             //EditMode
-            debugger;
+            
             let objStdChannel_: MaintainStdChannel;
             for (let index = 0; index < this.state.grdData.length; index++) {
-              if (this.state.grdData[index].Mnemonic == this.state.selectedStdChannel) {
-                objStdChannel_ = this.state.grdData[index];
-                break;
-              }
+                if (this.state.grdData[index].Mnemonic == this.state.selectedStdChannel) {
+                    objStdChannel_ = this.state.grdData[index];
+                    break;
+                }
             }
-            await this.setState({ objStdChannel: objStdChannel_, showStdChannelDialog   : true,  EditMode: "E" });
-      
+            await this.setState({ objStdChannel: objStdChannel_, showStdChannelDialog: true, EditMode: "E" });
+
 
         } catch (error) {
 
@@ -163,104 +272,90 @@ export default class MaintainStdChannels extends Component {
     removeStdChannels = () => {
         try {
 
-            // if (this.state.selectedStdChannel == "") {
-            //     alert("Please select Channel from the List");
-            //     return;
-            // }
-           
-            // let channelList = this.state.grdData;
-
-            // channelList = channelList.filter((item) => item.Mnemonic !== this.state.selectedStdChannel);
-
-            // this.setState({ grdData : channelList });
-
-
-
-
             if (this.state.selectedStdChannel == "") {
                 alert("Please select the row from grid ");
                 return;
-              }
-        
-        
-        
-              confirmAlert({
+            }
+
+
+
+            confirmAlert({
                 //title: 'eVuMax',
                 message: 'Are you sure want to delete Channel ?',
                 childrenElement: () => <div />,
                 buttons: [
-                  {
-                    label: 'Yes',
-                    onClick: async () => {
-        
-                      let objBrokerRequest = new BrokerRequest();
-                      objBrokerRequest.Module = "DataService";
-                      objBrokerRequest.Broker = "SetupMaintainStdChannels";
-                      objBrokerRequest.Function = "removeStdChannel";
-                      debugger;
-        
-        
-                      let paramuserid: BrokerParameter = new BrokerParameter(
-                        "UserId",
-                        _gMod._userId
-                      );
-                      objBrokerRequest.Parameters.push(paramuserid);
-        
-        
-                      let paramStdChannel: BrokerParameter = new BrokerParameter(
-                        "StdChannel",
-                        this.state.selectedStdChannel
-                      );
-                      
-                      objBrokerRequest.Parameters.push(paramStdChannel);
+                    {
+                        label: 'Yes',
+                        onClick: async () => {
 
-                      let paramLogType: BrokerParameter = new BrokerParameter(
-                        "LogType",
-                        this.state.selectedLogType.id
-                      );
-                      
-                      objBrokerRequest.Parameters.push(paramLogType);
-        
-                      axios.get(_gMod._performTask, {
-                        headers: {
-                          Accept: "application/json",
-                          "Content-Type": "application/json;charset=UTF-8",
-                        },
-                        params: { paramRequest: JSON.stringify(objBrokerRequest) },
-        
-                      })
-                        .then((res) => {
-        
-                          debugger;
-                          Util.StatusSuccess("Data successfully retrived  ");
-        
-        
-                          this.loadData();
-        
-                        })
-                        .catch((error) => {
-        
-                          Util.StatusError(error.message);
-        
-                          if (error.response) {
-        
-                          } else if (error.request) {
-                            console.log("error.request");
-                          } else {
-                            console.log("Error", error);
-                          }
-                          console.log("rejected");
-                          this.setState({ isProcess: false });
-                        });
+                            let objBrokerRequest = new BrokerRequest();
+                            objBrokerRequest.Module = "DataService";
+                            objBrokerRequest.Broker = "SetupMaintainStdChannels";
+                            objBrokerRequest.Function = "removeStdChannel";
+                            
+
+
+                            let paramuserid: BrokerParameter = new BrokerParameter(
+                                "UserId",
+                                _gMod._userId
+                            );
+                            objBrokerRequest.Parameters.push(paramuserid);
+
+
+                            let paramStdChannel: BrokerParameter = new BrokerParameter(
+                                "StdChannel",
+                                this.state.selectedStdChannel
+                            );
+
+                            objBrokerRequest.Parameters.push(paramStdChannel);
+
+                            let paramLogType: BrokerParameter = new BrokerParameter(
+                                "LogType",
+                                this.state.selectedLogType.id
+                            );
+
+                            objBrokerRequest.Parameters.push(paramLogType);
+
+                            axios.get(_gMod._performTask, {
+                                headers: {
+                                    Accept: "application/json",
+                                    "Content-Type": "application/json;charset=UTF-8",
+                                },
+                                params: { paramRequest: JSON.stringify(objBrokerRequest) },
+
+                            })
+                                .then((res) => {
+
+                                    
+                                    Util.StatusSuccess("Data successfully retrived  ");
+
+
+                                    this.loadData();
+
+                                })
+                                .catch((error) => {
+
+                                    Util.StatusError(error.message);
+
+                                    if (error.response) {
+
+                                    } else if (error.request) {
+                                        console.log("error.request");
+                                    } else {
+                                        console.log("Error", error);
+                                    }
+                                    console.log("rejected");
+                                    this.setState({ isProcess: false });
+                                });
+                        }
+
+                    },
+                    {
+                        label: 'No',
+                        onClick: () => null
                     }
-        
-                  },
-                  {
-                    label: 'No',
-                    onClick: () => null
-                  }
                 ]
-              });
+            });
 
 
         } catch (error) {
@@ -271,7 +366,9 @@ export default class MaintainStdChannels extends Component {
 
     mnemonicMapping = () => {
         try {
-
+         
+            this.loadMnemonicMappingData();
+            this.setState({ showMnemonicMapping: true });
 
         } catch (error) {
 
@@ -281,8 +378,8 @@ export default class MaintainStdChannels extends Component {
 
     grdRowClick = async (event: GridSelectionChangeEvent) => {
         try {
-            debugger;
-            await this.setState({ selectedStdChannel: event.dataItem.Mnemonic, selectedLogType : new comboData(event.dataItem.LogName, event.dataItem.LogType) })
+            
+            await this.setState({ selectedStdChannel: event.dataItem.Mnemonic, selectedLogType: new comboData(event.dataItem.LogName, event.dataItem.LogType) })
         } catch (error) {
 
         }
@@ -320,6 +417,16 @@ export default class MaintainStdChannels extends Component {
                     selectedLogType: event.value
                 });
             }
+
+            if (field == "MMLogType") {
+
+                this.setState({
+                    selectedMMLogType: event.value
+                });
+            }
+
+
+
         } catch (error) {
 
         }
@@ -328,16 +435,16 @@ export default class MaintainStdChannels extends Component {
     OkClick = async () => {
         try {
 
-            debugger;
+            
             let objStdChannel_ = new MaintainStdChannel();
             objStdChannel_.Mnemonic = this.state.objStdChannel.Mnemonic;
             objStdChannel_.ChannelName = this.state.objStdChannel.ChannelName;
             objStdChannel_.LogType = eval(this.state.selectedLogType.id);
             objStdChannel_.DataType = this.state.selectedDataType.text;
 
-            await this.setState({objStdChannel : objStdChannel_, showStdChannelDialog: false});
+            await this.setState({ objStdChannel: objStdChannel_, showStdChannelDialog: false });
             this.saveChannel();
-            
+
         } catch (error) {
 
         }
@@ -355,17 +462,17 @@ export default class MaintainStdChannels extends Component {
         }
     }
 
-    saveChannel =() =>{
+    saveChannel = () => {
         try {
 
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "SetupMaintainStdChannels";
             objBrokerRequest.Function = "saveStdChannel";
-            debugger;
+            
 
-        //    let arrChannels = this.extractValue(this.state.grdChannels, 'id');
-          //  this.state.objQCRule.Channels = utilFunc.convertMapToDictionaryJSON(arrChannels);
+            //    let arrChannels = this.extractValue(this.state.grdChannels, 'id');
+            //  this.state.objQCRule.Channels = utilFunc.convertMapToDictionaryJSON(arrChannels);
 
 
             let paramuserid: BrokerParameter = new BrokerParameter(
@@ -375,7 +482,7 @@ export default class MaintainStdChannels extends Component {
             objBrokerRequest.Parameters.push(paramuserid);
 
 
-            let paramobjStdChannel : BrokerParameter = new BrokerParameter(
+            let paramobjStdChannel: BrokerParameter = new BrokerParameter(
                 "objStdChannel",
                 JSON.stringify(this.state.objStdChannel)
             );
@@ -388,9 +495,9 @@ export default class MaintainStdChannels extends Component {
 
             objBrokerRequest.Parameters.push(paramEditMode);
 
-          
 
-          
+
+
             axios.get(_gMod._performTask, {
                 headers: {
                     Accept: "application/json",
@@ -401,19 +508,19 @@ export default class MaintainStdChannels extends Component {
             })
                 .then((res) => {
 
-                    debugger;
+                    
                     //let objData = JSON.parse(res.data);
                     //let objData :any="";
                     //alert("Pending");
 
-                    debugger;
+                    
                     Util.StatusSuccess("Data successfully retrived  ");
 
-                    
+
                     //reload all the connections
-                    
+
                     this.loadData();
-                    
+
                 })
                 .catch((error) => {
 
@@ -429,6 +536,29 @@ export default class MaintainStdChannels extends Component {
                     console.log("rejected");
                     this.setState({ isProcess: false });
                 });
+
+        } catch (error) {
+
+        }
+    }
+
+    addMapping = () => {
+        try {
+
+        } catch (error) {
+
+        }
+    }
+    removeMapping = () => {
+        try {
+
+        } catch (error) {
+
+        }
+    }
+
+    closeMapping = () => {
+        try {
 
         } catch (error) {
 
@@ -521,18 +651,18 @@ export default class MaintainStdChannels extends Component {
                             <span className="btn-group-vertical">
                                 <Button style={{ width: '140px' }} className="mt-3 k-button k-primary mr-4" onClick={
                                     () => {
-                                        debugger;
+                                        
                                         let objMaintainStdChannel_ = new MaintainStdChannel()
                                         this.setState({ objMaintainStdChannel: objMaintainStdChannel_, showStdChannelDialog: true, EditMode: "A" });
                                     }
                                 }>
-                                    Add 
+                                    Add
                                 </Button>
                                 <Button style={{ width: '140px' }} className="mt-3 k-button k-primary mr-4" onClick={this.editStdChannels}>
                                     Edit
                                 </Button>
                                 <Button style={{ width: '140px' }} onClick={this.removeStdChannels} className="mt-3">
-                                    Remove 
+                                    Remove
                                 </Button>
 
                                 <Button style={{ width: '140px' }} onClick={this.mnemonicMapping} className="mt-3">
@@ -568,7 +698,7 @@ export default class MaintainStdChannels extends Component {
                                             <Input
                                                 name="Mnemonic"
                                                 value={this.state.objStdChannel.Mnemonic}
-                                                disabled = {this.state.EditMode=="E" ? true : false}
+                                                disabled={this.state.EditMode == "E" ? true : false}
                                                 onChange={(e) => this.handleChange(e, "Mnemonic")}
                                             />
                                         </div>
@@ -578,7 +708,7 @@ export default class MaintainStdChannels extends Component {
                                             <Input
                                                 name="ChannelName"
                                                 value={this.state.objStdChannel.ChannelName}
-                                                
+
                                                 onChange={(e) => this.handleChange(e, "ChannelName")}
                                             />
 
@@ -612,7 +742,7 @@ export default class MaintainStdChannels extends Component {
                                                 dataItemKey="id"
                                                 value={this.state.selectedLogType}
                                                 style={{ width: 200 }}
-                                                disabled = {this.state.EditMode=="E" ? true : false}
+                                                disabled={this.state.EditMode == "E" ? true : false}
                                                 onChange={(event) => {
 
                                                     this.handleChangeDropDown(event, "LogType");
@@ -642,6 +772,122 @@ export default class MaintainStdChannels extends Component {
 
                     </Dialog>
                 )}
+
+
+                {this.state.showMnemonicMapping &&
+                    <Dialog
+                        title={"Mnemonic Mapping"}
+                        width={"900px"}
+                        height={"400px"}
+                        onClose={(e: any) => {
+                            this.setState({
+                                showMnemonicMapping: false
+                            })
+                        }}
+                    >
+                        <div className="row">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                <Label className="mr-2 mt-3 float-left">Log Type    </Label>
+                                <DropDownList
+                                    name="Data Type"
+                                    label=''
+                                    data={this.state.cboMMLogTypeList}
+                                    textField="text"
+                                    dataItemKey="id"
+                                    value={this.state.selectedMMLogType}
+                                    style={{ width: 400 }}
+                                    onChange={(event) => {
+                                        this.handleChangeDropDown(event, "MMLogType");
+
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                <Label className="mr-2 mt-3 float-left">VuMax Channel</Label>
+                                <DropDownList
+                                    name="VuMax Channel"
+                                    label=''
+                                    data={this.state.cboMMVuMaxChannelList}
+                                    textField="text"
+                                    dataItemKey="id"
+                                    value={this.state.selectedMMVuMaxChannel}
+                                    style={{ width: 400 }}
+                                    onChange={(event) => {
+                                        this.handleChangeDropDown(event, "MMVuMaxChannel");
+
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                <Checkbox
+                                    className="mr-2"
+                                    label={"Only show Standard channels"}
+                                    onChange={(event) => {
+                                        //  this.setState({ ShowComments: event.value });
+                                    }}
+                                />
+
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+                                <Grid
+
+                                    style={{ height: "auto", minHeight: "150px" }}
+                                    resizable={true}
+                                    scrollable={"scrollable"}
+                                    sortable={false}
+                                    selectedField="selected"
+                                    data={
+                                        this.state.grdMMData != null ? this.state.grdMMData.map((item: any) => (
+
+                                            {
+
+                                                ...item,
+
+                                                selected: item.Mnemonic === this.state.selectedMMDataMapping
+                                            }
+
+                                        ))
+                                            : null
+                                    }
+                                    onRowClick={this.grdRowClick}
+
+                                >
+                                    <Column
+                                        headerClassName="text-center"
+                                        className="maintainStdChannels"
+                                        field="Mnemonic"
+                                        title="Mnemonic"
+                                    />
+                                </Grid>
+                            </div>
+
+                            <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                                <span className="btn-group-vertical">
+                                    <Button style={{ width: '140px' }} className="mt-3 k-button k-primary mr-4" onClick={this.addMapping} >
+                                        Add Mapping
+                                    </Button>
+
+                                    <Button style={{ width: '140px' }} onClick={this.removeMapping} className="mt-3">
+                                        Remove Mapping
+                                    </Button>
+
+                                    <Button style={{ width: '140px' }} onClick={this.closeMapping} className="mt-3">
+                                        Close
+                                    </Button>
+                                </span>
+                            </div>
+                        </div>
+                    </Dialog>
+
+                }
             </div>
 
         )

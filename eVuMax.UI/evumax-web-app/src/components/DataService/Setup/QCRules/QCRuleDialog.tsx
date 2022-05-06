@@ -113,7 +113,7 @@ export default class QCRuleDialog extends Component<IProps> {
 
 
 
-                debugger;
+                
                 if (this.props.EditMode == "E") {
                     let curvName: string = ""
                     let channelList_ = [];
@@ -166,7 +166,7 @@ export default class QCRuleDialog extends Component<IProps> {
     OkClick = async () => {
         try {
             //Validation
-            debugger;
+            
             if (this.state.objQCRule.RuleName == "") {
                 alert("Please enter Rule Name");
                 return;
@@ -219,7 +219,7 @@ export default class QCRuleDialog extends Component<IProps> {
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "SetupQCRules";
             objBrokerRequest.Function = "saveQCRule";
-            debugger;
+            
 
             let arrChannels = this.extractValue(this.state.grdChannels, 'id');
             this.state.objQCRule.Channels = utilFunc.convertMapToDictionaryJSON(arrChannels);
@@ -260,12 +260,12 @@ export default class QCRuleDialog extends Component<IProps> {
             })
                 .then((res) => {
 
-                    debugger;
+                    
                     //let objData = JSON.parse(res.data);
                     //let objData :any="";
                     //alert("Pending");
 
-                    debugger;
+                    
                     Util.StatusSuccess("Data successfully retrived  ");
 
                     

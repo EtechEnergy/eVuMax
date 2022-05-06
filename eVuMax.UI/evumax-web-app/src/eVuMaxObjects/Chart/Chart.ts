@@ -75,7 +75,7 @@ export class Chart {
         this.createDefaultAxes();
       }
     } catch (error) {
-      this.objLogger.SendLog("CHART-constructor : " + chartId);
+      this.objLogger.SendLog("Error -->CHART-constructor : " + chartId);
     }
   }
   objLogger: ClientLogger;
@@ -312,7 +312,7 @@ export class Chart {
   createDefaultAxes = () => {
     try {
 
-
+      
       if (this.Axes.get(this.Id + "-left") == undefined) {
         //Create default left axis
 
@@ -381,7 +381,11 @@ export class Chart {
 
         this.Axes.set(this.Id + "-top", objTopAxis);
       }
-    } catch (error) { }
+    } catch (error) { 
+
+      this.objLogger.SendLog("Error ->CHART-createDefaultAxes : " + error.message);
+
+    }
   };
 
   createAxes = () => {
@@ -396,7 +400,9 @@ export class Chart {
           objAxis.createAxis(this);
         }
       }
-    } catch (error) { }
+    } catch (error) { 
+      this.objLogger.SendLog("Error ->CHART-createAxes : " + error.message);
+    }
   };
 
   getAxisByID = (axisId: string) => {
@@ -409,7 +415,7 @@ export class Chart {
 
       return null;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-getAxisByID : " + error);
+      this.objLogger.SendLog("Error ->CHART-getAxisByID : " + error.message);
       return null;
     }
   };
@@ -425,7 +431,7 @@ export class Chart {
         return this.getSelectorNumericRange();
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-getSelectorRange : " + error);
+      this.objLogger.SendLog("Error ->CHART-getSelectorRange : " + error.message);
       return null;
     }
   };
@@ -446,7 +452,7 @@ export class Chart {
         end: objAxis.__selectorEndPos,
       };
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-getSelectorNumericRange : " + error);
+      this.objLogger.SendLog("Error ->CHART-getSelectorNumericRange : " + error.message);
       return null;
     }
   };
@@ -467,7 +473,7 @@ export class Chart {
         endDate: objAxis.__selectorEndDatePos,
       };
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-getSelectorDateRange : " + error);
+      this.objLogger.SendLog("Error ->CHART-getSelectorDateRange : " + error.message);
       return null;
     }
   };
@@ -487,7 +493,7 @@ export class Chart {
       objAxis.__selectorStartPos = startVal;
       objAxis.__selectorEndPos = endVal;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-setSelectorRange : " + error);
+      this.objLogger.SendLog("Error ->CHART-setSelectorRange : " + error.message);
 
     }
   };
@@ -507,7 +513,7 @@ export class Chart {
       objAxis.__selectorStartDatePos = startDate;
       objAxis.__selectorEndDatePos = endDate;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-setSelectorDateRange : " + error);
+      this.objLogger.SendLog("Error ->CHART-setSelectorDateRange : " + error.message);
     }
   };
 
@@ -555,7 +561,7 @@ export class Chart {
       objAxis.__selectorStartDatePos =   startDate;
       objAxis.__selectorEndDatePos = endDate;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-setSelectorDateRange : " + error);
+      this.objLogger.SendLog("Error ->CHART-setSelectorDateRange : " + error.message);
     }
   };
   //=========
@@ -597,7 +603,7 @@ export class Chart {
       
     
     } catch (error) {
-      this.objLogger.SendLog("Error ->setSelectorLastHoursRange : " + error);
+      this.objLogger.SendLog("Error ->setSelectorLastHoursRange : " + error.message);
     }
   };
   //=========
@@ -612,13 +618,15 @@ export class Chart {
 
       for (let key of this.Axes.keys()) {
         
-
+        
         let objAxis: Axis = this.Axes.get(key);
         objAxis.updateAxis();
 
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-updateAxes : " + error);
+      //alert(error.message);
+      
+      this.objLogger.SendLog("Error ->CHART-updateAxes : " + error.message);
     }
   };
 
@@ -850,7 +858,7 @@ export class Chart {
       //Now calculate start and end positions of all axes
       this.calcAxesStartEndPos();
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-calculateAxesPositions : " + error);
+      this.objLogger.SendLog("Error ->CHART-calculateAxesPositions : " + error.message);
 
     }
   };
@@ -1068,7 +1076,7 @@ export class Chart {
         startPos = startPos + availableAxisSize;
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-calcAxesStartEndPos : " + error);
+      this.objLogger.SendLog("Error ->CHART-calcAxesStartEndPos : " + error.message);
 
     }
   };
@@ -1100,7 +1108,7 @@ export class Chart {
         return Number(height);
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-calculateHeight : " + error);
+      this.objLogger.SendLog("Error ->CHART-calculateHeight : " + error.message);
       return 0;
     }
   };
@@ -1133,7 +1141,7 @@ export class Chart {
         return Number(width);
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-calculateWidth : " + error);
+      this.objLogger.SendLog("Error ->CHART-calculateWidth : " + error.message);
       return 0;
     }
   };
@@ -1240,13 +1248,15 @@ export class Chart {
         }
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-mouseMoveOnSvg : " + error);
+      this.objLogger.SendLog("Error ->CHART-mouseMoveOnSvg : " + error.message);
     }
   }
 
   reDraw = async () => {
 
     try {
+
+      this.objLogger.SendLog("Chart.ts : reDraw function called :" + this.Id);
       $("#" + this.ContainerId).empty();
 
 
@@ -1261,11 +1271,16 @@ export class Chart {
 
       
       if (this.Height == 0) {
-        this.Height = document.getElementById(this.ContainerId).clientHeight;
-      
+        
+        if (document.getElementById(this.ContainerId) != null){
+          this.Height = document.getElementById(this.ContainerId).clientHeight;
+        }
       }
       if (this.Width == 0) {
-        this.Width = document.getElementById(this.ContainerId).clientWidth;
+        if (document.getElementById(this.ContainerId) != null){
+          this.Width = document.getElementById(this.ContainerId).clientWidth;
+        }
+        
       }
 
       let SVGRef = d3
@@ -1378,7 +1393,8 @@ export class Chart {
 
 
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-reDraw : " + error);
+      
+      this.objLogger.SendLog("Error ->CHART-reDraw : " + error.message);
 
     }
   };
@@ -1414,7 +1430,7 @@ export class Chart {
       }
       this.ScaleBackup = new Map<string, any>();
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-reBuildAxisAfterScrolling : " + error);
+      this.objLogger.SendLog("Error ->CHART-reBuildAxisAfterScrolling : " + error.message);
     }
 
   }
@@ -1492,7 +1508,7 @@ export class Chart {
       this.isScrollingInProgress = false;
 
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-onScroll : " + error);
+      this.objLogger.SendLog("Error ->CHART-onScroll : " + error.message);
     }
 
   };
@@ -1546,7 +1562,7 @@ export class Chart {
       });
       d3.event.stopPropagation();
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-mouseDownZoom : " + error);
+      this.objLogger.SendLog("Error ->CHART-mouseDownZoom : " + error.message);
       
     }
   };
@@ -1572,7 +1588,7 @@ export class Chart {
       }
 
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-zoomingDisableForAxies : " + error);
+      this.objLogger.SendLog("Error ->CHART-zoomingDisableForAxies : " + error.message);
     }
 
   }
@@ -1710,7 +1726,7 @@ export class Chart {
       }
 
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-mouseUpZoom : " + error);
+      this.objLogger.SendLog("Error ->CHART-mouseUpZoom : " + error.message);
     }
   };
 
@@ -1722,7 +1738,7 @@ export class Chart {
       objZoomStep.Max = Axis_.ScaleRef.domain()[1]; //xxxx wip-prath
       ZoomAxisArr.push(objZoomStep);
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error);
+      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error.message);
     }
   };
 
@@ -1735,7 +1751,7 @@ export class Chart {
       objZoomStep.Max = Axis_.ScaleRef.domain()[1]; //xxxx wip-prath
       ZoomAxisArr.push(objZoomStep);
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error);
+      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error.message);
     }
   };
 
@@ -1749,7 +1765,7 @@ export class Chart {
       objZoomStep.Max = Axis_.domain()[1]; //xxxx wip-prath
       ScrollAxisArr.push(objZoomStep);
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error);
+      this.objLogger.SendLog("Error ->CHART-setMinMaxZoom : " + error.message);
     }
   };
   restoreZoomStep = (zoomStep: number, ClearZoom?: boolean) => {
@@ -1808,7 +1824,7 @@ export class Chart {
       this.updateChart(true);
       //======================================================================
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-restoreZoomStep : " + error);
+      this.objLogger.SendLog("Error ->CHART-restoreZoomStep : " + error.message);
     }
   };
 
@@ -1946,7 +1962,7 @@ export class Chart {
 
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-refreshOnZoom : " + error);
+      this.objLogger.SendLog("Error ->CHART-refreshOnZoom : " + error.message);
     }
   };
 
@@ -2033,7 +2049,7 @@ export class Chart {
 
 
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-drawLegend : " + error);
+      this.objLogger.SendLog("Error ->CHART-drawLegend : " + error.message);
     }
   };
 
@@ -2059,14 +2075,14 @@ export class Chart {
       });
     } catch (error) {
       let halt = true;
-      this.objLogger.SendLog("Error ->CHART-initialize : " + error);
+      this.objLogger.SendLog("Error ->CHART-initialize : " + error.message);
     }
   };
   //
   //updateChart = () => {
   updateChart = (isRefresh: boolean = false) => {
     try {
-
+      
       this.Height = Number($("#" + this.ContainerId).height());
       this.Width = Number($("#" + this.ContainerId).width());
 
@@ -2173,7 +2189,7 @@ export class Chart {
       this.updateSeries();
       this._onAfterSeriesDraw.dispatch(null, 0);
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-updateChart : " + error);
+      this.objLogger.SendLog("Error ->CHART-updateChart : " + error.message);
 
     }
   };
@@ -2199,12 +2215,14 @@ export class Chart {
         objStackedBarSeries.redrawSeries();
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-drawSeries : " + error);
+      this.objLogger.SendLog("Error ->CHART-drawSeries : " + error.message);
     }
   };
 
   updateSeries = () => {
     try {
+      
+      this.objLogger.SendLog("Chart.ts --> updateSeries function --> : " +this.ContainerId+   " - " + this.DataSeries.size);
       //#Stacked Bar Chart - The stacked bar chart needs to be redrawn, right now it can't update just positions
       let stackedBarChartsFound: boolean = false;
       let lineSeriesFound: boolean = false;
@@ -2282,7 +2300,7 @@ export class Chart {
         objBarSeries.redrawSeries();
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-updateSeries : " + error);
+      this.objLogger.SendLog("Error ->CHART-updateSeries : " + error.message);
     }
   };
 
@@ -2318,7 +2336,7 @@ export class Chart {
 
       this._onMouseDown.dispatch(eventArgs, 0);
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-mouseDown : " + error);
+      this.objLogger.SendLog("Error ->CHART-mouseDown : " + error.message);
     }
   };
   //#endregion
@@ -2356,7 +2374,7 @@ export class Chart {
 
       this._onMouseUp.dispatch(eventArgs, 0);
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-mouseUp : " + error);
+      this.objLogger.SendLog("Error ->CHART-mouseUp : " + error.message);
     }
   };
 
@@ -2449,7 +2467,7 @@ export class Chart {
 
       return strText;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-getTooltipTextHorizontalPlot : " + error);
+      this.objLogger.SendLog("Error ->CHART-getTooltipTextHorizontalPlot : " + error.message);
 
     }
   };
@@ -2527,7 +2545,7 @@ export class Chart {
 
       this._onMouseMove.dispatch(eventArgs, 0);
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-mouseMove : " + error);
+      this.objLogger.SendLog("Error ->CHART-mouseMove : " + error.message);
 
     }
   };
@@ -2546,7 +2564,7 @@ export class Chart {
         $("#" + this.Id + "__selector_rect").css("cursor", "default");
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-mouseLeave : " + error);
+      this.objLogger.SendLog("Error ->CHART-mouseLeave : " + error.message);
     }
   };
 
@@ -2569,7 +2587,7 @@ export class Chart {
         return false;
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-hasSelectorDragInProgress : " + error);
+      this.objLogger.SendLog("Error ->CHART-hasSelectorDragInProgress : " + error.message);
       return false;
     }
   };
@@ -2589,7 +2607,7 @@ export class Chart {
 
       return false;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-isMouseOverSelector : " + error);
+      this.objLogger.SendLog("Error ->CHART-isMouseOverSelector : " + error.message);
       return false;
     }
   };
@@ -2609,7 +2627,7 @@ export class Chart {
 
       return false;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-isMouseOnLeftEdge : " + error);
+      this.objLogger.SendLog("Error ->CHART-isMouseOnLeftEdge : " + error.message);
       return false;
     }
   };
@@ -2629,7 +2647,7 @@ export class Chart {
 
       return false;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-isMouseOnRightEdge : " + error);
+      this.objLogger.SendLog("Error ->CHART-isMouseOnRightEdge : " + error.message);
       return false;
     }
   };
@@ -2645,7 +2663,7 @@ export class Chart {
 
       return null;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-getAxisWithSelector : " + error);
+      this.objLogger.SendLog("Error ->CHART-getAxisWithSelector : " + error.message);
       return null;
     }
   };
@@ -2660,7 +2678,7 @@ export class Chart {
 
       return false;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-hasSelector : " + error);
+      this.objLogger.SendLog("Error ->CHART-hasSelector : " + error.message);
       return false;
     }
   };
@@ -2675,7 +2693,7 @@ export class Chart {
 
       objAxis.__selectorDragging = false;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-selectorMouseUp : " + error);
+      this.objLogger.SendLog("Error ->CHART-selectorMouseUp : " + error.message);
 
     }
   };
@@ -2709,7 +2727,7 @@ export class Chart {
         objAxis.__rightEdgeDragging = true;
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-selectorMouseDown : " + error);
+      this.objLogger.SendLog("Error ->CHART-selectorMouseDown : " + error.message);
     }
   };
 
@@ -2723,7 +2741,7 @@ export class Chart {
 
       objAxis.__selectorDragging = false;
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-selectorMouseLeave : " + error);
+      this.objLogger.SendLog("Error ->CHART-selectorMouseLeave : " + error.message);
     }
   };
 
@@ -2778,7 +2796,7 @@ export class Chart {
         }
       }
     } catch (error) {
-      this.objLogger.SendLog("Error ->CHART-selectorMouseMove : " + error);
+      this.objLogger.SendLog("Error ->CHART-selectorMouseMove : " + error.message);
 
     }
   };

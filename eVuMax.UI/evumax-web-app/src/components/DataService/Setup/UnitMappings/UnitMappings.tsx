@@ -60,7 +60,7 @@ export default class UnitMappings extends Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     const objData = JSON.parse(res.data.Response);
                     this.setState({
                         grdMapping: objData,

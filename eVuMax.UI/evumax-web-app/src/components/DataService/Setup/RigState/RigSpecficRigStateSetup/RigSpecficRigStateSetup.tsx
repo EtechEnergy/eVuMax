@@ -87,7 +87,7 @@ export default class RigSpecficRigStateSetup extends Component {
 
 
             axios.all([axiosrequest1, axiosrequest2]).then(axios.spread((...res) => {
-                debugger;
+                
                 console.log(res[0]);
                 console.log(res[1]);
 
@@ -130,7 +130,7 @@ export default class RigSpecficRigStateSetup extends Component {
             //     })
 
             //     .then((res) => {
-            //         debugger;
+            //         
             //         const objData = JSON.parse(res.data.Response);
 
             //         this.setState({ grdRigNameList: objData });
@@ -207,7 +207,7 @@ export default class RigSpecficRigStateSetup extends Component {
     };
 
     grdDepthItemChange = (e: any) => {
-        debugger;
+        
         e.dataItem[e.field] = e.value;
         this.setState({
             grdRigDepth: [...this.state.grdRigDepth]
@@ -221,7 +221,7 @@ export default class RigSpecficRigStateSetup extends Component {
 
     cmdEditSetup = async (event: any, rowData: any) => {
         try {
-            debugger;
+            
             let newPanes: any = this.state.panes;
             newPanes[0].collapsed = true;
             newPanes[0].collapsible = true;
@@ -256,7 +256,7 @@ export default class RigSpecficRigStateSetup extends Component {
                 {
                     label: 'Yes',
                     onClick: () => {
-                        debugger;
+                        
                         let DepthList = this.state.grdRigDepth;
                         let objRow = rowData;
                         let SrNo = objRow.SrNo;// MNEMONIC;
@@ -288,7 +288,7 @@ export default class RigSpecficRigStateSetup extends Component {
 
             let objRigStates = utilFunctions.CopyObject(Object.values(objData.rigStates));
             let grdRigState = [];
-            debugger;
+            
             if (objRigStates.length > 0) {
                 for (let index = 0; index < objRigStates.length; index++) {
                     let objItem: any = objRigStates[index];
@@ -339,7 +339,7 @@ export default class RigSpecficRigStateSetup extends Component {
 
 
 
-            debugger;
+            
             let autoSlideSetupList: AutoSlideSettings[] = [];
             for (let index = 0; index < this.state.grdRigDepth.length; index++) {
                 const objItem: any = this.state.grdRigDepth[index];
@@ -410,7 +410,7 @@ export default class RigSpecficRigStateSetup extends Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let objResponse = JSON.parse(res.data.Response);
 
                     if (objResponse.RequestSuccessfull == false) {
@@ -494,7 +494,7 @@ export default class RigSpecficRigStateSetup extends Component {
                 })
                 .then((res) => {
                     const objData = JSON.parse(res.data.Response);
-                    debugger;
+                    
                     console.log(objData);
                     if (res.data.RequestSuccessfull) {
                         if (objData != undefined || objData != "") {
@@ -713,7 +713,7 @@ export default class RigSpecficRigStateSetup extends Component {
 
                                                                         value={props.dataItem[props.field]}
                                                                         onChange={e => {
-                                                                            debugger;
+                                                                            
                                                                             props.onChange({
                                                                                 dataItem: props.dataItem,
                                                                                 dataIndex: props.dataIndex,

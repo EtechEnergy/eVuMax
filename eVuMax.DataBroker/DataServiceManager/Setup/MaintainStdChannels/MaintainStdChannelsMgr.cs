@@ -15,6 +15,9 @@ namespace eVuMax.DataBroker.DataServiceManager
         const string saveStdChannel = "saveStdChannel";
         const string removeStdChannel = "removeStdChannel";
 
+        const string generateMMStandardChannels = "generateMMStandardChannels";
+        
+
         public  BrokerResponse getData(BrokerRequest paramRequest)
         {
             BrokerResponse objResponse = paramRequest.createResponseObject();
@@ -24,6 +27,19 @@ namespace eVuMax.DataBroker.DataServiceManager
             {
                 eMaintainStdChannels objStdChannels = new eMaintainStdChannels(ref paramRequest.objDataService);
                 DataTable objStdChannesList = objStdChannels.loadStdChannels();
+
+                objResponse.RequestSuccessfull = true;
+                objResponse.Response = JsonConvert.SerializeObject(objStdChannesList);
+                return objResponse;
+            }
+
+
+            if (paramRequest.Function == generateMMStandardChannels)
+            {
+                eMaintainStdChannels objStdChannels = new eMaintainStdChannels(ref paramRequest.objDataService);
+
+                string LogType = paramRequest.Parameters.Where(x => x.ParamName.Contains("LogType")).FirstOrDefault().ParamValue;
+                DataTable objStdChannesList = objStdChannels.generateMMStandardChannels(LogType);
 
                 objResponse.RequestSuccessfull = true;
                 objResponse.Response = JsonConvert.SerializeObject(objStdChannesList);
