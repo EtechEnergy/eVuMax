@@ -16,7 +16,12 @@ namespace eVuMax.DataBroker.DataServiceManager
         const string removeStdChannel = "removeStdChannel";
 
         const string generateMMStandardChannels = "generateMMStandardChannels";
-        
+        const string generateMMAllChannels = "generateMMAllChannels";
+        const string loadMappingGrid = "loadMappingGrid";
+
+        const string addMapping = "addMapping";
+        const string removeMapping = "removeMapping";
+
 
         public  BrokerResponse getData(BrokerRequest paramRequest)
         {
@@ -46,6 +51,33 @@ namespace eVuMax.DataBroker.DataServiceManager
                 return objResponse;
             }
 
+            if (paramRequest.Function == generateMMAllChannels)
+            {
+                eMaintainStdChannels objStdChannels = new eMaintainStdChannels(ref paramRequest.objDataService);
+
+                
+                DataTable objAllChannesList = objStdChannels.generateMMAllChannels();
+
+                objResponse.RequestSuccessfull = true;
+                objResponse.Response = JsonConvert.SerializeObject(objAllChannesList);
+                return objResponse;
+            }
+
+            if (paramRequest.Function == loadMappingGrid)
+            {
+                eMaintainStdChannels objStdChannels = new eMaintainStdChannels(ref paramRequest.objDataService);
+
+                string Mnemonic = paramRequest.Parameters.Where(x => x.ParamName.Contains("Mnemonic")).FirstOrDefault().ParamValue;
+                DataTable objAllChannesList = objStdChannels.loadMappingGrid(Mnemonic);
+
+                objResponse.RequestSuccessfull = true;
+                objResponse.Response = JsonConvert.SerializeObject(objAllChannesList);
+                return objResponse;
+            }
+
+        
+
+            
 
             throw new NotImplementedException();
         }
@@ -116,8 +148,68 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
 
 
+            if (paramRequest.Function == addMapping)
+            {
+                eMaintainStdChannels objStdChannels = new eMaintainStdChannels(ref paramRequest.objDataService);
+
+                string Mnemonic = paramRequest.Parameters.Where(x => x.ParamName.Contains("Mnemonic")).FirstOrDefault().ParamValue;
+                string SourceMnemonic = paramRequest.Parameters.Where(x => x.ParamName.Contains("SourceMnemonic")).FirstOrDefault().ParamValue;
+
+                if (objStdChannels.addMapping(Mnemonic, SourceMnemonic))
+                {
+
+                    objResponse = paramRequest.createResponseObject();
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Errors = "";
+                    return objResponse;
+
+                }
+                else
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Errors = "Error saving user settings " + objStdChannels.LastError;
+                    return objBadResponse;
+
+                }
+
+            }
+
+            if (paramRequest.Function == removeMapping)
+            {
+                string MnemonicId = paramRequest.Parameters.Where(x => x.ParamName.Contains("MnemonicId")).FirstOrDefault().ParamValue;
+
+                eMaintainStdChannels objStdChannels = new eMaintainStdChannels(ref paramRequest.objDataService);
+
+
+                if (objStdChannels.removeMapping(MnemonicId))
+                {
+
+                    objResponse = paramRequest.createResponseObject();
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Errors = "";
+                    return objResponse;
+
+                }
+                else
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Errors = "Error saving user settings " + objStdChannels.LastError;
+                    return objBadResponse;
+
+                }
+
+                return objResponse;
+
+
+                objResponse.RequestSuccessfull = true;
+                return objResponse;
+            }
             return objResponse;
-            //            throw new NotImplementedException();
+            
         }
 
         public BrokerResponse addStdChannel(BrokerRequest paramRequest)

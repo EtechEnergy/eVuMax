@@ -1,12 +1,7 @@
-﻿using eVuMax.DataBroker.Broker;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VuMaxDR.Data;
-using VuMaxDR.Data.Objects;
+using eVuMax.DataBroker.Common;
 
 namespace eVuMax.DataBroker.DataServiceManager
 {
@@ -48,27 +43,13 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
         }
 
-        //Memonic Mapping
-        public DataTable generateMMStandardChannels(string logType)
-        {
-            try
-            {
-                string strSQL = "SELECT MNEMONIC,CURVE_NAME FROM VMX_CURVE_DICTIONARY WHERE LOG_TYPE=" + logType + " AND USER_VISIBLE=1 ORDER BY MNEMONIC";
-                DataTable objData = objDataService.getTable(strSQL);
-                return objData;
-            }
-            catch (Exception ex)
-            {
-
-                return new DataTable();
-            }
-        }
+       
         public bool addStdChannels(ref eMaintainStdChannels objeMaintainStdChannels)
         {
             try
             {
                 string strSQL = "";
-
+                
                 strSQL = "INSERT INTO VMX_CURVE_DICTIONARY (CURVE_ID,CURVE_NAME,MNEMONIC,DATA_TYPE,VALUE_TYPE,VALUE_QUERY,LOG_TYPE,USER_VISIBLE,CREATED_BY,CREATED_DATE,MODIFIED_BY,MODIFIED_DATE) VALUES(";
                 strSQL += "'" + objeMaintainStdChannels.Mnemonic.Replace("'", "''") + "',";
                 strSQL += "'" + objeMaintainStdChannels.ChannelName.Replace("'", "''") + "',";
@@ -87,7 +68,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
                     return true;
                 }
-                return true;
+                return false;
             }
             catch (Exception ex)
             {
@@ -143,5 +124,105 @@ namespace eVuMax.DataBroker.DataServiceManager
                 return false;
             }
         }
+
+
+        //Memonic Mapping
+        public DataTable generateMMStandardChannels(string logType)
+        {
+            try
+            {
+                string strSQL = "SELECT MNEMONIC,CURVE_NAME FROM VMX_CURVE_DICTIONARY WHERE LOG_TYPE=" + logType + " AND USER_VISIBLE=1 ORDER BY MNEMONIC";
+                DataTable objData = objDataService.getTable(strSQL);
+                return objData;
+            }
+            catch (Exception ex)
+            {
+                LastError = ex.Message + ex.StackTrace;
+                return new DataTable();
+            }
+        }
+
+        public DataTable generateMMAllChannels()
+        {
+            try
+            {
+
+                DataTable objData = objDataService.getTable("SELECT MAPPING_ID, MNEMONIC,SOURCE_MNEMONIC AS CURVE_NAME FROM VMX_MNEMONIC_MAPPING ORDER BY MNEMONIC");
+                return  objData;
+            }
+
+            catch (Exception ex)
+            {
+                LastError = ex.Message + ex.StackTrace;
+                return new DataTable();
+
+            }
+        }
+
+
+
+        public DataTable loadMappingGrid(string paraMnemonic)
+        {
+            try
+            {
+                DataTable objData = objDataService.getTable("SELECT Mapping_Id, SOURCE_MNEMONIC as SourceMnemonic  FROM VMX_MNEMONIC_MAPPING WHERE LTRIM(RTRIM(UPPER(MNEMONIC)))='" + paraMnemonic.Trim().ToUpper() + "' ORDER BY MNEMONIC");
+                return objData;
+            }
+
+
+            catch (Exception ex)
+            {
+                LastError = ex.Message + ex.StackTrace;
+                return new DataTable();
+            }
+        }
+
+
+        //
+        public bool addMapping(string Mnemonic, string SourceMnemonic)
+        {
+            try
+            {
+                string mappingID = ObjectIDFactory.getObjectID(); ;
+
+                string strSQL = "INSERT INTO VMX_MNEMONIC_MAPPING (MAPPING_ID,MNEMONIC,SOURCE_MNEMONIC) VALUES(";
+                strSQL += "'" + mappingID + "',";
+                strSQL += "'" + Mnemonic.Replace("'", "''") + "',";
+                strSQL += "'" + SourceMnemonic.Replace("'", "''") + "')";
+
+                if (objDataService.executeNonQuery(strSQL))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LastError = ex.Message + " - " + ex.StackTrace; 
+                return false;
+            }
+        }
+
+        public bool removeMapping(string MnemonicId)
+        {
+            try
+            {
+                
+                string strSQL = "DELETE FROM VMX_MNEMONIC_MAPPING WHERE MAPPING_ID='" + MnemonicId + "'";
+                             
+
+                if (objDataService.executeNonQuery(strSQL))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LastError = ex.Message + " - " + ex.StackTrace;
+                return false;
+            }
+        }
+
     }
 }
