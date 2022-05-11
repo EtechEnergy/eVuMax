@@ -56,6 +56,17 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objMaintainStdChannelsMgr.getData(paramRequest);
                 }
 
+                if (paramRequest.Broker == Global.Brk_Setup_EmailSettings)
+                {
+                    EmailSettingsMgr objEmailSettingsMgr = new EmailSettingsMgr();
+                    return objEmailSettingsMgr.getData(paramRequest);
+                }
+
+                if (paramRequest.Broker == Global.Brk_Setup_DownloadAuditInfo)
+                {
+                    DownloadAuditInfoMgr objDownloadAuditInfoMgr = new DownloadAuditInfoMgr();
+                    return objDownloadAuditInfoMgr.getData(paramRequest);
+                }
 
                 BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
@@ -120,6 +131,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
                     MaintainStdChannelsMgr objMaintainStdChannelsMgr = new MaintainStdChannelsMgr();
                     return objMaintainStdChannelsMgr.performTask(paramRequest);
+                }
+
+                if (paramRequest.Broker == Global.Brk_Setup_EmailSettings)
+                {
+                    EmailSettingsMgr objEmailSettingsMgr = new EmailSettingsMgr();
+                    return objEmailSettingsMgr.performTask(paramRequest);
                 }
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();

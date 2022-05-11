@@ -692,6 +692,17 @@ export class Dashboard extends React.Component<Props> {
                   Unit Conversion Profile
                 </NavLink>
               </li>
+
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/EmailSettings">
+                  Email Settings
+                </NavLink>
+              </li>
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/DownloadAuditInfo">
+                Download Audit Information
+                </NavLink>
+              </li>
             </ol>
           </ul>
 

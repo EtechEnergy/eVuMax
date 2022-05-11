@@ -44,6 +44,8 @@ import UnitDictionary from "../components/DataService/Setup/Units/UnitDictionary
 import UnitConversion from "../components/DataService/Setup/UnitsConversion/UnitConversion";
 import UnitMappings from "../components/DataService/Setup/UnitMappings/UnitMappings";
 import UnitConversionProfile from "../components/DataService/Setup/UnitConversionProfile/UnitConversionProfile";
+import EmailSettings from "../components/DataService/Setup/EmailSettings/EmailSettings";
+import DownloadAuditInfo from "../components/DataService/Setup/DownloadAudit/DownloadAuditInfo";
 
        
 
@@ -336,9 +338,21 @@ const dashbordRoutes = [
     component: UnitConversionProfile,
     layout: "/dashboard",
   },
-
+  {
+    path: "/EmailSettings",
+    name: "EmailSettings",
+    icon: "",
+    component: EmailSettings,
+    layout: "/dashboard",
+  },
   
-
+  {
+    path: "/DownloadAuditInfo",
+    name: "DownloadAuditInfo",
+    icon: "",
+    component: DownloadAuditInfo,
+    layout: "/dashboard",
+  },
 ];
 
 export default dashbordRoutes;

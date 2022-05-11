@@ -76,6 +76,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\VuMaxDR.Data.Objects.dll</HintPath>
     </Reference>
+    <Reference Include="VuMaxDR.Snapshots">
+      <HintPath>..\lib\VuMaxDR.Snapshots.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdvKPI\AdvKPI.cs" />
@@ -119,6 +122,9 @@
     <Compile Include="DataServiceManager\DataServiceBroker.cs" />
     <Compile Include="DataServiceManager\Setup\AlertSettings\AlertSettings.cs" />
     <Compile Include="DataServiceManager\Setup\AlertSettings\AlertSettingsMgr.cs" />
+    <Compile Include="DataServiceManager\Setup\DownloadAuditInfo\DownloadAuditInfoMgr.cs" />
+    <Compile Include="DataServiceManager\Setup\EmailSettings\EmailSettings.cs" />
+    <Compile Include="DataServiceManager\Setup\EmailSettings\EmailSettingsMgr.cs" />
     <Compile Include="DataServiceManager\Setup\MaintainStdChannels\eMaintainStdChannels.cs" />
     <Compile Include="DataServiceManager\Setup\MaintainStdChannels\MaintainStdChannel.cs" />
     <Compile Include="DataServiceManager\Setup\MaintainStdChannels\MaintainStdChannelsMgr.cs" />

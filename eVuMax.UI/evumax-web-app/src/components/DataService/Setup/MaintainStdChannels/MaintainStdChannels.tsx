@@ -548,7 +548,7 @@ export default class MaintainStdChannels extends Component {
 
             })
                 .then((res) => {
-                    Util.StatusSuccess("Data successfully retrived  ");
+                    Util.StatusSuccess("Data successfully saved  ");
                     this.loadData();
                 })
                 .catch((error) => {
