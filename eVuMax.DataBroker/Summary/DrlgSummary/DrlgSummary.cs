@@ -362,7 +362,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
         {
             try
             {
-
+                
                 Dictionary<int, double> __RigStateSummary = new Dictionary<int, double>();
                 __RigStateSummary = objTimeLog.getRigStateSummary(ref paramRequest.objDataService, paramFromDate, paramToDate);
 

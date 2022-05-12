@@ -67,6 +67,7 @@ export class Dashboard extends React.Component<Props> {
   }
 
   componentDidMount(): void {
+    
     this.getVersion();
   }
 
@@ -701,6 +702,12 @@ export class Dashboard extends React.Component<Props> {
               <li>
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/DownloadAuditInfo">
                 Download Audit Information
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/AuditInformation">
+                Audit Information
                 </NavLink>
               </li>
             </ol>

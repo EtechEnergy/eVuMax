@@ -1,5 +1,6 @@
-import { Button, DateTimePicker, DropDownList, Grid, GridColumn as Column, Input, Label } from '@progress/kendo-react-all';
+import { Button, DateTimePicker, DropDownList, Grid, GridColumn as Column, GridColumn, Input, Label, Splitter } from '@progress/kendo-react-all';
 import React, { Component } from 'react';
+import { faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { SnapshotSettings } from '../../../../eVuMaxObjects/dataObjects/Snapshots/SnapshotSettings';
 import * as utilFunc from '../../../../../src/utilFunctions/utilFunctions';
 import { Checkbox } from '@progress/kendo-react-inputs';
@@ -11,14 +12,24 @@ import axios from "axios";
 import { ClientLogger } from '../../../ClientLogger/ClientLogger';
 import { comboData } from '../../../../eVuMaxObjects/UIObjects/comboData';
 import moment from 'moment';
+import NotifyMe from 'react-notification-timeline';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 let _gMod = new GlobalMod();
 
+let columnList: any[] = [];
+let wellList: any[] = [];
 
-export default class DownloadAuditInfo extends Component {
-  objLogger: ClientLogger = new ClientLogger("DownloadAuditInfo", _gMod._userId);
+export default class AuditInformation extends Component {
+  objLogger: ClientLogger = new ClientLogger("AuditInformation", _gMod._userId);
+
 
   state = {
+    panes: [{ size: "30%", collapsible: false }, {}],
+    openDialog: false,
+    warningMsg: [],
+    activeWellList: [] as any,
+
     DateRange: false,
     FromDate: new Date,
     ToDate: new Date,
@@ -30,13 +41,67 @@ export default class DownloadAuditInfo extends Component {
 
   componentDidMount = async () => {
     try {
-      alert("aa");
       debugger;
-      this.loadComboData();
+      this.getActiveWellList();
+      //this.loadComboData();
     } catch (error) {
 
     }
   }
+
+  getActiveWellList = () => {
+    try {
+
+      let objBrokerRequest = new BrokerRequest();
+
+      this.setState({ isProcess: true });
+      objBrokerRequest = new BrokerRequest();
+      let objParameter = new BrokerParameter("odata", "odata");
+
+      objBrokerRequest.Module = "Well.Data.Objects";
+      objBrokerRequest.Function = "ActiveWellList";
+      objBrokerRequest.Broker = "ActiveWellProfile";
+      objBrokerRequest.Parameters.push(objParameter);
+
+      axios
+        .get(_gMod._getData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+        })
+        .then((res) => {
+          let _Data = [];
+          if (res.data.RequestSuccessfull) {
+            _Data = JSON.parse(res.data.Response);
+            wellList = _Data;
+
+            console.log(columnList);
+
+            this.setState({
+              columnNames: columnList,
+              activeWellList: _Data.map((dataItem: any) =>
+                Object.assign({ selected: false }, dataItem)
+              ),
+            });
+          }
+          debugger;
+          this.setState({ isProcess: false });
+        })
+        .catch((error) => {
+          if (error.response) {
+            // this.errors(error.response.message);
+          } else if (error.request) {
+            console.log("error.request");
+          } else {
+            console.log("Error", error);
+          }
+          console.log("rejected");
+        });
+
+    } catch { }
+  };
 
   loadComboData = () => {
     try {
@@ -52,8 +117,6 @@ export default class DownloadAuditInfo extends Component {
       this.state.cboObjectType.push(cboData);
       cboData = new comboData("Well", "Well");
       this.state.cboObjectType.push(cboData);
-
-
 
     } catch (error) {
 
@@ -114,8 +177,8 @@ export default class DownloadAuditInfo extends Component {
           }
 
 
-       await   this.setState({
-              grdData: Object.values(objData),
+          await this.setState({
+            grdData: Object.values(objData),
           });
         })
         .catch((error) => {
@@ -196,166 +259,123 @@ export default class DownloadAuditInfo extends Component {
 
   }
 
+  OnChange = () => {
+    try {
+
+    } catch (error) {
+
+    }
+  }
+  WellListRowClick = () => {
+    try {
+
+    } catch (error) {
+
+    }
+  }
+  cmdRun_click = (e, objRow: any) => {
+    try {
+
+    } catch (error) {
+
+    }
+  }
   render() {
     return (
-      <div className='mt-3'>
-        <div>Data Change Audit</div>
-        <div className="row">
-          <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2">
-            <div className="grd">
-              <p>
-                <Label>Search</Label>
-              </p>
+      <div>
 
-
-              <p>
-                <Checkbox
-                  className="mr-2"
-                  label={"Search by date range"}
-                  value={this.state.DateRange}
-                  onChange={(e) => this.setState({ DateRange: e.value })}
-                />
-              </p>
-
-              <p>
-                <Label>From Date</Label>
-              </p>
-              <p>
-                <DateTimePicker
-                  name="txtFromDate"
-                  value={new Date(this.state.FromDate)}
-                  format="MM/dd/yyyy HH:mm:ss"
-                  formatPlaceholder={{
-                    year: "yyyy",
-                    month: "MM",
-                    day: "dd",
-                    hour: "HH",
-                    minute: "mm",
-                    second: "ss",
-                  }}
-
-                  onChange={(e) => this.setState({ FromDate: e.value })}
-                />
-              </p>
-
-              <p>
-                <Label>To Date</Label>
-              </p>
-              <p>
-                <DateTimePicker
-                  name="txtToDate"
-                  value={new Date(this.state.ToDate)}
-                  format="MM/dd/yyyy HH:mm:ss"
-                  formatPlaceholder={{
-                    year: "yyyy",
-                    month: "MM",
-                    day: "dd",
-                    hour: "HH",
-                    minute: "mm",
-                    second: "ss",
-                  }}
-
-                  onChange={(e) => this.setState({ ToDate: e.value })}
-                />
-              </p>
-
-              <p>
-                Object Type
-              </p>
-              <p>
-                <Label className="mr-2 mt-3 float-left">Data Type</Label>
-                <DropDownList
-                  name="Data Type"
-                  label=''
-                  data={this.state.cboObjectType}
-                  textField="text"
-                  dataItemKey="id"
-                  value={this.state.selectedObjectType}
-                  style={{ width: 200 }}
-                  onChange={(event) => {
-                    this.handleChangeDropDown(event, "ObjectType");
-                  }}
-                />
-              </p>
-            </div>
-
-            <p>
-              <Button style={{ width: '110px' }} className="mt-3 k-button k-primary mr-4" onClick={this.searchClick}>
-                Search
-              </Button>
-              <Button style={{ width: '110px' }} onClick={this.showAllClick} className="mt-3">
-                Show All
-              </Button>
-            </p>
-          </div>
-
-          <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8">
-            <Grid
-              style={{ height: "500px", minHeight: "150px" }}
-              resizable={true}
-              scrollable={"scrollable"}
-              sortable={false}
-              selectedField="selected"
-              data={this.state.grdData}
-            //  data={
-            //      this.state.grdData != null ? this.state.grdData.map((item: any) => (
-            //          {
-            //              ...item,
-            //              selected: item.Mnemonic === this.state.selectedStdChannel
-            //          }
-
-            //      ))
-            //          : null
-            //  }
-            //onRowClick={this.grdRowClick}
-            >
-              <Column
-                headerClassName="text-center"
-                className="downloadAudit"
-                field="CHANGE_DATE"
-                title="Change Date"
-              />
-
-              <Column
-                headerClassName="text-center"
-                className="downloadAudit"
-                field="OBJECT_TYPE"
-                title="Object Type"
-              />
-
-              <Column
-                headerClassName="text-center"
-                className="downloadAudit"
-                field="OBJECT_ID"
-                title="Object ID"
-              />
-
-              <Column
-                headerClassName="text-center"
-                className="downloadAudit"
-                field="FUNCTION_TYPE"
-                title="Change Type"
-              />
-
-              <Column
-                headerClassName="text-center"
-                className="downloadAudit"
-                field="CHANGE_INFORMATION"
-                title="Change Information"
-              />
-
-              <Column
-                headerClassName="text-center"
-                className="downloadAudit"
-                field="CHANGE_BY"
-                title="Changed By"
-              />
-
-            </Grid>
-
-          </div>
+        <div className="" style={{ display: "flex", justifyContent: "flex-start" }}>
+          {/* <label>{this.wellName} </label> */}
         </div>
+        <div className="" style={{ display: "flex", justifyContent: "flex-end" }}>
+          <NotifyMe
+
+            data={this.state.warningMsg}
+            storageKey='notific_key'
+            notific_key='timestamp'
+            notific_value='update'
+            heading='Warnings'
+            sortedByKey={false}
+            showDate={false}
+            size={24}
+
+          />
+        </div>
+
+        <Splitter
+          panes={this.state.panes}
+          onChange={this.OnChange}
+          style={{ height: "90vh" }}
+
+        >
+          <div className={this.state.openDialog ? "k-state-disabled" : "pane-content"}>
+
+            <label>Click Run Button from the list to Load Information </label>
+
+
+            <Grid
+              style={{
+                height: "750px", width: "auto"
+              }}
+
+              selectedField="selected"
+              data={this.state.activeWellList}
+              //   data={this.state.grdActiveWellData != null ? (this.state.grdData.map((item: any) =>
+              //     ({ ...item, selected: item.TEMPLATE_ID === this.state.currentPlotID })
+              //   )) : null}
+              onRowClick={this.WellListRowClick}
+
+
+            >
+
+
+              <Column
+                field="WELL_NAME"
+                title="Well Name"
+                width="490px"
+                reorderable={true}
+                //orderIndex={this.getColumnOrderIndex("WELL_NAME")}
+                cell={(props) => (
+                  <td
+                    className="text-left"
+                  // onClick={(e) =>
+                  //   this.showOpenInterfaceDialog(props.dataItem)
+                  // }
+                  >
+                    <label>{props.dataItem.WELL_NAME}</label>
+                  </td>
+                )}
+              />
+
+              <Column
+                width="50px"
+                headerClassName="text-center"
+                resizable={false}
+                field="editWell"
+                title="Run"
+                cell={(props) => (
+                  <td
+                    style={props.style}
+                    className={"text-center k-command-cell " + props.className}
+                    onClick={(e) => this.cmdRun_click(e, props.dataItem)}
+                  >
+                    <span>
+                      <FontAwesomeIcon icon={faChartLine} />
+                    </span>
+                  </td>
+                )}
+              />
+            </Grid>
+          </div>
+
+          <div className="pane-content ml-5" id="rightPanel" >
+
+            Information
+          </div>
+        </Splitter>
       </div>
+
+
     )
   }
 }
