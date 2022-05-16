@@ -269,7 +269,6 @@ export default class customDrlgSummaryViewer extends Component {
 
             <label>Click Run Button from the list to Load Summary </label>
 
-
             <Grid
               style={{
                 height: "750px", width: "auto"
@@ -281,10 +280,7 @@ export default class customDrlgSummaryViewer extends Component {
                 ({ ...item, selected: item.TEMPLATE_ID === this.state.currentPlotID })
               )) : null}
               onRowClick={this.PlotListRowClick}
-
-
-            >
-
+           >
               <GridColumn
                 field="TEMPLATE_NAME"
                 title="Plot Name"
@@ -320,8 +316,6 @@ export default class customDrlgSummaryViewer extends Component {
               {/* <DataSelectorInfo objDataSelector={this.state.objDataSelector} isRealTime={false} ></DataSelectorInfo> */}
               {this.state.runReport && (
                 <>
-
-
 
                   <CustomDrillingSummary PlotID={this.state.currentPlotID} showListPanel={this.showListPanel} WellID={this.WellID} PlotName={this.state.currentRow.TEMPLATE_NAME} updateWarnings={this.updateWarnings} parentRef={this} objDataSelector={this.state.objDataSelector} ></CustomDrillingSummary>
 

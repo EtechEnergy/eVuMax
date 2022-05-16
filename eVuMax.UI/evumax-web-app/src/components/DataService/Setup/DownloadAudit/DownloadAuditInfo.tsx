@@ -30,7 +30,7 @@ export default class DownloadAuditInfo extends Component {
 
   componentDidMount = async () => {
     try {
-      alert("aa");
+      
       debugger;
       this.loadComboData();
     } catch (error) {
@@ -113,9 +113,14 @@ export default class DownloadAuditInfo extends Component {
             });
           }
 
+          let grdData_ =Object.values(objData);
+          grdData_.forEach((element :any) => {
+            element.CHANGE_DATE  = moment(new Date(element.CHANGE_DATE)).format("YYYY-MM-DD hh:mm:ss a")
+          });
+
 
        await   this.setState({
-              grdData: Object.values(objData),
+              grdData: Object.values(grdData_),
           });
         })
         .catch((error) => {

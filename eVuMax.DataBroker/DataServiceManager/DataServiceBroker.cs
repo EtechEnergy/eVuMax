@@ -68,6 +68,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objDownloadAuditInfoMgr.getData(paramRequest);
                 }
 
+                if (paramRequest.Broker == Global.Brk_Setup_AuditInfo)
+                {
+                    AuditInfoMgr objAuditInfoMgr = new AuditInfoMgr();
+                    return objAuditInfoMgr.getData(paramRequest);
+                }
+
                 BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";

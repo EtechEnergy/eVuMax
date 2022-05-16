@@ -122,6 +122,7 @@
     <Compile Include="DataServiceManager\DataServiceBroker.cs" />
     <Compile Include="DataServiceManager\Setup\AlertSettings\AlertSettings.cs" />
     <Compile Include="DataServiceManager\Setup\AlertSettings\AlertSettingsMgr.cs" />
+    <Compile Include="DataServiceManager\Setup\AuditInfo\AuditInfoMgr.cs" />
     <Compile Include="DataServiceManager\Setup\DownloadAuditInfo\DownloadAuditInfoMgr.cs" />
     <Compile Include="DataServiceManager\Setup\EmailSettings\EmailSettings.cs" />
     <Compile Include="DataServiceManager\Setup\EmailSettings\EmailSettingsMgr.cs" />

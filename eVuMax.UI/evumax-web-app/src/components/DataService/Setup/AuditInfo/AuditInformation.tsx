@@ -29,6 +29,7 @@ export default class AuditInformation extends Component {
     openDialog: false,
     warningMsg: [],
     activeWellList: [] as any,
+    currentRow: [] as any,
 
     DateRange: false,
     FromDate: new Date,
@@ -43,7 +44,8 @@ export default class AuditInformation extends Component {
     try {
       debugger;
       this.getActiveWellList();
-      //this.loadComboData();
+      this.loadComboData();
+      
     } catch (error) {
 
     }
@@ -129,7 +131,7 @@ export default class AuditInformation extends Component {
       this.objLogger.SendLog("load Donwload Audit Info");
       let objBrokerRequest = new BrokerRequest();
       objBrokerRequest.Module = "DataService";
-      objBrokerRequest.Broker = "SetupDownloadAuditInfo";
+      objBrokerRequest.Broker = "SetupAuditInfo";
       objBrokerRequest.Function = "loadData";
 
       let paramuserid: BrokerParameter = new BrokerParameter(
@@ -144,6 +146,12 @@ export default class AuditInformation extends Component {
       );
       objBrokerRequest.Parameters.push(paramSearchCondition);
 
+      
+      let paramWellId: BrokerParameter = new BrokerParameter(
+        "WellId",
+        this.state.currentRow.WELL_ID
+      );
+      objBrokerRequest.Parameters.push(paramWellId);
       debugger;
 
       axios
@@ -177,9 +185,16 @@ export default class AuditInformation extends Component {
           }
 
 
-          await this.setState({
-            grdData: Object.values(objData),
+          let grdData_ =Object.values(objData);
+          grdData_.forEach((element :any) => {
+            element.CHANGE_DATE  = moment(new Date(element.CHANGE_DATE)).format("YYYY-MM-DD hh:mm:ss a")
           });
+
+          await this.setState({
+            grdData: grdData_,
+          });
+          
+          debugger;
         })
         .catch((error) => {
 
@@ -238,6 +253,7 @@ export default class AuditInformation extends Component {
   generateSearchCondition = () => {
     try {
       let searchCondition_ = "";
+      debugger;
       if (this.state.DateRange) {
         // searchCondition = (searchCondition + (" AND CHANGE_DATE>='" + (this.state.FromDate.toLocaleString("dd-MMM-yyyy HH:mm:ss") + ("' AND CHANGE_DATE<='" 
         //             + (this.state.ToDate.toString("dd-MMM-yyyy HH:mm:ss") + "' ")))));
@@ -276,10 +292,46 @@ export default class AuditInformation extends Component {
   cmdRun_click = (e, objRow: any) => {
     try {
 
+      let newPanes: any = this.state.panes;
+      newPanes[0].collapsed = true;
+      this.setState({
+        panes: newPanes,
+        currentRow: objRow,
+        currentPlotID: objRow.TEMPLATE_ID,
+        openDialog: true,
+      });
+
     } catch (error) {
 
     }
   }
+
+  closeEvent = () => {
+    try {
+
+
+
+      this.showListPanel();
+    } catch (error) {
+
+    }
+  }
+
+
+  showListPanel = () => {
+    try {
+      let newPanes: any = this.state.panes;
+      newPanes[0].collapsed = false;
+      this.setState({
+        panes: newPanes,
+        currentPlotID: "",
+        openDialog: false,
+        warningMsg: []
+      });
+
+    } catch (error) { }
+  };
+
   render() {
     return (
       <div>
@@ -324,10 +376,16 @@ export default class AuditInformation extends Component {
               //     ({ ...item, selected: item.TEMPLATE_ID === this.state.currentPlotID })
               //   )) : null}
               onRowClick={this.WellListRowClick}
-
-
             >
 
+
+              {false &&
+              <Column 
+                field="WELL_ID"
+                title="Well Id"
+                width="100px"
+              />
+              }
 
               <Column
                 field="WELL_NAME"
@@ -369,8 +427,189 @@ export default class AuditInformation extends Component {
           </div>
 
           <div className="pane-content ml-5" id="rightPanel" >
+            {this.state.openDialog && (
 
-            Information
+
+
+              <div className='mt-3'>
+
+
+                <div className="row">
+
+
+                  <div className="col-lg-2">
+                    Data Change Audit
+                  </div>
+
+                  <div className="col-lg-8">
+                    {this.state.currentRow.WELL_NAME}
+                  </div>
+
+                  <div className="col-lg-2">
+                    <div className="flex-item">
+                      <Button onClick={this.closeEvent}>Close</Button>
+                    </div>
+
+                  </div>
+
+                </div>
+                <div className="row">
+                  <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                    <div className="grd">
+                      <p>
+                        <Label>Search</Label>
+                      </p>
+
+
+                      <p>
+                        <Checkbox
+                          className="mr-2"
+                          label={"Search by date range"}
+                          value={this.state.DateRange}
+                          onChange={(e) => this.setState({ DateRange: e.value })}
+                        />
+                      </p>
+
+                      <p>
+                        <Label>From Date</Label>
+                      </p>
+                      <p>
+                        <DateTimePicker
+                          name="txtFromDate"
+                          value={new Date(this.state.FromDate)}
+                          format="MM/dd/yyyy HH:mm:ss"
+                          formatPlaceholder={{
+                            year: "yyyy",
+                            month: "MM",
+                            day: "dd",
+                            hour: "HH",
+                            minute: "mm",
+                            second: "ss",
+                          }}
+
+                          onChange={(e) => this.setState({ FromDate: e.value })}
+                        />
+                      </p>
+
+                      <p>
+                        <Label>To Date</Label>
+                      </p>
+                      <p>
+                        <DateTimePicker
+                          name="txtToDate"
+                          value={new Date(this.state.ToDate)}
+                          format="MM/dd/yyyy HH:mm:ss"
+                          formatPlaceholder={{
+                            year: "yyyy",
+                            month: "MM",
+                            day: "dd",
+                            hour: "HH",
+                            minute: "mm",
+                            second: "ss",
+                          }}
+
+                          onChange={(e) => this.setState({ ToDate: e.value })}
+                        />
+                      </p>
+
+                      <p>
+                        Object Type
+                      </p>
+                      <p>
+                        <Label className="mr-2 mt-3 float-left">Data Type</Label>
+                        <DropDownList
+                          name="Data Type"
+                          label=''
+                          data={this.state.cboObjectType}
+                          textField="text"
+                          dataItemKey="id"
+                          value={this.state.selectedObjectType}
+                          style={{ width: 200 }}
+                          onChange={(event) => {
+                            this.handleChangeDropDown(event, "ObjectType");
+                          }}
+                        />
+                      </p>
+                    </div>
+
+                    <p>
+                      <Button style={{ width: '110px' }} className="mt-3 k-button k-primary mr-4" onClick={this.searchClick}>
+                        Search
+                      </Button>
+                      <Button style={{ width: '110px' }} onClick={this.showAllClick} className="mt-3">
+                        Show All
+                      </Button>
+                    </p>
+                  </div>
+
+                  <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                    <Grid
+                      style={{ height: "500px", minHeight: "150px" }}
+                      resizable={true}
+                      scrollable={"scrollable"}
+                      sortable={false}
+                      selectedField="selected"
+                      data={this.state.grdData}
+                    //  data={
+                    //      this.state.grdData != null ? this.state.grdData.map((item: any) => (
+                    //          {
+                    //              ...item,
+                    //              selected: item.Mnemonic === this.state.selectedStdChannel
+                    //          }
+
+                    //      ))
+                    //          : null
+                    //  }
+                    //onRowClick={this.grdRowClick}
+                    >
+                      <Column
+                        headerClassName="text-center"
+                        className="downloadAudit"
+                        field="CHANGE_DATE"
+                        title="Change Date"
+                      />
+
+                      <Column
+                        headerClassName="text-center"
+                        className="downloadAudit"
+                        field="OBJECT_TYPE"
+                        title="Object Type"
+                      />
+
+                      <Column
+                        headerClassName="text-center"
+                        className="downloadAudit"
+                        field="OBJECT_ID"
+                        title="Object ID"
+                      />
+
+                      <Column
+                        headerClassName="text-center"
+                        className="downloadAudit"
+                        field="FUNCTION_TYPE"
+                        title="Change Type"
+                      />
+
+                      <Column
+                        headerClassName="text-center"
+                        className="downloadAudit"
+                        field="CHANGE_INFORMATION"
+                        title="Change Information"
+                      />
+
+                      <Column
+                        headerClassName="text-center"
+                        className="downloadAudit"
+                        field="CHANGE_BY"
+                        title="Changed By"
+                      />
+
+                    </Grid>
+
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </Splitter>
       </div>
