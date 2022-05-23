@@ -48,6 +48,7 @@ import EmailSettings from "../components/DataService/Setup/EmailSettings/EmailSe
 import DownloadAuditInfo from "../components/DataService/Setup/DownloadAudit/DownloadAuditInfo";
 import AuditInformation from "../components/DataService/Setup/AuditInfo/AuditInformation";
 import ChannelLibrary from "../components/DataService/Setup/ChannelLibrary/ChannelLibrary";
+import WellMonitor from "../components/DataService/Setup/WellMonitor/WellMonitor";
 
        
 
@@ -369,6 +370,15 @@ const dashbordRoutes = [
     name: "ChannelLibrary",
     icon: "",
     component: ChannelLibrary,
+    layout: "/dashboard",
+  },
+
+
+  {
+    path: "/WellMonitor",
+    name: "WellMonitor",
+    icon: "",
+    component: WellMonitor,
     layout: "/dashboard",
   },
 ];

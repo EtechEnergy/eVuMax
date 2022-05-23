@@ -719,6 +719,12 @@ export class Dashboard extends React.Component<Props> {
                 Channel Library
                 </NavLink>
               </li>
+
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/WellMonitor">
+                Well Monitor Setup
+                </NavLink>
+              </li>
             </ol>
           </ul>
 
