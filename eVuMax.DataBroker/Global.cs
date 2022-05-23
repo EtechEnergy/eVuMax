@@ -109,8 +109,9 @@ namespace eVuMax.DataBroker
         public const string Brk_Setup_EmailSettings = "SetupEmailSettings"; //prath 10-05-2022
         public const string Brk_Setup_DownloadAuditInfo = "SetupDownloadAuditInfo"; //prath 10-05-2022
         public const string Brk_Setup_AuditInfo = "SetupAuditInfo"; //prath 14-05-2022
+        public const string Brk_Setup_ChannelLibrary = "SetupChannelLibrary"; //prath 17-05-2022
 
-        
+
         #endregion
         /// <summary>
         /// Extracts Parameter list from request object and returns it

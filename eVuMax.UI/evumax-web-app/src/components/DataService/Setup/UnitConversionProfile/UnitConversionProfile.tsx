@@ -50,7 +50,7 @@ export default class UnitConversionProfile extends Component {
 
     cmdAddConversion = async () => {
         try {
-            debugger;
+            
 
             let maxID = Math.max(...this.state.grdConversions.map(o => o.ConversionID));
             if (maxID == -Infinity) {
@@ -80,7 +80,7 @@ export default class UnitConversionProfile extends Component {
 
     cmdAddProfile = async () => {
         try {
-            debugger;
+            
 
             // let maxID=Math.max(...this.state.grdConversions.map(o => o.ConversionID));
             // let newData = this.state.grdConversionProfile
@@ -109,7 +109,7 @@ export default class UnitConversionProfile extends Component {
 
     cmdEditProfile = async (event: any, rowData: any) => {
         try {
-            debugger;
+            
 
 
             objBrokerRequest = new BrokerRequest();
@@ -132,7 +132,7 @@ export default class UnitConversionProfile extends Component {
                 .then((res) => {
 
                     const objData = JSON.parse(res.data.Response);
-                    debugger;
+                    
                     // Conversions:
                     // 1:
                     // ConversionFormula: ""
@@ -187,7 +187,7 @@ export default class UnitConversionProfile extends Component {
     }
 
     handleChange = (objItem: any, fieldName: string) => {
-        debugger;
+        
         let newData: any = this.state.objProfile;
         newData[fieldName] = objItem.value;
         this.setState({
@@ -211,7 +211,7 @@ export default class UnitConversionProfile extends Component {
         });
     };
     grdItemChange = (e: any) => {
-        debugger;
+        
         //pending
         e.dataItem[e.field] = e.value;
         this.setState({
@@ -225,7 +225,7 @@ export default class UnitConversionProfile extends Component {
     };
 
     SaveProfile = async () => {
-        debugger;
+        
 
         let objProfile: any = {};
         //objProfile = { ProfileID: "", ProfileName: "", Conversions: [] };
@@ -326,7 +326,7 @@ export default class UnitConversionProfile extends Component {
 
 
             axios.all([axiosrequest1, axiosrequest2]).then(axios.spread((...res) => {
-                debugger;
+                
                 console.log(res[0]);
                 console.log(res[1]);
 
@@ -340,7 +340,7 @@ export default class UnitConversionProfile extends Component {
                 })
                 //
 
-                debugger;
+                
 
                 const objData2 = JSON.parse(res[1].data.Response);
                 let units = Object.values(objData2.units);
@@ -391,7 +391,7 @@ export default class UnitConversionProfile extends Component {
                 {
                     label: 'Yes',
                     onClick: async () => {
-                        debugger;
+                        
                         let objRow = rowData;
                         let newData = this.state.grdConversions;
                         let index = newData.findIndex((item: any) => item.ConversionID === objRow.ConversionID);
@@ -428,7 +428,7 @@ export default class UnitConversionProfile extends Component {
                 {
                     label: 'Yes',
                     onClick: async () => {
-                        debugger;
+                        
                         let objRow = rowData;
 
                         objBrokerRequest = new BrokerRequest();
@@ -614,7 +614,7 @@ export default class UnitConversionProfile extends Component {
 
                                             item => item.id === props.dataItem[props.field]
                                         );
-                                        debugger;
+                                        
                                         return (
                                             <td className="text-center">
                                                 <DropDownList

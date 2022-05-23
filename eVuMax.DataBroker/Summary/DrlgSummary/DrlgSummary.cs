@@ -54,10 +54,11 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
         DateTime offsetFromDate = DateTime.Now;
         DateTime offsetToDate = DateTime.Now;
 
-        Double offsetDepthIn = 0;
-        Double offsetDepthOut = 0;
-        Boolean MatchDepthByFormationTops = false;
+        double offsetDepthIn = 0;
+        double offsetDepthOut = 0;
+        bool MatchDepthByFormationTops = false;
 
+        string warning = "";
         //************************************
 
         public Broker.BrokerResponse getData(Broker.BrokerRequest paramRequest)
@@ -205,7 +206,10 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                 //Get the primary time log 
                 objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
-
+                if (objTimeLog.ObjectID == "")
+                {
+                    __Warnings += "Primary TimeLog not assigned/ not found";
+                }
                 objRigState = rigState.loadWellRigStateSetup(ref paramRequest.objDataService, wellId);
 
                 if (objTimeLog != null)
@@ -356,6 +360,8 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
 
+                __Warnings += warning;
+
                 objResponse.Warnings = __Warnings;
 
                 objResponse.Response = JsonConvert.SerializeObject(objSummaryData);
@@ -375,6 +381,10 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 
                 Dictionary<int, double> __RigStateSummary = new Dictionary<int, double>();
                 __RigStateSummary = objTimeLog.getRigStateSummary(ref paramRequest.objDataService, paramFromDate, paramToDate);
+                if(__RigStateSummary.Count == 0 || __RigStateSummary == null)
+                {
+                    warning += "Rig States Summary is not available";
+                }
 
 
                 double totalSeconds = 0;
@@ -417,6 +427,10 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                         objSummaryData.rigStateSummaryData.Rows.Add(objRow);
                         counter += 1;
+                    }
+                    else
+                    {
+                        objLogger.LogMessage("********  getRigStateSummaryData  Percentage -ve line 414  textLabel =" + textLabel + " - Percentage =" + percentage.ToString());
                     }
                 }
             }
@@ -499,8 +513,8 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                         for (int i = 0; i <= objData.Rows.Count - 1; i++)
                         {
-                            Double ROP = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["ROP"], 0));
-                            Double Depth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["HDTH"], 0));
+                            double ROP = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["ROP"], 0));
+                            double Depth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["HDTH"], 0));
                             DateTime DateTime_ = Convert.ToDateTime(DataService.checkNull(objData.Rows[i]["DATETIME"], new DateTime()));
 
                             
@@ -508,12 +522,12 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                             if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
                             {
                                 DateTime_ = Util.convertUTCToWellTimeZone(DateTime_, objWell);
-                                objLogger.LogMessage("generateROPData Function line 510 Depth= " + Depth.ToString() + " - " + DateTime_.ToString());
+                                objLogger.LogMessage("generateROPData Function line 525 Depth= " + Depth.ToString() + " - " + DateTime_.ToString());
                             }
                             else
                             {
                                 DateTime_ = Util.convertWellToLocalTimeZone(DateTime_, objWell);
-                                objLogger.LogMessage("generateROPData Function line 515 Depth= " + Depth.ToString() + " - " + DateTime_.ToString());
+                                objLogger.LogMessage("generateROPData Function line 530 Depth= " + Depth.ToString() + " - " + DateTime_.ToString());
                             }
 
 
@@ -541,7 +555,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
 
                     DataTable objData = objDataService.getTable(strSQL);
-                    objLogger.LogMessage("generateROPData  Offset line 543 objData.length= " + objData.Rows.Count);
+                    objLogger.LogMessage("generateROPData  Offset line 554 objData.length= " + objData.Rows.Count);
 
                     if (objData.Rows.Count > 1) //Process only if more then 1 record is present Nishant 28-09-2020
                     {
@@ -553,7 +567,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                             Double ROP = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["ROP"], 0));
                             Double Depth = Convert.ToDouble(DataService.checkNull(objData.Rows[i]["HDTH"], 0));
-                            objLogger.LogMessage("generateROPData  Line 555 Depth=" +Depth.ToString() +" - "+ "ROP= " + ROP.ToString());
+                            objLogger.LogMessage("generateROPData  Line 567 Depth=" +Depth.ToString() +" - "+ "ROP= " + ROP.ToString());
                             offsetROPX[i] = ROP;
                             offsetROPY[i] = Depth;
 
@@ -598,7 +612,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                             double[] tempYData = new double[elementCount - 1 + 1];
 
                             int subCounter = 0;
-                            objLogger.LogMessage("generateROPData offsetROPY line 600 ... " + offsetROPY.Length);
+                            objLogger.LogMessage("generateROPData offsetROPY line 613 ... " + offsetROPY.Length);
                             for (int i = 0; i < offsetROPY.Length - 1; i++)
                             {
 
@@ -626,6 +640,10 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         }
                     }
                 }
+                else
+                {
+                    paramWarnings += "Off Set ROP Mneomic Not Mapped, Please check Menomic Mapping";
+                }
 
                 //Add Data to ROP Data Table form Array
                 if (mainROPX != null)
@@ -643,6 +661,10 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         objSummaryData.ROPData.Rows.Add(objNewRow);
                     }
                 }
+               if(objSummaryData.ROPData.Rows.Count==0 || objSummaryData.ROPData == null)
+                {
+                    paramWarnings += "ROP Data Not found";
+                }
 
                 //Add Data to Offset ROP Data Table form Array
                 if (offsetROPX != null)
@@ -659,6 +681,11 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                         objLogger.LogMessage("generateROPData Offset add to table  X=" + offsetROPX[i].ToString() + " - Y=" + offsetROPY[i].ToString());
                         objSummaryData.ROPDataOffset.Rows.Add(objNewRow);
                     }
+                }
+
+                if (objSummaryData.ROPDataOffset.Rows.Count == 0 || objSummaryData.ROPDataOffset == null)
+                {
+                    paramWarnings += "Offset Well ROP Data Not found";
                 }
 
             }
@@ -729,7 +756,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
             catch (Exception ex)
             {
 
-                objLogger.LogMessage("Error --> getDateRangeFromDepth  Exception throw on line 732 " + ex.Message + " " + ex.StackTrace);
+                objLogger.LogMessage("Error --> getDateRangeFromDepth  Exception throw on line 759 " + ex.Message + " " + ex.StackTrace);
             }
 
 
@@ -780,7 +807,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
             }
             catch (Exception ex)
             {
-                objLogger.LogMessage("Error --> getDateRangeFromSideTrack  Exception throw on line 783 " + ex.Message + " " + ex.StackTrace);
+                objLogger.LogMessage("Error --> getDateRangeFromSideTrack  Exception throw on line 810 " + ex.Message + " " + ex.StackTrace);
             }
 
 
@@ -810,7 +837,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
             }
             catch (Exception ex)
             {
-                objLogger.LogMessage("Error --> CreateStatItemFromString  Exception throw on line 813 " + ex.Message + " " + ex.StackTrace);
+                objLogger.LogMessage("Error --> CreateStatItemFromString  Exception throw on line 841 " + ex.Message + " " + ex.StackTrace);
                 return new ChartOutputItem();
 
             }
@@ -854,7 +881,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                 list.Add("Auto_Slide_Footage_Pct#14#DEPTH#19#1#0#");
 
 
-                objLogger.LogMessage("generateDefaultItems line 844 list length = " + list.Count);
+                objLogger.LogMessage("generateDefaultItems line 884 list length = " + list.Count);
                 foreach (string strItem in list)
                 {
                     ChartOutputItem objItem = CreateStatItemFromString(strItem);
@@ -866,7 +893,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
             }
             catch (Exception ex)
             {
-                objLogger.LogMessage("Error --> generateDefaultItems Function line 856 " + ex.Message + " " + ex.StackTrace);
+                objLogger.LogMessage("Error --> generateDefaultItems Function line 896 " + ex.Message + " " + ex.StackTrace);
             }
         }
         private DataTable processOffsetNumericOutput(ref VuMaxDR.Data.DataService objDataService, DateTime FromDate, DateTime ToDate)
@@ -951,7 +978,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
             }
             catch (Exception ex)
             {
-                objLogger.LogMessage("Error --> processOffsetNumericOutput  Exception throw on line 954 " + ex.Message + " " + ex.StackTrace);
+                objLogger.LogMessage("Error --> processOffsetNumericOutput  Exception throw on line 981 " + ex.Message + " " + ex.StackTrace);
                 return new DataTable();
             }
         }
@@ -973,7 +1000,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
                 ChartOutputItem[] arrChartResults = itemsList.Values.ToArray();
                 // 'Array.Sort(arrChartResults)
-                objLogger.LogMessage("processNumericOutput Generate list ... " + arrChartResults.Length);
+                objLogger.LogMessage("processNumericOutput Generate list 1003... " + arrChartResults.Length);
 
                 if (arrChartResults.GetType().IsArray)
                 {
@@ -981,7 +1008,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                     {
                         ChartOutputItem objItem = arrChartResults[i];
                         objFilteredData.Columns.Add(objItem.ItemName.Replace(" ", "_"));
-                        objLogger.LogMessage("processNumericOutput ItemName... " + objItem.ItemName.Replace(" ", "_"));
+                        objLogger.LogMessage("processNumericOutput ItemName 1011... " + objItem.ItemName.Replace(" ", "_"));
                     }
                 }
 
@@ -1128,9 +1155,9 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
                     objSummaryData.RotaryROPOffset = Math.Round(calcDrillingROPByDepth(objOffsetTimeLog, "0", offsetDepthIn, offsetDepthOut, objDataService));
                     objSummaryData.SlideROPOffset = Math.Round(calcDrillingROPByDepth(objOffsetTimeLog, "1,19", offsetDepthIn, offsetDepthOut, objDataService));
 
-                    objLogger.LogMessage("calculate Statastics Offset  line 1128 RotaryTimeOffset & SlideTimeOffset=" + objSummaryData.RotaryTimeOffset.ToString() + " - " + objSummaryData.SlideTimeOffset.ToString());
-                    objLogger.LogMessage("calculate Statastics Offset line 1129 RotaryFootageOffset & SlideFootageOffset" + objSummaryData.RotaryFootageOffset.ToString() + " - " + objSummaryData.SlideFootageOffset.ToString());
-                    objLogger.LogMessage("calculate Statastics Offset line 1130 RotaryROPOffset & SlideROPOffset" + objSummaryData.RotaryROPOffset.ToString() + " - " + objSummaryData.SlideROPOffset.ToString());
+                    objLogger.LogMessage("calculate Statastics Offset  line 1131 RotaryTimeOffset & SlideTimeOffset=" + objSummaryData.RotaryTimeOffset.ToString() + " - " + objSummaryData.SlideTimeOffset.ToString());
+                    objLogger.LogMessage("calculate Statastics Offset line 1132 RotaryFootageOffset & SlideFootageOffset" + objSummaryData.RotaryFootageOffset.ToString() + " - " + objSummaryData.SlideFootageOffset.ToString());
+                    objLogger.LogMessage("calculate Statastics Offset line 1133 RotaryROPOffset & SlideROPOffset" + objSummaryData.RotaryROPOffset.ToString() + " - " + objSummaryData.SlideROPOffset.ToString());
 
                 }
 
@@ -1152,7 +1179,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
 
             catch (Exception ex)
             {
-                objLogger.LogMessage("Error --> calculateStatastics  Exception throw on line 1154 " + ex.Message + " " + ex.StackTrace);
+                objLogger.LogMessage("Error --> calculateStatastics  Exception throw on line 1155 " + ex.Message + " " + ex.StackTrace);
             }
         }
 

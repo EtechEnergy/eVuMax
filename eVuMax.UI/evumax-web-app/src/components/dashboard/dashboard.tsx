@@ -442,6 +442,9 @@ export class Dashboard extends React.Component<Props> {
                 {/* </NavLink> */}
               </li>
               {/* Nishant 27-11-2020 Witsml Explorer */}
+              
+              
+              
               <li className="nav-item">
                 <NavLink
                   className="nav-link"
@@ -496,7 +499,7 @@ export class Dashboard extends React.Component<Props> {
                 >
                   <FontAwesomeIcon icon={faKey} />
 
-                </NavLink>
+                </NavLink> 
               </li>
 
 
@@ -708,6 +711,12 @@ export class Dashboard extends React.Component<Props> {
               <li>
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/AuditInformation">
                 Audit Information
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/ChannelLibrary">
+                Channel Library
                 </NavLink>
               </li>
             </ol>

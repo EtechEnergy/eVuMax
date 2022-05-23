@@ -74,6 +74,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objAuditInfoMgr.getData(paramRequest);
                 }
 
+
+                if (paramRequest.Broker == Global.Brk_Setup_ChannelLibrary)
+                {
+                    ChannelLibraryMgr objChannelLibraryMgr = new ChannelLibraryMgr();
+                    return objChannelLibraryMgr.getData(paramRequest);
+                }
                 BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";
@@ -143,6 +149,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
                     EmailSettingsMgr objEmailSettingsMgr = new EmailSettingsMgr();
                     return objEmailSettingsMgr.performTask(paramRequest);
+                }
+
+                if (paramRequest.Broker == Global.Brk_Setup_ChannelLibrary)
+                {
+                    ChannelLibraryMgr objChannelLibraryMgr = new ChannelLibraryMgr();
+                    return objChannelLibraryMgr.performTask(paramRequest);
                 }
 
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();

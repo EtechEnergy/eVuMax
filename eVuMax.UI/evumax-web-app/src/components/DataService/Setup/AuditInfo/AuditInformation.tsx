@@ -42,10 +42,10 @@ export default class AuditInformation extends Component {
 
   componentDidMount = async () => {
     try {
-      debugger;
+      
       this.getActiveWellList();
       this.loadComboData();
-      
+
     } catch (error) {
 
     }
@@ -88,7 +88,7 @@ export default class AuditInformation extends Component {
               ),
             });
           }
-          debugger;
+          
           this.setState({ isProcess: false });
         })
         .catch((error) => {
@@ -146,13 +146,13 @@ export default class AuditInformation extends Component {
       );
       objBrokerRequest.Parameters.push(paramSearchCondition);
 
-      
+
       let paramWellId: BrokerParameter = new BrokerParameter(
         "WellId",
         this.state.currentRow.WELL_ID
       );
       objBrokerRequest.Parameters.push(paramWellId);
-      debugger;
+      
 
       axios
         .get(_gMod._getData, {
@@ -169,7 +169,7 @@ export default class AuditInformation extends Component {
 
 
           let objData = JSON.parse(res.data.Response);
-          debugger;
+          
 
           let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {
@@ -185,16 +185,16 @@ export default class AuditInformation extends Component {
           }
 
 
-          let grdData_ =Object.values(objData);
-          grdData_.forEach((element :any) => {
-            element.CHANGE_DATE  = moment(new Date(element.CHANGE_DATE)).format("YYYY-MM-DD hh:mm:ss a")
+          let grdData_ = Object.values(objData);
+          grdData_.forEach((element: any) => {
+            element.CHANGE_DATE = moment(new Date(element.CHANGE_DATE)).format("YYYY-MM-DD hh:mm:ss a")
           });
 
           await this.setState({
             grdData: grdData_,
           });
+
           
-          debugger;
         })
         .catch((error) => {
 
@@ -219,12 +219,12 @@ export default class AuditInformation extends Component {
 
   handleChangeDropDown = (event: any, field?: string) => {
     try {
-      debugger;
+      
       if (field == "ObjectType") {
         this.setState({ selectedObjectType: event.value });
 
       }
-      debugger;
+      
 
     } catch (error) {
 
@@ -240,10 +240,10 @@ export default class AuditInformation extends Component {
     }
   }
 
-  searchClick = (e) => {
+  searchClick = async (e) => {
     try {
-      this.generateSearchCondition();
-      this.loadData();
+      await this.generateSearchCondition();
+      await this.loadData();
     } catch (error) {
 
     }
@@ -253,7 +253,7 @@ export default class AuditInformation extends Component {
   generateSearchCondition = () => {
     try {
       let searchCondition_ = "";
-      debugger;
+      
       if (this.state.DateRange) {
         // searchCondition = (searchCondition + (" AND CHANGE_DATE>='" + (this.state.FromDate.toLocaleString("dd-MMM-yyyy HH:mm:ss") + ("' AND CHANGE_DATE<='" 
         //             + (this.state.ToDate.toString("dd-MMM-yyyy HH:mm:ss") + "' ")))));
@@ -267,7 +267,7 @@ export default class AuditInformation extends Component {
           + (this.state.selectedObjectType.text + "' ")));
       }
       this.setState({ searchCondition: searchCondition_ });
-      debugger;
+      
     }
     catch (ex) {
 
@@ -380,11 +380,11 @@ export default class AuditInformation extends Component {
 
 
               {false &&
-              <Column 
-                field="WELL_ID"
-                title="Well Id"
-                width="100px"
-              />
+                <Column
+                  field="WELL_ID"
+                  title="Well Id"
+                  width="100px"
+                />
               }
 
               <Column
@@ -466,7 +466,11 @@ export default class AuditInformation extends Component {
                           className="mr-2"
                           label={"Search by date range"}
                           value={this.state.DateRange}
-                          onChange={(e) => this.setState({ DateRange: e.value })}
+                          onChange={(e) =>
+
+                            this.setState({ DateRange: e.value })
+                          }
+
                         />
                       </p>
 

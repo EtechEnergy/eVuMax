@@ -30,8 +30,8 @@ export default class DownloadAuditInfo extends Component {
 
   componentDidMount = async () => {
     try {
+
       
-      debugger;
       this.loadComboData();
     } catch (error) {
 
@@ -81,7 +81,7 @@ export default class DownloadAuditInfo extends Component {
       );
       objBrokerRequest.Parameters.push(paramSearchCondition);
 
-      debugger;
+      
 
       axios
         .get(_gMod._getData, {
@@ -98,7 +98,7 @@ export default class DownloadAuditInfo extends Component {
 
 
           let objData = JSON.parse(res.data.Response);
-          debugger;
+          
 
           let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {
@@ -113,14 +113,14 @@ export default class DownloadAuditInfo extends Component {
             });
           }
 
-          let grdData_ =Object.values(objData);
-          grdData_.forEach((element :any) => {
-            element.CHANGE_DATE  = moment(new Date(element.CHANGE_DATE)).format("YYYY-MM-DD hh:mm:ss a")
+          let grdData_ = Object.values(objData);
+          grdData_.forEach((element: any) => {
+            element.CHANGE_DATE = moment(new Date(element.CHANGE_DATE)).format("YYYY-MM-DD hh:mm:ss a")
           });
 
 
-       await   this.setState({
-              grdData: Object.values(grdData_),
+          await this.setState({
+            grdData: Object.values(grdData_),
           });
         })
         .catch((error) => {
@@ -146,12 +146,12 @@ export default class DownloadAuditInfo extends Component {
 
   handleChangeDropDown = (event: any, field?: string) => {
     try {
-      debugger;
+      
       if (field == "ObjectType") {
         this.setState({ selectedObjectType: event.value });
 
       }
-      debugger;
+      
 
     } catch (error) {
 
@@ -167,10 +167,10 @@ export default class DownloadAuditInfo extends Component {
     }
   }
 
-  searchClick = (e) => {
+  searchClick = async (e) => {
     try {
-      this.generateSearchCondition();
-      this.loadData();
+      await this.generateSearchCondition();
+      await this.loadData();
     } catch (error) {
 
     }
@@ -193,7 +193,7 @@ export default class DownloadAuditInfo extends Component {
           + (this.state.selectedObjectType.text + "' ")));
       }
       this.setState({ searchCondition: searchCondition_ });
-      debugger;
+      
     }
     catch (ex) {
 

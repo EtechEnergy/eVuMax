@@ -162,9 +162,12 @@ namespace eVuMax.DataBroker.Summary.DrlgConn
 
 
                 //Get the primary time log 
-                VuMaxDR.Data.Objects.TimeLog objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
+                TimeLog objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLog(ref paramRequest.objDataService, wellId);
 
-                
+                if(objTimeLog.ObjectID == "")
+                {
+                    
+                }
 
                 if (objTimeLog.logCurves.ContainsKey("DEPTH"))
                 {

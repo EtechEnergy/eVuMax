@@ -47,6 +47,7 @@ import UnitConversionProfile from "../components/DataService/Setup/UnitConversio
 import EmailSettings from "../components/DataService/Setup/EmailSettings/EmailSettings";
 import DownloadAuditInfo from "../components/DataService/Setup/DownloadAudit/DownloadAuditInfo";
 import AuditInformation from "../components/DataService/Setup/AuditInfo/AuditInformation";
+import ChannelLibrary from "../components/DataService/Setup/ChannelLibrary/ChannelLibrary";
 
        
 
@@ -360,6 +361,14 @@ const dashbordRoutes = [
     name: "AuditInformation",
     icon: "",
     component: AuditInformation,
+    layout: "/dashboard",
+  },
+  
+  {
+    path: "/ChannelLibrary",
+    name: "ChannelLibrary",
+    icon: "",
+    component: ChannelLibrary,
     layout: "/dashboard",
   },
 ];

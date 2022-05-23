@@ -28,14 +28,14 @@ export default class EmailSettings extends Component {
 
     loadData =() =>{
         try {
-            debugger;
+            
             //Util.StatusInfo("Getting data from server   ");
             this.objLogger.SendLog("load Maint Std Channels");
             let objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "SetupEmailSettings";
             objBrokerRequest.Function = "loadEmailSettings";
-            debugger;
+            
 
             let paramuserid: BrokerParameter = new BrokerParameter(
                 "UserId",
