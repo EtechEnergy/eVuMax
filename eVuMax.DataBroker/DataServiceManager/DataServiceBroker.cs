@@ -80,6 +80,13 @@ namespace eVuMax.DataBroker.DataServiceManager
                     ChannelLibraryMgr objChannelLibraryMgr = new ChannelLibraryMgr();
                     return objChannelLibraryMgr.getData(paramRequest);
                 }
+
+                if (paramRequest.Broker == Global.Brk_Setup_WellMonitor)
+                {
+                    WellMonitorMgr objWellMonitorMgr = new WellMonitorMgr();
+                    return objWellMonitorMgr.getData(paramRequest);
+                }
+
                 BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";
@@ -157,6 +164,11 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objChannelLibraryMgr.performTask(paramRequest);
                 }
 
+                if (paramRequest.Broker == Global.Brk_Setup_WellMonitor)
+                {
+                    WellMonitorMgr objWellMonitorMgr = new WellMonitorMgr();
+                    return objWellMonitorMgr.performTask(paramRequest);
+                }
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";
