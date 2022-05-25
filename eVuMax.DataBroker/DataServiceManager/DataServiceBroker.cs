@@ -87,6 +87,16 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objWellMonitorMgr.getData(paramRequest);
                 }
 
+
+
+                #region Data
+                if (paramRequest.Broker == Global.Brk_Data_SetupAlarms)
+                {
+                    SetupAlarmsMgr objSetupAlarmsMgr = new SetupAlarmsMgr();
+                    return objSetupAlarmsMgr.getData(paramRequest);
+                }
+                #endregion
+
                 BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";

@@ -114,6 +114,13 @@ namespace eVuMax.DataBroker
 
 
         #endregion
+
+
+        #region Data
+        public const string Mod_Data = "Data";// prath 25-05-2022
+        public const string Brk_Data_SetupAlarms = "DataSetupAlarms"; //prath 25-05-2022
+
+        #endregion
         /// <summary>
         /// Extracts Parameter list from request object and returns it
         /// </summary>

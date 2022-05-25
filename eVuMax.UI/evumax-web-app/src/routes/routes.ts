@@ -49,6 +49,7 @@ import DownloadAuditInfo from "../components/DataService/Setup/DownloadAudit/Dow
 import AuditInformation from "../components/DataService/Setup/AuditInfo/AuditInformation";
 import ChannelLibrary from "../components/DataService/Setup/ChannelLibrary/ChannelLibrary";
 import WellMonitor from "../components/DataService/Setup/WellMonitor/WellMonitor";
+import SetupAlarms from "../components/DataService/Data/SetupAlarms";
 
        
 
@@ -379,6 +380,16 @@ const dashbordRoutes = [
     name: "WellMonitor",
     icon: "",
     component: WellMonitor,
+    layout: "/dashboard",
+  },
+
+
+  
+  {
+    path: "/SetupAlarms",
+    name: "SetupAlarms",
+    icon: "",
+    component: SetupAlarms,
     layout: "/dashboard",
   },
 ];
