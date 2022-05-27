@@ -14,5 +14,6 @@ namespace eVuMax.DataBroker.DataServiceManager
         public DataTable objProfileList =new DataTable();
         public string WellProfileID = "";
 
+
     }
 }
