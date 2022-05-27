@@ -1,16 +1,16 @@
 import { DropDownList, Grid, Input, Label, Splitter, GridColumn as Column, Dialog, Button, SplitterOnChangeEvent } from '@progress/kendo-react-all'
 import React, { Component } from 'react'
 import axios from "axios";
-import GlobalMod from '../../../objects/global';
-import BrokerRequest from '../../../broker/BrokerRequest';
-import * as utilFunctions from "../../../utilFunctions/utilFunctions";
+import GlobalMod from '../../../../objects/global';
+import BrokerRequest from '../../../../broker/BrokerRequest';
+import * as utilFunctions from "../../../../utilFunctions/utilFunctions";
 import NotifyMe from 'react-notification-timeline';
-import BrokerParameter from '../../../broker/BrokerParameter';
+import BrokerParameter from '../../../../broker/BrokerParameter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine } from '@fortawesome/free-solid-svg-icons';
-import ActiveWellSelector from '../../wellSelector/ActiveWellSelector';
-import { comboData } from '../../../eVuMaxObjects/UIObjects/comboData';
-import { Util } from '../../../Models/eVuMax';
+import ActiveWellSelector from '../../../wellSelector/ActiveWellSelector';
+import { comboData } from '../../../../eVuMaxObjects/UIObjects/comboData';
+import { Util } from '../../../../Models/eVuMax';
 //import WellSelector from "../../wellSelector/WellSelector";
 
 let _gMod = new GlobalMod();
@@ -22,7 +22,7 @@ export default class SetupAlarms extends Component {
 
 
     state = {
-        panes: [{ size: "70%", collapsible: false }, {}],
+        panes: [{ size: "55%", collapsible: false }, {}],
         WellID: "",
         WellName: "",
         WellProfileID: "",
