@@ -56,9 +56,9 @@ export default class SetupAlarms extends Component {
                     WellID: WellID
                 }
                 )
-
                 this.loadData();
-
+            } else {
+                alert("Please select the well from the list");
             }
 
         } catch (error) {
@@ -177,7 +177,7 @@ export default class SetupAlarms extends Component {
 
                     let selectedProfile_ = new comboData();
                     for (let index = 0; index < objData.objProfileList.length; index++) {
-                        if (objData.objProfileList[index].id ==objData.WellProfileID) {
+                        if (objData.objProfileList[index].id == objData.WellProfileID) {
                             selectedProfile_ = new comboData(objData.objProfileList[index].text, objData.objProfileList[index].id);
                         }
                     }
@@ -252,16 +252,16 @@ export default class SetupAlarms extends Component {
         }
     }
 
-    okClick =()=>{
+    okClick = () => {
         try {
-          
+
             objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "DataSetupAlarms";
             objBrokerRequest.Function = "saveAlarm";
 
 
-           let objParameter = new BrokerParameter('UserName', _gMod._userId);
+            let objParameter = new BrokerParameter('UserName', _gMod._userId);
             objBrokerRequest.Parameters.push(objParameter);
 
             objParameter = new BrokerParameter('WellID', this.state.WellID);
@@ -282,7 +282,7 @@ export default class SetupAlarms extends Component {
                 },
                 )
                 .then((res) => {
-                    
+
                     Util.StatusSuccess("Data successfully saved  ");
 
                 })
@@ -308,15 +308,15 @@ export default class SetupAlarms extends Component {
             });
 
         } catch (error) {
-            
+
         }
     }
 
-    closeClick =()=>{
+    closeClick = () => {
         try {
-            
+
         } catch (error) {
-            
+
         }
     }
 
@@ -324,7 +324,7 @@ export default class SetupAlarms extends Component {
     render() {
         return (
             <div>
-                <div>SetupAlarms</div>
+                <h5>Setup Alarms</h5>
 
                 {/* <Label>{this.state.WellName}</Label>
                 <Label>{this.state.WellID}</Label> */}
@@ -373,10 +373,10 @@ export default class SetupAlarms extends Component {
                                         <div className='row' style={{ height: "50px" }}>
                                             <div className="col-lg-8 col-xl-8 col-md-8 col-sm-8 p-5">
                                                 <div className="btn-group" role="group">
-                                                <Button onClick={this.okClick} style={{width:"100px"}}>Ok</Button>
-                                                <Button className='ml-3' onClick={this.closeClick} style={{width:"100px"}}>Cancel</Button>
-                                                    
-                                                    
+                                                    <Button onClick={this.okClick} style={{ width: "100px" }}>Ok</Button>
+                                                    <Button className='ml-3' onClick={this.closeClick} style={{ width: "100px" }}>Cancel</Button>
+
+
                                                 </div>
                                             </div>
                                         </div>
