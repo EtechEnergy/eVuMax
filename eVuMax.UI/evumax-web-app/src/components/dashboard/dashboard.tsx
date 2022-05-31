@@ -595,6 +595,12 @@ export class Dashboard extends React.Component<Props> {
                 </NavLink>
               </li>
 
+              <li>
+                <NavLink onClick={this.getMenu} exact to="/dashboard/RigStateSetup">
+                  Rig State Setup
+                </NavLink>
+              </li>
+
               {/* <li>
                 <NavLink
                   onClick={this.getMenu}
