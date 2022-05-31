@@ -206,7 +206,7 @@ export default class DownloadAuditInfo extends Component {
       <div className='mt-3'>
         <div>Data Change Audit</div>
         <div className="row">
-          <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+          <div className="col-xl-3 col-lg-3 col-md-3 col-sm-12 mt-2">
             <div className="grd">
               <p>
                 <Label>Search</Label>
@@ -222,11 +222,12 @@ export default class DownloadAuditInfo extends Component {
                 />
               </p>
 
-              <p>
+              <span>
                 <Label>From Date</Label>
-              </p>
-              <p>
+              </span>
+              <span>
                 <DateTimePicker
+                  className='ml-3'
                   name="txtFromDate"
                   value={new Date(this.state.FromDate)}
                   format="MM/dd/yyyy HH:mm:ss"
@@ -241,13 +242,14 @@ export default class DownloadAuditInfo extends Component {
 
                   onChange={(e) => this.setState({ FromDate: e.value })}
                 />
-              </p>
-
-              <p>
+              </span>
+<br/>
+              <span>
                 <Label>To Date</Label>
-              </p>
-              <p>
+              </span>
+              <span>
                 <DateTimePicker
+                 className='ml-4 pl-2'
                   name="txtToDate"
                   value={new Date(this.state.ToDate)}
                   format="MM/dd/yyyy HH:mm:ss"
@@ -262,11 +264,13 @@ export default class DownloadAuditInfo extends Component {
 
                   onChange={(e) => this.setState({ ToDate: e.value })}
                 />
-              </p>
+              </span>
+<br/>
+<br/>
 
-              <p>
+              <span className='mt-5'>
                 Object Type
-              </p>
+              </span>
               <p>
                 <Label className="mr-2 mt-3 float-left">Data Type</Label>
                 <DropDownList
@@ -294,7 +298,7 @@ export default class DownloadAuditInfo extends Component {
             </p>
           </div>
 
-          <div className="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+          <div className="col-xl-7 col-lg-7 col-md-7 col-sm-12">
             <Grid
               style={{ height: "500px", minHeight: "150px" }}
               resizable={true}

@@ -461,24 +461,12 @@ export default class UnitConversion extends Component {
 
                 {this.state.ShowUnitEditor && <Dialog
                     title="Unit Conversion Properties"
-                    height={350}
+                    height={365}
                     width={650}
                     onClose={() => this.setState({ ShowUnitEditor: false })}
                 >
-                    <DialogActionsBar>
-                        <Button
-                            className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
-                            onClick={this.SaveUnitConversion}
-                        >   Save
-                        </Button>
-                        <Button
-                            className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
-                            onClick={this.cancel}
-                        >
-                            Cancel
-                        </Button>
-                    </DialogActionsBar>
-                    <div className="col-12 p-2" >
+                    
+                    <div className="col-12 p-3" >
                         <div className="row">
                             <Label className='mr-4' style={{ alignSelf: "flex-end" }}>From Unit</Label>
                             <ComboBox
@@ -488,8 +476,8 @@ export default class UnitConversion extends Component {
                                 onChange={(e: any) => { this.handleChange(e, "FromUnitID") }}
                                 allowCustom={true}
                             />
-                        </div>      <div className="row">
-                            <Label className='mr-4' style={{ alignSelf: "flex-end" }}>To Unit</Label>
+                        </div>      <div className="row mt-1">
+                            <Label className='mr-5' style={{ alignSelf: "flex-end" }}>To Unit</Label>
                             <ComboBox
                                 style={{ width: "200px" }}
                                 data={this.UnitIDList}
@@ -501,7 +489,7 @@ export default class UnitConversion extends Component {
                             />
                         </div>
 
-                        <div className="row">
+                        <div className="row mt-2">
                             <Label className='mr-4' style={{ alignSelf: "flex-end" }}>Conversion Formula</Label>
                             <Input type="text"
                                 value={this.state.ConversionFormula}
@@ -517,6 +505,20 @@ export default class UnitConversion extends Component {
                         <div className="row">
                             <Label className='mr-4' style={{ alignSelf: "flex-end", color: "Highlight", fontSize: "18px" }}>unit * 3.33</Label>
                         </div>
+                 
+                  <div className="row">
+                  <span className="">
+              <Button style={{ width: '90px' }} className="mt-3 k-button k-primary mr-4"  onClick={this.SaveUnitConversion}>
+                Ok
+              </Button>
+              <Button style={{ width: '90px' }} className="mt-3 k-button k-primary mr-4"  onClick={this.cancel}>
+                Cancel
+              </Button>
+
+            </span>
+                      </div>      
+           
+        
                     </div>
                 </Dialog>}
 

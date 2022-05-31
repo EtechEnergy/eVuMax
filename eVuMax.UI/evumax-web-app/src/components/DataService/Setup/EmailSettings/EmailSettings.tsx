@@ -193,15 +193,15 @@ export default class EmailSettings extends Component {
 
     render() {
         return (
-            <div className='ml-3'>
+            <div className='ml-3 m-2 p-2'>
 
                 <div>Email Settings</div>
                 <div className='ml-3'>
                 <div className='row'>
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 
-                        <div className="row">
-                            <Label className="mr-2 mt-3 float-left">SMTPHost</Label>
+                        <div className="row ml-5">
+                            <Label className="mr-3 mt-3 float-left">SMTPHost</Label>
                             <Input
                                 name="SMTPHost"
                                 value={this.state.objSettings.SMTPHost}
@@ -210,8 +210,8 @@ export default class EmailSettings extends Component {
 
                         </div>
 
-                        <div className="row">
-                            <Label className="mr-2 mt-3 float-left">Port</Label>
+                        <div className="row ml-5 mt-2">
+                            <Label className="mr-5 mt-3 float-left">Port</Label>
                             <Input
                                 name="Port"
                                 value={this.state.objSettings.Port}
@@ -219,7 +219,7 @@ export default class EmailSettings extends Component {
                             />
                         </div>
 
-                        <div className="row">
+                        <div className="row mt-2">
                             <Checkbox
                                 className="mr-2"
                                 label={"Only show Standard channels"}
@@ -228,8 +228,8 @@ export default class EmailSettings extends Component {
                             />
                         </div>
 
-                        <div className="row">
-                            <Label className="mr-2 mt-3 float-left">EMail User Name</Label>
+                        <div className="row ml-5">
+                            <Label className="mr-3 mt-3 float-left">Email User Name</Label>
                             <Input
                                 name="UserName"
                                 value={this.state.objSettings.UserName}
@@ -237,8 +237,8 @@ export default class EmailSettings extends Component {
                             />
                         </div>
 
-                        <div className="row">
-                            <Label className="mr-2 mt-3 float-left">EMail Password</Label>
+                        <div className="row ml-5">
+                            <Label className="mr-4 mt-3 float-left">Email Password</Label>
                             <Input
                                 name="Password"
                                 value={this.state.objSettings.Password}
@@ -248,7 +248,7 @@ export default class EmailSettings extends Component {
 
 
 
-                        <div className="row">
+                        <div className="row mt-2">
                             <Checkbox
                                 className="mr-2"
                                 label={"Use secure connection"}
@@ -259,11 +259,11 @@ export default class EmailSettings extends Component {
 
                         <div className="row">
                             <span className="btn-group">
-                                <Button style={{ width: '140px' }} className="mt-3 k-button k-primary mr-4" onClick={this.OkClick} >
+                                <Button style={{ width: '80px' }} className="mt-3 k-button k-primary mr-4" onClick={this.OkClick} >
                                     Ok
                                 </Button>
 
-                                <Button style={{ width: '140px' }} onClick={this.CancelClick} className="mt-3">
+                                <Button style={{ width: '80px' }} onClick={this.CancelClick} className="mt-3">
                                     Cancel
                                 </Button>
                             </span>
