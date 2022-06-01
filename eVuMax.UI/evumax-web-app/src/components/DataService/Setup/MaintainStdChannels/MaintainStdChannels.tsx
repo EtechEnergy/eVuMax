@@ -816,12 +816,12 @@ export default class MaintainStdChannels extends Component {
                         }}
                     >
                         <div className="row">
-                            <div className="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+                            <div className="col-xl-10 col-lg-10 col-md-10 col-sm-10 m-2 pl-3">
 
-                                <div className="row" >
+                                <div className="row mt-2 " >
                                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                         <div className="row">
-                                            <Label className="mr-2 mt-3 float-left">Mnemonic</Label>
+                                            <Label className="mr-3 mt-3 float-left">Mnemonic</Label>
                                             <Input
                                                 name="Mnemonic"
                                                 value={this.state.objStdChannel.Mnemonic}
@@ -831,8 +831,9 @@ export default class MaintainStdChannels extends Component {
                                         </div>
 
                                         <div className="row">
-                                            <Label className="mr-2 mt-3 float-left">Name</Label>
+                                            <Label className="mr-5 mt-3 float-left">Name</Label>
                                             <Input
+                                            className=''
                                                 name="ChannelName"
                                                 value={this.state.objStdChannel.ChannelName}
 
@@ -841,8 +842,8 @@ export default class MaintainStdChannels extends Component {
 
                                         </div>
 
-                                        <div className="row">
-                                            <Label className="mr-2 mt-3 float-left">Data Type</Label>
+                                        <div className="row mt-3">
+                                            <Label className="mr-4 mt-2 float-left">Data Type</Label>
                                             <DropDownList
                                                 name="Data Type"
                                                 label=''
@@ -859,8 +860,8 @@ export default class MaintainStdChannels extends Component {
                                             />
                                         </div>
 
-                                        <div className="row">
-                                            <Label className="mr-2 mt-3 float-left">Log Type</Label>
+                                        <div className="row mt-3">
+                                            <Label className="mr-4 mt-2 float-left">Log Type</Label>
                                             <DropDownList
                                                 name="Log Type"
                                                 label=''
@@ -883,13 +884,13 @@ export default class MaintainStdChannels extends Component {
 
                                 </div>
                             </div>
-                            <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2">
-                                <span className="btn-group-vertical">
+                            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3">
+                                <span className="mt-3">
 
-                                    <Button style={{ width: '130px' }} className="mt-3 k-button k-primary mr-4" onClick={this.OkClick}>
+                                    <Button style={{ width: '80px' }} className="mt-3 k-button k-primary mr-4" onClick={this.OkClick}>
                                         Ok
                                     </Button>
-                                    <Button style={{ width: '130px' }} className="mt-3 k-button k-primary mr-4" onClick={this.CancelClick}>
+                                    <Button style={{ width: '80px' }} className="mt-3 k-button k-primary mr-4" onClick={this.CancelClick}>
                                         Cancel
                                     </Button>
                                 </span>
