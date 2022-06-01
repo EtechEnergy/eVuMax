@@ -1,5 +1,4 @@
-﻿
-using eVuMax.DataBroker.Broker;
+﻿using eVuMax.DataBroker.Broker;
 using eVuMax.DataBroker.DataServiceManager.Setup;
 using System;
 
@@ -92,8 +91,17 @@ namespace eVuMax.DataBroker.DataServiceManager
                 #region Data
                 if (paramRequest.Broker == Global.Brk_Data_SetupAlarms)
                 {
+                    
                     SetupAlarmsMgr objSetupAlarmsMgr = new SetupAlarmsMgr();
                     return objSetupAlarmsMgr.getData(paramRequest);
+                }
+
+
+                if (paramRequest.Broker == Global.Brk_Data_RigStateSetup)
+                {
+
+                    WellRigStateSetupMgr objWellRigStateSetupMgr = new WellRigStateSetupMgr();
+                    return objWellRigStateSetupMgr.getData(paramRequest);
                 }
                 #endregion
 
@@ -189,6 +197,13 @@ namespace eVuMax.DataBroker.DataServiceManager
                     SetupAlarmsMgr objSetupAlarmsMgr = new SetupAlarmsMgr();
                     return objSetupAlarmsMgr.performTask(paramRequest);
                 }
+
+                if (paramRequest.Broker == Global.Brk_Data_RigStateSetup)
+                {
+                    WellRigStateSetupMgr objWellRigStateSetupMgr = new WellRigStateSetupMgr();
+                    return objWellRigStateSetupMgr.performTask(paramRequest);
+                }
+
                 #endregion
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;

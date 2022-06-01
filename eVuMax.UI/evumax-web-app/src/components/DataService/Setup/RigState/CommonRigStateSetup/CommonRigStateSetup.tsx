@@ -24,7 +24,6 @@ export default class CommonRigStateSetup extends Component {
 
     handleSelectTab = (e: TabStripSelectEventArguments) => {
         this.setState({ selectedTab: e.selected })
-
     }
 
 

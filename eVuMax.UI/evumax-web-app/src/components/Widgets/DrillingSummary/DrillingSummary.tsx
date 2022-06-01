@@ -124,8 +124,6 @@ export class DrillingSummary extends Component {
     //this.objLogger.SendLog("Component did Mount")
     this.initilizeCharts();
 
-
-
     this.setState({
       objChart_ROP: this.objChart,
     });

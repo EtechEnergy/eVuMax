@@ -942,7 +942,6 @@ namespace eVuMax.DataBroker.Well.Data.Objects.Well.Dashboard
                         VuMaxDR.Data.Objects.Well.getAlarmHistoryTable(ref paramRequest.objDataService, wellID);
 
 
-
                         objRow["ALARM_RED_STATUS"] = 0; //No alarm active
                         objRow["ALARM_YELLOW_STATUS"] = 0;
 

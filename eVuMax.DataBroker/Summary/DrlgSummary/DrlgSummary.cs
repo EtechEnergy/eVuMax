@@ -128,7 +128,7 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
         }
 
 
-        //Nishant
+        
         private Broker.BrokerResponse getDrlgSummary(Broker.BrokerRequest paramRequest)
         {
             try
@@ -755,7 +755,6 @@ namespace eVuMax.DataBroker.Summary.DrlgSummary
             }
             catch (Exception ex)
             {
-
                 objLogger.LogMessage("Error --> getDateRangeFromDepth  Exception throw on line 759 " + ex.Message + " " + ex.StackTrace);
             }
 
