@@ -601,6 +601,12 @@ export class Dashboard extends React.Component<Props> {
                 </NavLink>
               </li>
 
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/AlarmProfile">
+                Alarm Profile
+                </NavLink>
+              </li>
+
               {/* <li>
                 <NavLink
                   onClick={this.getMenu}
@@ -737,6 +743,9 @@ export class Dashboard extends React.Component<Props> {
                 Well Monitor Setup
                 </NavLink>
               </li>
+
+            
+
             </ol>
           </ul>
 
