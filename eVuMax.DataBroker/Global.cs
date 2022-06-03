@@ -120,6 +120,7 @@ namespace eVuMax.DataBroker
         public const string Mod_Data = "Data";// prath 25-05-2022
         public const string Brk_Data_SetupAlarms = "DataSetupAlarms"; //prath 25-05-2022
         public const string Brk_Data_RigStateSetup = "RigStateSetup"; //prath 28-05-2022
+        public const string Brk_Data_AlarmProfiles = "DataAlarmProfiles"; //prath 03-06-2022
 
         #endregion
         /// <summary>

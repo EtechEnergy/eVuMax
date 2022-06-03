@@ -53,7 +53,8 @@ import WellMonitor from "../components/DataService/Setup/WellMonitor/WellMonitor
 //import RigStateSetup from "../components/DataService/Data/RigStateSetup";
 import SetupAlarms from "../components/DataService/Data/SetupAlarms/SetupAlarms";
 import RigStateSetup from "../components/DataService/Data/RigStateSetup/RigStateSetup";
-import AlarmProfile from "../components/DataService/Data/AlarmProfile";
+import AlarmProfiles from "../components/DataService/Data/AlarmProfiles/AlarmProfiles";
+
 //import RigStateSetup from "../components/DataService/Data/RigStateSetup";
 
        
@@ -406,10 +407,10 @@ const dashbordRoutes = [
     layout: "/dashboard",
   },
   {
-    path: "/AlarmProfile",
-    name: "AlarmProfile",
+    path: "/AlarmProfiles",
+    name: "AlarmProfiles",
     icon: "",
-    component: AlarmProfile,
+    component: AlarmProfiles,
     layout: "/dashboard",
   },
 ];

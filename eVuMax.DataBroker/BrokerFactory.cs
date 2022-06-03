@@ -86,7 +86,6 @@ namespace eVuMax.DataBroker
 					return objBroker;
 				}
 
-				//
 				if (paramRequest.Module == Global.Mod_AdvKPI)
 				{
 
@@ -94,7 +93,6 @@ namespace eVuMax.DataBroker
 					return objBroker;
 				}
 
-				//Nishant 25-04-2022
 				if(paramRequest.Module == Global.Mod_DataService)
                 {
 					DataServiceManager.DataServiceBroker objBroker = new DataServiceManager.DataServiceBroker();

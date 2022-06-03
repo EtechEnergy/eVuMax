@@ -103,6 +103,22 @@ namespace eVuMax.DataBroker.DataServiceManager
                     WellRigStateSetupMgr objWellRigStateSetupMgr = new WellRigStateSetupMgr();
                     return objWellRigStateSetupMgr.getData(paramRequest);
                 }
+
+                if (paramRequest.Broker == Global.Brk_Data_RigStateSetup)
+                {
+
+                    WellRigStateSetupMgr objWellRigStateSetupMgr = new WellRigStateSetupMgr();
+                    return objWellRigStateSetupMgr.getData(paramRequest);
+                }
+
+
+                if (paramRequest.Broker == Global.Brk_Data_AlarmProfiles)
+                {
+
+                    AlarmProfilesMgr objAlarmProfilesMgr = new AlarmProfilesMgr();
+                    return objAlarmProfilesMgr.getData(paramRequest);
+                }
+
                 #endregion
 
                 BrokerResponse objResponse = paramRequest.createResponseObject();

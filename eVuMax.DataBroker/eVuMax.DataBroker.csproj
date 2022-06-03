@@ -120,6 +120,8 @@
     <Compile Include="DataObject.Manager\DownloadManager.cs" />
     <Compile Include="DataObject.Manager\WellBroker.cs" />
     <Compile Include="DataServiceManager\DataServiceBroker.cs" />
+    <Compile Include="DataServiceManager\Data\AlarmProfiles\AlarmProfiles.cs" />
+    <Compile Include="DataServiceManager\Data\AlarmProfiles\AlarmProfilesMgr.cs" />
     <Compile Include="DataServiceManager\Data\RigStateSetup\eWellRigStateItem.cs" />
     <Compile Include="DataServiceManager\Data\RigStateSetup\WellRigStateSetupMgr.cs" />
     <Compile Include="DataServiceManager\Data\SetupAlarms\SetupAlarms.cs" />
@@ -129,7 +131,6 @@
     <Compile Include="DataServiceManager\Setup\AuditInfo\AuditInfoMgr.cs" />
     <Compile Include="DataServiceManager\Setup\ChannelLibrary\ChannelLibraryMgr.cs" />
     <Compile Include="DataServiceManager\Setup\DownloadAuditInfo\DownloadAuditInfoMgr.cs" />
-    <Compile Include="DataServiceManager\Setup\EmailSettings\EmailSettings.cs" />
     <Compile Include="DataServiceManager\Setup\EmailSettings\EmailSettingsMgr.cs" />
     <Compile Include="DataServiceManager\Setup\MaintainStdChannels\eMaintainStdChannels.cs" />
     <Compile Include="DataServiceManager\Setup\MaintainStdChannels\MaintainStdChannel.cs" />

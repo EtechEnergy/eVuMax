@@ -1,0 +1,8 @@
+.serachStyle {
+  width: 20%;
+  border: 1px solid var(--base-anchor-color) !important;
+  border-radius: 22px;
+  background-color: inherit;
+  color: var(--base-anchor-color);
+  padding: 5px 20px;
+}
