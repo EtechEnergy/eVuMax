@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using VuMaxDR.Data;
+using VuMaxDR.Data.Objects;
+
 
 namespace eVuMax.DataBroker.DataServiceManager
 {
@@ -14,6 +16,11 @@ namespace eVuMax.DataBroker.DataServiceManager
     {
         
         public string loadAlarmProfiles = "loadAlarmProfiles";
+        public string addAlarmProfiles = "addAlarmProfiles";
+        public string editAlarmProfiles = "editAlarmProfiles";
+        public string removeAlarmProfiles = "removeAlarmProfiles";
+
+
         public BrokerResponse getData(BrokerRequest paramRequest)
         {
             BrokerResponse objResponse = paramRequest.createResponseObject();
@@ -34,6 +41,75 @@ namespace eVuMax.DataBroker.DataServiceManager
 
         public BrokerResponse performTask(BrokerRequest paramRequest)
         {
+            BrokerResponse objResponse = paramRequest.createResponseObject();
+
+            if (paramRequest.Function == addAlarmProfiles)
+            {
+                
+
+                objResponse = paramRequest.createResponseObject();
+                objResponse.RequestSuccessfull = true;
+                objResponse.Response = "";
+
+                objResponse.Errors = "";
+                return objResponse;
+            }
+
+            if (paramRequest.Function == editAlarmProfiles)
+            {
+                try
+                {
+                    string ProfileID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ProfileID")).FirstOrDefault().ParamValue;
+
+                    
+                    AlarmPanelProfile objPanel = AlarmPanelProfile.loadProfile(ref paramRequest.objDataService, ProfileID);
+
+                    
+
+                    objResponse = paramRequest.createResponseObject();
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Response = JsonConvert.SerializeObject(objPanel);
+
+                    objResponse.Errors = "";
+                    return objResponse;
+                }
+              catch (Exception ex)
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Warnings = "Error : " + ex.Message + ex.StackTrace;
+                    objBadResponse.Errors = "Error : " + ex.Message + ex.StackTrace;
+                    return objBadResponse;
+                }
+            }
+
+
+            if (paramRequest.Function == removeAlarmProfiles)
+            {
+                try
+                {
+                    string ProfileID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ProfileID")).FirstOrDefault().ParamValue;
+
+                    AlarmPanelProfile.removeProfile(ref paramRequest.objDataService, ProfileID);
+
+                    objResponse = paramRequest.createResponseObject();
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Response = "";
+                    objResponse.Errors = "";
+                    return objResponse;
+                }
+                catch (Exception ex)
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Warnings = "Error : " + ex.Message + ex.StackTrace;
+                    objBadResponse.Errors = "Error : " + ex.Message + ex.StackTrace;
+                    return objBadResponse;
+                }
+             
+            }
             throw new NotImplementedException();
         }
 
@@ -83,10 +159,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                 DateTime createdDate = DateTime.Parse(DataService.checkNull(objRow["CREATED_DATE"], new DateTime()).ToString());
                 DateTime modifiedDate = DateTime.Parse(DataService.checkNull(objRow["MODIFIED_DATE"], new DateTime()).ToString());
 
-                //objRow["CREATEDDATE"] = createdDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
-                //objRow["MODIFIEDDATE"] = modifiedDate.ToLocalTime().ToString("MMM-dd-yyyy HH:mm:ss");
-
-                objRow["CREATEDDATE"] = createdDate.ToString("MMM-dd-yyyy HH:mm:ss"); //21-10-2021 prath
+                objRow["CREATEDDATE"] = createdDate.ToString("MMM-dd-yyyy HH:mm:ss"); 
                 objRow["MODIFIEDDATE"] = modifiedDate.ToString("MMM-dd-yyyy HH:mm:ss");
 
 

@@ -220,6 +220,13 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objWellRigStateSetupMgr.performTask(paramRequest);
                 }
 
+
+                if (paramRequest.Broker == Global.Brk_Data_AlarmProfiles)
+                {
+
+                    AlarmProfilesMgr objAlarmProfilesMgr = new AlarmProfilesMgr();
+                    return objAlarmProfilesMgr.performTask(paramRequest);
+                }
                 #endregion
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;

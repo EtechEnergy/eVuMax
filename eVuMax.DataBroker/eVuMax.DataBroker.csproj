@@ -120,7 +120,6 @@
     <Compile Include="DataObject.Manager\DownloadManager.cs" />
     <Compile Include="DataObject.Manager\WellBroker.cs" />
     <Compile Include="DataServiceManager\DataServiceBroker.cs" />
-    <Compile Include="DataServiceManager\Data\AlarmProfiles\AlarmProfiles.cs" />
     <Compile Include="DataServiceManager\Data\AlarmProfiles\AlarmProfilesMgr.cs" />
     <Compile Include="DataServiceManager\Data\RigStateSetup\eWellRigStateItem.cs" />
     <Compile Include="DataServiceManager\Data\RigStateSetup\WellRigStateSetupMgr.cs" />

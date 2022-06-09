@@ -1,4 +1,4 @@
-import { Button, Grid, GridColumn as Column, Input, Label } from '@progress/kendo-react-all'
+import { Button, Dialog, Grid, GridColumn as Column, Input, Label } from '@progress/kendo-react-all'
 import React, { Component } from 'react'
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
@@ -10,8 +10,15 @@ import { Util } from '../../../../Models/eVuMax';
 import axios from "axios";
 import { filterBy } from "@progress/kendo-data-query";
 import "./AlarmProfiles.css";
+import AlarmProfile from './AlarmProfile';
 
 let _gMod = new GlobalMod();
+
+interface IState {
+    selectedval?: string;
+   
+  
+  }
 
 export default class AlarmProfiles extends Component {
 
@@ -19,8 +26,10 @@ export default class AlarmProfiles extends Component {
 
     state = {
         ProfileName: "",
+        selectedProfileID: "",
         Notes: "",
-        grdAlarmProfile: []
+        grdAlarmProfiles: [],
+        showAlarmProfileDialog: false
     }
 
     grdData: any[];
@@ -91,7 +100,7 @@ export default class AlarmProfiles extends Component {
                     debugger;
 
                     this.setState({
-                        grdAlarmProfile: Object.values(objData)
+                        grdAlarmProfiles: Object.values(objData)
                     });
                     this.grdData = Object.values(objData)
 
@@ -123,10 +132,18 @@ export default class AlarmProfiles extends Component {
 
 
     Add = () => {
-
+        this.setState({ showAlarmProfileDialog: true, selectedProfileID :"" });
     }
 
-    Edit = () => {
+    Edit = (e) => {
+        try {
+
+            this.setState({ showAlarmProfileDialog: true });
+
+
+        } catch (error) {
+
+        }
 
     }
 
@@ -169,9 +186,11 @@ export default class AlarmProfiles extends Component {
         }
     }
 
-    RowClickAlarmProfile = () => {
+    RowClickAlarmProfile = (e) => {
         try {
+            debugger;
 
+            this.setState({ selectedProfileID: e.dataItem.PROFILE_ID });
 
         } catch (error) {
 
@@ -190,7 +209,7 @@ export default class AlarmProfiles extends Component {
         };
 
         this.setState({
-            grdAlarmProfile: filterBy(this.grdData, filter),
+            grdAlarmProfiles: filterBy(this.grdData, filter),
         });
     };
 
@@ -199,7 +218,7 @@ export default class AlarmProfiles extends Component {
             <div>
                 <h4>Maintain Alarm Profile</h4>
 
-                <div className="container1">
+                <div>
                     <div className="row">
                         <div className='col-lg-6 col-xl-6 col-md-6 col-sm-6 mb-3'>
                             <span className="float-left ml-2 mr-2" >
@@ -237,11 +256,6 @@ export default class AlarmProfiles extends Component {
 
 
                     <div className="row">
-                    
-
-                        {/* PROFILE_ID,PROFILE_NAME,NOTES,CREATED_BY,CREATED_DATE,MODIFIED_BY,MODIFIED_DATE */}
-
-
                         <div className="col-lg-12 col-xl-12 col-md-12 col-sm-12 mb-3">
 
                             <div className="k-textbox k-space-right serachStyle">
@@ -257,10 +271,17 @@ export default class AlarmProfiles extends Component {
                             </div>
 
                             <Grid
-                                style={{ height: "75vh"}}
-                                data={this.state.grdAlarmProfile}
+                                style={{ height: "75vh" }}
+                                data={this.state.grdAlarmProfiles}
                                 onRowClick={this.RowClickAlarmProfile}
                             >
+                                {false &&
+                                    <Column
+                                        field="PROFILE_ID"
+                                        title="Profile ID"
+                                        width="0"
+                                    />}
+
                                 <Column
                                     field="PROFILE_NAME"
                                     title="Profile Name"
@@ -301,6 +322,27 @@ export default class AlarmProfiles extends Component {
                             </Grid>
                         </div>
                     </div>
+
+                    {this.state.showAlarmProfileDialog &&
+
+                        <Dialog title={"Alarm Profile"}
+                            width={"90vw"}
+                            height={"90vh"}
+                            onClose={(e: any) => {
+                                this.setState({
+                                    showAlarmProfileDialog: false
+                                })
+                            }}
+                        >
+                            {/* <AlarmProfile objPanel= {this.state.objPanel}></AlarmProfile> */}
+                            <AlarmProfile ProfileID = {this.state.selectedProfileID}></AlarmProfile>
+
+                        </Dialog>
+
+                    }
+
+
+
                 </div>
             </div>
         )
