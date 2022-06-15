@@ -15,7 +15,7 @@ export class APContainer{
      TimeLogTableName  : string ="";
      parent ={} //parent As Object
     IsActive : boolean;
-    channels :APChannel[] = []; //As Dictionary(Of String, APChannel)
+     channels :APChannel[] = []; //As Dictionary(Of String, APChannel)
     LastDataTime :  Date;
     setAlarms : AlarmValues[] = []; 
     LastStateTime : Date; 

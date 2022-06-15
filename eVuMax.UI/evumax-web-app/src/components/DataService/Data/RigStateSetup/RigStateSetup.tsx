@@ -92,7 +92,7 @@ export default class RigStateSetup extends Component {
 
             this.state.grdAutoSlideSetupList.forEach(function (x) { delete x.SRNO });
 
-
+debugger;
             this.state.objRigStateSetup.autoSlideSetupList = utilFunctions.convertMapToDictionaryJSON(this.state.grdAutoSlideSetupList);
 
 

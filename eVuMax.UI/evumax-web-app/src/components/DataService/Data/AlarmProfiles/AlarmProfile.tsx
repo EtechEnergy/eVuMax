@@ -10,9 +10,14 @@ import { Util } from '../../../../Models/eVuMax';
 import * as utilFunc from './../../../../../src/utilFunctions/utilFunctions';
 import { APContainer } from './APContainer';
 import { Guid } from 'guid-typescript';
+import { comboData } from '../../../../eVuMaxObjects/UIObjects/comboData';
+import $ from "jquery";
+import AlarmPanelDesigner from './AlarmPanelDesigner';
 
 interface IProps {
     ProfileID: string;
+    PanelEditMode: string;
+    saveProfile: any;
 }
 
 let _gMod = new GlobalMod();
@@ -35,7 +40,12 @@ export default class AlarmProfile extends Component<IProps> {
         showEditContainer: false,
 
         selectedConainerID: "",
-        Mode: ''
+        Mode: '',
+        containerLibrary: [] = [],
+        showLoadLibraryDialog: false,
+        strAlarmInfo: "",
+
+        showAlarmPanelDesingerDialog: false
     }
 
     handleSelectTab = (e: TabStripSelectEventArguments) => {
@@ -51,8 +61,11 @@ export default class AlarmProfile extends Component<IProps> {
 
         }
     }
-    SaveToLibrary = () => { }
-    LoadFromLibrary = () => { }
+    SaveToLibrary = () => {
+
+
+    }
+
     TestAlarm = () => { }
 
     handleChange = (event: any, field: string) => {
@@ -75,6 +88,86 @@ export default class AlarmProfile extends Component<IProps> {
         }
     }
 
+    LoadFromLibrary = () => {
+        try {
+
+            let objBrokerRequest = new BrokerRequest();
+
+            objBrokerRequest.Module = "DataService";
+            objBrokerRequest.Broker = "DataAlarmProfiles";
+            objBrokerRequest.Function = "loadFromLibrary";
+
+
+            axios
+                .get(_gMod._getData, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+                .then(async (res) => {
+
+                    Util.StatusSuccess("Data successfully retrived.");
+
+                    let warnings: string = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    } else {
+                        this.setState({
+                            warningMsg: []
+                        });
+                    }
+
+                    debugger;
+                    if (res.data.Response == null) {
+                        return;
+                    }
+                    let containerList_ = utilFunc.CopyObject(Object.values(JSON.parse(res.data.Response)));
+                    debugger;
+
+
+                    // objPanel_.containers.forEach(element => {
+                    //     element.channels = Object.values(element.channels)
+                    // });
+
+                    containerList_ = containerList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+
+                    this.setState({
+                        containerLibrary: containerList_, showLoadLibraryDialog: true
+
+                    });
+
+
+
+                })
+                .catch((error) => {
+                    Util.StatusError(error.message);
+                    Util.StatusReady();
+
+                    if (error.response) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        // this.errors(error.response.message);
+                    } else if (error.request) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("error.request");
+                    } else {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("Error", error);
+                    }
+                    // return <CustomeNotifications Key="success" Icon={false}  />
+                    console.log("rejected");
+                });
+
+        } catch (error) {
+
+        }
+
+    }
 
     loadProfile = () => {
         try {
@@ -85,14 +178,9 @@ export default class AlarmProfile extends Component<IProps> {
 
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "DataAlarmProfiles";
-            objBrokerRequest.Function = "editAlarmProfiles";
+            objBrokerRequest.Function = "editAlarmProfile";
 
 
-            // let objParameter = new BrokerParameter("UserID", _gMod._userId);
-            // objBrokerRequest.Parameters.push(objParameter);
-
-            // objParameter = new BrokerParameter("EditMode", "E");
-            // objBrokerRequest.Parameters.push(objParameter);
 
             let objParameter = new BrokerParameter("ProfileID", this.state.selectedProfileID);
             objBrokerRequest.Parameters.push(objParameter);
@@ -109,44 +197,43 @@ export default class AlarmProfile extends Component<IProps> {
                 .then(async (res) => {
                     Util.StatusSuccess("Data successfully retrived.");
 
+                    let warnings: string = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    } else {
+                        this.setState({
+                            warningMsg: []
+                        });
+                    }
+
 
                     if (res.data.Response == null) {
                         return;
                     }
                     let objPanel_: AlarmPanelProfile = JSON.parse(res.data.Response);
 
-                    //let  container : [] as any    =  Object.values(objPanel_.containers);
-
-                    // let objPanel_.containers = Object.values(objPanel_.containers);
-                    //let objPanel_.containers = "";
-
-                    // for (let index = 0; index < container.length; index++) {
-                    //     let objcont  = objPanel_.containers[index];
-                    //     container.push(objcont);
-                    //       break;
-                    // }
-
                     objPanel_.containers = Object.values(objPanel_.containers);
 
                     objPanel_.containers.forEach(element => {
                         element.channels = Object.values(element.channels)
                     });
-
+                    debugger;
                     this.setState({
-                        grdContainers: objPanel_.containers.map((item: any) => Object.assign({ selected: true, inEdit: true }, item))
+                        objPanel: objPanel_, grdContainers: objPanel_.containers.map((item: any) => Object.assign({ selected: true, inEdit: true }, item)),
+                        selectedTab: 0, showAlarmProfileDialog: true
                     });
 
 
-                    this.setState({
-                        objPanel: objPanel_
-                    });
+                    // await this.setState({
+                    //     selectedTab: 0,
+                    //     showAlarmProfileDialog: true
+                    // });
 
 
-                    await this.setState({
-                        selectedTab: 0,
-                        showAlarmProfileDialog: true
-
-                    });
 
                 })
                 .catch((error) => {
@@ -203,18 +290,8 @@ export default class AlarmProfile extends Component<IProps> {
                 let containers = this.state.grdContainers;
                 debugger;
                 let index = containers.findIndex(item => item.ContainerID === this.state.selectedConainerID);
-
-                //let index = containers.findIndex( (item)=>{ item.ContainerID==this.state.selectedConainerID});
                 containers.splice(index, 1);
                 this.setState({ ContainerName: "", IsActive: true, grdContainers: containers, selectedConainerID: "" });
-                // containers.forEach(element => {
-                //     if (element.ContainerID == this.state.selectedConainerID) {
-
-                //         this.setState({ ContainerName: this.state.ContainerName1, IsActive: this.state.IsActive1, grdContainers: containers });        
-                //     }
-                // });
-
-
 
             } else {
                 alert("Please select container you want to delete from the list !");
@@ -231,15 +308,7 @@ export default class AlarmProfile extends Component<IProps> {
             );
             if (index >= 0) {
 
-                // let newData: any = utilFunc.CopyObject(this.state.grdContainers);
-                // let value = newData[index];
-                // newData[index] = e.dataItem;
-                // this.setState({
-                //     grdContainers: newData, selectedTab :1
-                // });
-
                 let channelList_ = [];
-
 
                 e.dataItem.channels.forEach(element => {
                     channelList_.push({ ChannelName: element.ChannelName });
@@ -256,6 +325,96 @@ export default class AlarmProfile extends Component<IProps> {
     }
 
 
+    grdRowClickLibrary = (e) => {
+        try {
+
+            let index = this.state.containerLibrary.findIndex((item: any) => item["ContainerID"] === e.dataItem.ContainerID);
+
+            debugger;
+            let selectedItem: any = this.state.containerLibrary[index];
+
+
+            let channelName = e.dataItem.ContainerName;
+
+
+            try {
+
+                let objBrokerRequest = new BrokerRequest();
+
+                objBrokerRequest.Module = "DataService";
+                objBrokerRequest.Broker = "DataAlarmProfiles";
+                objBrokerRequest.Function = "lstContainersClick";
+
+                let objParameter = new BrokerParameter("ChannelName", channelName);
+                objBrokerRequest.Parameters.push(objParameter);
+
+                axios
+                    .get(_gMod._getData, {
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json;charset=UTF-8",
+                        },
+                        params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                    })
+                    .then(async (res) => {
+
+                        Util.StatusSuccess("Data successfully retrived.");
+
+                        let warnings: string = res.data.Warnings;
+                        if (warnings.trim() != "") {
+                            let warningList = [];
+                            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                            this.setState({
+                                warningMsg: warningList
+                            });
+                        } else {
+                            this.setState({
+                                warningMsg: []
+                            });
+                        }
+
+                        debugger;
+
+                        let strAlarmInfo_ = JSON.parse(res.data.Response);
+
+                        this.setState({ strAlarmInfo: strAlarmInfo_ });
+                        $("#txtAlarmInfo").empty();
+                        $("#txtAlarmInfo").html(strAlarmInfo_);
+
+
+
+                    })
+                    .catch((error) => {
+                        Util.StatusError(error.message);
+                        Util.StatusReady();
+
+                        if (error.response) {
+                            // return <CustomeNotifications Key="success" Icon={false}  />
+                            // this.errors(error.response.message);
+                        } else if (error.request) {
+                            // return <CustomeNotifications Key="success" Icon={false}  />
+                            console.log("error.request");
+                        } else {
+                            // return <CustomeNotifications Key="success" Icon={false}  />
+                            console.log("Error", error);
+                        }
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("rejected");
+                    });
+
+            } catch (error) {
+
+            }
+
+
+
+
+
+        } catch (error) {
+
+        }
+    }
+
 
     selectionChange = (event) => {
         try {
@@ -270,6 +429,24 @@ export default class AlarmProfile extends Component<IProps> {
             });
             this.setState({ grdContainers: data });
             //wellList = data;
+        } catch (error) {
+
+        }
+    }
+
+    selectionChangeLibrary = (event) => {
+        try {
+
+            const checked = event.syntheticEvent.target.checked;
+
+            const data = this.state.containerLibrary.map((item: any) => {
+                if (item["ContainerID"] === event.dataItem.ContainerID) {
+                    item["selected"] = checked;
+                }
+                return item;
+            });
+            this.setState({ containerLibrary: data });
+
         } catch (error) {
 
         }
@@ -317,6 +494,147 @@ export default class AlarmProfile extends Component<IProps> {
     CancelContainer = () => {
         try {
             this.setState({ showEditContainer: false });
+        } catch (error) {
+
+        }
+    }
+
+    Save = () => {
+        try {
+            //if (this.props.PanelEditMode=="A")
+
+            let objBrokerRequest = new BrokerRequest();
+
+
+            objBrokerRequest.Module = "DataService";
+            objBrokerRequest.Broker = "DataAlarmProfiles";
+            objBrokerRequest.Function = "saveAlarmProfile";
+
+            debugger;
+            let objPanel_: any = utilFunc.CopyObject(this.state.objPanel);
+
+            objPanel_.containers.forEach(element => {
+                element.channels = null;
+            });
+
+            objPanel_.containers = utilFunc.convertMapToDictionaryJSON(objPanel_.containers);
+
+            // //convert QcRules array to Map
+            // let newAlarmConainerList: Map<string, AlarmPanelProfile> = new Map();
+            // if (objPanel_.containers.length > 0) {
+            //     objPanel_.containers.forEach((objItem) => {
+            //         //          let objAlarmPanelProfile: AlarmPanelProfile = new AlarmPanelProfile();
+
+            //         //   objAlarmPanelProfile.panelID = objPanel_.ContainerID;
+            //         //   objAlarmPanelProfile.panelName = objPanel_.panelName;
+
+            //         objItem.channels = null;
+            //         newAlarmConainerList.set(objItem.ContainerID, objItem);
+            //     });
+            // }
+            // objPanel_.containers = utilFunc.convertMapToDictionaryJSON(newAlarmConainerList); ;
+
+
+            // objPanellocal.containers.forEach(element => {
+            //     //element.channels = utilFunc.convertMapToDictionaryJSON(element.channels);
+            //     element.channels = null;
+            //     //Object.assign(element.channels);
+            // });
+
+            // objPanellocal.containers = utilFunc.convertMapToDictionaryJSON(this.state.grdContainers);
+
+
+            //objPanel_.containers = Object.assign(this.state.grdContainers);
+
+
+            let objParameter = new BrokerParameter("PanelEditMode", this.props.PanelEditMode);
+            objBrokerRequest.Parameters.push(objParameter);
+
+            objParameter = new BrokerParameter("objPanel", JSON.stringify(objPanel_));
+            objBrokerRequest.Parameters.push(objParameter);
+
+            axios
+                .get(_gMod._performTask, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                })
+                .then(async (res) => {
+                    Util.StatusSuccess("Data successfully Saved.");
+
+                    let warnings: string = res.data.Warnings;
+                    if (warnings.trim() != "") {
+                        let warningList = [];
+                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                        this.setState({
+                            warningMsg: warningList
+                        });
+                    } else {
+                        this.setState({
+                            warningMsg: []
+                        });
+                    }
+
+                    this.props.saveProfile();
+
+                })
+                .catch((error) => {
+                    alert(error.message);
+                    Util.StatusError(error.message);
+                    Util.StatusReady();
+
+                    if (error.response) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        // this.errors(error.response.message);
+                    } else if (error.request) {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("error.request");
+                    } else {
+                        // return <CustomeNotifications Key="success" Icon={false}  />
+                        console.log("Error", error);
+                    }
+                    // return <CustomeNotifications Key="success" Icon={false}  />
+                    console.log("rejected");
+                });
+
+
+        } catch (error) {
+
+        }
+
+    }
+
+
+    OkLoadLibrary = () => {
+        try {
+            let localContainers = utilFunc.CopyObject(this.state.grdContainers);
+            this.state.containerLibrary.forEach((item: any) => {
+                if (item.selected) {
+                    localContainers.push(item);
+                }
+
+                this.setState({ showLoadLibraryDialog: false, grdContainers: localContainers });
+            });
+
+        } catch (error) {
+
+        }
+    }
+
+    CancelLoadLibrary = () => {
+        try {
+            this.setState({ showLoadLibraryDialog: false });
+        } catch (error) {
+
+        }
+    }
+
+    AddChannel = () => {
+        try {
+            this.setState({showAlarmPanelDesingerDialog : true})
+            
         } catch (error) {
 
         }
@@ -469,7 +787,7 @@ export default class AlarmProfile extends Component<IProps> {
 
                                         <div className="col-lg-4 col-xl-4 col-md-4 col-sm-4">
                                             <div className='btn-group-vertical'>
-                                                <Button style={{ width: "150px" }}>
+                                                <Button style={{ width: "150px" }} onClick={this.AddChannel}>
                                                     Add Channel
                                                 </Button>
                                                 <Button className='mt-3' style={{ width: "150px" }}>
@@ -496,7 +814,7 @@ export default class AlarmProfile extends Component<IProps> {
 
                         </div>
                         <div className="col-lg-6 col-xl-6 col-md-6 col-sm-6">
-                            <Button>Save</Button>
+                            <Button onClick={this.Save}>Save</Button>
                             <Button className='ml-4'>Cancel</Button>
                         </div>
                     </div>
@@ -537,6 +855,90 @@ export default class AlarmProfile extends Component<IProps> {
 
                         </div>
                     </Dialog>}
+
+                {this.state.showLoadLibraryDialog && <Dialog
+                    title={"Load from Library"}
+                    width={"1200px"}
+                    height={"700px"}
+                    onClose={async (e: any) => {
+
+
+                        await this.setState({
+                            showLoadLibraryDialog: false
+                        })
+                    }}
+                >
+                    <div className="row">
+                        <div className='col-lg-6 col-xl-6 col-md-6 col-sm-6'>
+
+                            <Grid
+                                style={{ height: '55vh', width: '100%' }}
+                                data={this.state.containerLibrary}
+                                editField="inEdit"
+                                selectedField="selected"
+                                onRowClick={this.grdRowClickLibrary}
+                                onSelectionChange={this.selectionChangeLibrary}
+                                className="mt-3"
+                            >
+                                <Column
+                                    field="selected"
+                                    width="65px"
+                                    title=""
+                                    resizable={true}
+                                    minResizableWidth={65}
+                                    headerClassName="text-center"
+                                    className="text-center"
+                                    //editable={true}
+                                    editor="boolean"
+                                    headerSelectionValue={
+                                        this.state.containerLibrary.findIndex(
+                                            (dataItem: any) => dataItem.selected === true
+                                        ) === -1
+                                    }
+                                ></Column>
+
+                                {false && <Column field="ContainerID" title="Container ID" resizable={true} minResizableWidth={50} headerClassName="text-center" editable={false}  ></Column>}
+
+                                <Column field="ContainerName" title="Container Name" resizable={true} minResizableWidth={50} headerClassName="text-center" editable={false}  ></Column>
+
+                            </Grid>
+                            <br />
+                            <p>
+                                <Button style={{ width: "150px" }} onClick={this.OkLoadLibrary}> Ok</Button>
+                                <Button className='ml-3' style={{ width: "150px" }} onClick={this.CancelLoadLibrary}>Cancel</Button>
+                            </p>
+                        </div>
+
+                        <div className='col-lg-6 col-xl-6 col-md-6 col-sm-6'>
+                            <div className='mt-3'>
+                                <div id="txtAlarmInfo"></div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </Dialog>}
+
+
+                {this.state.showAlarmPanelDesingerDialog &&
+
+                    <Dialog title={"Alarm Panel Designer"}
+                        width={"90vw"}
+                        height={"90vh"}
+                        onClose={(e: any) => {
+                            this.setState({
+                                showAlarmPanelDesingerDialog: false
+                            })
+                        }}
+                    >
+                        
+                        <AlarmPanelDesigner></AlarmPanelDesigner>
+
+                    </Dialog>
+
+                }
+
 
             </div>
         )

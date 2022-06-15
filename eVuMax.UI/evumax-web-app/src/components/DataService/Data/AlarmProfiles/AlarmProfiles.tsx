@@ -29,7 +29,8 @@ export default class AlarmProfiles extends Component {
         selectedProfileID: "",
         Notes: "",
         grdAlarmProfiles: [],
-        showAlarmProfileDialog: false
+        showAlarmProfileDialog: false,
+        PanelEditMode:""
     }
 
     grdData: any[];
@@ -38,6 +39,16 @@ export default class AlarmProfiles extends Component {
             this.loadProfileGrid();
         } catch (error) {
 
+        }
+    }
+
+    saveProfile =()=>{
+        try {
+            this.setState({showAlarmProfileDialog :false});
+
+
+        } catch (error) {
+            
         }
     }
 
@@ -75,6 +86,8 @@ export default class AlarmProfiles extends Component {
                         Accept: "application/json",
                         "Content-Type": "application/json;charset=UTF-8",
                     },
+                    maxContentLength:Infinity,
+                    maxBodyLength: Infinity,
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
 
                 })
@@ -122,6 +135,23 @@ export default class AlarmProfiles extends Component {
                 });
 
 
+                // const axiosInstance = axios.create({
+                //     baseURL: 'http://localhost:1234'
+                //    })
+                  
+                //   const route = `reports/docName.pdf? 
+                //   ID=idOfTheDocument&reference=ref1%20ref2%20ref3%20ref4...`;
+                  
+                //   const request =  axiosInstance.get(route , {
+                //    auth: {
+                //       username: _gMod._userId,
+                //       password: "123456",
+                //     //   maxContentLength: Infinity,
+                //     //   maxBodyLength: Infinity
+                //    },
+                //    responseType: 'arraybuffer',
+                //   });
+
 
         } catch (error) {
 
@@ -132,13 +162,13 @@ export default class AlarmProfiles extends Component {
 
 
     Add = () => {
-        this.setState({ showAlarmProfileDialog: true, selectedProfileID :"" });
+        this.setState({ showAlarmProfileDialog: true, selectedProfileID :"",PanelEditMode : "A" });
     }
 
     Edit = (e) => {
         try {
 
-            this.setState({ showAlarmProfileDialog: true });
+            this.setState({ showAlarmProfileDialog: true,PanelEditMode : "E" });
 
 
         } catch (error) {
@@ -335,7 +365,7 @@ export default class AlarmProfiles extends Component {
                             }}
                         >
                             {/* <AlarmProfile objPanel= {this.state.objPanel}></AlarmProfile> */}
-                            <AlarmProfile ProfileID = {this.state.selectedProfileID}></AlarmProfile>
+                            <AlarmProfile ProfileID = {this.state.selectedProfileID} PanelEditMode= {this.state.PanelEditMode} saveProfile= {this.saveProfile}></AlarmProfile>
 
                         </Dialog>
 
