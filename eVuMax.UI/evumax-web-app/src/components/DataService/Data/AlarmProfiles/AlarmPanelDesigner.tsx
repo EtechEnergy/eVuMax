@@ -7,7 +7,7 @@ import { comboData } from '../../../../eVuMaxObjects/UIObjects/comboData';
 import { Util } from '../../../../Models/eVuMax';
 import GlobalMod from '../../../../objects/global';
 import { ClientLogger } from '../../../ClientLogger/ClientLogger';
-import { APChannel } from './APChannel';
+import { APChannel, apSourceType } from './APChannel';
 import axios from "axios";
 import * as utilFunc from './../../../../../src/utilFunctions/utilFunctions';
 import ExpressionEditor from '../../../ExpressionEditorComponent/ExpressionEditor';
@@ -49,7 +49,7 @@ export default class AlarmPanelDesigner extends Component {
 
     selectedShape: new comboData(),
     cmbShape: [] as any,
-    YellowExpression: "",
+    //YellowExpression: "",
     showExpressionEditorDialog: false,
 
     //Add Channel Dialog
@@ -64,14 +64,27 @@ export default class AlarmPanelDesigner extends Component {
   }
 
 
-  saveExpression =()=>{
+  saveExpression = (expressionText: string) => {
     try {
-      alert("aa");
-      this.setState({showExpressionEditorDialog : true});
+
+      let objChannel_: APChannel = this.state.objChannel;
+      objChannel_.YellowExpression = expressionText;
+
+      this.setState({ showExpressionEditorDialog: false, objChannel_: objChannel_ });
+
     } catch (error) {
-      
+
     }
   }
+
+  closeExpression = () => {
+    try {
+      this.setState({ showExpressionEditorDialog: false });
+    } catch (error) {
+
+    }
+  }
+
   loadCombo = async () => {
     try {
 
@@ -289,6 +302,97 @@ export default class AlarmPanelDesigner extends Component {
 
   onClickWizard = () => {
     try {
+       let finalRedExpression  = ""
+       let  finalYellowExpression  = ""
+
+
+       //this.objLogger.SendLog("load Donwload Audit Info");
+       let objBrokerRequest = new BrokerRequest();
+       objBrokerRequest.Module = "DataService";
+       objBrokerRequest.Broker = "DataAlarmProfiles";
+       objBrokerRequest.Function = "loadExpWizard";
+ 
+      //  let objParameter: BrokerParameter = new BrokerParameter(
+      //    "logtype",
+      //    this.state.objChannel.SourceType.toString()
+      //  );
+      //  objBrokerRequest.Parameters.push(objParameter);
+ 
+ 
+ 
+ 
+        axios
+         .get(_gMod._getData, {
+           headers: {
+             Accept: "application/json",
+             "Content-Type": "application/json;charset=UTF-8",
+           },
+           params: { paramRequest: JSON.stringify(objBrokerRequest) },
+ 
+         })
+         .then(async (res) => {
+           Util.StatusSuccess("Data successfully retrived  ");
+           this.objLogger.SendLog("load ExpWizard Data Received...");
+           debugger;
+ 
+           let objData = JSON.parse(res.data.Response);
+ 
+ 
+           let warnings: string = res.data.Warnings;
+           if (warnings.trim() != "") {
+             let warningList = [];
+             warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+             this.setState({
+               warningMsg: warningList
+             });
+           } else {
+             this.setState({
+               warningMsg: []
+             });
+           }
+ 
+ 
+           // let objData_ :any = Object.values(objData);
+ 
+           let RigStatesList_ = Object.values(objData.RigStatesList);
+ 
+           let RigStatesList__ = RigStatesList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+ 
+           let WellStatusList_ = Object.values(objData.WellStatusList);
+           let WellStatusList__ = WellStatusList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+ 
+           //containerList_ = containerList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+ 
+ 
+           if (this.state.isStdChannelList) {
+             await this.setState({
+               ChannelList: Object.values(objData.stdChannelList), AlarmTypeList: Object.values(objData.alarmTypeList),
+               AlarmCategory2List: Object.values(objData.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+             });
+           } else {
+             await this.setState({
+               ChannelList: Object.values(objData.channelList), AlarmTypeList: Object.values(objData.alarmTypeList),
+               AlarmCategory2List: Object.values(objData.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+             });
+           }
+ 
+         })
+         .catch((error) => {
+ 
+           Util.StatusError(error.message);
+ 
+           if (error.response) {
+ 
+           } else if (error.request) {
+             console.log("error.request");
+           } else {
+             console.log("Error", error);
+           }
+           console.log("rejected");
+           this.setState({ isProcess: false });
+         });
+ 
+
 
     } catch (error) {
 
@@ -488,20 +592,36 @@ export default class AlarmPanelDesigner extends Component {
                 value="1"
                 checked={this.state.objChannel.SourceType === 1}
                 label="Time Log"
+                //onChange={(e)=>{this.handleChange(e, "SourceType")}}
+                // onChange={(e)=>{
+                //   this.setState({SourceType : apSourceType.TimeLog });
+                // }}
+
+                onChange={(e) => {
+                  let objChannel_ = this.state.objChannel;
+                  objChannel_.SourceType = 1;
+                  this.setState({ objChannel: objChannel_ });
+                }}
               >
               </RadioButton>
 
-              <RadioButton
+              {/* <RadioButton
                 value="2"
                 checked={this.state.objChannel.SourceType === 2}
                 label="Depth Log"
               >
-              </RadioButton>
+              </RadioButton> */}
 
               <RadioButton
                 value="3"
                 checked={this.state.objChannel.SourceType === 3}
                 label="Trajectory"
+                //onChange={(e)=>{this.handleChange(e, "SourceType")}}
+                onChange={(e) => {
+                  let objChannel_ = this.state.objChannel;
+                  objChannel_.SourceType = 3;
+                  this.setState({ objChannel: objChannel_ });
+                }}
               >
               </RadioButton>
             </div>
@@ -623,7 +743,7 @@ export default class AlarmPanelDesigner extends Component {
                 autoSize={true}
                 style={{ width: "30%" }}
                 rows={2}
-                value={this.state.YellowExpression}
+                value={this.state.objChannel.YellowExpression}
                 onChange={(e) => this.handleChange(e, "YellowExpression")}
               />
 
@@ -716,211 +836,216 @@ export default class AlarmPanelDesigner extends Component {
 
           </div>
 
-          <div className='col-lg-6 col-xl-6 col-md-6 col-sm-6'>
-            <div className="form-group">
 
-              <h4>
-                Rig State Selection
-              </h4>
-              <Checkbox
-                checked={this.state.objChannel.RigStateSelection}
-                onClick={(e) => this.handleChange(e, "RigStateSelection")}
-                label={"Only evaluate for selected rig states"}
-              ></Checkbox>
+          {this.state.objChannel.SourceType == 1 &&
 
-            </div>
+            <div className='col-lg-6 col-xl-6 col-md-6 col-sm-6'>
+              <div className="form-group">
 
-            <div className="form-group">
-              <div className="row">
-                <div className="col-12">
-                  <Grid
-                    className='mt-3'
-                    data={this.state.RigStatesList}
-                    onRowClick={(e) => { this.grdRowClick(e, "RigStatesList") }}
+                <h4>
+                  Rig State Selection
+                </h4>
+                <Checkbox
+                  checked={this.state.objChannel.RigStateSelection}
+                  onClick={(e) => this.handleChange(e, "RigStateSelection")}
+                  label={"Only evaluate for selected rig states"}
+                ></Checkbox>
 
-                    onSelectionChange={(e) => { this.selectionChange(e, "RigStatesList") }}
-                    editField="inEdit"
-                    selectedField="selected"
-                    style={{ height: "300px", width: "600px" }}
-                    onHeaderSelectionChange={(e) => { this.grid_headerSelectionChange(e, "RigStatesList") }} //Nishant 26-05-2020
-                  >
-                    <Column
-                      field="selected"
-                      width="65px"
-                      title=""
-                      resizable={true}
-                      minResizableWidth={65}
-                      headerClassName="text-center"
-                      className="text-center"
-                      editable={true}
-                      editor="boolean">
+              </div>
 
-                    </Column>
+              <div className="form-group">
+                <div className="row">
+                  <div className="col-12">
+                    <Grid
+                      className='mt-3'
+                      data={this.state.RigStatesList}
+                      onRowClick={(e) => { this.grdRowClick(e, "RigStatesList") }}
 
-
-
-                    <Column
-                      field='Name'
+                      onSelectionChange={(e) => { this.selectionChange(e, "RigStatesList") }}
+                      editField="inEdit"
+                      selectedField="selected"
+                      style={{ height: "300px", width: "600px" }}
+                      onHeaderSelectionChange={(e) => { this.grid_headerSelectionChange(e, "RigStatesList") }} //Nishant 26-05-2020
                     >
+                      <Column
+                        field="selected"
+                        width="65px"
+                        title=""
+                        resizable={true}
+                        minResizableWidth={65}
+                        headerClassName="text-center"
+                        className="text-center"
+                        editable={true}
+                        editor="boolean">
 
-                    </Column>
+                      </Column>
 
 
-                  </Grid>
+
+                      <Column
+                        field='Name'
+                      >
+
+                      </Column>
+
+
+                    </Grid>
+                  </div>
                 </div>
+
+
+              </div>
+
+
+
+
+
+
+              <div className="form-group">
+
+                <h4>
+                  Well Status Selection
+                </h4>
+                <Checkbox
+                  checked={this.state.objChannel.WellStatusSpecific}
+                  onClick={(e) => this.handleChange(e, "WellStatusSpecific")}
+                  label={"Only evaluate for selected well status"}
+                ></Checkbox>
+
+              </div>
+
+              <div className="form-group">
+                <div className="row">
+                  <div className="col-12">
+                    <Grid
+                      data={this.state.WellStatusList}
+
+                      className='mt-3'
+                      onRowClick={(e) => { this.grdRowClick(e, "WellStatusList") }}
+                      onSelectionChange={(e) => { this.selectionChange(e, "WellStatusList") }}
+
+                      editField="inEdit"
+                      selectedField="selected"
+                      style={{ height: "300px", width: "600px" }}
+                      onHeaderSelectionChange={(e) => { this.grid_headerSelectionChange(e, "WellStatusList") }} //Nishant 26-05-2020
+
+                    >
+                      <Column
+                        field="selected"
+                        width="65px"
+                        title=""
+                        resizable={true}
+                        minResizableWidth={65}
+                        headerClassName="text-center"
+                        className="text-center"
+                        editable={true}
+                        editor="boolean"
+                      >
+
+                      </Column>
+
+                      <Column
+                        field='WELL_STATUS'
+                      >
+
+                      </Column>
+
+
+                    </Grid>
+                  </div>
+                </div>
+
+
+              </div>
+
+
+              <div className="form-group">
+                <Label>Trigger Based on</Label>
+
+                <RadioButton
+                  value="0"
+                  checked={this.state.objChannel.TriggerType === 0}
+                  onChange={(e) => this.handleChange(e, "TriggerType")}
+                  label={"Current Data"}
+                >
+
+                </RadioButton>
+
+                <RadioButton
+                  value="0"
+                  checked={this.state.objChannel.TriggerType === 1}
+                  onChange={(e) => this.handleChange(e, "TriggerType")}
+                  label={"Data of Last "}
+                >
+                </RadioButton>
+                <Input value={this.state.objChannel.TimeDuration}
+                  style={{ width: "100px" }}
+                  onChange={(e) => this.handleChange(e, "TriggerType")}
+                ></Input>
+                <Label> Minutes</Label>
+              </div>
+
+
+              <div className="form-group">
+                <Label> Down Sample Function </Label>
+                <DropDownList
+                  id="DownsampleFunction"
+                  data={this.state.cmbDownSampleFunction}
+                  value={this.state.objChannel.DownSampleFunction}
+                  textField="text"
+                  dataItemKey="id"
+                  onChange={(e) => { this.onDropdownChange(e, "DownsampleFunction") }}
+                >
+
+                </DropDownList>
+              </div>
+
+              <div className="form-group">
+                <Label className='mr-3'>Alarm Frequency</Label>
+                <Input value={this.state.objChannel.Frequency} onChange={(e) => this.handleChange(e, "Frequency")} ></Input>
+                <Label className='ml-3'> Minutes</Label>
+              </div>
+
+              <div className="form-group">
+                <Checkbox
+                  label={"Send email to "}
+                  checked={this.state.objChannel.SendMail}
+                  onChange={(e) => { this.onDropdownChange(e, "SendMail") }}
+                >
+                </Checkbox>
+
+                <Label className='mr-3'>If Alarm is not validated in </Label>
+                <Input className='mr-3' value={this.state.objChannel.AckTimeLimit} onChange={(e) => this.handleChange(e, "AckTimeLimit")}></Input>
+                <Label>Minutes </Label>
+
+
               </div>
 
 
             </div>
+          }
 
 
-
-
-
-
-            <div className="form-group">
-
-              <h4>
-                Well Status Selection
-              </h4>
-              <Checkbox
-                checked={this.state.objChannel.WellStatusSpecific}
-                onClick={(e) => this.handleChange(e, "WellStatusSpecific")}
-                label={"Only evaluate for selected well status"}
-              ></Checkbox>
-
-            </div>
-
-            <div className="form-group">
-              <div className="row">
-                <div className="col-12">
-                  <Grid
-                    data={this.state.WellStatusList}
-
-                    className='mt-3'
-                    onRowClick={(e) => { this.grdRowClick(e, "WellStatusList") }}
-                    onSelectionChange={(e) => { this.selectionChange(e, "WellStatusList") }}
-
-                    editField="inEdit"
-                    selectedField="selected"
-                    style={{ height: "300px", width: "600px" }}
-                    onHeaderSelectionChange={(e) => { this.grid_headerSelectionChange(e, "WellStatusList") }} //Nishant 26-05-2020
-
-                  >
-                    <Column
-                      field="selected"
-                      width="65px"
-                      title=""
-                      resizable={true}
-                      minResizableWidth={65}
-                      headerClassName="text-center"
-                      className="text-center"
-                      editable={true}
-                      editor="boolean"
-                    >
-
-                    </Column>
-
-                    <Column
-                      field='WELL_STATUS'
-                    >
-
-                    </Column>
-
-
-                  </Grid>
-                </div>
-              </div>
-
-
-            </div>
-
-
-            <div className="form-group">
-              <Label>Trigger Based on</Label>
-
-              <RadioButton
-                value="0"
-                checked={this.state.objChannel.TriggerType === 0}
-                onChange={(e) => this.handleChange(e, "TriggerType")}
-                label={"Current Data"}
-              >
-
-              </RadioButton>
-
-              <RadioButton
-                value="0"
-                checked={this.state.objChannel.TriggerType === 1}
-                onChange={(e) => this.handleChange(e, "TriggerType")}
-                label={"Data of Last "}
-              >
-              </RadioButton>
-              <Input value={this.state.objChannel.TimeDuration}
-                style={{ width: "100px" }}
-                onChange={(e) => this.handleChange(e, "TriggerType")}
-              ></Input>
-              <Label> Minutes</Label>
-            </div>
-
-
-            <div className="form-group">
-              <Label> Down Sample Function </Label>
-              <DropDownList
-                id="DownsampleFunction"
-                data={this.state.cmbDownSampleFunction}
-                value={this.state.objChannel.DownSampleFunction}
-                textField="text"
-                dataItemKey="id"
-                onChange={(e) => { this.onDropdownChange(e, "DownsampleFunction") }}
-              >
-
-              </DropDownList>
-            </div>
-
-            <div className="form-group">
-              <Label className='mr-3'>Alarm Frequency</Label>
-              <Input value={this.state.objChannel.Frequency} onChange={(e) => this.handleChange(e, "Frequency")} ></Input>
-              <Label className='ml-3'> Minutes</Label>
-            </div>
-
-            <div className="form-group">
-              <Checkbox
-                label={"Send email to "}
-                checked={this.state.objChannel.SendMail}
-                onChange={(e) => { this.onDropdownChange(e, "SendMail") }}
-              >
-              </Checkbox>
-
-              <Label className='mr-3'>If Alarm is not validated in </Label>
-              <Input className='mr-3' value={this.state.objChannel.AckTimeLimit} onChange={(e) => this.handleChange(e, "AckTimeLimit")}></Input>
-              <Label>Minutes </Label>
-
-
-            </div>
-
-
-          </div>
         </div>
 
-        {this.state.showExpressionEditorDialog && this.state.objChannel.SourceType === 1 &&
+        {/* {this.state.showExpressionEditorDialog && this.state.objChannel.SourceType === 1 &&
           <Dialog
             height={500}
             width={600}
           >
-            {/* <ExpressionEditor {...this} objTimeLog={this.__parentRef.state.objTimeLog} expressionText={this.state.objChannel.valueQuery}></ExpressionEditor> */}
 
             <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
 
           </Dialog>
         }
+ */}
 
-        {this.state.showExpressionEditorDialog && this.state.objChannel.SourceType === 3 &&
+        {this.state.showExpressionEditorDialog &&
           <Dialog
             height={500}
             width={600}
           >
-            <ExpressionEditor objTimeLog={this.state.objTimeLog} objDepthLog={this.state.objDepthLog} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
-            {/* <ExpressionEditor {...this} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor> */}
+            <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} objDepthLog={this.state.objDepthLog} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
           </Dialog>
         }
 

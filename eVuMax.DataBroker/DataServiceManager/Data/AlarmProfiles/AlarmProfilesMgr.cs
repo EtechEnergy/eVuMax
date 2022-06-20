@@ -24,6 +24,8 @@ namespace eVuMax.DataBroker.DataServiceManager
         public string lstContainersClick = "lstContainersClick";
 
         public string loadAlarmDesignerCombo = "loadAlarmDesignerCombo";
+        public string loadExpWizard = "loadExpWizard";
+        
 
         public BrokerResponse getData(BrokerRequest paramRequest)
         {
@@ -131,6 +133,22 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                 objResponse.Errors = "";
                 return objResponse;
+            }
+
+            if (paramRequest.Function == "loadExpWizard")
+            {
+                string finalRedExpression = "";
+                string finalYellowExpression = "";
+
+                if (VuMaxDR.Data.Objects.ExpMetaDataInterface.runExpWizard(ref paramRequest.objDataService, ref finalRedExpression, ref finalYellowExpression)) {
+                    ExpMetaData objMetaData = new ExpMetaData(paramRequest.objDataService);
+                    objMetaData.RedExpression = finalRedExpression;
+                    objMetaData.YellowExpression = finalYellowExpression;
+
+                    //    txtYellowExpression.Text = finalYellowExpression
+                    //txtRedExpression.Text = finalRedExpression
+                }
+
             }
             throw new NotImplementedException();
         }
