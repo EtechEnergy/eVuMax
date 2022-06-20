@@ -12,9 +12,9 @@ using VuMaxDR.Data.Objects;
 
 namespace eVuMax.DataBroker.DataServiceManager
 {
-  public  class AlarmProfilesMgr : IBroker
+    public class AlarmProfilesMgr : IBroker
     {
-        
+
         public string loadAlarmProfiles = "loadAlarmProfiles";
         public string addAlarmProfiles = "addAlarmProfiles";
         public string editAlarmProfile = "editAlarmProfile";
@@ -25,7 +25,7 @@ namespace eVuMax.DataBroker.DataServiceManager
 
         public string loadAlarmDesignerCombo = "loadAlarmDesignerCombo";
         public string loadExpWizard = "loadExpWizard";
-        
+
 
         public BrokerResponse getData(BrokerRequest paramRequest)
         {
@@ -33,7 +33,7 @@ namespace eVuMax.DataBroker.DataServiceManager
 
             if (paramRequest.Function == loadAlarmProfiles)
             {
-              DataTable objData =   this.loadAlarmProfilesList(paramRequest);
+                DataTable objData = this.loadAlarmProfilesList(paramRequest);
 
                 objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = true;
@@ -60,7 +60,7 @@ namespace eVuMax.DataBroker.DataServiceManager
 
             if (paramRequest.Function == lstContainersClick)
             {
-                
+
                 Dictionary<string, APContainer> list = AlarmLibrary.getLibraryList(ref paramRequest.objDataService);
 
                 string ChannelName = paramRequest.Parameters.Where(x => x.ParamName.Contains("ChannelName")).FirstOrDefault().ParamValue;
@@ -78,7 +78,7 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                             if (objChannel.YellowUseBuilder)
                             {
-                                strInfo += "<p>" +  "    Yellow State ::  " + VuMaxDR.Data.Objects.EzConditoinSet.parseXML(objChannel.YellowConditions).getVuMaxExpression().ToString();
+                                strInfo += "<p>" + "    Yellow State ::  " + VuMaxDR.Data.Objects.EzConditoinSet.parseXML(objChannel.YellowConditions).getVuMaxExpression().ToString();
                             }
                             else
                             {
@@ -94,19 +94,19 @@ namespace eVuMax.DataBroker.DataServiceManager
                                 strInfo += "<p>" + "    Red State     ::  " + objChannel.RedExpression;
                             }
 
-                            strInfo += "<p>" ;
+                            strInfo += "<p>";
 
                         }
 
-                     
+
 
                     }
 
                 }
 
-            
 
-                    objResponse = paramRequest.createResponseObject();
+
+                objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = true;
                 objResponse.Response = JsonConvert.SerializeObject(strInfo);
 
@@ -118,15 +118,15 @@ namespace eVuMax.DataBroker.DataServiceManager
             if (paramRequest.Function == loadAlarmDesignerCombo)
             {
 
-                
-                
-                int LogType =  Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("logtype")).FirstOrDefault().ParamValue);
+
+
+                int LogType = Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("logtype")).FirstOrDefault().ParamValue);
                 bool isStdChannel = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isStdChannel")).FirstOrDefault().ParamValue);
 
                 APChannelData objData = new APChannelData();
-                objData.getComboData(LogType, isStdChannel,  paramRequest.objDataService);
+                objData.getComboData(LogType, isStdChannel, paramRequest.objDataService);
 
-                
+
                 objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = true;
                 objResponse.Response = JsonConvert.SerializeObject(objData);
@@ -137,17 +137,27 @@ namespace eVuMax.DataBroker.DataServiceManager
 
             if (paramRequest.Function == "loadExpWizard")
             {
-                string finalRedExpression = "";
-                string finalYellowExpression = "";
+                //string finalRedExpression = "";
+                //string finalYellowExpression = "";
 
-                if (VuMaxDR.Data.Objects.ExpMetaDataInterface.runExpWizard(ref paramRequest.objDataService, ref finalRedExpression, ref finalYellowExpression)) {
-                    ExpMetaData objMetaData = new ExpMetaData(paramRequest.objDataService);
-                    objMetaData.RedExpression = finalRedExpression;
-                    objMetaData.YellowExpression = finalYellowExpression;
+                // if (VuMaxDR.Data.Objects.ExpMetaDataInterface.runExpWizard(ref paramRequest.objDataService, ref finalRedExpression, ref finalYellowExpression)) {
+                //ExpMetaData objMetaData = new ExpMetaData(paramRequest.objDataService);
+                Dictionary<string, ExpMetaData> objData = ExpMetaData.getList(ref paramRequest.objDataService);
 
-                    //    txtYellowExpression.Text = finalYellowExpression
-                    //txtRedExpression.Text = finalRedExpression
-                }
+
+
+                objResponse = paramRequest.createResponseObject();
+                objResponse.RequestSuccessfull = true;
+                objResponse.Response = JsonConvert.SerializeObject(objData);
+                objResponse.Errors = "";
+                return objResponse;
+
+                //objMetaData.RedExpression = finalRedExpression;
+                //objMetaData.YellowExpression = finalYellowExpression;
+
+                //    txtYellowExpression.Text = finalYellowExpression
+                //txtRedExpression.Text = finalRedExpression
+                ///      }
 
             }
             throw new NotImplementedException();
@@ -159,7 +169,7 @@ namespace eVuMax.DataBroker.DataServiceManager
 
             if (paramRequest.Function == addAlarmProfiles)
             {
-                
+
 
                 objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = true;
@@ -175,10 +185,10 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
                     string ProfileID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ProfileID")).FirstOrDefault().ParamValue;
 
-                    
+
                     AlarmPanelProfile objPanel = AlarmPanelProfile.loadProfile(ref paramRequest.objDataService, ProfileID);
 
-                    
+
 
                     objResponse = paramRequest.createResponseObject();
                     objResponse.RequestSuccessfull = true;
@@ -187,7 +197,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                     objResponse.Errors = "";
                     return objResponse;
                 }
-              catch (Exception ex)
+                catch (Exception ex)
                 {
 
                     Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
@@ -235,7 +245,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                     {
                         string LastError = "";
 
-                        if (AlarmPanelProfile.updatePanel(ref paramRequest.objDataService, objPanel,ref LastError))
+                        if (AlarmPanelProfile.updatePanel(ref paramRequest.objDataService, objPanel, ref LastError))
                         {
                             objResponse = paramRequest.createResponseObject();
                             objResponse.RequestSuccessfull = true;
@@ -262,7 +272,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                     objBadResponse.Warnings = "Error : " + ex.Message + ex.StackTrace;
                     objBadResponse.Errors = "Error : " + ex.Message + ex.StackTrace;
                     return objBadResponse;
-                    
+
                 }
             }
 
@@ -289,7 +299,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                     objBadResponse.Errors = "Error : " + ex.Message + ex.StackTrace;
                     return objBadResponse;
                 }
-             
+
             }
             throw new NotImplementedException();
         }
@@ -334,13 +344,13 @@ namespace eVuMax.DataBroker.DataServiceManager
             foreach (DataRow objRow in objData.Rows)
             {
 
-              
+
 
 
                 DateTime createdDate = DateTime.Parse(DataService.checkNull(objRow["CREATED_DATE"], new DateTime()).ToString());
                 DateTime modifiedDate = DateTime.Parse(DataService.checkNull(objRow["MODIFIED_DATE"], new DateTime()).ToString());
 
-                objRow["CREATEDDATE"] = createdDate.ToString("MMM-dd-yyyy HH:mm:ss"); 
+                objRow["CREATEDDATE"] = createdDate.ToString("MMM-dd-yyyy HH:mm:ss");
                 objRow["MODIFIEDDATE"] = modifiedDate.ToString("MMM-dd-yyyy HH:mm:ss");
 
 
