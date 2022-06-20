@@ -129,6 +129,9 @@
     <Compile Include="DataServiceManager\Data\RigStateSetup\WellRigStateSetupMgr.cs" />
     <Compile Include="DataServiceManager\Data\SetupAlarms\SetupAlarms.cs" />
     <Compile Include="DataServiceManager\Data\SetupAlarms\SetupAlarmsMgr.cs" />
+    <Compile Include="DataServiceManager\KPI\PhaseTagMaster\PhaseTagMaster.cs" />
+    <Compile Include="DataServiceManager\KPI\PhaseTagMaster\PhaseTagMasterMgr.cs" />
+    <Compile Include="DataServiceManager\KPI\PhaseTagMaster\PhaseTreeNode.cs" />
     <Compile Include="DataServiceManager\Setup\AlertSettings\AlertSettings.cs" />
     <Compile Include="DataServiceManager\Setup\AlertSettings\AlertSettingsMgr.cs" />
     <Compile Include="DataServiceManager\Setup\AuditInfo\AuditInfoMgr.cs" />

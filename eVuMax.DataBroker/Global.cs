@@ -112,6 +112,8 @@ namespace eVuMax.DataBroker
         public const string Brk_Setup_ChannelLibrary = "SetupChannelLibrary"; //prath 17-05-2022
         public const string Brk_Setup_WellMonitor= "SetupWellMonitor"; //prath 23-05-2022
 
+        public const string Brk_KPI_PhaseMaster = "KPIPhaseMaster";//Nishant 16/06/2022
+
 
         #endregion
 

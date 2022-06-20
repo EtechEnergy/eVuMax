@@ -29,7 +29,7 @@ import DrlgStandPlot from "../components/Widgets/DrlgStandPlot/DrlgStandPlot";
 import TripReport from "../components/Widgets/TripReport/TripReport";
 import  BroomstickPlot from "../components/Widgets/BroomstickDocs/BroomstickPlot";
 import AdvKPI from "../components/Widgets/AdvKPI/AdvKPI";
-
+import PhaseTagMaster from "../components/DataService/KPI/PhaseMaster/PhaseTagMaster";
 
 //DS
 import QcRules from "../components/DataService/Setup/QCRules/QcRules";// "../components/dashboard/dataservice/setup/qcrules/QcRules";
@@ -411,6 +411,13 @@ const dashbordRoutes = [
     name: "AlarmProfiles",
     icon: "",
     component: AlarmProfiles,
+    layout: "/dashboard",
+  },
+  {
+    path: "/PhaseTagMaster",
+    name: "PhaseTagMaster",
+    icon: "",
+    component: PhaseTagMaster,
     layout: "/dashboard",
   },
 ];
