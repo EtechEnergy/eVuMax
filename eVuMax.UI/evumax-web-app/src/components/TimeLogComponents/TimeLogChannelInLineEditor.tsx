@@ -362,10 +362,7 @@ export default class TimeLogChannelInLineEditor extends Component<IProps> {
                         width={600}
                     >
                         <ExpressionEditor {...this} objTimeLog={this.__parentRef.state.objTimeLog} expressionText={this.state.objChannel.valueQuery}></ExpressionEditor>
-
                     </Dialog>}
-
-
             </>
         )
     }

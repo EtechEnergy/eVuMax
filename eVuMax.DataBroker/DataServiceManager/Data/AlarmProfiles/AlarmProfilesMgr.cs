@@ -23,6 +23,8 @@ namespace eVuMax.DataBroker.DataServiceManager
         public string loadFromLibrary = "loadFromLibrary";
         public string lstContainersClick = "lstContainersClick";
 
+        public string loadAlarmDesignerCombo = "loadAlarmDesignerCombo";
+
         public BrokerResponse getData(BrokerRequest paramRequest)
         {
             BrokerResponse objResponse = paramRequest.createResponseObject();
@@ -109,8 +111,27 @@ namespace eVuMax.DataBroker.DataServiceManager
                 objResponse.Errors = "";
                 return objResponse;
             }
-           
 
+
+            if (paramRequest.Function == loadAlarmDesignerCombo)
+            {
+
+                
+                
+                int LogType =  Convert.ToInt32(paramRequest.Parameters.Where(x => x.ParamName.Contains("logtype")).FirstOrDefault().ParamValue);
+                bool isStdChannel = Convert.ToBoolean(paramRequest.Parameters.Where(x => x.ParamName.Contains("isStdChannel")).FirstOrDefault().ParamValue);
+
+                APChannelData objData = new APChannelData();
+                objData.getComboData(LogType, isStdChannel,  paramRequest.objDataService);
+
+                
+                objResponse = paramRequest.createResponseObject();
+                objResponse.RequestSuccessfull = true;
+                objResponse.Response = JsonConvert.SerializeObject(objData);
+
+                objResponse.Errors = "";
+                return objResponse;
+            }
             throw new NotImplementedException();
         }
 

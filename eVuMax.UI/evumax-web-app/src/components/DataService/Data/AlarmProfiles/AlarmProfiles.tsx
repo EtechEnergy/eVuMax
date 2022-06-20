@@ -243,6 +243,9 @@ export default class AlarmProfiles extends Component {
         });
     };
 
+   
+
+
     render() {
         return (
             <div>
@@ -304,6 +307,7 @@ export default class AlarmProfiles extends Component {
                                 style={{ height: "75vh" }}
                                 data={this.state.grdAlarmProfiles}
                                 onRowClick={this.RowClickAlarmProfile}
+                                
                             >
                                 {false &&
                                     <Column

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { TimeLog, DepthLog } from '../../eVuMaxObjects/dataObjects/dataObjects'
+import { TimeLog, DepthLog, Trajectory } from '../../eVuMaxObjects/dataObjects/dataObjects'
 import { comboData } from '../../eVuMaxObjects/UIObjects/comboData'
 import { ComboBox, Button, Input } from '@progress/kendo-react-all'
 import ListItem from '@progress/kendo-react-dropdowns/dist/npm/common/ListItem';
@@ -7,6 +7,7 @@ import ListItem from '@progress/kendo-react-dropdowns/dist/npm/common/ListItem';
 interface IProps {
     objTimeLog: TimeLog
     objDepthLog?: DepthLog
+    objTractory?: Trajectory //prath
     expressionText: string
 }
 
