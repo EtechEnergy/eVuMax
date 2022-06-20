@@ -18,6 +18,7 @@ import NotifyMe from 'react-notification-timeline';
 import * as utilFunc from '../../../../utilFunctions/utilFunctions';
 import { isObjectBindingPattern } from 'typescript';
 import { confirmAlert } from 'react-confirm-alert';
+import { locales } from 'moment';
 
 
 let _gMod = new GlobalMod();
@@ -43,7 +44,7 @@ export default class PhaseTagMaster extends Component {
         AddBtnCaption: "Add Emphasis",
         warningMsg: [],
         selectedNodeType: UI.enumPhaseNodeType.Master,
-        selectedNode: new UI.phaseTreeNode(),
+        //selectedNode: new UI.phaseTreeNode(),
         EditingInProgress: false,
         editMode: ""
 
@@ -65,11 +66,11 @@ export default class PhaseTagMaster extends Component {
         }
 
         if (this.state.AddBtnCaption == "Add Step") {
-            
+            alert(this.state.objPhase.PhaseName);
             await this.setState({
                 showPhaseEditor: false,
                 showStepEditor:true,
-                objPhase: new clsPhase(),
+                //objPhase: new clsPhase(),
                 objStep: new clsStep(),
                 EditingInProgress: true,
                 editMode: "A"
@@ -110,8 +111,12 @@ export default class PhaseTagMaster extends Component {
     removeNode = () => {
         try {
             debugger;
-            if (this.state.selectedNode.nodeType == UI.enumPhaseNodeType.Phase) {
+            if (this.state.selectedNodeType == UI.enumPhaseNodeType.Phase) {
                 this.removePhase();
+            }
+
+            if (this.state.selectedNodeType == UI.enumPhaseNodeType.StepPhase) {
+                this.removeStep();
             }
 
 
@@ -119,6 +124,72 @@ export default class PhaseTagMaster extends Component {
 
         }
     }
+
+    removeStep = () => {
+        try {
+            debugger;
+            confirmAlert({
+                //title: 'eVuMax',
+                message: 'Are you sure want to delete selected Step ?',
+                childrenElement: () => <div />,
+                buttons: [
+                    {
+                        label: 'Yes',
+                        onClick: async () => {
+                            debugger;
+                            objBrokerRequest = new BrokerRequest();
+                            objBrokerRequest.Module = "DataService";
+                            objBrokerRequest.Function = "removeSteps";
+                            objBrokerRequest.Broker = "KPIPhaseMaster";
+
+                            let localStep: clsStep = new clsStep();
+                            
+                            
+                            localStep = this.state.objStep;
+                         //   localStep.PhaseID = this.state.objPhase.PhaseID;
+
+                            objParameter = new BrokerParameter('objStep', JSON.stringify(localStep));
+
+                            objBrokerRequest.Parameters.push(objParameter);
+
+                            axios.post(_gMod._performTask, {
+                                paramRequest: JSON.stringify(objBrokerRequest),
+                            })
+                                .then(async (response) => {
+
+                                    this.setState({
+                                        showPhaseEditor: false,
+                                        showStepEditor: false,
+                                        EditingInProgress: false,
+                                        editMode: ""
+                                    });
+
+                                    await this.loadTree();
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+
+
+                        }
+
+                    },
+                    {
+                        label: 'No',
+                        onClick: () => null
+                    }
+                ]
+            });
+
+
+
+
+        } catch (error) {
+
+        }
+    }
+  
+  
     removePhase = () => {
         try {
             debugger;
@@ -223,12 +294,19 @@ export default class PhaseTagMaster extends Component {
     saveStep = () => {
         try {
 
+            debugger;
             let FunctioName = "";
+            let objLocalStep: clsStep = new clsStep();
+            objLocalStep = this.state.objStep;
+          //  objLocalStep.PhaseID = this.state.objPhase.PhaseID;
+            
+
+
             if (this.state.editMode == "A") {
-                FunctioName = "addStep"
+                FunctioName = "addSteps"
             }
             if (this.state.editMode == "E") {
-                FunctioName = "editStep"
+                FunctioName = "editSteps"
             }
 
             objBrokerRequest = new BrokerRequest();
@@ -236,7 +314,7 @@ export default class PhaseTagMaster extends Component {
             objBrokerRequest.Function = FunctioName;
             objBrokerRequest.Broker = "KPIPhaseMaster";
 
-            objParameter = new BrokerParameter('objStep', JSON.stringify(this.state.objStep));
+            objParameter = new BrokerParameter('objStep', JSON.stringify(objLocalStep));
 
             objBrokerRequest.Parameters.push(objParameter);
 
@@ -511,7 +589,7 @@ export default class PhaseTagMaster extends Component {
                 result = this.updateTree(treeNode.items[i], NodeText);
             }
             if (result.nodeType == UI.enumPhaseNodeType.Phase) {
-                result.objPhase = this.state.selectedNode.objPhase;
+                result.objPhase = this.state.objPhase;
             }
         }
         return null;
@@ -604,7 +682,7 @@ export default class PhaseTagMaster extends Component {
         }
 
         if (objNode.nodeType == UI.enumPhaseNodeType.Phase) {
-
+            
             this.setState({
                 // showPhaseEditor: true,
                 // showStepEditor: false,
@@ -620,6 +698,7 @@ export default class PhaseTagMaster extends Component {
         }
 
         if (objNode.nodeType == UI.enumPhaseNodeType.StepPhase) {
+           
             this.setState({
                 // showPhaseEditor: false,
                 // showStepEditor: true,
@@ -655,9 +734,9 @@ export default class PhaseTagMaster extends Component {
         return (
             <div>
                 <div className="row">
-                    <div className="col-6" >
+                    <div className="col-4" >
 
-                        <div style={{ height: "200px" }}>
+                        <div style={{ height: "800px",overflowX:"hidden",overflowY:"scroll" }}>
                             <TreeView
 
                                 className={this.state.EditingInProgress ? "k-state-disabled" : ""} //Nishant 25-09-2020
@@ -814,6 +893,7 @@ export default class PhaseTagMaster extends Component {
                         }}
                     >
                         <div>
+                        <label>Phase ID: {this.state.objStep.PhaseID}</label>
                             <label>Step Name</label>
                             <Input value={this.state.objStep.StepName} onChange={(e) => { this.handleStepChange(e, "StepName") }} ></Input>
                             <br></br>

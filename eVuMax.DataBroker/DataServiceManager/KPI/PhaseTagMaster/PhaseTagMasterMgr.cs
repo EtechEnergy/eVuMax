@@ -271,6 +271,115 @@ namespace eVuMax.DataBroker.DataServiceManager.KPI
                 }
 
 
+                if (paramRequest.Function == editSteps)
+                {
+
+                    string userID = "";
+                    string strObjStep = "";
+                    clsStep objStep = new clsStep();
+
+
+
+                    //  userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                    strObjStep = paramRequest.Parameters.Where(x => x.ParamName.Contains("objStep")).FirstOrDefault().ParamValue.ToString();
+
+                    if (strObjStep != "")
+                    {
+                        try
+                        {
+                            objStep = JsonConvert.DeserializeObject<clsStep>(strObjStep);
+                            string lastError = "";
+                            
+                            clsStep.update(ref paramRequest.objDataService, objStep, ref lastError);
+
+
+
+                            if (lastError != "")
+                            {
+                                objResponse = paramRequest.createResponseObject();
+                                objResponse.RequestSuccessfull = false;
+                                objResponse.Warnings = "Error updating Step: " + lastError;
+                                objResponse.Response = "";
+                                return objResponse;
+                            }
+
+
+                            objResponse.RequestSuccessfull = true;
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject objStep";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+                }
+
+
+
+
+                if (paramRequest.Function == removeSteps)
+                {
+
+                    string userID = "";
+                    string strObjStep = "";
+                    clsStep objStep = new clsStep();
+
+
+
+                    //  userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                    strObjStep = paramRequest.Parameters.Where(x => x.ParamName.Contains("objStep")).FirstOrDefault().ParamValue.ToString();
+
+                    if (strObjStep != "")
+                    {
+                        try
+                        {
+                            objStep = JsonConvert.DeserializeObject<clsStep>(strObjStep);
+                            string lastError = "";
+
+                            clsStep.remove(ref paramRequest.objDataService, objStep.PhaseID,ref objStep.StepID, ref lastError);
+
+
+
+                            if (lastError != "")
+                            {
+                                objResponse = paramRequest.createResponseObject();
+                                objResponse.RequestSuccessfull = false;
+                                objResponse.Warnings = "Error removing Step: " + lastError;
+                                objResponse.Response = "";
+                                return objResponse;
+                            }
+
+
+                            objResponse.RequestSuccessfull = true;
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject objStep";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+                }
+
+
+
+
+
                 #endregion
 
 
