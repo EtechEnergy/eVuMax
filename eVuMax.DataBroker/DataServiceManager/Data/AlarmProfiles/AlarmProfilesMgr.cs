@@ -137,17 +137,27 @@ namespace eVuMax.DataBroker.DataServiceManager
 
             if (paramRequest.Function == "loadExpWizard")
             {
-                string finalRedExpression = "";
-                string finalYellowExpression = "";
+                //string finalRedExpression = "";
+                //string finalYellowExpression = "";
 
-                if (VuMaxDR.Data.Objects.ExpMetaDataInterface.runExpWizard(ref paramRequest.objDataService, ref finalRedExpression, ref finalYellowExpression)) {
-                    ExpMetaData objMetaData = new ExpMetaData(paramRequest.objDataService);
-                    objMetaData.RedExpression = finalRedExpression;
-                    objMetaData.YellowExpression = finalYellowExpression;
+               // if (VuMaxDR.Data.Objects.ExpMetaDataInterface.runExpWizard(ref paramRequest.objDataService, ref finalRedExpression, ref finalYellowExpression)) {
+                    //ExpMetaData objMetaData = new ExpMetaData(paramRequest.objDataService);
+                    Dictionary<string, ExpMetaData> objData = ExpMetaData.getList(ref paramRequest.objDataService);
+
+
+
+                    objResponse = paramRequest.createResponseObject();
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Response = JsonConvert.SerializeObject(objData);
+                    objResponse.Errors = "";
+                    return objResponse;
+
+                    //objMetaData.RedExpression = finalRedExpression;
+                    //objMetaData.YellowExpression = finalYellowExpression;
 
                     //    txtYellowExpression.Text = finalYellowExpression
                     //txtRedExpression.Text = finalRedExpression
-                }
+          ///      }
 
             }
             throw new NotImplementedException();
