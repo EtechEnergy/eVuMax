@@ -1,34 +1,290 @@
-import { Button, DropDownList, Grid, GridColumn as Column, Label } from '@progress/kendo-react-all'
-import { Checkbox, Input, RadioButton } from '@progress/kendo-react-inputs'
+import { Button, Dialog, DropDownList, Grid, GridColumn as Column, Label } from '@progress/kendo-react-all'
+import { Checkbox, Input, RadioButton, TextArea } from '@progress/kendo-react-inputs'
 import React, { Component } from 'react'
+import BrokerParameter from '../../../../broker/BrokerParameter';
+import BrokerRequest from '../../../../broker/BrokerRequest';
+import { comboData } from '../../../../eVuMaxObjects/UIObjects/comboData';
+import { Util } from '../../../../Models/eVuMax';
+import GlobalMod from '../../../../objects/global';
+import { ClientLogger } from '../../../ClientLogger/ClientLogger';
 import { APChannel } from './APChannel';
+import axios from "axios";
+import * as utilFunc from './../../../../../src/utilFunctions/utilFunctions';
+import ExpressionEditor from '../../../ExpressionEditorComponent/ExpressionEditor';
+import { DepthLog, TimeLog, Trajectory, Well } from '../../../../eVuMaxObjects/dataObjects/dataObjects';
 
+let _gMod = new GlobalMod();
 export default class AlarmPanelDesigner extends Component {
+  objLogger: ClientLogger = new ClientLogger("AuditInformation", _gMod._userId);
 
   state = {
     objChannel: new APChannel(),
+
+
     ChannelList: [],
-    AlarmCategoryList: [],
-    chkStdChannelList: false,
+    selectedChannel: new comboData(),
+
+    selectedAlarmCategory: new comboData(),
+    cmbAlarmCategory: [],
+
+    isStdChannelList: false,
+
     AlarmTypeList: [],
+    selectedAlarmType: new comboData(),
+
+
     AlarmCategory2List: [],
-    AlarmShapeList: [],
-    RigstateList: [],
+
+    RigStatesList: [],
+    selectedRigState: "",
+
     WellStatusList: [],
-    cmbDownSampleFunction: []
+    selectedWellStatus: "",
+
+    selectedDownSampleFunction: new comboData(),
+    cmbDownSampleFunction: [],
+
+    selectedAlarmCategory2: new comboData(),
+    cmbAlarmCategory2: [] as any,
+
+    selectedShape: new comboData(),
+    cmbShape: [] as any,
+    YellowExpression: "",
+    showExpressionEditorDialog: false,
+
+    //Add Channel Dialog
+    objTimeLog: new TimeLog(),
+    objDepthLog: new DepthLog(),
+    objTractory: new Trajectory(),
+
 
   }
   componentDidMount = () => {
-
+    this.loadCombo();
   }
 
-  handleChange = (e, field: string) => {
+
+  saveExpression =()=>{
     try {
+      alert("aa");
+      this.setState({showExpressionEditorDialog : true});
+    } catch (error) {
+      
+    }
+  }
+  loadCombo = async () => {
+    try {
+
+      //Trajectory
+      let cboData: comboData;
+
+      if (this.state.objChannel.SourceType) {
+
+        cboData = new comboData("MD", "MD");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("TVD", "TVD");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("INCLINATION", "INCLINATION");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("AZIMUTH", "AZIMUTH");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("NS", "NS");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("EW", "EW");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("CLOSURE", "CLOSURE");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("DOGLEG", "DOG_LEG");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("DOGLEG 100", "DOG_LEG_100");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("DEPARTURE", "DEPARTURE");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("TOOLFACE", "TOOLFACE");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("WALK RATE", "WALK_RATE");
+        this.state.ChannelList.push(cboData);
+
+        cboData = new comboData("BUILD RATE", "BUILD_RATE");
+        this.state.ChannelList.push(cboData);
+
+      }
+
+      // load category
+
+      this.state.cmbAlarmCategory = [];
+      cboData = new comboData("Viewer Alarm", "0");
+      this.state.cmbAlarmCategory.push(cboData);
+      cboData = new comboData("DQM Alarm", "1");
+      this.state.cmbAlarmCategory.push(cboData);
+
+      // load alarm types from DB
+
+
+      // load alarm category2 from DB
+
+
+      // load shapes
+      this.state.cmbShape = [];
+      cboData = new comboData("Circle", "0");
+      this.state.cmbShape.push(cboData);
+      cboData = new comboData("Rectangle", "1");
+      this.state.cmbShape.push(cboData);
+      cboData = new comboData("Triangle", "2");
+      this.state.cmbShape.push(cboData);
+      cboData = new comboData("Down Triangle", "3");
+      this.state.cmbShape.push(cboData);
+      cboData = new comboData("Diamond", "4");
+      this.state.cmbShape.push(cboData);
+      cboData = new comboData("Left Triangle", "5");
+      this.state.cmbShape.push(cboData);
+      cboData = new comboData("Right Triangle", "6");
+      this.state.cmbShape.push(cboData);
+      // load all rig states from DB
+
+      // load well status  from DB
+
+      // down sample function
+      this.state.cmbDownSampleFunction = [];
+      cboData = new comboData("Last Value", "0");
+      this.state.cmbDownSampleFunction.push(cboData);
+      cboData = new comboData("Avg Value", "1");
+      this.state.cmbDownSampleFunction.push(cboData);
+      cboData = new comboData("Min Value", "2");
+      this.state.cmbDownSampleFunction.push(cboData);
+      cboData = new comboData("Max Value", "3");
+      this.state.cmbDownSampleFunction.push(cboData);
+      cboData = new comboData("First Value", "4");
+      this.state.cmbDownSampleFunction.push(cboData);
+
+
+      //Load from DB
+      Util.StatusInfo("Getting data from server   ");
+
+      this.objLogger.SendLog("load Donwload Audit Info");
+      let objBrokerRequest = new BrokerRequest();
+      objBrokerRequest.Module = "DataService";
+      objBrokerRequest.Broker = "DataAlarmProfiles";
+      objBrokerRequest.Function = "loadAlarmDesignerCombo";
+
+      let objParameter: BrokerParameter = new BrokerParameter(
+        "logtype",
+        this.state.objChannel.SourceType.toString()
+      );
+      objBrokerRequest.Parameters.push(objParameter);
+
+
+      objParameter = new BrokerParameter(
+        "isStdChannel", this.state.isStdChannelList.toString());
+      objBrokerRequest.Parameters.push(objParameter);
+
+
+      await axios
+        .get(_gMod._getData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+
+        })
+        .then(async (res) => {
+          Util.StatusSuccess("Data successfully retrived  ");
+          this.objLogger.SendLog("load Download Audit Info Data Received...");
+          debugger;
+
+          let objData = JSON.parse(res.data.Response);
+
+
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          } else {
+            this.setState({
+              warningMsg: []
+            });
+          }
+
+
+          // let objData_ :any = Object.values(objData);
+
+          let RigStatesList_ = Object.values(objData.RigStatesList);
+
+          let RigStatesList__ = RigStatesList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+
+          let WellStatusList_ = Object.values(objData.WellStatusList);
+          let WellStatusList__ = WellStatusList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+
+          //containerList_ = containerList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+
+
+          if (this.state.isStdChannelList) {
+            await this.setState({
+              ChannelList: Object.values(objData.stdChannelList), AlarmTypeList: Object.values(objData.alarmTypeList),
+              AlarmCategory2List: Object.values(objData.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+            });
+          } else {
+            await this.setState({
+              ChannelList: Object.values(objData.channelList), AlarmTypeList: Object.values(objData.alarmTypeList),
+              AlarmCategory2List: Object.values(objData.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+            });
+          }
+
+        })
+        .catch((error) => {
+
+          Util.StatusError(error.message);
+
+          if (error.response) {
+
+          } else if (error.request) {
+            console.log("error.request");
+          } else {
+            console.log("Error", error);
+          }
+          console.log("rejected");
+          this.setState({ isProcess: false });
+        });
+
 
     } catch (error) {
 
     }
+  }
 
+
+  handleChange = (event: any, field: any) => {
+    try {
+      debugger;
+      const value = event.value;
+
+      const name = field;
+
+      let edited: any = utilFunc.CopyObject(this.state.objChannel);
+      edited[field] = value;
+      this.setState({
+        objChannel: edited
+      });
+
+
+    } catch (error) {
+
+    }
   }
 
   onClickWizard = () => {
@@ -42,43 +298,48 @@ export default class AlarmPanelDesigner extends Component {
   onDropdownChange = (e: any, field: string) => {
     try {
 
-      if (field == "cmbAlarmCategory") {
+      let edited = this.state.objChannel;
+      let value = e.value;
+      let index: number = 0;
+      edited[field] = value.text;
+
+
+
+      if (field == "Mnemonic") {  //Channel 
+        this.setState({
+          selectedChannel: e.value, objChannel: edited
+        });
+        return;
+      }
+
+      if (field == "AlarmType") {
 
         this.setState({
-          cmbAlarmCategory: e.value
+          selectedAlarmType: e.value, objChannel: edited
         });
         return;
       }
 
 
-      if (field == "cmbChannel") {
-
+      if (field == "AlarmCategory") {
         this.setState({
-          cmbChannel: e.value
+          selectedAlarmCategory: e.value, objChannel: edited
         });
         return;
       }
 
-      if (field == "cmbAlarmType") {
+      if (field == "AlarmCategory2ID") {
 
         this.setState({
-          cmbChannel: e.value
+          selectedAlarmCategory2: e.value, objChannel: edited
         });
         return;
       }
 
-      if (field == "cmbAlarmCategory") {
+      if (field == "AlarmShape") {
 
         this.setState({
-          cmbAlarmCategory: e.value
-        });
-        return;
-      }
-
-      if (field == "cmbShape") {
-
-        this.setState({
-          cmbShape: e.value
+          cmbShape: e.value, objChannel: edited
         });
         return;
       }
@@ -86,7 +347,7 @@ export default class AlarmPanelDesigner extends Component {
       if (field == "DownsampleFunction") {
 
         this.setState({
-          DownsampleFunction: e.value
+          DownsampleFunction: e.value, objChannel: edited
         });
         return;
       }
@@ -101,6 +362,121 @@ export default class AlarmPanelDesigner extends Component {
     }
   }
 
+
+  grdItemChange = (e: any) => {
+
+    e.dataItem[e.field] = e.value;
+    this.setState({
+      RigStatesList: [...this.state.RigStatesList]
+    });
+
+    let newData: any = Object.values([...this.state.RigStatesList]);
+    let index = newData.findIndex((item: any) => item.Number === e.dataItem.Number); // use unique value like ID
+    newData[index][e.field] = e.value;
+    this.setState({ RigStatesList: newData })
+  };
+
+
+  grdRowClick = (e: any, field: string) => {
+    debugger;
+    if (field == 'RigStatesList') {
+      let index = this.state.RigStatesList.findIndex((item: any) => item["Number"] === e.dataItem.Number);
+      this.setState({
+        selectedRigState: e.dataItem.Number
+      });
+    }
+
+    if (field == 'WellStatusList') {
+      let index = this.state.RigStatesList.findIndex((item: any) => item["WellStatus"] === e.dataItem.WellStatus);
+      this.setState({
+        selectedWellStatus: e.dataItem.WellStatus
+      });
+    }
+
+
+  };
+
+
+  selectionChange = async (event, field: string) => {
+    try {
+
+      debugger;
+
+
+      const checked = event.syntheticEvent.target.checked;
+
+      if (field == "RigStatesList") {
+        const data = this.state.RigStatesList.map((item: any) => {
+          if (item["Number"] === event.dataItem.Number) {
+            item["selected"] = checked;
+          }
+          return item;
+        });
+        await this.setState({ RigStatesList: data });
+      }
+      if (field == "WellStatusList") {
+        const data = this.state.WellStatusList.map((item: any) => {
+          debugger;
+          if (item["WELL_STATUS"] === event.dataItem.WELL_STATUS) {
+            item["selected"] = checked;
+          }
+          return item;
+        });
+        await this.setState({ WellStatusList: data });
+      }
+
+    } catch (error) {
+
+    }
+  }
+
+
+  grid_headerSelectionChange = (event: any, field: string) => {
+    const checked = event.syntheticEvent.target.checked;
+    if (field == "RigStatesList") {
+      const data = this.state.RigStatesList.map((item: any) => {
+        item["selected"] = checked;
+        return item;
+      });
+      this.setState({ RigStatesList: data });
+    }
+    if (field == "WellStatusList") {
+      const data = this.state.WellStatusList.map((item: any) => {
+        item["selected"] = checked;
+        return item;
+      });
+      this.setState({ WellStatusList: data });
+    }
+
+  };
+
+  onOpenEditorClick = () => {
+    try {
+
+
+      let localTimeLog: TimeLog = new TimeLog();
+      let localDepthLog: DepthLog = new DepthLog();
+      let localTrajectory: Trajectory = new Trajectory();
+
+
+      if (this.state.objChannel.SourceType == 1) {
+        localTimeLog = this.state.objTimeLog;
+      }
+
+      if (this.state.objChannel.SourceType == 2) {
+        localDepthLog = this.state.objDepthLog;
+      }
+
+      if (this.state.objChannel.SourceType == 3) {
+        localTrajectory = new Trajectory();
+      }
+
+      this.setState({ showExpressionEditorDialog: true });
+    } catch (error) {
+
+    }
+  }
+
   render() {
     return (
       <div className='mt-3'>
@@ -109,22 +485,22 @@ export default class AlarmPanelDesigner extends Component {
             <div className="form-group">
               <Label>Source</Label>
               <RadioButton
-                value="0"
-                checked={this.state.objChannel.SourceType === 0}
-                label="Time Log"
-              >
-              </RadioButton>
-
-              <RadioButton
                 value="1"
                 checked={this.state.objChannel.SourceType === 1}
-                label="Depth Log"
+                label="Time Log"
               >
               </RadioButton>
 
               <RadioButton
                 value="2"
                 checked={this.state.objChannel.SourceType === 2}
+                label="Depth Log"
+              >
+              </RadioButton>
+
+              <RadioButton
+                value="3"
+                checked={this.state.objChannel.SourceType === 3}
                 label="Trajectory"
               >
               </RadioButton>
@@ -137,16 +513,23 @@ export default class AlarmPanelDesigner extends Component {
                 textField="text"
                 dataItemKey="id"
                 data={this.state.ChannelList}
-                value={this.state.objChannel.Mnemonic}
-                onChange={(e) => this.onDropdownChange(e, "cmbChannel")}
+                value={this.state.selectedChannel}
+                onChange={(e) => this.onDropdownChange(e, "Mnemonic")}
               >
               </DropDownList>
 
               <Checkbox
                 className="ml-2"
                 label={"Standard List"}
-                value={this.state.chkStdChannelList}
-                onChange={(e) => this.handleChange(e, "chkStdChannelList")}
+                value={this.state.isStdChannelList}
+                onChange={async (e) => {
+                  debugger;
+                  await this.setState({ isStdChannelList: e.value });
+                  this.loadCombo();
+
+                }
+
+                }
               >
 
               </Checkbox>
@@ -157,6 +540,7 @@ export default class AlarmPanelDesigner extends Component {
               <Input
                 name="ChannelName"
                 value={this.state.objChannel.ChannelName}
+                onChange={(e) => { this.handleChange(e, "ChannelName") }}
               >
               </Input>
             </div>
@@ -170,9 +554,13 @@ export default class AlarmPanelDesigner extends Component {
                 className="form-control"
                 textField="text"
                 dataItemKey="id"
-                data={this.state.AlarmCategoryList}
-                onChange={(e) => this.onDropdownChange(e, "cmbAlarmCategory")}
-                value={this.state.objChannel.AlarmCategory}
+                data={this.state.cmbAlarmCategory}
+                value={this.state.selectedAlarmCategory}
+                onChange={(e) => this.onDropdownChange(e, "AlarmCategory")}
+
+
+
+
               >
               </DropDownList>
             </div>
@@ -186,8 +574,8 @@ export default class AlarmPanelDesigner extends Component {
                 textField="text"
                 dataItemKey="id"
                 data={this.state.AlarmTypeList}
-                onChange={(e) => this.onDropdownChange(e, "cmbAlarmType")}
-                value={this.state.objChannel.AlarmType}
+                onChange={(e) => this.onDropdownChange(e, "AlarmType")}
+                value={this.state.selectedAlarmType}
               >
               </DropDownList>
             </div>
@@ -201,8 +589,8 @@ export default class AlarmPanelDesigner extends Component {
                 textField="text"
                 dataItemKey="id"
                 data={this.state.AlarmCategory2List}
-                onChange={(e) => this.onDropdownChange(e, "cmbAlarmCategory2")}
-                value={this.state.objChannel.AlarmCategory2ID}
+                onChange={(e) => this.onDropdownChange(e, "AlarmCategory2ID")}
+                value={this.state.selectedAlarmCategory2}
               >
               </DropDownList>
             </div>
@@ -211,20 +599,36 @@ export default class AlarmPanelDesigner extends Component {
               <Label>Yellow Expression</Label>
 
               <RadioButton
+                value={false}
                 checked={this.state.objChannel.YellowUseBuilder === false}
                 label="Directly enter Expression"
+                onChange={(e) => { this.handleChange(e, "YellowUseBuilder") }}
               >
               </RadioButton>
 
 
               <RadioButton
-                checked={this.state.objChannel.YellowUseBuilder}
+                value={true}
+                checked={this.state.objChannel.YellowUseBuilder == true}
                 label="Use Conditional Builder"
+                onChange={(e) => { this.handleChange(e, "YellowUseBuilder") }}
               >
               </RadioButton>
               <Button id="cmdWizard" onClick={this.onClickWizard} className='ml-3'>Run Expression Wizard </Button>
             </div>
 
+
+            <div className="form-group  mt-3 mb-3">
+              <TextArea
+                autoSize={true}
+                style={{ width: "30%" }}
+                rows={2}
+                value={this.state.YellowExpression}
+                onChange={(e) => this.handleChange(e, "YellowExpression")}
+              />
+
+              <Button id="cmdOpenEditor" onClick={this.onOpenEditorClick} className='ml-3'>Open Editor </Button>
+            </div>
 
             <div className="form-group  mt-3 mb-3">
               <Button>Click to Open Container Builder</Button>
@@ -269,8 +673,8 @@ export default class AlarmPanelDesigner extends Component {
                 className="form-control"
                 textField="text"
                 dataItemKey="id"
-                data={this.state.AlarmShapeList}
-                onChange={(e) => this.onDropdownChange(e, "cmbShape")}
+                data={this.state.cmbShape}
+                onChange={(e) => this.onDropdownChange(e, "AlarmShape")}
                 value={this.state.objChannel.AlarmShape}
               >
 
@@ -330,16 +734,33 @@ export default class AlarmPanelDesigner extends Component {
               <div className="row">
                 <div className="col-12">
                   <Grid
-                    data={this.state.RigstateList}
+                    className='mt-3'
+                    data={this.state.RigStatesList}
+                    onRowClick={(e) => { this.grdRowClick(e, "RigStatesList") }}
+
+                    onSelectionChange={(e) => { this.selectionChange(e, "RigStatesList") }}
+                    editField="inEdit"
+                    selectedField="selected"
+                    style={{ height: "300px", width: "600px" }}
+                    onHeaderSelectionChange={(e) => { this.grid_headerSelectionChange(e, "RigStatesList") }} //Nishant 26-05-2020
                   >
                     <Column
-                      field='selected'
-                    >
+                      field="selected"
+                      width="65px"
+                      title=""
+                      resizable={true}
+                      minResizableWidth={65}
+                      headerClassName="text-center"
+                      className="text-center"
+                      editable={true}
+                      editor="boolean">
 
                     </Column>
 
+
+
                     <Column
-                      field='RigState'
+                      field='Name'
                     >
 
                     </Column>
@@ -375,15 +796,33 @@ export default class AlarmPanelDesigner extends Component {
                 <div className="col-12">
                   <Grid
                     data={this.state.WellStatusList}
+
+                    className='mt-3'
+                    onRowClick={(e) => { this.grdRowClick(e, "WellStatusList") }}
+                    onSelectionChange={(e) => { this.selectionChange(e, "WellStatusList") }}
+
+                    editField="inEdit"
+                    selectedField="selected"
+                    style={{ height: "300px", width: "600px" }}
+                    onHeaderSelectionChange={(e) => { this.grid_headerSelectionChange(e, "WellStatusList") }} //Nishant 26-05-2020
+
                   >
                     <Column
-                      field='selected'
+                      field="selected"
+                      width="65px"
+                      title=""
+                      resizable={true}
+                      minResizableWidth={65}
+                      headerClassName="text-center"
+                      className="text-center"
+                      editable={true}
+                      editor="boolean"
                     >
 
                     </Column>
 
                     <Column
-                      field='RigState'
+                      field='WELL_STATUS'
                     >
 
                     </Column>
@@ -463,8 +902,30 @@ export default class AlarmPanelDesigner extends Component {
           </div>
         </div>
 
+        {this.state.showExpressionEditorDialog && this.state.objChannel.SourceType === 1 &&
+          <Dialog
+            height={500}
+            width={600}
+          >
+            {/* <ExpressionEditor {...this} objTimeLog={this.__parentRef.state.objTimeLog} expressionText={this.state.objChannel.valueQuery}></ExpressionEditor> */}
+
+            <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
+
+          </Dialog>
+        }
+
+        {this.state.showExpressionEditorDialog && this.state.objChannel.SourceType === 3 &&
+          <Dialog
+            height={500}
+            width={600}
+          >
+            <ExpressionEditor objTimeLog={this.state.objTimeLog} objDepthLog={this.state.objDepthLog} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
+            {/* <ExpressionEditor {...this} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor> */}
+          </Dialog>
+        }
 
       </div>
+
     )
   }
 }

@@ -16,9 +16,9 @@ export enum apTriggerType {
 }
 
 export enum apSourceType {
-    TimeLog = 0,
-    DepthLog = 1,
-    Trajectory = 2
+    TimeLog = 1,
+    DepthLog = 2,
+    Trajectory = 3
 }
 
 export class APChannel {
@@ -69,7 +69,7 @@ export class APChannel {
     RedUseBuilder: boolean;
     WellStatusSpecific: boolean;
     YellowConditions: string = "";
-    YellowUseBuilder: boolean;
+    YellowUseBuilder: boolean=false;
     PlaySound: boolean;
     AckRequired: boolean;
 

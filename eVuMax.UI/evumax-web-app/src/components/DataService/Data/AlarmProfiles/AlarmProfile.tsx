@@ -135,7 +135,7 @@ export default class AlarmProfile extends Component<IProps> {
                     //     element.channels = Object.values(element.channels)
                     // });
 
-                    containerList_ = containerList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+                    containerList_ = containerList_.map((item: any) => Object.assign({ selected_: false, inEdit: true }, item));
 
                     this.setState({
                         containerLibrary: containerList_, showLoadLibraryDialog: true
@@ -303,7 +303,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     grdRowClick = (e) => {
         try {
-
+            debugger;
             let index = this.state.grdContainers.findIndex((item: any) => item["ContainerID"] === e.dataItem.ContainerID
             );
             if (index >= 0) {
@@ -315,7 +315,8 @@ export default class AlarmProfile extends Component<IProps> {
                 });
 
                 this.setState({
-                    selectedTab: 1, ChannelsList: channelList_, ContainerName: e.dataItem.ContainerName, IsActive: e.dataItem.IsActive, selectedConainerID: e.dataItem.ContainerID
+                    selectedTab: 1, ChannelsList: channelList_, ContainerName: e.dataItem.ContainerName, IsActive: e.dataItem.IsActive, 
+                    selectedConainerID: e.dataItem.ContainerID
                 });
                 debugger;
             }
@@ -327,7 +328,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     grdRowClickLibrary = (e) => {
         try {
-
+            debugger;
             let index = this.state.containerLibrary.findIndex((item: any) => item["ContainerID"] === e.dataItem.ContainerID);
 
             debugger;
@@ -418,7 +419,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     selectionChange = (event) => {
         try {
-
+            debugger;
             const checked = event.syntheticEvent.target.checked;
 
             const data = this.state.grdContainers.map((item: any) => {
@@ -436,12 +437,12 @@ export default class AlarmProfile extends Component<IProps> {
 
     selectionChangeLibrary = (event) => {
         try {
-
+            debugger;
             const checked = event.syntheticEvent.target.checked;
 
             const data = this.state.containerLibrary.map((item: any) => {
                 if (item["ContainerID"] === event.dataItem.ContainerID) {
-                    item["selected"] = checked;
+                    item["selected_"] = checked;
                 }
                 return item;
             });
@@ -638,7 +639,32 @@ export default class AlarmProfile extends Component<IProps> {
         } catch (error) {
 
         }
+    
     }
+
+   
+  grid_headerSelectionChange = (event: any, field :  string) => {
+    
+    debugger;
+    const checked = event.syntheticEvent.target.checked;
+    if (field=="grdContainers"){
+      const data = this.state.grdContainers.map((item: any) => {
+        item["selected"] = checked;
+        return item;
+      });
+      this.setState({ grdContainers: data });
+    }
+
+
+    if (field=="containerLibrary"){
+        const data = this.state.containerLibrary.map((item: any) => {
+          item["selected_"] = checked;
+          return item;
+        });
+        this.setState({ containerLibrary: data });
+      }
+}
+ 
     render() {
         return (
             <div>
@@ -716,6 +742,7 @@ export default class AlarmProfile extends Component<IProps> {
                                             selectedField="selected"
                                             onRowClick={this.grdRowClick}
                                             onSelectionChange={this.selectionChange}
+                                            onHeaderSelectionChange={(e)=>{ this.grid_headerSelectionChange(e, "grdContainers")}} //Nishant 26-05-2020
                                         >
                                             <Column
                                                 field="selected"
@@ -875,13 +902,14 @@ export default class AlarmProfile extends Component<IProps> {
                                 style={{ height: '55vh', width: '100%' }}
                                 data={this.state.containerLibrary}
                                 editField="inEdit"
-                                selectedField="selected"
+                                selectedField="selected_"
                                 onRowClick={this.grdRowClickLibrary}
                                 onSelectionChange={this.selectionChangeLibrary}
                                 className="mt-3"
+                                onHeaderSelectionChange={(e)=>{ this.grid_headerSelectionChange(e, "containerLibrary")}} //Nishant 26-05-2020
                             >
                                 <Column
-                                    field="selected"
+                                    field="selected_"
                                     width="65px"
                                     title=""
                                     resizable={true}
@@ -890,11 +918,14 @@ export default class AlarmProfile extends Component<IProps> {
                                     className="text-center"
                                     //editable={true}
                                     editor="boolean"
-                                    headerSelectionValue={
-                                        this.state.containerLibrary.findIndex(
-                                            (dataItem: any) => dataItem.selected === true
-                                        ) === -1
-                                    }
+                                    // headerSelectionValue={
+                                        
+                                    //     this.state.containerLibrary.findIndex(
+                                    //         (dataItem: any) => dataItem.selected_ === true
+                                    //     ) === -1
+                                    // }
+
+                                    
                                 ></Column>
 
                                 {false && <Column field="ContainerID" title="Container ID" resizable={true} minResizableWidth={50} headerClassName="text-center" editable={false}  ></Column>}
