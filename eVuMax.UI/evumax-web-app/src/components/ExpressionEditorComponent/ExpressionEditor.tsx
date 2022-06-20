@@ -95,9 +95,13 @@ export default class ExpressionEditor extends Component<IProps> {
     }
 
     save = () => {
+        debugger;
         this.__parentRef.saveExpression(this.state.expressionText);
     }
 
+    close = ()=>{
+        this.__parentRef.closeExpression();
+    }
 
     render() {
         return (
@@ -143,7 +147,7 @@ export default class ExpressionEditor extends Component<IProps> {
                         </Button>
                     </div>
                     <div className="col">
-                        <Button>
+                        <Button onClick={this.close}>
                             Cancel
                         </Button>
                     </div>

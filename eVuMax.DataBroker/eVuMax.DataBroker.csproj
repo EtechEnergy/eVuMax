@@ -122,6 +122,9 @@
     <Compile Include="DataServiceManager\Data\AlarmProfiles\AlarmProfilesMgr.cs" />
     <Compile Include="DataServiceManager\Data\AlarmProfiles\APChannel.cs" />
     <Compile Include="DataServiceManager\Data\AlarmProfiles\APChannelData.cs" />
+    <Compile Include="DataServiceManager\Data\AlarmProfiles\ExpMetaData.cs" />
+    <Compile Include="DataServiceManager\Data\AlarmProfiles\ExpVariable.cs" />
+    <Compile Include="DataServiceManager\Data\AlarmProfiles\ExpWizard.cs" />
     <Compile Include="DataServiceManager\Data\RigStateSetup\eWellRigStateItem.cs" />
     <Compile Include="DataServiceManager\Data\RigStateSetup\WellRigStateSetupMgr.cs" />
     <Compile Include="DataServiceManager\Data\SetupAlarms\SetupAlarms.cs" />
