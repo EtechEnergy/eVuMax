@@ -12,6 +12,8 @@ using System.Reflection;
 using System.IO;
 using log4net;
 using System.Configuration;
+using eVuMax.DataBroker.Data;
+using VuMaxDR.Data;
 
 
 namespace eVuMax.API
@@ -83,6 +85,7 @@ namespace eVuMax.API
             try
             {
 
+
                 ILog APILogger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
                 APILogger = log4net.LogManager.GetLogger("eVuMaxAPILog");
 
@@ -109,6 +112,8 @@ namespace eVuMax.API
                 VuMaxDR.Data.DataService objDataService;
 
                 objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
+
+             
 
 
 
@@ -205,14 +210,18 @@ namespace eVuMax.API
                 connString = getConnectionString();//for Decrepting password and user Name
 
                 VuMaxDR.Data.DataService objDataService;
-
                 objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
+
+
 
                 string __username = "";
                 string __password = "";
                 string __servername = "";
 
                 getConnStringComponents(out __servername, out __username, out __password);
+
+                
+
 
                 //if (!objDataService.OpenConnectionSqlPassword(__username,__password,__servername))
                 if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername))
@@ -242,9 +251,7 @@ namespace eVuMax.API
                     if (objDataService != null)
                     {
                         objDataService.closeConnection();
-
                     }
-
 
                     //JsonConvert.SerializeObject(objResponse);
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objResponse));
