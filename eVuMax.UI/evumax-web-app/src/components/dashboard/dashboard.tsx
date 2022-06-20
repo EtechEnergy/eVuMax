@@ -744,7 +744,12 @@ export class Dashboard extends React.Component<Props> {
                 </NavLink>
               </li>
 
-            
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/PhaseTagMaster">
+                Phase Tag Master
+                </NavLink>
+              </li>
+
 
             </ol>
           </ul>

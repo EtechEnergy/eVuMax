@@ -1,4 +1,5 @@
 ﻿using eVuMax.DataBroker.Broker;
+using eVuMax.DataBroker.DataServiceManager.KPI;
 using eVuMax.DataBroker.DataServiceManager.Setup;
 using System;
 
@@ -121,6 +122,15 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                 #endregion
 
+
+                #region KPI
+                if(paramRequest.Broker == Global.Brk_KPI_PhaseMaster)
+                {
+                    PhaseTagMasterMgr objPhaseMaster = new PhaseTagMasterMgr();
+                    return objPhaseMaster.getData(paramRequest);
+                }
+                #endregion
+
                 BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";
@@ -228,6 +238,18 @@ namespace eVuMax.DataBroker.DataServiceManager
                     return objAlarmProfilesMgr.performTask(paramRequest);
                 }
                 #endregion
+
+
+                //Nishant 18/06/2022
+                #region KPI
+                if (paramRequest.Broker == Global.Brk_KPI_PhaseMaster)
+                {
+                    PhaseTagMasterMgr objPhaseMaster = new PhaseTagMasterMgr();
+                    return objPhaseMaster.performTask(paramRequest);
+                }
+                #endregion
+
+
                 Broker.BrokerResponse objResponse = paramRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Errors = "Invalid request Broker header. Please use proper header in the Broker request";
