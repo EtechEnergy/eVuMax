@@ -344,9 +344,6 @@ namespace eVuMax.DataBroker.DataServiceManager
             foreach (DataRow objRow in objData.Rows)
             {
 
-
-
-
                 DateTime createdDate = DateTime.Parse(DataService.checkNull(objRow["CREATED_DATE"], new DateTime()).ToString());
                 DateTime modifiedDate = DateTime.Parse(DataService.checkNull(objRow["MODIFIED_DATE"], new DateTime()).ToString());
 
