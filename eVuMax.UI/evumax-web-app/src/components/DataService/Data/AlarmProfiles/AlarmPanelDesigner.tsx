@@ -51,11 +51,13 @@ export default class AlarmPanelDesigner extends Component {
     cmbShape: [] as any,
     //YellowExpression: "",
     showExpressionEditorDialog: false,
+    AlarmExpList: []=[], 
 
     //Add Channel Dialog
     objTimeLog: new TimeLog(),
     objDepthLog: new DepthLog(),
     objTractory: new Trajectory(),
+    
 
 
   }
@@ -305,6 +307,7 @@ export default class AlarmPanelDesigner extends Component {
        let finalRedExpression  = ""
        let  finalYellowExpression  = ""
 
+      
 
        //this.objLogger.SendLog("load Donwload Audit Info");
        let objBrokerRequest = new BrokerRequest();
@@ -337,7 +340,8 @@ export default class AlarmPanelDesigner extends Component {
  
            let objData = JSON.parse(res.data.Response);
  
- 
+           debugger;
+
            let warnings: string = res.data.Warnings;
            if (warnings.trim() != "") {
              let warningList = [];
@@ -352,29 +356,13 @@ export default class AlarmPanelDesigner extends Component {
            }
  
  
-           // let objData_ :any = Object.values(objData);
- 
-           let RigStatesList_ = Object.values(objData.RigStatesList);
- 
-           let RigStatesList__ = RigStatesList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
- 
-           let WellStatusList_ = Object.values(objData.WellStatusList);
-           let WellStatusList__ = WellStatusList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
- 
-           //containerList_ = containerList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
- 
- 
-           if (this.state.isStdChannelList) {
+            let objData_ :any = Object.values(objData);
+ //Object.values(objData)[0].Name
+           
              await this.setState({
-               ChannelList: Object.values(objData.stdChannelList), AlarmTypeList: Object.values(objData.alarmTypeList),
-               AlarmCategory2List: Object.values(objData.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+              AlarmExpList: objData_
              });
-           } else {
-             await this.setState({
-               ChannelList: Object.values(objData.channelList), AlarmTypeList: Object.values(objData.alarmTypeList),
-               AlarmCategory2List: Object.values(objData.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
-             });
-           }
+           
  
          })
          .catch((error) => {
@@ -1033,9 +1021,7 @@ export default class AlarmPanelDesigner extends Component {
             height={500}
             width={600}
           >
-
             <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
-
           </Dialog>
         }
  */}
@@ -1048,6 +1034,16 @@ export default class AlarmPanelDesigner extends Component {
             <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} objDepthLog={this.state.objDepthLog} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
           </Dialog>
         }
+
+{/* 
+{this.state.showAlarmExpListDialog &&
+          <Dialog
+            height={500}
+            width={600}
+          >
+            <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} objDepthLog={this.state.objDepthLog} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
+          </Dialog>
+        } */}
 
       </div>
 
