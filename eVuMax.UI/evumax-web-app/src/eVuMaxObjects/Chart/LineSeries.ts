@@ -543,7 +543,7 @@ export class LineSeries {
               .attr("r", 7)
               .style("stroke", function (d) {
                 //return d.color; //"#11bbcc"; // objSeries.Color;
-                return "red";
+                return "#36FF25";
               })
               .style("fill", "none")
               .style("stroke-width", "1px")
@@ -706,12 +706,12 @@ export class LineSeries {
                         d3.select(this)
                           .select("text")
                           .attr("font-family", "Verdana")
-                          .style("fill", "red")
+                          .style("fill", "#36FF25")
                           .attr("font-size", "12px")
                           .style("stroke-width", "0px")
                           .style("stroke", function (d: any) {
                             //return d.color; //"#11bbcc"; // objSeries.Color;
-                            return "red";
+                            return "#36FF25";
                           })
                           .text(d.name + " (" + xValue + " , " + yValue + ")");
                       } else {

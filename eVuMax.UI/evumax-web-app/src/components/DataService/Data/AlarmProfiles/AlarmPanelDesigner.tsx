@@ -12,6 +12,7 @@ import axios from "axios";
 import * as utilFunc from './../../../../../src/utilFunctions/utilFunctions';
 import ExpressionEditor from '../../../ExpressionEditorComponent/ExpressionEditor';
 import { DepthLog, TimeLog, Trajectory, Well } from '../../../../eVuMaxObjects/dataObjects/dataObjects';
+import AlarmExpression from './AlarmExpression';
 
 let _gMod = new GlobalMod();
 export default class AlarmPanelDesigner extends Component {
@@ -51,14 +52,14 @@ export default class AlarmPanelDesigner extends Component {
     cmbShape: [] as any,
     //YellowExpression: "",
     showExpressionEditorDialog: false,
-    AlarmExpList: []=[], 
+    AlarmExpList: [] = [],
 
     //Add Channel Dialog
     objTimeLog: new TimeLog(),
     objDepthLog: new DepthLog(),
     objTractory: new Trajectory(),
-    
 
+    showAlarmExpListDialog: false,
 
   }
   componentDidMount = () => {
@@ -304,82 +305,82 @@ export default class AlarmPanelDesigner extends Component {
 
   onClickWizard = () => {
     try {
-       let finalRedExpression  = ""
-       let  finalYellowExpression  = ""
+      let finalRedExpression = ""
+      let finalYellowExpression = ""
 
-      
 
-       //this.objLogger.SendLog("load Donwload Audit Info");
-       let objBrokerRequest = new BrokerRequest();
-       objBrokerRequest.Module = "DataService";
-       objBrokerRequest.Broker = "DataAlarmProfiles";
-       objBrokerRequest.Function = "loadExpWizard";
- 
+
+      //this.objLogger.SendLog("load Donwload Audit Info");
+      let objBrokerRequest = new BrokerRequest();
+      objBrokerRequest.Module = "DataService";
+      objBrokerRequest.Broker = "DataAlarmProfiles";
+      objBrokerRequest.Function = "loadExpWizard";
+
       //  let objParameter: BrokerParameter = new BrokerParameter(
       //    "logtype",
       //    this.state.objChannel.SourceType.toString()
       //  );
       //  objBrokerRequest.Parameters.push(objParameter);
- 
- 
- 
- 
-        axios
-         .get(_gMod._getData, {
-           headers: {
-             Accept: "application/json",
-             "Content-Type": "application/json;charset=UTF-8",
-           },
-           params: { paramRequest: JSON.stringify(objBrokerRequest) },
- 
-         })
-         .then(async (res) => {
-           Util.StatusSuccess("Data successfully retrived  ");
-           this.objLogger.SendLog("load ExpWizard Data Received...");
-           debugger;
- 
-           let objData = JSON.parse(res.data.Response);
- 
-           debugger;
 
-           let warnings: string = res.data.Warnings;
-           if (warnings.trim() != "") {
-             let warningList = [];
-             warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
-             this.setState({
-               warningMsg: warningList
-             });
-           } else {
-             this.setState({
-               warningMsg: []
-             });
-           }
- 
- 
-            let objData_ :any = Object.values(objData);
- //Object.values(objData)[0].Name
-           
-             await this.setState({
-              AlarmExpList: objData_
-             });
-           
- 
-         })
-         .catch((error) => {
- 
-           Util.StatusError(error.message);
- 
-           if (error.response) {
- 
-           } else if (error.request) {
-             console.log("error.request");
-           } else {
-             console.log("Error", error);
-           }
-           console.log("rejected");
-           this.setState({ isProcess: false });
-         });
- 
+
+
+
+      axios
+        .get(_gMod._getData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+
+        })
+        .then(async (res) => {
+          Util.StatusSuccess("Data successfully retrived  ");
+          this.objLogger.SendLog("load ExpWizard Data Received...");
+          debugger;
+
+          let objData = JSON.parse(res.data.Response);
+
+          debugger;
+
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          } else {
+            this.setState({
+              warningMsg: []
+            });
+          }
+
+
+          let objData_: any = Object.values(objData);
+          //Object.values(objData)[0].Name
+
+          await this.setState({
+            AlarmExpList: objData_, showAlarmExpListDialog : true
+          });
+
+
+        })
+        .catch((error) => {
+
+          Util.StatusError(error.message);
+
+          if (error.response) {
+
+          } else if (error.request) {
+            console.log("error.request");
+          } else {
+            console.log("Error", error);
+          }
+          console.log("rejected");
+          this.setState({ isProcess: false });
+        });
+
 
 
     } catch (error) {
@@ -1035,15 +1036,19 @@ export default class AlarmPanelDesigner extends Component {
           </Dialog>
         }
 
-{/* 
-{this.state.showAlarmExpListDialog &&
+
+        {this.state.showAlarmExpListDialog &&
           <Dialog
+          title={"Alarm Expression"}
+          onClose={() =>
+            this.setState({ showAlarmExpListDialog: false })
+          }
             height={500}
             width={600}
           >
-            <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} objDepthLog={this.state.objDepthLog} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
+            <AlarmExpression AlarmExpList = {this.state.AlarmExpList}></AlarmExpression>
           </Dialog>
-        } */}
+        }
 
       </div>
 
