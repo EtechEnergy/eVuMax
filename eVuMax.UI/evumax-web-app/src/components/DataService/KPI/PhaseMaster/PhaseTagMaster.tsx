@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 
 import axios from "axios";
 
-import { Button, Dialog, Input, Label, TreeView, Window } from "@progress/kendo-react-all";
+import { Button, ColorPicker, Dialog, Input, Label, TreeView, Window } from "@progress/kendo-react-all";
 
 import BrokerRequest from "../../../../broker/BrokerRequest";
 import BrokerParameter from "../../../../broker/BrokerParameter";
@@ -16,9 +16,9 @@ import { clsStep } from './clsStep';
 import { clsEmph } from './clsEmph';
 import NotifyMe from 'react-notification-timeline';
 import * as utilFunc from '../../../../utilFunctions/utilFunctions';
-import { isObjectBindingPattern } from 'typescript';
+
 import { confirmAlert } from 'react-confirm-alert';
-import { locales } from 'moment';
+import * as utilFunctions from "../../../../utilFunctions/utilFunctions";
 
 
 let _gMod = new GlobalMod();
@@ -54,7 +54,7 @@ export default class PhaseTagMaster extends Component {
         // await this.setState({
         //     showPhaseEditor: true
         // });
-
+        debugger;
         if (this.state.AddBtnCaption == "Add Phase") {
 
             await this.setState({
@@ -69,9 +69,22 @@ export default class PhaseTagMaster extends Component {
             alert(this.state.objPhase.PhaseName);
             await this.setState({
                 showPhaseEditor: false,
-                showStepEditor:true,
+                showStepEditor: true,
                 //objPhase: new clsPhase(),
                 objStep: new clsStep(),
+                EditingInProgress: true,
+                editMode: "A"
+            });
+        }
+
+        if (this.state.AddBtnCaption == "Add Emphasis") {
+            alert(this.state.objPhase.PhaseName);
+            await this.setState({
+                showPhaseEditor: false,
+                showStepEditor: false,
+                showEmphEditor: true,
+                //objPhase: new clsPhase(),
+                objEmph: new clsEmph(),
                 EditingInProgress: true,
                 editMode: "A"
             });
@@ -97,7 +110,7 @@ export default class PhaseTagMaster extends Component {
 
         const value = event.value;
 
-        const name = field; 
+        const name = field;
         let edited: any = utilFunc.CopyObject(this.state.objStep);
         edited[field] = value;
         this.setState({
@@ -105,6 +118,79 @@ export default class PhaseTagMaster extends Component {
         });
 
     };
+
+    handleEmphChange = (event: any, field: string) => {
+
+
+        const value = event.value;
+        const name = field;
+        let edited: any = utilFunc.CopyObject(this.state.objEmph);
+        edited[field] = value;
+        console.log("Color", event.value);
+        this.setState({
+            objEmph: edited
+        });
+
+    };
+
+    saveEmph = () => {
+        try {
+
+            debugger;
+            let FunctioName = "";
+
+
+            if (this.state.editMode == "A") {
+                FunctioName = "addEmph"
+            }
+            if (this.state.editMode == "E") {
+                FunctioName = "editEmph"
+            }
+
+            objBrokerRequest = new BrokerRequest();
+            objBrokerRequest.Module = "DataService";
+            objBrokerRequest.Function = FunctioName;
+            objBrokerRequest.Broker = "KPIPhaseMaster";
+
+            let objLocalEmph: clsEmph = new clsEmph();
+            objLocalEmph = utilFunctions.CopyObject(this.state.objEmph);
+            objLocalEmph.PhaseID = this.state.objStep.PhaseID;
+            objLocalEmph.StepID = this.state.objStep.StepID
+
+
+            
+            objLocalEmph.Color =utilFunctions.rgb2hex(objLocalEmph.Color);
+            objParameter = new BrokerParameter('objEmph', JSON.stringify(objLocalEmph));
+            objBrokerRequest.Parameters.push(objParameter);
+            // objParameter = new BrokerParameter('color', localColor);
+
+            // objBrokerRequest.Parameters.push(objParameter);
+
+            axios.post(_gMod._performTask, {
+                paramRequest: JSON.stringify(objBrokerRequest),
+            })
+                .then(async (response) => {
+
+                    this.setState({
+                        showPhaseEditor: false,
+                        showStepEditor: false,
+                        showEmphEditor: false,
+                        EditingInProgress: false,
+                        editMode: ""
+                    });
+
+                    await this.loadTree();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+
+
+        } catch (error) {
+
+        }
+    }
 
 
 
@@ -143,10 +229,10 @@ export default class PhaseTagMaster extends Component {
                             objBrokerRequest.Broker = "KPIPhaseMaster";
 
                             let localStep: clsStep = new clsStep();
-                            
-                            
+
+
                             localStep = this.state.objStep;
-                         //   localStep.PhaseID = this.state.objPhase.PhaseID;
+                            //   localStep.PhaseID = this.state.objPhase.PhaseID;
 
                             objParameter = new BrokerParameter('objStep', JSON.stringify(localStep));
 
@@ -188,8 +274,8 @@ export default class PhaseTagMaster extends Component {
 
         }
     }
-  
-  
+
+
     removePhase = () => {
         try {
             debugger;
@@ -298,8 +384,8 @@ export default class PhaseTagMaster extends Component {
             let FunctioName = "";
             let objLocalStep: clsStep = new clsStep();
             objLocalStep = this.state.objStep;
-          //  objLocalStep.PhaseID = this.state.objPhase.PhaseID;
-            
+            //  objLocalStep.PhaseID = this.state.objPhase.PhaseID;
+
 
 
             if (this.state.editMode == "A") {
@@ -360,7 +446,18 @@ export default class PhaseTagMaster extends Component {
             if (this.state.selectedNodeType == UI.enumPhaseNodeType.StepPhase) {
                 await this.setState({
                     showPhaseEditor: false,
-                    showStepEditor:true,
+                    showStepEditor: true,
+                    EditingInProgress: true,
+                    editMode: "E"
+                });
+
+            }
+
+            if (this.state.selectedNodeType == UI.enumPhaseNodeType.Emph) {
+                await this.setState({
+                    showPhaseEditor: false,
+                    showStepEditor: false,
+                    showEmphEditor: true,
                     EditingInProgress: true,
                     editMode: "E"
                 });
@@ -442,6 +539,11 @@ export default class PhaseTagMaster extends Component {
                 objNode.nodeType = UI.enumPhaseNodeType.Emph;
                 objNode.text = objItem.text;
                 objNode.objEmph = objItem.objEmph;
+                objNode.objPhase = objParentNode.objPhase;
+                objNode.objStep = objParentNode.objStep;
+                //objNode.objEmph.Color = utilFunctions.convertRGBtoHex(objItem.objEmph.Color);
+
+                objNode.objEmph.Color = "rgb(" + objItem.objEmph.Color + ")";
 
 
                 objParentNode.items.push(objNode);
@@ -466,14 +568,15 @@ export default class PhaseTagMaster extends Component {
 
                 let objItem: UI.phaseTreeNode = objData[index];
                 let objNode: UI.phaseTreeNode = new UI.phaseTreeNode();
-                
+
                 objNode.nodeID = objItem.nodeID;
                 objNode.PhaseID = objItem.PhaseID;
                 objNode.StepID = objItem.StepID
                 objNode.nodeType = UI.enumPhaseNodeType.StepPhase;
                 objNode.text = objItem.text;
+                objNode.objPhase = objParentNode.objPhase;
                 objNode.objStep = objItem.objStep;
-                
+
 
                 if (objItem.items.length > 0) {
                     this.loadEmphNodes(objItem.items, objNode);
@@ -669,6 +772,8 @@ export default class PhaseTagMaster extends Component {
 
 
 
+
+
         if (objNode.nodeType == UI.enumPhaseNodeType.Master) {
 
             this.searchPhaseFromObject(objNode, objNode.nodeType);
@@ -682,7 +787,7 @@ export default class PhaseTagMaster extends Component {
         }
 
         if (objNode.nodeType == UI.enumPhaseNodeType.Phase) {
-            
+
             this.setState({
                 // showPhaseEditor: true,
                 // showStepEditor: false,
@@ -698,7 +803,7 @@ export default class PhaseTagMaster extends Component {
         }
 
         if (objNode.nodeType == UI.enumPhaseNodeType.StepPhase) {
-           
+
             this.setState({
                 // showPhaseEditor: false,
                 // showStepEditor: true,
@@ -707,6 +812,7 @@ export default class PhaseTagMaster extends Component {
                 AddBtnCaption: "Add Emphasis",
                 selectedNodeType: UI.enumPhaseNodeType.StepPhase,
                 objStep: objNode.objStep,
+                objPhase: objNode.objPhase,
             });
 
         }
@@ -719,6 +825,8 @@ export default class PhaseTagMaster extends Component {
                 // EditingInProgress: true,
                 AddBtnCaption: "Add Emphasis",
                 selectedNodeType: UI.enumPhaseNodeType.Emph,
+                objStep: objNode.objStep,
+                objPhase: objNode.objPhase,
                 objEmph: objNode.objEmph,
             });
 
@@ -736,7 +844,7 @@ export default class PhaseTagMaster extends Component {
                 <div className="row">
                     <div className="col-4" >
 
-                        <div style={{ height: "800px",overflowX:"hidden",overflowY:"scroll" }}>
+                        <div style={{ height: "800px", overflowX: "hidden", overflowY: "scroll" }}>
                             <TreeView
 
                                 className={this.state.EditingInProgress ? "k-state-disabled" : ""} //Nishant 25-09-2020
@@ -855,7 +963,8 @@ export default class PhaseTagMaster extends Component {
                         onClose={(e: any) => {
                             this.setState({
                                 showPhaseEditor: false,
-                                EditingInProgress: false
+                                EditingInProgress: false,
+                                EditMode: ""
                             })
                         }}
                     >
@@ -887,13 +996,16 @@ export default class PhaseTagMaster extends Component {
                         onClose={(e: any) => {
                             this.setState({
                                 showPhaseEditor: false,
-                                showStepEditor:false,
-                                EditingInProgress: false
+                                showStepEditor: false,
+                                EditingInProgress: false,
+                                EditMode: ""
                             })
                         }}
                     >
                         <div>
-                        <label>Phase ID: {this.state.objStep.PhaseID}</label>
+                            <label>Phase Name:  {this.state.objPhase.PhaseName}  </label>
+                            <br></br>
+
                             <label>Step Name</label>
                             <Input value={this.state.objStep.StepName} onChange={(e) => { this.handleStepChange(e, "StepName") }} ></Input>
                             <br></br>
@@ -902,7 +1014,52 @@ export default class PhaseTagMaster extends Component {
                             <Input value={this.state.objStep.Notes} onChange={(e) => { this.handleStepChange(e, "Notes") }} ></Input>
                             <br></br>
                             <Button onClick={this.saveStep}>Save</Button>
-                            <Button onClick={(e: any) => { this.setState({ EditingInProgress: false, showStepEditor: false, EditMode:"" }); }}>Cancel</Button>
+                            <Button onClick={(e: any) => { this.setState({ EditingInProgress: false, showStepEditor: false, EditMode: "" }); }}>Cancel</Button>
+                        </div>
+
+
+
+                    </Dialog>
+
+                }
+
+
+
+                {this.state.showEmphEditor &&
+
+                    <Dialog title="Emphasis Editor"
+                        width={"600px"}
+                        height={"300px"}
+                        onClose={(e: any) => {
+                            this.setState({
+                                showPhaseEditor: false,
+                                showStepEditor: false,
+                                EditingInProgress: false,
+                                showEmphEditor: false,
+                                EditMode: ""
+                            })
+                        }}
+                    >
+                        <div>
+                            <label>Phase Name:  {this.state.objPhase.PhaseName}  </label>
+                            <br></br>
+
+                            <label>Step Name:  {this.state.objStep.StepName}  </label>
+                            <br></br>
+
+                            <label>Name</label>
+                            <Input value={this.state.objEmph.EmphName} onChange={(e) => { this.handleEmphChange(e, "EmphName") }} ></Input>
+                            <br></br>
+                            <label>Color</label>
+                            <ColorPicker value={this.state.objEmph.Color} onChange={e => { this.handleEmphChange(e, "Color") }} />
+                            <br></br>
+                            <label>Notes</label>
+                            <br></br>
+                            <Input value={this.state.objEmph.Notes} onChange={(e) => { this.handleEmphChange(e, "Notes") }} ></Input>
+                            <br></br>
+                            <br></br>
+                            <Button onClick={this.saveEmph}>Save</Button>
+                            <Button onClick={(e: any) => { this.setState({ EditingInProgress: false, showEmphEditor: false, EditMode: "" }); }}>Cancel</Button>
                         </div>
 
 

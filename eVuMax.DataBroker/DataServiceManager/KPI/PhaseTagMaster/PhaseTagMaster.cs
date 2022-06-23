@@ -53,6 +53,7 @@ namespace eVuMax.DataBroker.DataServiceManager.KPI
                         objStepNode.text = "Step: " + StepName;
                         objStepNode.imageUrl = "";
                         objStepNode.nodeID = objStepNode.PhaseID + objStepNode.StepID + objStepNode.EmphID;
+                        objStepNode.objPhase = objPhaseNode.objPhase;
                         objStepNode.objStep = clsStep.load(ref objDataService, PhaseID, StepID);
 
                         DataTable objEmphData = objDataService.getTable("SELECT * FROM VMX_EMPH_MASTER WHERE PHASE_ID='" + PhaseID + "' AND STEP_ID='" + StepID + "' ORDER BY EMPH_NAME");
@@ -71,6 +72,9 @@ namespace eVuMax.DataBroker.DataServiceManager.KPI
                             objEmphNode.text = "Emphasis: " + EmphName;
                             objEmphNode.imageUrl = "";
                             objEmphNode.nodeID = objEmphNode.PhaseID + objEmphNode.StepID + objEmphNode.EmphID;
+
+                            objEmphNode.objStep = objStepNode.objStep;
+                            objEmphNode.objPhase = objStepNode.objPhase;
                             objEmphNode.objEmph = clsEmph.load(ref objDataService, PhaseID, StepID, EmphID);
 
                             objStepNode.items.Add(objEmphNode);

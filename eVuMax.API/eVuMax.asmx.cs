@@ -13,7 +13,7 @@ using System.IO;
 using log4net;
 using System.Configuration;
 //using eVuMax.DataBroker.Data;
-using VuMaxDR.Data;
+//using VuMaxDR.Data;
 
 
 namespace eVuMax.API

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -376,12 +377,110 @@ namespace eVuMax.DataBroker.DataServiceManager.KPI
 
                 }
 
-
-
-
-
                 #endregion
 
+
+                #region Emph
+                if (paramRequest.Function == addEmph)
+                {
+
+                    string color = "";
+                    string strObjEmph = "";
+                    clsEmph objEmph = new clsEmph();
+
+
+
+                    color = paramRequest.Parameters.Where(x => x.ParamName.Contains("color")).FirstOrDefault().ParamValue.ToString();
+                    strObjEmph = paramRequest.Parameters.Where(x => x.ParamName.Contains("objEmph")).FirstOrDefault().ParamValue.ToString();
+
+                    if (strObjEmph  != "")
+                    {
+                        try
+                        {
+                            objEmph = JsonConvert.DeserializeObject<clsEmph>(strObjEmph);
+                            string lastError = "";
+                            objEmph.Color = ColorTranslator.FromHtml(color);
+                            objEmph.EmphID = eVuMax.DataBroker.Common.ObjectIDFactory.getObjectID();
+                            clsEmph.add(ref paramRequest.objDataService, objEmph, ref lastError);
+
+
+
+                            if (lastError != "")
+                            {
+                                objResponse = paramRequest.createResponseObject();
+                                objResponse.RequestSuccessfull = false;
+                                objResponse.Warnings = "Error adding Step: " + lastError;
+                                objResponse.Response = "";
+                                return objResponse;
+                            }
+
+
+                            objResponse.RequestSuccessfull = true;
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject objStep";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+                }
+
+                if (paramRequest.Function == editEmph)
+                {
+
+                    string color = "";
+                    string strObjEmph = "";
+                    clsEmph objEmph = new clsEmph();
+
+
+
+                   // color = paramRequest.Parameters.Where(x => x.ParamName.Contains("color")).FirstOrDefault().ParamValue.ToString();
+                    strObjEmph = paramRequest.Parameters.Where(x => x.ParamName.Contains("objEmph")).FirstOrDefault().ParamValue.ToString();
+
+                    if (strObjEmph != "")
+                    {
+                        try
+                        {
+                            objEmph = JsonConvert.DeserializeObject<clsEmph>(strObjEmph);
+                            string lastError = "";
+                            
+                            clsEmph.update(ref paramRequest.objDataService, objEmph, ref lastError);
+
+                            if (lastError != "")
+                            {
+                                objResponse = paramRequest.createResponseObject();
+                                objResponse.RequestSuccessfull = false;
+                                objResponse.Warnings = "Error adding Step: " + lastError;
+                                objResponse.Response = "";
+                                return objResponse;
+                            }
+
+
+                            objResponse.RequestSuccessfull = true;
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject objStep";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+                }
+                #endregion
 
 
 
