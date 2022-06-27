@@ -9,6 +9,7 @@ interface IProps {
     objDepthLog?: DepthLog
     objTractory?: Trajectory //prath
     expressionText: string
+    expType?: string
 }
 
 export default class ExpressionEditor extends Component<IProps> {
@@ -96,7 +97,12 @@ export default class ExpressionEditor extends Component<IProps> {
 
     save = () => {
         debugger;
-        this.__parentRef.saveExpression(this.state.expressionText);
+        if (this.props.expType==""){
+            this.__parentRef.saveExpression(this.state.expressionText);
+        }else{
+            this.__parentRef.saveExpression(this.state.expressionText, this.props.expType);
+        }
+        
     }
 
     close = ()=>{

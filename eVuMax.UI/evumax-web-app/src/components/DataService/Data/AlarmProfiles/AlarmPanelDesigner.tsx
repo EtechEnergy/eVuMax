@@ -13,6 +13,7 @@ import * as utilFunc from './../../../../../src/utilFunctions/utilFunctions';
 import ExpressionEditor from '../../../ExpressionEditorComponent/ExpressionEditor';
 import { DepthLog, TimeLog, Trajectory, Well } from '../../../../eVuMaxObjects/dataObjects/dataObjects';
 import AlarmExpression from './AlarmExpression';
+import { Dir } from 'fs';
 
 let _gMod = new GlobalMod();
 export default class AlarmPanelDesigner extends Component {
@@ -60,6 +61,7 @@ export default class AlarmPanelDesigner extends Component {
     objTractory: new Trajectory(),
 
     showAlarmExpListDialog: false,
+    expressionType: ""
 
   }
   componentDidMount = () => {
@@ -67,11 +69,16 @@ export default class AlarmPanelDesigner extends Component {
   }
 
 
-  saveExpression = (expressionText: string) => {
+  saveExpression = (expressionText: string, expType: string) => {
     try {
-
+      debugger;
       let objChannel_: APChannel = this.state.objChannel;
-      objChannel_.YellowExpression = expressionText;
+      if (expType == "YellowExpression") {
+        objChannel_.YellowExpression = expressionText;
+      } else {
+        objChannel_.RedExpression = expressionText;
+      }
+
 
       this.setState({ showExpressionEditorDialog: false, objChannel_: objChannel_ });
 
@@ -355,13 +362,13 @@ export default class AlarmPanelDesigner extends Component {
               warningMsg: []
             });
           }
-
+          debugger;
 
           let objData_: any = Object.values(objData);
           //Object.values(objData)[0].Name
 
           await this.setState({
-            AlarmExpList: objData_, showAlarmExpListDialog : true
+            AlarmExpList: objData_, showAlarmExpListDialog: true
           });
 
 
@@ -432,7 +439,7 @@ export default class AlarmPanelDesigner extends Component {
       if (field == "AlarmShape") {
 
         this.setState({
-          cmbShape: e.value, objChannel: edited
+          selectedShape: e.value, objChannel: edited
         });
         return;
       }
@@ -543,7 +550,7 @@ export default class AlarmPanelDesigner extends Component {
 
   };
 
-  onOpenEditorClick = () => {
+  onOpenEditorClick = (e: any, field: string) => {
     try {
 
 
@@ -564,12 +571,68 @@ export default class AlarmPanelDesigner extends Component {
         localTrajectory = new Trajectory();
       }
 
-      this.setState({ showExpressionEditorDialog: true });
+      this.setState({ showExpressionEditorDialog: true, expressionType: field });
     } catch (error) {
 
     }
   }
 
+  okClick = () => {
+    try {
+      
+      if (this.state.objChannel.RigStateSelection) {
+        let objChannel_: APChannel = new APChannel();
+        objChannel_.RigStates = "";
+
+        this.setState({ objChannel: objChannel_ });
+
+
+      }
+      else {
+        let strRigStates: string = "";
+        
+        debugger;
+        for (let i: number = 0; (i <= (this.state.RigStatesList.length - 1)); i++) {
+          let rigState_ = this.state.RigStatesList[i];
+
+          if (rigState_.selected) {
+            strRigStates =strRigStates + "," +  this.state.RigStatesList[i].Number;
+          }
+
+        }
+
+        if ((strRigStates.trim() != "")) {
+          strRigStates = strRigStates.substring(1);
+        }
+
+        let objChannel_: APChannel = this.state.objChannel;
+        objChannel_.RigStates = strRigStates;
+        this.setState({objChannel : objChannel_ });
+        
+        let strWellStatus ="";
+        if (this.state.objChannel.WellStatusSpecific){
+          this.state.objChannel.WellStatus="";
+        }else{
+          this.state.WellStatusList.forEach(element => {
+            if (element.selected) {
+              strWellStatus =strWellStatus + "," +  element.WELL_STATUS;
+            }
+          });
+
+          if ((strWellStatus.trim() != "")) {
+            strWellStatus = strWellStatus.substring(1);
+          }
+
+        }
+      }
+    } catch (error) {
+
+    }
+  }
+
+  cancelClick = () => {
+
+  }
   render() {
     return (
       <div className='mt-3'>
@@ -716,14 +779,14 @@ export default class AlarmPanelDesigner extends Component {
               </RadioButton>
 
 
-              <RadioButton
+              {/* <RadioButton
                 value={true}
                 checked={this.state.objChannel.YellowUseBuilder == true}
                 label="Use Conditional Builder"
                 onChange={(e) => { this.handleChange(e, "YellowUseBuilder") }}
               >
-              </RadioButton>
-              <Button id="cmdWizard" onClick={this.onClickWizard} className='ml-3'>Run Expression Wizard </Button>
+              </RadioButton> */}
+              <Button id="cmdWizard" style={{ visibility: 'hidden' }} onClick={this.onClickWizard} className='ml-3'>Run Expression Wizard </Button>
             </div>
 
 
@@ -736,11 +799,12 @@ export default class AlarmPanelDesigner extends Component {
                 onChange={(e) => this.handleChange(e, "YellowExpression")}
               />
 
-              <Button id="cmdOpenEditor" onClick={this.onOpenEditorClick} className='ml-3'>Open Editor </Button>
+              <Button id="cmdOpenEditor" onClick={(e) => this.onOpenEditorClick(e, "YellowExpression")} className='ml-3'>Open Editor </Button>
             </div>
 
-            <div className="form-group  mt-3 mb-3">
+            <div style={{ visibility: 'hidden' }} className="form-group  mt-3 mb-3">
               <Button>Click to Open Container Builder</Button>
+
               <Button className='ml-3'>
                 Open Editor
               </Button>
@@ -750,24 +814,36 @@ export default class AlarmPanelDesigner extends Component {
               <Label>Red Expression</Label>
 
               <RadioButton
-                checked={this.state.objChannel.RedUseBuilder === false}
+                checked={this.state.objChannel.RedUseBuilder == false}
                 label="Directly enter Expression"
               >
               </RadioButton>
 
-
+              {/* 
               <RadioButton
                 checked={this.state.objChannel.RedUseBuilder}
                 label="Use Conditional Builder"
               >
-              </RadioButton>
-              <Button id="cmdWizard" onClick={this.onClickWizard} className='ml-3'>Run Expression Wizard </Button>
+              </RadioButton> */}
+
+              <Button id="cmdWizard" style={{ visibility: 'hidden' }} onClick={this.onClickWizard} className='ml-3'>Run Expression Wizard </Button>
             </div>
 
 
             <div className="form-group  mt-3 mb-3">
-              <Button>Click to Open Container Builder</Button>
-              <Button className='ml-3'>
+              <TextArea
+                autoSize={true}
+                style={{ width: "30%" }}
+                rows={2}
+                value={this.state.objChannel.RedExpression}
+                onChange={(e) => this.handleChange(e, "RedExpression")}
+
+              />
+              {/* <Button>Click to Open Container Builder</Button> */}
+
+              <Button className='ml-3'
+                onClick={(e) => this.onOpenEditorClick(e, "RedExpression")}
+              >
                 Open Editor
               </Button>
             </div>
@@ -784,7 +860,7 @@ export default class AlarmPanelDesigner extends Component {
                 dataItemKey="id"
                 data={this.state.cmbShape}
                 onChange={(e) => this.onDropdownChange(e, "AlarmShape")}
-                value={this.state.objChannel.AlarmShape}
+                value={this.state.selectedShape}
               >
 
               </DropDownList>
@@ -799,7 +875,7 @@ export default class AlarmPanelDesigner extends Component {
               <Label>
                 Shape Size
               </Label>
-              <Input value={this.state.objChannel.ShapeSize} className="ml-3" style={{ width: "100px" }}></Input>
+              <Input value={this.state.objChannel.ShapeSize} className="ml-3" style={{ width: "100px" }} onChange={(e) => this.handleChange(e, "ShapeSize")}></Input>
             </div>
 
             <div className="form-group">
@@ -952,7 +1028,7 @@ export default class AlarmPanelDesigner extends Component {
                 <Label>Trigger Based on</Label>
 
                 <RadioButton
-                  value="0"
+                  value={0}
                   checked={this.state.objChannel.TriggerType === 0}
                   onChange={(e) => this.handleChange(e, "TriggerType")}
                   label={"Current Data"}
@@ -961,15 +1037,16 @@ export default class AlarmPanelDesigner extends Component {
                 </RadioButton>
 
                 <RadioButton
-                  value="0"
+                  value={1}
                   checked={this.state.objChannel.TriggerType === 1}
                   onChange={(e) => this.handleChange(e, "TriggerType")}
-                  label={"Data of Last "}
+                  label={"Data of Last"}
                 >
                 </RadioButton>
+
                 <Input value={this.state.objChannel.TimeDuration}
                   style={{ width: "100px" }}
-                  onChange={(e) => this.handleChange(e, "TriggerType")}
+                  onChange={(e) => this.handleChange(e, "TimeDuration")}
                 ></Input>
                 <Label> Minutes</Label>
               </div>
@@ -1017,38 +1094,45 @@ export default class AlarmPanelDesigner extends Component {
 
         </div>
 
-        {/* {this.state.showExpressionEditorDialog && this.state.objChannel.SourceType === 1 &&
-          <Dialog
-            height={500}
-            width={600}
-          >
-            <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
-          </Dialog>
-        }
- */}
+
+        <div className='row'>
+          <div className="col-12">
+            <Button
+              onClick={this.okClick}
+            >
+              Ok
+            </Button>
+
+            <Button
+              onClick={this.cancelClick}>
+              Cancel
+            </Button>
+          </div>
+        </div>
 
         {this.state.showExpressionEditorDialog &&
           <Dialog
             height={500}
             width={600}
           >
-            <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} objDepthLog={this.state.objDepthLog} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression}></ExpressionEditor>
+            <ExpressionEditor {...this} objTimeLog={this.state.objTimeLog} objDepthLog={this.state.objDepthLog} objTractory={this.state.objTractory} expressionText={this.state.objChannel.YellowExpression} expType={this.state.expressionType}></ExpressionEditor>
           </Dialog>
         }
 
 
         {this.state.showAlarmExpListDialog &&
           <Dialog
-          title={"Alarm Expression"}
-          onClose={() =>
-            this.setState({ showAlarmExpListDialog: false })
-          }
+            title={"Alarm Expression"}
+            onClose={() =>
+              this.setState({ showAlarmExpListDialog: false })
+            }
             height={500}
             width={600}
           >
-            <AlarmExpression AlarmExpList = {this.state.AlarmExpList}></AlarmExpression>
+            <AlarmExpression AlarmExpList={this.state.AlarmExpList}></AlarmExpression>
           </Dialog>
         }
+
 
       </div>
 

@@ -1,6 +1,7 @@
 import { Button, Dialog, Input, Label } from '@progress/kendo-react-all';
 import { Grid, GridColumn as Column, } from '@progress/kendo-react-grid'
 import React, { Component } from 'react'
+import $ from "jquery";
 
 interface IProps {
     AlarmExpList: any[]
@@ -9,7 +10,8 @@ export default class AlarmExpression extends Component<IProps> {
     state = {
         AlarmExpList: this.props.AlarmExpList,
         selectedAlarmExpID: "",
-        showAlarmExpSubWizard: false
+        showAlarmExpSubWizard: false,
+        dynamicDiv_: ""
     }
 
     componentDidMount(): void {
@@ -52,6 +54,7 @@ export default class AlarmExpression extends Component<IProps> {
                     }
                     return item;
                 });
+                debugger;
                 await this.setState({ AlarmExpList: data });
             }
 
@@ -66,7 +69,34 @@ export default class AlarmExpression extends Component<IProps> {
     }
 
 
-    onNext = () => {
+    onNext = async () => {
+
+
+        // Caption: "Circulation Variation Limit"
+        // Note: ""
+        // VariableID: "CIRCVARIATION"
+
+        let dynamicDiv__ = "<div>";
+        debugger;
+        this.state.AlarmExpList.forEach((element: any) => {
+
+            if (element.ExpressionID == this.state.selectedAlarmExpID) {
+                let subElement = Object.values(element.inputVariables);
+                subElement.forEach((element1: any) => {
+                    dynamicDiv__ += "<div className='form-group'> <label>" + element1.Caption + "</label>    ";
+                    dynamicDiv__ += "<Input id='cust1' type='textbox' value=''></Input>  ";
+                    dynamicDiv__ += "</div>";
+                });
+            }
+        });
+
+        dynamicDiv__ += "</div>"
+
+
+        await this.setState({ dynamicDiv_: dynamicDiv__, showAlarmExpSubWizard: true });
+        await $("#dynamicDiv").html(this.state.dynamicDiv_);
+
+        //this.forceUpdate();
 
     }
     render() {
@@ -105,15 +135,16 @@ export default class AlarmExpression extends Component<IProps> {
                         onClose={() =>
                             this.setState({ showAlarmExpSubWizard: false })
                         }
-                        height={500}
-                        width={600}
+                        height={800}
+                        width={800}
                     >
                         <div>
-                            <div className="form-group">
-                                <Label>Enter the paramer values and click on 'Finish' button to create expression</Label>
+                            <div>
+                                {/* <Label>Enter the paramer values and click on 'Finish' button to create expression</Label>
                                 <Input value="Max. Allowed Overlape(%)  - Red Alarm" disabled={true}> </Input>
-                                <Input value="" > </Input>
-
+                                <Input value="" > </Input> */}
+                                PRATH
+                                <div id="dynamicDiv"></div>
 
                             </div>
                         </div>

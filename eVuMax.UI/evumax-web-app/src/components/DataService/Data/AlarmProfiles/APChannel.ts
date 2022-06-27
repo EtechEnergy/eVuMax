@@ -66,7 +66,7 @@ export class APChannel {
     WellStatus: string = "";
     parent: object;
     RedConditions: string = "";
-    RedUseBuilder: boolean;
+    RedUseBuilder: boolean=false;
     WellStatusSpecific: boolean;
     YellowConditions: string = "";
     YellowUseBuilder: boolean=false;
