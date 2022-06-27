@@ -34,9 +34,12 @@
 				<Control Id="PasswordEdit" Type="Edit" X="130" Y="120" Width="180" Height="18" Property="DB_PASSWORD" Text="{80}" Password="yes" >
 				</Control>
 
+				<Control Id="DatabaseLabel" Type="Text" X="86" Y="148" Width="220" Height="15" TabSkip="no" Text="&amp;Database :" >
+				</Control>
+				<Control Id="DatabaseEdit" Type="Edit" X="130" Y="145" Width="180" Height="18" Property="DB_DATABASE" Text="{80}">
+				</Control>
 
-
-
+				
 				<Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back"></Control>
 				
 				<Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">	

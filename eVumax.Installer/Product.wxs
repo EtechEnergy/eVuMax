@@ -25,6 +25,7 @@
 		<Property Id="DB_USER" Value="user"/>
 		<Property Id="DB_PASSWORD" Value="password"/>
 		<Property Id="DB_SERVER" Value="localhost"/>
+		<Property Id="DB_DATABASE" Value="VuMaxDR"/>
 		<Property Id="ISWINDOWSAUTHENTICATION" Secure="yes" Value="0"  />
 		<Property Id="INTEGRATEDSECURITY" Value="0" />
 

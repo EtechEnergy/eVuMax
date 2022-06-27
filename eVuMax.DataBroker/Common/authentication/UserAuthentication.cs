@@ -232,7 +232,7 @@ namespace eVuMax.DataBroker.Common.authentication
             {
 
                 //if(objConnCheckDataService.OpenConnectionSqlPassword(UserName,Passwd,objDataService.ServerName))
-                if (objDataService.OpenConnectionWithPassword(UserName, Passwd, objDataService.ServerName))
+                if (objDataService.OpenConnectionWithPassword(UserName, Passwd, objDataService.ServerName,objDataService.Database))
                 {
                     return true;
                 }
