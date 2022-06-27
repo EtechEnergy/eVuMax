@@ -205,6 +205,10 @@ export default class PhaseTagMaster extends Component {
                 this.removeStep();
             }
 
+            if (this.state.selectedNodeType == UI.enumPhaseNodeType.Emph) {
+                this.removeEmph();
+            }
+
 
         } catch (error) {
 
@@ -275,6 +279,72 @@ export default class PhaseTagMaster extends Component {
         }
     }
 
+    
+    removeEmph = () => {
+        try {
+            debugger;
+            confirmAlert({
+                //title: 'eVuMax',
+                message: 'Are you sure want to delete selected Emphasis ?',
+                childrenElement: () => <div />,
+                buttons: [
+                    {
+                        label: 'Yes',
+                        onClick: async () => {
+                            debugger;
+                            objBrokerRequest = new BrokerRequest();
+                            objBrokerRequest.Module = "DataService";
+                            objBrokerRequest.Function = "removeEmph";
+                            objBrokerRequest.Broker = "KPIPhaseMaster";
+
+                            let objLocalEmph: clsEmph = new clsEmph();
+                            objLocalEmph = utilFunctions.CopyObject(this.state.objEmph);
+                            // objLocalEmph.PhaseID = this.state.objStep.PhaseID;
+                            // objLocalEmph.StepID = this.state.objStep.StepID
+                
+                
+                            
+                            objLocalEmph.Color =utilFunctions.rgb2hex(objLocalEmph.Color);
+                            objParameter = new BrokerParameter('objEmph', JSON.stringify(objLocalEmph));
+
+                            objBrokerRequest.Parameters.push(objParameter);
+
+                            axios.post(_gMod._performTask, {
+                                paramRequest: JSON.stringify(objBrokerRequest),
+                            })
+                                .then(async (response) => {
+
+                                    this.setState({
+                                        showPhaseEditor: false,
+                                        showEmphEditor: false,
+                                        EditingInProgress: false,
+                                        editMode: ""
+                                    });
+
+                                    await this.loadTree();
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+
+
+                        }
+
+                    },
+                    {
+                        label: 'No',
+                        onClick: () => null
+                    }
+                ]
+            });
+
+
+
+
+        } catch (error) {
+
+        }
+    }
 
     removePhase = () => {
         try {

@@ -457,7 +457,7 @@ namespace eVuMax.DataBroker.DataServiceManager.KPI
                             {
                                 objResponse = paramRequest.createResponseObject();
                                 objResponse.RequestSuccessfull = false;
-                                objResponse.Warnings = "Error adding Step: " + lastError;
+                                objResponse.Warnings = "Error adding Emphasis: " + lastError;
                                 objResponse.Response = "";
                                 return objResponse;
                             }
@@ -472,7 +472,57 @@ namespace eVuMax.DataBroker.DataServiceManager.KPI
                         {
                             objResponse = paramRequest.createResponseObject();
                             objResponse.RequestSuccessfull = false;
-                            objResponse.Warnings = "Error DeserializeObject objStep";
+                            objResponse.Warnings = "Error DeserializeObject objEmph";
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                    }
+
+                }
+
+                if (paramRequest.Function == removeEmph)
+                {
+
+                    string color = "";
+                    string strObjEmph = "";
+                    clsEmph objEmph = new clsEmph();
+
+
+
+                    // color = paramRequest.Parameters.Where(x => x.ParamName.Contains("color")).FirstOrDefault().ParamValue.ToString();
+                    strObjEmph = paramRequest.Parameters.Where(x => x.ParamName.Contains("objEmph")).FirstOrDefault().ParamValue.ToString();
+
+                    if (strObjEmph != "")
+                    {
+                        try
+                        {
+                            objEmph = JsonConvert.DeserializeObject<clsEmph>(strObjEmph);
+                            string lastError = "";
+
+                            clsEmph.remove(ref paramRequest.objDataService, objEmph.PhaseID, objEmph.StepID, objEmph.EmphID ,ref lastError);
+                            
+
+                            if (lastError != "")
+                            {
+                                objResponse = paramRequest.createResponseObject();
+                                objResponse.RequestSuccessfull = false;
+                                objResponse.Warnings = "Error removing Emphasis: " + lastError;
+                                objResponse.Response = "";
+                                return objResponse;
+                            }
+
+
+                            objResponse.RequestSuccessfull = true;
+                            objResponse.Response = "";
+                            return objResponse;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            objResponse = paramRequest.createResponseObject();
+                            objResponse.RequestSuccessfull = false;
+                            objResponse.Warnings = "Error DeserializeObject objEmph";
                             objResponse.Response = "";
                             return objResponse;
 
