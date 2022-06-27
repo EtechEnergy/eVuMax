@@ -12,8 +12,6 @@ using System.Reflection;
 using System.IO;
 using log4net;
 using System.Configuration;
-//using eVuMax.DataBroker.Data;
-//using VuMaxDR.Data;
 
 
 namespace eVuMax.API
@@ -46,15 +44,16 @@ namespace eVuMax.API
                 string __username = "";
                 string __password = "";
                 string __servername = "";
+                string __databaseName = "";
 
-                getConnStringComponents(out __servername, out __username, out __password);
+                getConnStringComponents(out __servername, out __username, out __password,out __databaseName);
 
                 VuMaxDR.Data.DataService objDataService;
 
                 objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true,false);
 
                 //if (!objDataService.OpenConnectionSqlPassword(__username, __password, __servername))
-                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername))
+                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername,__databaseName))
                 {
 
                     string response = "Error opening database connection " + objDataService.LastError + " \n  User Info "+__username+" pwd "+__password+" server "+__servername+" ==>Connection string was " + objDataService.ConnectionString;
@@ -85,7 +84,6 @@ namespace eVuMax.API
             try
             {
 
-
                 ILog APILogger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
                 APILogger = log4net.LogManager.GetLogger("eVuMaxAPILog");
 
@@ -106,19 +104,17 @@ namespace eVuMax.API
                 string __username = "";
                 string __password = "";
                 string __servername = "";
+                string __databaseName = "";
 
-                getConnStringComponents(out __servername, out __username, out __password);
+                getConnStringComponents(out __servername, out __username, out __password,out __databaseName);
 
                 VuMaxDR.Data.DataService objDataService;
 
                 objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
 
-             
-
-
 
                 //if (!objDataService.OpenConnectionSqlPassword(__username, __password, __servername))
-                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername))
+                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername,__databaseName))
                 {
                     //Error opening database connection
                     BrokerResponse objBadResponse = objRequest.createResponseObject();
@@ -210,21 +206,18 @@ namespace eVuMax.API
                 connString = getConnectionString();//for Decrepting password and user Name
 
                 VuMaxDR.Data.DataService objDataService;
+
                 objDataService = new VuMaxDR.Data.DataService(VuMaxDR.Data.DataService.vmDatabaseType.SQLServer, "2008", true, false);
-
-
 
                 string __username = "";
                 string __password = "";
                 string __servername = "";
+                string __databaseName = "";
 
-                getConnStringComponents(out __servername, out __username, out __password);
-
-                
-
+                getConnStringComponents(out __servername, out __username, out __password,out __databaseName);
 
                 //if (!objDataService.OpenConnectionSqlPassword(__username,__password,__servername))
-                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername))
+                if (!objDataService.OpenConnectionWithPassword(__username, __password, __servername,__databaseName))
                 {
                     //Error opening database connection
                     BrokerResponse objBadResponse = objRequest.createResponseObject();
@@ -251,7 +244,9 @@ namespace eVuMax.API
                     if (objDataService != null)
                     {
                         objDataService.closeConnection();
+
                     }
+
 
                     //JsonConvert.SerializeObject(objResponse);
                     HttpContext.Current.Response.Write(JsonConvert.SerializeObject(objResponse));
@@ -441,11 +436,12 @@ namespace eVuMax.API
 
 
 
-        private void getConnStringComponents(out string paramServerName, out string paramUserName, out string paramPassword)
+        private void getConnStringComponents(out string paramServerName, out string paramUserName, out string paramPassword,out string paramDatabaseName)
         {
             paramServerName = "";
             paramUserName = "";
             paramPassword = "";
+            paramDatabaseName = "VuMaxDR";
 
             try
             {
@@ -462,9 +458,11 @@ namespace eVuMax.API
 
                     string userName = DecryptString(builder["User ID"].ToString());
                     string password = DecryptString(builder["Password"].ToString());
+                    string database = builder["Initial Catalog"].ToString();
 
                     paramUserName = userName;
                     paramPassword = password;
+                    paramDatabaseName = database;
 
                 }
                 catch (Exception)
