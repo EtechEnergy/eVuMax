@@ -13,6 +13,7 @@ import { Guid } from 'guid-typescript';
 import { comboData } from '../../../../eVuMaxObjects/UIObjects/comboData';
 import $ from "jquery";
 import AlarmPanelDesigner from './AlarmPanelDesigner';
+import { APChannel } from './APChannel';
 
 interface IProps {
     ProfileID: string;
@@ -45,7 +46,8 @@ export default class AlarmProfile extends Component<IProps> {
         showLoadLibraryDialog: false,
         strAlarmInfo: "",
 
-        showAlarmPanelDesingerDialog: false
+        showAlarmPanelDesingerDialog: false,
+        selectedChannel_ :  new APChannel(),
     }
 
     handleSelectTab = (e: TabStripSelectEventArguments) => {
@@ -261,12 +263,14 @@ export default class AlarmProfile extends Component<IProps> {
 
     AddContainer = async () => {
         try {
-            await this.setState({ showEditContainer: true, ContainerName1: "", IsActive1: true, Mode: 'A' });
+            this.setState({ showEditContainer: true, ContainerName1: "", IsActive1: true, Mode: 'A' });
 
         } catch (error) {
 
         }
     }
+
+
 
     EditContainer = () => {
         try {
@@ -311,11 +315,11 @@ export default class AlarmProfile extends Component<IProps> {
                 let channelList_ = [];
 
                 e.dataItem.channels.forEach(element => {
-                    channelList_.push({ ChannelName: element.ChannelName });
+                    channelList_.push({ ChannelName: element.ChannelName, Mnemonic : element.Mnemonic  });
                 });
 
                 this.setState({
-                    selectedTab: 1, ChannelsList: channelList_, ContainerName: e.dataItem.ContainerName, IsActive: e.dataItem.IsActive, 
+                    selectedTab: 1, ChannelsList: channelList_, ContainerName: e.dataItem.ContainerName, IsActive: e.dataItem.IsActive,
                     selectedConainerID: e.dataItem.ContainerID
                 });
                 debugger;
@@ -634,37 +638,98 @@ export default class AlarmProfile extends Component<IProps> {
 
     AddChannel = () => {
         try {
-            this.setState({showAlarmPanelDesingerDialog : true})
+            this.setState({ showAlarmPanelDesingerDialog: true })
+        } catch (error) {
+
+        }
+
+    }
+
+    
+    EditChannel = () => {
+        try {
+            //alert("Edit click" + this.state.selectedChannel_.ChannelName);
+
+            if (this.state.selectedChannel_.ChannelName==""  ){
+
+                alert("Please select the channel from the list");
+            }else{
+
+                this.setState({ showAlarmPanelDesingerDialog: true });
+            }
+
             
         } catch (error) {
 
         }
-    
+
     }
 
-   
-  grid_headerSelectionChange = (event: any, field :  string) => {
-    
-    debugger;
-    const checked = event.syntheticEvent.target.checked;
-    if (field=="grdContainers"){
-      const data = this.state.grdContainers.map((item: any) => {
-        item["selected"] = checked;
-        return item;
-      });
-      this.setState({ grdContainers: data });
+    grid_headerSelectionChange = (event: any, field: string) => {
+
+        debugger;
+        const checked = event.syntheticEvent.target.checked;
+        if (field == "grdContainers") {
+            const data = this.state.grdContainers.map((item: any) => {
+                item["selected"] = checked;
+                return item;
+            });
+            this.setState({ grdContainers: data });
+        }
+
+
+        if (field == "containerLibrary") {
+            const data = this.state.containerLibrary.map((item: any) => {
+                item["selected_"] = checked;
+                return item;
+            });
+            this.setState({ containerLibrary: data });
+        }
     }
 
 
-    if (field=="containerLibrary"){
-        const data = this.state.containerLibrary.map((item: any) => {
-          item["selected_"] = checked;
-          return item;
-        });
-        this.setState({ containerLibrary: data });
-      }
-}
- 
+    onClosePanelDesigner = () => {
+        try {
+            this.setState({ showAlarmPanelDesingerDialog : false});
+
+
+        } catch (error) {
+
+        }
+    }
+
+    
+    channelRowClick = async(e)=>{
+        try {
+            //this.state.grdContainers[1].channels
+            debugger;
+            let index = this.state.ChannelsList.findIndex((item: any) => item["Mnemonic"] === e.dataItem.Mnemonic
+            );
+
+            if (index >= 0) {
+                let ContainerIndex = this.state.grdContainers.findIndex( (item : any) => item.ContainerID === this.state.selectedConainerID);
+                debugger;
+
+                this.state.grdContainers[ContainerIndex].channels.forEach(async channel => {
+                    if (channel.Mnemonic == e.dataItem.Mnemonic){
+                        debugger;
+                       await    this.setState({ selectedChannel_: channel });
+                    }
+                    
+                });
+                
+                //alert(this.state.selectedChannel_.ChannelName);
+             
+                debugger;
+            }else{
+                alert("Select channel from the list");
+            }
+
+
+        } catch (error) {
+            
+        }
+    }
     render() {
         return (
             <div>
@@ -742,7 +807,7 @@ export default class AlarmProfile extends Component<IProps> {
                                             selectedField="selected"
                                             onRowClick={this.grdRowClick}
                                             onSelectionChange={this.selectionChange}
-                                            onHeaderSelectionChange={(e)=>{ this.grid_headerSelectionChange(e, "grdContainers")}} //Nishant 26-05-2020
+                                            onHeaderSelectionChange={(e) => { this.grid_headerSelectionChange(e, "grdContainers") }} //Nishant 26-05-2020
                                         >
                                             <Column
                                                 field="selected"
@@ -806,6 +871,7 @@ export default class AlarmProfile extends Component<IProps> {
                                         <div className="col-lg-8 col-xl-8 col-md-8 col-sm-8">
                                             <Grid
                                                 data={this.state.ChannelsList}
+                                                onRowClick={this.channelRowClick}
                                             >
                                                 <Column field="ChannelName" title="Channel Name" resizable={true} minResizableWidth={50} headerClassName="text-center" editable={false}  ></Column>
                                             </Grid>
@@ -817,7 +883,7 @@ export default class AlarmProfile extends Component<IProps> {
                                                 <Button style={{ width: "150px" }} onClick={this.AddChannel}>
                                                     Add Channel
                                                 </Button>
-                                                <Button className='mt-3' style={{ width: "150px" }}>
+                                                <Button className='mt-3' style={{ width: "150px" }}  onClick={this.EditChannel}>
                                                     Edit Channel
                                                 </Button>
                                                 <Button className='mt-3' style={{ width: "150px" }}>
@@ -855,7 +921,7 @@ export default class AlarmProfile extends Component<IProps> {
                         onClose={async (e: any) => {
 
 
-                            await this.setState({
+                            this.setState({
                                 showEditContainer: false
                             })
                         }}
@@ -890,7 +956,7 @@ export default class AlarmProfile extends Component<IProps> {
                     onClose={async (e: any) => {
 
 
-                        await this.setState({
+                        this.setState({
                             showLoadLibraryDialog: false
                         })
                     }}
@@ -906,7 +972,7 @@ export default class AlarmProfile extends Component<IProps> {
                                 onRowClick={this.grdRowClickLibrary}
                                 onSelectionChange={this.selectionChangeLibrary}
                                 className="mt-3"
-                                onHeaderSelectionChange={(e)=>{ this.grid_headerSelectionChange(e, "containerLibrary")}} //Nishant 26-05-2020
+                                onHeaderSelectionChange={(e) => { this.grid_headerSelectionChange(e, "containerLibrary") }} //Nishant 26-05-2020
                             >
                                 <Column
                                     field="selected_"
@@ -918,14 +984,14 @@ export default class AlarmProfile extends Component<IProps> {
                                     className="text-center"
                                     //editable={true}
                                     editor="boolean"
-                                    // headerSelectionValue={
-                                        
-                                    //     this.state.containerLibrary.findIndex(
-                                    //         (dataItem: any) => dataItem.selected_ === true
-                                    //     ) === -1
-                                    // }
+                                // headerSelectionValue={
 
-                                    
+                                //     this.state.containerLibrary.findIndex(
+                                //         (dataItem: any) => dataItem.selected_ === true
+                                //     ) === -1
+                                // }
+
+
                                 ></Column>
 
                                 {false && <Column field="ContainerID" title="Container ID" resizable={true} minResizableWidth={50} headerClassName="text-center" editable={false}  ></Column>}
@@ -963,8 +1029,8 @@ export default class AlarmProfile extends Component<IProps> {
                             })
                         }}
                     >
-                        
-                        <AlarmPanelDesigner></AlarmPanelDesigner>
+
+                        <AlarmPanelDesigner onClosePanelDesigner={this.onClosePanelDesigner} objChannel = {this.state.selectedChannel_}></AlarmPanelDesigner>
 
                     </Dialog>
 

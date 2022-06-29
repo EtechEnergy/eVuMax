@@ -16,13 +16,19 @@ import AlarmExpression from './AlarmExpression';
 import { Dir } from 'fs';
 
 let _gMod = new GlobalMod();
-export default class AlarmPanelDesigner extends Component {
+
+interface IProps {
+  onClosePanelDesigner: any,
+  objChannel: APChannel,
+}
+
+export default class AlarmPanelDesigner extends Component<IProps> {
   objLogger: ClientLogger = new ClientLogger("AuditInformation", _gMod._userId);
 
   state = {
-    objChannel: new APChannel(),
-
-
+    //objChannel: new APChannel(),
+    objData: {} as any,
+    objChannel: this.props.objChannel,
     ChannelList: [],
     selectedChannel: new comboData(),
 
@@ -65,13 +71,15 @@ export default class AlarmPanelDesigner extends Component {
 
   }
   componentDidMount = () => {
-    this.loadCombo();
+    
+    //this.loadCombo();
+    this.loadData();
   }
 
 
   saveExpression = (expressionText: string, expType: string) => {
     try {
-      debugger;
+      
       let objChannel_: APChannel = this.state.objChannel;
       if (expType == "YellowExpression") {
         objChannel_.YellowExpression = expressionText;
@@ -95,54 +103,208 @@ export default class AlarmPanelDesigner extends Component {
     }
   }
 
+  loadChannelListCombo = async () => {
+    try {
+      //alert(this.state.objChannel.SourceType);
+
+      if (this.state.objChannel.SourceType == apSourceType.Trajectory) {
+        let cboData: comboData;
+
+        let ChannelList_ = [];
+        cboData = new comboData("MD", "MD");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("TVD", "TVD");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("INCLINATION", "INCLINATION");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("AZIMUTH", "AZIMUTH");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("NS", "NS");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("EW", "EW");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("CLOSURE", "CLOSURE");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("DOGLEG", "DOG_LEG");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("DOGLEG 100", "DOG_LEG_100");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("DEPARTURE", "DEPARTURE");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("TOOLFACE", "TOOLFACE");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("WALK RATE", "WALK_RATE");
+        ChannelList_.push(cboData);
+
+        cboData = new comboData("BUILD RATE", "BUILD_RATE");
+        ChannelList_.push(cboData);
+        this.setState({ ChannelList: ChannelList_ });
+
+      }
+      // else{
+      //   if (this.state.isStdChannelList) {
+      //     await this.setState({
+      //       ChannelList: Object.values(this.state.objData.stdChannelList)
+      //     });
+      //   } else {
+      //     await this.setState({
+      //       ChannelList: Object.values(this.state.objData.channelList)
+      //     });
+      //   }
+      // }
+    } catch (error) {
+
+    }
+  }
+  loadData = async () => {
+    try {
+
+      //Load from DB
+      Util.StatusInfo("Getting data from server   ");
+
+      this.objLogger.SendLog("load Donwload Audit Info");
+      let objBrokerRequest = new BrokerRequest();
+      objBrokerRequest.Module = "DataService";
+      objBrokerRequest.Broker = "DataAlarmProfiles";
+      objBrokerRequest.Function = "loadAlarmDesignerCombo";
+
+      let objParameter: BrokerParameter = new BrokerParameter(
+        "logtype",
+        this.state.objChannel.SourceType.toString()
+      );
+      objBrokerRequest.Parameters.push(objParameter);
+
+
+      objParameter = new BrokerParameter(
+        "isStdChannel", this.state.isStdChannelList.toString());
+      objBrokerRequest.Parameters.push(objParameter);
+
+      //alert("source type=" +   this.state.objChannel.SourceType.toString());
+
+      await axios
+        .get(_gMod._getData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          params: { paramRequest: JSON.stringify(objBrokerRequest) },
+
+        })
+        .then(async (res) => {
+          Util.StatusSuccess("Data successfully retrived  ");
+          this.objLogger.SendLog("load Download Audit Info Data Received...");
+          
+
+          let objData_ = JSON.parse(res.data.Response);
+
+
+          let warnings: string = res.data.Warnings;
+          if (warnings.trim() != "") {
+            let warningList = [];
+            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+              warningMsg: warningList
+            });
+          } else {
+            this.setState({
+              warningMsg: []
+            });
+          }
+
+
+          // let objData_ :any = Object.values(objData);
+
+          let RigStatesList_ = Object.values(objData_.RigStatesList);
+
+          let RigStatesList__ = RigStatesList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+
+          let WellStatusList_ = Object.values(objData_.WellStatusList);
+          let WellStatusList__ = WellStatusList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+
+          //containerList_ = containerList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+
+          
+          if (this.state.objChannel.SourceType == apSourceType.Trajectory) {
+            if (this.state.isStdChannelList) {
+              await this.setState({
+                objData: objData_, AlarmTypeList: Object.values(objData_.alarmTypeList),
+                AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+              });
+            } else {
+              await this.setState({
+                objData: objData_, AlarmTypeList: Object.values(objData_.alarmTypeList),
+                AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+              });
+            }
+          }
+          else {
+            if (this.state.isStdChannelList) {
+              await this.setState({
+                objData: objData_, ChannelList: Object.values(objData_.stdChannelList), AlarmTypeList: Object.values(objData_.alarmTypeList),
+                AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+              });
+            } else {
+              await this.setState({
+                objData: objData_, ChannelList: Object.values(objData_.channelList), AlarmTypeList: Object.values(objData_.alarmTypeList),
+                AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+              });
+            }
+          }
+
+          //alert("name = " + this.state.objChannel.ChannelName);
+
+          if (this.state.objChannel.ChannelName != "") {
+
+            //name, mnemonic
+
+
+            let combodata_ = new comboData();
+            combodata_.id = this.state.objChannel.Mnemonic;
+            combodata_.text = this.state.objChannel.ChannelName;
+            this.setState({ selectedChannel: combodata_ });
+          }
+
+          this.loadCombo();
+        })
+        .catch((error) => {
+
+          Util.StatusError(error.message);
+
+          if (error.response) {
+
+          } else if (error.request) {
+            console.log("error.request");
+          } else {
+            console.log("Error", error);
+          }
+          console.log("rejected");
+          this.setState({ isProcess: false });
+        });
+
+
+    } catch (error) {
+
+    }
+  }
+
   loadCombo = async () => {
     try {
 
+      this.loadChannelListCombo();
       //Trajectory
       let cboData: comboData;
 
-      if (this.state.objChannel.SourceType) {
-
-        cboData = new comboData("MD", "MD");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("TVD", "TVD");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("INCLINATION", "INCLINATION");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("AZIMUTH", "AZIMUTH");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("NS", "NS");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("EW", "EW");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("CLOSURE", "CLOSURE");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("DOGLEG", "DOG_LEG");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("DOGLEG 100", "DOG_LEG_100");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("DEPARTURE", "DEPARTURE");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("TOOLFACE", "TOOLFACE");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("WALK RATE", "WALK_RATE");
-        this.state.ChannelList.push(cboData);
-
-        cboData = new comboData("BUILD RATE", "BUILD_RATE");
-        this.state.ChannelList.push(cboData);
-
-      }
 
       // load category
 
@@ -151,6 +313,16 @@ export default class AlarmPanelDesigner extends Component {
       this.state.cmbAlarmCategory.push(cboData);
       cboData = new comboData("DQM Alarm", "1");
       this.state.cmbAlarmCategory.push(cboData);
+
+      
+      if (this.state.objChannel.ChannelName != "") {
+        for (let index = 0; index < this.state.cmbAlarmCategory.length; index++) {
+          if (this.state.cmbAlarmCategory[index].id == this.state.objChannel.AlarmCategory) {
+            this.setState({ selectedAlarmCategory: this.state.cmbAlarmCategory[index] });
+          }
+        }
+      }
+
 
       // load alarm types from DB
 
@@ -174,6 +346,17 @@ export default class AlarmPanelDesigner extends Component {
       this.state.cmbShape.push(cboData);
       cboData = new comboData("Right Triangle", "6");
       this.state.cmbShape.push(cboData);
+
+
+      if (this.state.objChannel.ChannelName != "") {
+        for (let index = 0; index < this.state.cmbShape.length; index++) {
+          if (this.state.cmbShape[index].id == this.state.objChannel.AlarmShape) {
+            this.setState({ selectedShape: this.state.cmbShape[index] });
+          }
+        }
+
+      }
+
       // load all rig states from DB
 
       // load well status  from DB
@@ -191,109 +374,70 @@ export default class AlarmPanelDesigner extends Component {
       cboData = new comboData("First Value", "4");
       this.state.cmbDownSampleFunction.push(cboData);
 
-
-      //Load from DB
-      Util.StatusInfo("Getting data from server   ");
-
-      this.objLogger.SendLog("load Donwload Audit Info");
-      let objBrokerRequest = new BrokerRequest();
-      objBrokerRequest.Module = "DataService";
-      objBrokerRequest.Broker = "DataAlarmProfiles";
-      objBrokerRequest.Function = "loadAlarmDesignerCombo";
-
-      let objParameter: BrokerParameter = new BrokerParameter(
-        "logtype",
-        this.state.objChannel.SourceType.toString()
-      );
-      objBrokerRequest.Parameters.push(objParameter);
-
-
-      objParameter = new BrokerParameter(
-        "isStdChannel", this.state.isStdChannelList.toString());
-      objBrokerRequest.Parameters.push(objParameter);
-
-
-      await axios
-        .get(_gMod._getData, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=UTF-8",
-          },
-          params: { paramRequest: JSON.stringify(objBrokerRequest) },
-
-        })
-        .then(async (res) => {
-          Util.StatusSuccess("Data successfully retrived  ");
-          this.objLogger.SendLog("load Download Audit Info Data Received...");
-          debugger;
-
-          let objData = JSON.parse(res.data.Response);
-
-
-          let warnings: string = res.data.Warnings;
-          if (warnings.trim() != "") {
-            let warningList = [];
-            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
-            this.setState({
-              warningMsg: warningList
-            });
-          } else {
-            this.setState({
-              warningMsg: []
-            });
+debugger;
+      if (this.state.objChannel.ChannelName != "") {
+        for (let index = 0; index < this.state.cmbDownSampleFunction.length; index++) {
+          if (this.state.cmbDownSampleFunction[index].id == this.state.objChannel.DownSampleFunction) {
+            this.setState({ selectedDownSampleFunction: this.state.cmbDownSampleFunction[index] });
           }
+        }
 
+      }
 
-          // let objData_ :any = Object.values(objData);
+      for (let index = 0; index < this.state.AlarmTypeList.length; index++) {
+        if (this.state.AlarmTypeList[index].id == this.state.objChannel.AlarmType) {
+          this.setState({ selectedAlarmType: this.state.AlarmTypeList[index] });
+        }
+      }
 
-          let RigStatesList_ = Object.values(objData.RigStatesList);
+      for (let index = 0; index < this.state.AlarmCategory2List.length; index++) {
+        if (this.state.AlarmCategory2List[index].id == this.state.objChannel.AlarmCategory2ID) {
+          this.setState({ selectedAlarmCategory2: this.state.AlarmCategory2List[index] });
+        }
+      }
 
-          let RigStatesList__ = RigStatesList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+      //set list
+      //rigstate collection
+      let selectedRigStateList = this.state.objChannel.RigStates.split(",");
 
-          let WellStatusList_ = Object.values(objData.WellStatusList);
-          let WellStatusList__ = WellStatusList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+      
+      let rigStateList_ = this.state.RigStatesList;
+      selectedRigStateList.forEach(element => {
 
-          //containerList_ = containerList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
+        let index = this.state.RigStatesList.findIndex(x => x.Number.toString() === element);
+        if (index != -1) {
+          rigStateList_[index]["selected"]= true;
+        }
+      });
 
+      await this.setState( {RigStatesList : rigStateList_});
 
-          if (this.state.isStdChannelList) {
-            await this.setState({
-              ChannelList: Object.values(objData.stdChannelList), AlarmTypeList: Object.values(objData.alarmTypeList),
-              AlarmCategory2List: Object.values(objData.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
-            });
-          } else {
-            await this.setState({
-              ChannelList: Object.values(objData.channelList), AlarmTypeList: Object.values(objData.alarmTypeList),
-              AlarmCategory2List: Object.values(objData.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
-            });
-          }
+      
 
-        })
-        .catch((error) => {
+    //well status selection
+    
+    let selectedWellStatusList = this.state.objChannel.WellStatus.split(",");
+    let wellStatusList_ = this.state.WellStatusList;
 
-          Util.StatusError(error.message);
+    selectedWellStatusList.forEach(element => {
 
-          if (error.response) {
+      let index = this.state.WellStatusList.findIndex(x => x.Number.toString() === element);
+      if (index != -1) {
+        wellStatusList_[index]["selected"]= true;
+      }
+    });
 
-          } else if (error.request) {
-            console.log("error.request");
-          } else {
-            console.log("Error", error);
-          }
-          console.log("rejected");
-          this.setState({ isProcess: false });
-        });
+    await this.setState( {WellStatusList : wellStatusList_});
+
 
 
     } catch (error) {
 
     }
   }
-
-
   handleChange = (event: any, field: any) => {
     try {
-      debugger;
+      
       const value = event.value;
 
       const name = field;
@@ -344,11 +488,11 @@ export default class AlarmPanelDesigner extends Component {
         .then(async (res) => {
           Util.StatusSuccess("Data successfully retrived  ");
           this.objLogger.SendLog("load ExpWizard Data Received...");
-          debugger;
+          
 
           let objData = JSON.parse(res.data.Response);
 
-          debugger;
+          
 
           let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {
@@ -362,7 +506,7 @@ export default class AlarmPanelDesigner extends Component {
               warningMsg: []
             });
           }
-          debugger;
+          
 
           let objData_: any = Object.values(objData);
           //Object.values(objData)[0].Name
@@ -443,11 +587,11 @@ export default class AlarmPanelDesigner extends Component {
         });
         return;
       }
-
-      if (field == "DownsampleFunction") {
+debugger;
+      if (field == "DownSampleFunction") {
 
         this.setState({
-          DownsampleFunction: e.value, objChannel: edited
+          selectedDownSampleFunction: e.value, objChannel: edited
         });
         return;
       }
@@ -478,7 +622,7 @@ export default class AlarmPanelDesigner extends Component {
 
 
   grdRowClick = (e: any, field: string) => {
-    debugger;
+    
     if (field == 'RigStatesList') {
       let index = this.state.RigStatesList.findIndex((item: any) => item["Number"] === e.dataItem.Number);
       this.setState({
@@ -500,7 +644,7 @@ export default class AlarmPanelDesigner extends Component {
   selectionChange = async (event, field: string) => {
     try {
 
-      debugger;
+      
 
 
       const checked = event.syntheticEvent.target.checked;
@@ -516,7 +660,7 @@ export default class AlarmPanelDesigner extends Component {
       }
       if (field == "WellStatusList") {
         const data = this.state.WellStatusList.map((item: any) => {
-          debugger;
+          
           if (item["WELL_STATUS"] === event.dataItem.WELL_STATUS) {
             item["selected"] = checked;
           }
@@ -579,24 +723,22 @@ export default class AlarmPanelDesigner extends Component {
 
   okClick = () => {
     try {
-      
+
       if (this.state.objChannel.RigStateSelection) {
         let objChannel_: APChannel = new APChannel();
         objChannel_.RigStates = "";
 
         this.setState({ objChannel: objChannel_ });
-
-
       }
       else {
         let strRigStates: string = "";
+
         
-        debugger;
         for (let i: number = 0; (i <= (this.state.RigStatesList.length - 1)); i++) {
           let rigState_ = this.state.RigStatesList[i];
 
           if (rigState_.selected) {
-            strRigStates =strRigStates + "," +  this.state.RigStatesList[i].Number;
+            strRigStates = strRigStates + "," + this.state.RigStatesList[i].Number;
           }
 
         }
@@ -607,15 +749,15 @@ export default class AlarmPanelDesigner extends Component {
 
         let objChannel_: APChannel = this.state.objChannel;
         objChannel_.RigStates = strRigStates;
-        this.setState({objChannel : objChannel_ });
-        
-        let strWellStatus ="";
-        if (this.state.objChannel.WellStatusSpecific){
-          this.state.objChannel.WellStatus="";
-        }else{
+        this.setState({ objChannel: objChannel_ });
+
+        let strWellStatus = "";
+        if (this.state.objChannel.WellStatusSpecific) {
+          this.state.objChannel.WellStatus = "";
+        } else {
           this.state.WellStatusList.forEach(element => {
             if (element.selected) {
-              strWellStatus =strWellStatus + "," +  element.WELL_STATUS;
+              strWellStatus = strWellStatus + "," + element.WELL_STATUS;
             }
           });
 
@@ -625,13 +767,16 @@ export default class AlarmPanelDesigner extends Component {
 
         }
       }
+
+      this.props.onClosePanelDesigner();
+
     } catch (error) {
 
     }
   }
 
   cancelClick = () => {
-
+    this.props.onClosePanelDesigner();
   }
   render() {
     return (
@@ -642,7 +787,7 @@ export default class AlarmPanelDesigner extends Component {
               <Label>Source</Label>
               <RadioButton
                 value="1"
-                checked={this.state.objChannel.SourceType === 1}
+                checked={this.state.objChannel.SourceType === 0}
                 label="Time Log"
                 //onChange={(e)=>{this.handleChange(e, "SourceType")}}
                 // onChange={(e)=>{
@@ -651,8 +796,10 @@ export default class AlarmPanelDesigner extends Component {
 
                 onChange={(e) => {
                   let objChannel_ = this.state.objChannel;
-                  objChannel_.SourceType = 1;
+                  objChannel_.SourceType = 0;
+                  //this.loadChannelListCombo();
                   this.setState({ objChannel: objChannel_ });
+                  this.loadCombo();
                 }}
               >
               </RadioButton>
@@ -666,13 +813,15 @@ export default class AlarmPanelDesigner extends Component {
 
               <RadioButton
                 value="3"
-                checked={this.state.objChannel.SourceType === 3}
+                checked={this.state.objChannel.SourceType === 2}
                 label="Trajectory"
                 //onChange={(e)=>{this.handleChange(e, "SourceType")}}
                 onChange={(e) => {
                   let objChannel_ = this.state.objChannel;
-                  objChannel_.SourceType = 3;
+                  objChannel_.SourceType = 2;
+                  //this.loadChannelListCombo();
                   this.setState({ objChannel: objChannel_ });
+                  this.loadCombo();
                 }}
               >
               </RadioButton>
@@ -695,7 +844,7 @@ export default class AlarmPanelDesigner extends Component {
                 label={"Standard List"}
                 value={this.state.isStdChannelList}
                 onChange={async (e) => {
-                  debugger;
+                  
                   await this.setState({ isStdChannelList: e.value });
                   this.loadCombo();
 
@@ -799,13 +948,13 @@ export default class AlarmPanelDesigner extends Component {
                 onChange={(e) => this.handleChange(e, "YellowExpression")}
               />
 
-              <Button id="cmdOpenEditor" onClick={(e) => this.onOpenEditorClick(e, "YellowExpression")} className='ml-3'>Open Editor </Button>
+              <Button id="cmdOpenEditor" style={{ width: "150px" }} onClick={(e) => this.onOpenEditorClick(e, "YellowExpression")} className='ml-3'>Open Editor </Button>
             </div>
 
             <div style={{ visibility: 'hidden' }} className="form-group  mt-3 mb-3">
               <Button>Click to Open Container Builder</Button>
 
-              <Button className='ml-3'>
+              <Button className='ml-3' style={{ width: "150px" }}>
                 Open Editor
               </Button>
             </div>
@@ -826,7 +975,7 @@ export default class AlarmPanelDesigner extends Component {
               >
               </RadioButton> */}
 
-              <Button id="cmdWizard" style={{ visibility: 'hidden' }} onClick={this.onClickWizard} className='ml-3'>Run Expression Wizard </Button>
+              <Button id="cmdWizard" style={{ visibility: 'hidden', width: "150px" }} onClick={this.onClickWizard} className='ml-3'>Run Expression Wizard </Button>
             </div>
 
 
@@ -841,7 +990,7 @@ export default class AlarmPanelDesigner extends Component {
               />
               {/* <Button>Click to Open Container Builder</Button> */}
 
-              <Button className='ml-3'
+              <Button className='ml-3' style={{ width: "150px" }}
                 onClick={(e) => this.onOpenEditorClick(e, "RedExpression")}
               >
                 Open Editor
@@ -883,7 +1032,7 @@ export default class AlarmPanelDesigner extends Component {
                 name="AcknRequire"
                 checked={this.state.objChannel.AckRequired}
                 label={"Acknowledgement Require"}
-                onChange={(e) => { this.handleChange(e, "AcknRequire") }}
+                onChange={(e) => { this.handleChange(e, "AckRequired") }}
               >
               </Checkbox>
 
@@ -902,7 +1051,7 @@ export default class AlarmPanelDesigner extends Component {
           </div>
 
 
-          {this.state.objChannel.SourceType == 1 &&
+          {this.state.objChannel.SourceType == 0 &&
 
             <div className='col-lg-6 col-xl-6 col-md-6 col-sm-6'>
               <div className="form-group">
@@ -1055,12 +1204,13 @@ export default class AlarmPanelDesigner extends Component {
               <div className="form-group">
                 <Label> Down Sample Function </Label>
                 <DropDownList
-                  id="DownsampleFunction"
+                  id="DownSampleFunction"
                   data={this.state.cmbDownSampleFunction}
-                  value={this.state.objChannel.DownSampleFunction}
+                  //value={this.state.objChannel.DownSampleFunction}
+                  value={this.state.selectedDownSampleFunction}
                   textField="text"
                   dataItemKey="id"
-                  onChange={(e) => { this.onDropdownChange(e, "DownsampleFunction") }}
+                  onChange={(e) => { this.onDropdownChange(e, "DownSampleFunction") }}
                 >
 
                 </DropDownList>
@@ -1076,7 +1226,7 @@ export default class AlarmPanelDesigner extends Component {
                 <Checkbox
                   label={"Send email to "}
                   checked={this.state.objChannel.SendMail}
-                  onChange={(e) => { this.onDropdownChange(e, "SendMail") }}
+                  onChange={(e) => this.handleChange(e,"SendMail") }
                 >
                 </Checkbox>
 
@@ -1097,13 +1247,13 @@ export default class AlarmPanelDesigner extends Component {
 
         <div className='row'>
           <div className="col-12">
-            <Button
+            <Button style={{ width: "150px" }}
               onClick={this.okClick}
             >
               Ok
             </Button>
 
-            <Button
+            <Button className='ml-2' style={{ width: "150px" }}
               onClick={this.cancelClick}>
               Cancel
             </Button>

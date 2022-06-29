@@ -302,6 +302,9 @@ export default class PhaseTagMaster extends Component {
                             })
                                 .then(async (response) => {
 
+                                    debugger;
+                                    let objRes = JSON.parse(response.data);
+
                                     this.setState({
                                         showPhaseEditor: false,
                                         EditingInProgress: false,

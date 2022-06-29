@@ -16,9 +16,9 @@ export enum apTriggerType {
 }
 
 export enum apSourceType {
-    TimeLog = 1,
-    DepthLog = 2,
-    Trajectory = 3
+    TimeLog = 0,
+    DepthLog = 1,
+    Trajectory = 2
 }
 
 export class APChannel {
