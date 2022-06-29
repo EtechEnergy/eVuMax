@@ -3,6 +3,6 @@ export class clsEmph{
     public StepID: string= "";
     public EmphID: string= ""
     public  EmphName:string = "";
-    public Color: string= "green";
+    public Color: string= "rgb(113, 174, 72, 1)";
     public Notes:string = "";
 }

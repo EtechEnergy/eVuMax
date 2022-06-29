@@ -67,7 +67,7 @@ export class Dashboard extends React.Component<Props> {
   }
 
   componentDidMount(): void {
-    
+
     this.getVersion();
   }
 
@@ -442,9 +442,9 @@ export class Dashboard extends React.Component<Props> {
                 {/* </NavLink> */}
               </li>
               {/* Nishant 27-11-2020 Witsml Explorer */}
-              
-              
-              
+
+
+
               <li className="nav-item">
                 <NavLink
                   className="nav-link"
@@ -499,7 +499,7 @@ export class Dashboard extends React.Component<Props> {
                 >
                   <FontAwesomeIcon icon={faKey} />
 
-                </NavLink> 
+                </NavLink>
               </li>
 
 
@@ -603,7 +603,7 @@ export class Dashboard extends React.Component<Props> {
 
               <li>
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/AlarmProfiles">
-                Alarm Profile
+                  Alarm Profile
                 </NavLink>
               </li>
 
@@ -722,33 +722,46 @@ export class Dashboard extends React.Component<Props> {
               </li>
               <li>
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/DownloadAuditInfo">
-                Download Audit Information
+                  Download Audit Information
                 </NavLink>
               </li>
 
               <li>
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/AuditInformation">
-                Audit Information
+                  Audit Information
                 </NavLink>
               </li>
 
               <li>
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/ChannelLibrary">
-                Channel Library
+                  Channel Library
                 </NavLink>
               </li>
 
               <li>
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/WellMonitor">
-                Well Monitor Setup
+                  Well Monitor Setup
                 </NavLink>
               </li>
 
               <li>
                 <NavLink onClick={this.toggleMenu} exact to="/dashboard/PhaseTagMaster">
-                Phase Tag Master
+                  Phase Tag Master
                 </NavLink>
               </li>
+
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/CustomTagMaster">
+                  Custom Tag Master
+                </NavLink>
+              </li>
+              <li>
+                <NavLink onClick={this.toggleMenu} exact to="/dashboard/CustomTagSourceMgr">
+                  Custom Tag Source Master
+                </NavLink>
+              </li>
+
+
 
 
             </ol>
