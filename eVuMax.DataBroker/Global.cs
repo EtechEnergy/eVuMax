@@ -114,6 +114,7 @@ namespace eVuMax.DataBroker
 
         public const string Brk_KPI_PhaseMaster = "KPIPhaseMaster";//Nishant 16/06/2022
         public const string Brk_KPI_CustomTagMaster = "KPICustomTagMaster";//Nishant 16/06/2022
+        public const string Brk_KPI_PhaseTagMapping = "KPIPhaseTagMapping";//Nishant 16/06/2022
 
 
         #endregion

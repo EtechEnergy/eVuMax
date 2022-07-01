@@ -307,7 +307,8 @@ export default class QcRules extends Component {
 
               })
                 .then((res) => {
-
+                  debugger;
+                  let objData = JSON.parse(res.data);
                   
                   Util.StatusSuccess("Data successfully retrived  ");
 

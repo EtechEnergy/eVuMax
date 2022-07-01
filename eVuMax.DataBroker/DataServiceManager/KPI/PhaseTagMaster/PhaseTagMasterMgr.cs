@@ -390,7 +390,7 @@ namespace eVuMax.DataBroker.DataServiceManager.KPI
 
 
 
-                    color = paramRequest.Parameters.Where(x => x.ParamName.Contains("color")).FirstOrDefault().ParamValue.ToString();
+                    //color = paramRequest.Parameters.Where(x => x.ParamName.Contains("color")).FirstOrDefault().ParamValue.ToString();
                     strObjEmph = paramRequest.Parameters.Where(x => x.ParamName.Contains("objEmph")).FirstOrDefault().ParamValue.ToString();
 
                     if (strObjEmph  != "")
@@ -399,7 +399,7 @@ namespace eVuMax.DataBroker.DataServiceManager.KPI
                         {
                             objEmph = JsonConvert.DeserializeObject<clsEmph>(strObjEmph);
                             string lastError = "";
-                            objEmph.Color = ColorTranslator.FromHtml(color);
+                            //objEmph.Color = ColorTranslator.FromHtml(color);
                             objEmph.EmphID = eVuMax.DataBroker.Common.ObjectIDFactory.getObjectID();
                             clsEmph.add(ref paramRequest.objDataService, objEmph, ref lastError);
 

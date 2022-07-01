@@ -135,6 +135,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                     CustomTagMasterMgr objCustomTagMgr = new CustomTagMasterMgr();
                     return objCustomTagMgr.getData(paramRequest);
                 }
+
+                if (paramRequest.Broker == Global.Brk_KPI_PhaseTagMapping)
+                {
+                    PhaseTagMappingMgr objMgr = new PhaseTagMappingMgr();
+                    return objMgr.getData(paramRequest);
+                }
                 #endregion
 
                 BrokerResponse objResponse = paramRequest.createResponseObject();
@@ -258,6 +264,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
                     CustomTagMasterMgr objCustomTagMgr = new CustomTagMasterMgr();
                     return objCustomTagMgr.performTask(paramRequest);
+                }
+
+                if(paramRequest.Broker == Global.Brk_KPI_PhaseTagMapping)
+                {
+                    PhaseTagMappingMgr objMgr = new PhaseTagMappingMgr();
+                    objMgr.performTask(paramRequest);
                 }
 
                 #endregion
