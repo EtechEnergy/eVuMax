@@ -400,6 +400,9 @@ export default class PhaseTagMaster extends Component {
 
                                     }
 
+                                    debugger;
+                                    let objRes = JSON.parse(response.data);
+
                                     this.setState({
                                         showPhaseEditor: false,
                                         EditingInProgress: false,
