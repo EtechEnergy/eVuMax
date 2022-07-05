@@ -59,6 +59,7 @@ import AlarmProfiles from "../components/DataService/Data/AlarmProfiles/AlarmPro
 
 import CustomTagMaster from "../components/DataService/KPI/CustomTagMaster/CustomTagMaster";
 import CustomTagSourceMgr from "../components/DataService/KPI/CustomTagMaster/CustomTagSource/CustomTagSourceMgr";
+import PhaseMappingMgr from "../components/DataService/KPI/PhaseTagMapping/PhaseMappingMgr";
 
        
 
@@ -437,6 +438,13 @@ const dashbordRoutes = [
     name: "CustomTagSourceMgr",
     icon: "",
     component: CustomTagSourceMgr,
+    layout: "/dashboard",
+  },
+  {
+    path: "/PhaseMappingMgr",
+    name: "PhaseMappingMgr",
+    icon: "",
+    component: PhaseMappingMgr,
     layout: "/dashboard",
   },
 

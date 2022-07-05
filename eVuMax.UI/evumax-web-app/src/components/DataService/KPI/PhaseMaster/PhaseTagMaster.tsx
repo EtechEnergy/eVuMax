@@ -158,8 +158,8 @@ export default class PhaseTagMaster extends Component {
             objLocalEmph.StepID = this.state.objStep.StepID
 
 
-            
-            objLocalEmph.Color =utilFunctions.rgb2hex(objLocalEmph.Color);
+
+            objLocalEmph.Color = utilFunctions.rgb2hex(objLocalEmph.Color);
             objParameter = new BrokerParameter('objEmph', JSON.stringify(objLocalEmph));
             objBrokerRequest.Parameters.push(objParameter);
             // objParameter = new BrokerParameter('color', localColor);
@@ -279,7 +279,7 @@ export default class PhaseTagMaster extends Component {
         }
     }
 
-    
+
     removeEmph = () => {
         try {
             debugger;
@@ -301,10 +301,10 @@ export default class PhaseTagMaster extends Component {
                             objLocalEmph = utilFunctions.CopyObject(this.state.objEmph);
                             // objLocalEmph.PhaseID = this.state.objStep.PhaseID;
                             // objLocalEmph.StepID = this.state.objStep.StepID
-                
-                
-                            
-                            objLocalEmph.Color =utilFunctions.rgb2hex(objLocalEmph.Color);
+
+
+
+                            objLocalEmph.Color = utilFunctions.rgb2hex(objLocalEmph.Color);
                             objParameter = new BrokerParameter('objEmph', JSON.stringify(objLocalEmph));
 
                             objBrokerRequest.Parameters.push(objParameter);
@@ -313,6 +313,7 @@ export default class PhaseTagMaster extends Component {
                                 paramRequest: JSON.stringify(objBrokerRequest),
                             })
                                 .then(async (response) => {
+
 
                                     this.setState({
                                         showPhaseEditor: false,
@@ -367,10 +368,37 @@ export default class PhaseTagMaster extends Component {
 
                             objBrokerRequest.Parameters.push(objParameter);
 
-                            axios.post(_gMod._performTask, {
-                                paramRequest: JSON.stringify(objBrokerRequest),
+                            // axios.post(_gMod._performTask, {
+                            //     paramRequest: JSON.stringify(objBrokerRequest),
+                            // })
+                            axios.get(_gMod._performTask, {
+                                headers: {
+                                    Accept: "application/json",
+                                    "Content-Type": "application/json;charset=UTF-8",
+                                },
+                                params: { paramRequest: JSON.stringify(objBrokerRequest) },
+
                             })
-                                .then(async (response) => {
+                                .then((response) => {
+                                    debugger;
+                                    let objResp = response.data;
+                                    let warnings = objResp.Warnings;
+                                   
+                                    if (objResp.RequestSuccessfull == false) {
+
+                                        if (warnings.trim() != "") {
+                                            let warningList = [];
+                                            if (objResp.Error != "") {
+                                                warningList.push({ "update": objResp.Errors, "timestamp": new Date(Date.now()).getTime() });
+                                            }
+                                            warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                                            this.setState({
+                                                warningMsg: warningList
+                                            });
+                                        }
+
+
+                                    }
 
                                     debugger;
                                     let objRes = JSON.parse(response.data);
@@ -378,10 +406,11 @@ export default class PhaseTagMaster extends Component {
                                     this.setState({
                                         showPhaseEditor: false,
                                         EditingInProgress: false,
-                                        editMode: ""
+                                        editMode: "",
+
                                     });
 
-                                    await this.loadTree();
+                                    this.loadTree();
                                 })
                                 .catch((error) => {
                                     console.log(error);
@@ -914,7 +943,22 @@ export default class PhaseTagMaster extends Component {
     render() {
         return (
             <div>
+                <div className="form-inline m-1" style={{ float: 'right' }}>
+                        <NotifyMe
+                            data={this.state.warningMsg}
+                            storageKey='notific_key'
+                            notific_key='timestamp'
+                            notific_value='update'
+                            heading='Warnings'
+                            sortedByKey={false}
+                            showDate={false}
+                            size={24}
+                            color="yellow"
+                        />
+
+                    </div>
                 <div className="row">
+                    
                     <div className="col-4" >
 
                         <div style={{ height: "800px", overflowX: "hidden", overflowY: "scroll" }}>

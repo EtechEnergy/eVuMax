@@ -132,6 +132,8 @@
     <Compile Include="DataServiceManager\KPI\CustomTagMaster\CustomTagMaster.cs" />
     <Compile Include="DataServiceManager\KPI\CustomTagMaster\CustomTagMasterMgr.cs" />
     <Compile Include="DataServiceManager\KPI\CustomTagMaster\customTagTreeNode.cs" />
+    <Compile Include="DataServiceManager\KPI\PhaseTagMapping\PhaseMapping.cs" />
+    <Compile Include="DataServiceManager\KPI\PhaseTagMapping\PhaseTagMappingMgr.cs" />
     <Compile Include="DataServiceManager\KPI\PhaseTagMaster\PhaseTagMaster.cs" />
     <Compile Include="DataServiceManager\KPI\PhaseTagMaster\PhaseTagMasterMgr.cs" />
     <Compile Include="DataServiceManager\KPI\PhaseTagMaster\PhaseTreeNode.cs" />
