@@ -42,12 +42,15 @@ export default class AlarmProfile extends Component<IProps> {
 
         selectedConainerID: "",
         Mode: '',
+        ModeChannel: '',
         containerLibrary: [] = [],
         showLoadLibraryDialog: false,
         strAlarmInfo: "",
 
         showAlarmPanelDesingerDialog: false,
         selectedChannel_ :  new APChannel(),
+
+        selectedChannelIndex:-1
     }
 
     handleSelectTab = (e: TabStripSelectEventArguments) => {
@@ -513,7 +516,7 @@ export default class AlarmProfile extends Component<IProps> {
 
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "DataAlarmProfiles";
-            objBrokerRequest.Function = "saveAlarmProfile";
+            objBrokerRequest.Function = "saveAlarmProfile";  //saveAlarmProfile
 
             debugger;
             let objPanel_: any = utilFunc.CopyObject(this.state.objPanel);
@@ -524,42 +527,18 @@ export default class AlarmProfile extends Component<IProps> {
 
             objPanel_.containers = utilFunc.convertMapToDictionaryJSON(objPanel_.containers);
 
-            // //convert QcRules array to Map
-            // let newAlarmConainerList: Map<string, AlarmPanelProfile> = new Map();
-            // if (objPanel_.containers.length > 0) {
-            //     objPanel_.containers.forEach((objItem) => {
-            //         //          let objAlarmPanelProfile: AlarmPanelProfile = new AlarmPanelProfile();
-
-            //         //   objAlarmPanelProfile.panelID = objPanel_.ContainerID;
-            //         //   objAlarmPanelProfile.panelName = objPanel_.panelName;
-
-            //         objItem.channels = null;
-            //         newAlarmConainerList.set(objItem.ContainerID, objItem);
-            //     });
-            // }
-            // objPanel_.containers = utilFunc.convertMapToDictionaryJSON(newAlarmConainerList); ;
-
-
-            // objPanellocal.containers.forEach(element => {
-            //     //element.channels = utilFunc.convertMapToDictionaryJSON(element.channels);
-            //     element.channels = null;
-            //     //Object.assign(element.channels);
-            // });
-
-            // objPanellocal.containers = utilFunc.convertMapToDictionaryJSON(this.state.grdContainers);
-
-
-            //objPanel_.containers = Object.assign(this.state.grdContainers);
+       
 
 
             let objParameter = new BrokerParameter("PanelEditMode", this.props.PanelEditMode);
             objBrokerRequest.Parameters.push(objParameter);
 
-            objParameter = new BrokerParameter("objPanel", JSON.stringify(objPanel_));
-            objBrokerRequest.Parameters.push(objParameter);
+            // objParameter = new BrokerParameter("objPanel", JSON.stringify(objPanel_));
+            // objBrokerRequest.Parameters.push(objParameter);
+            debugger;
 
             axios
-                .get(_gMod._performTask, {
+                .post(_gMod._performTask, {
                     headers: {
                         Accept: "application/json",
                         "Content-Type": "application/json;charset=UTF-8",
@@ -568,6 +547,7 @@ export default class AlarmProfile extends Component<IProps> {
                 })
                 .then(async (res) => {
                     Util.StatusSuccess("Data successfully Saved.");
+                    alert("success");
 
                     let warnings: string = res.data.Warnings;
                     if (warnings.trim() != "") {
@@ -606,7 +586,7 @@ export default class AlarmProfile extends Component<IProps> {
 
 
         } catch (error) {
-
+            alert(error);
         }
 
     }
@@ -638,7 +618,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     AddChannel = () => {
         try {
-            this.setState({ showAlarmPanelDesingerDialog: true })
+            this.setState({ showAlarmPanelDesingerDialog: true, ModeChannel : "A", selectedChannelIndex : -1 })
         } catch (error) {
 
         }
@@ -655,7 +635,7 @@ export default class AlarmProfile extends Component<IProps> {
                 alert("Please select the channel from the list");
             }else{
 
-                this.setState({ showAlarmPanelDesingerDialog: true });
+                this.setState({ showAlarmPanelDesingerDialog: true, ModeChannel : "E"  });
             }
 
             
@@ -688,13 +668,68 @@ export default class AlarmProfile extends Component<IProps> {
     }
 
 
-    onClosePanelDesigner = () => {
+    onClosePanelDesigner = async (objChannel_ : APChannel, Mode_ : string) => {
         try {
-            this.setState({ showAlarmPanelDesingerDialog : false});
+            debugger;
+            //alert("abc");
+            this.setState({ showAlarmPanelDesingerDialog : false, selectedChannel_  :  objChannel_});
 
+
+            //let grdContainers_ = this.state.grdContainers;
+            
+            let ContainerIndex = this.state.grdContainers.findIndex( (item : any) => item.ContainerID === this.state.selectedConainerID);
+            
+
+            let oldgrdContainers = this.state.grdContainers;
+
+            // oldgrdContainers[ContainerIndex].channels.forEach( (element :any) => {
+            //     debugger;
+                
+            //     if (element.Mnemonic ==objChannel_.Mnemonic){
+            //         oldgrdContainers[ContainerIndex].channels= objChannel_;
+            //     }
+                
+            // });
+
+            if (Mode_=="A"){
+                //oldgrdContainers[ContainerIndex].channels[oldgrdContainers[ContainerIndex].channels.length] = objChannel_;
+                oldgrdContainers[ContainerIndex].channels.push(objChannel_);
+
+            }else{
+                oldgrdContainers[ContainerIndex].channels[this.state.selectedChannelIndex] = objChannel_;
+            }
+
+            
+            
+            
+
+            // for (let index = 0; index < oldgrdContainers[ContainerIndex].channels.length; index++) {
+            //     const channel_ = oldgrdContainers[ContainerIndex].channels[index];
+
+            //     if (channel_.Mnemonic ==objChannel_.Mnemonic){
+            //         oldgrdContainers[ContainerIndex].channels[index] = channel_;
+            //     }
+            // }
+
+
+            let channelList_ = [];
+
+            oldgrdContainers[ContainerIndex].channels.forEach(element => {
+                channelList_.push({ ChannelName: element.ChannelName, Mnemonic : element.Mnemonic  });
+            });
+
+            // this.setState({
+            //     selectedTab: 1, ChannelsList: channelList_, ContainerName: oldgrdContainers[ContainerIndex].ContainerName, IsActive: oldgrdContainers[ContainerIndex].IsActive,
+            //     selectedConainerID: oldgrdContainers[ContainerIndex].ContainerID, grdContainers :  oldgrdContainers
+            // });
+
+
+            alert(oldgrdContainers[ContainerIndex].ContainerName);
+            debugger;
+            await this.setState({ grdContainers: oldgrdContainers, ChannelsList: channelList_, ContainerName: oldgrdContainers[ContainerIndex].ContainerName });
 
         } catch (error) {
-
+                alert(error);
         }
     }
 
@@ -713,7 +748,7 @@ export default class AlarmProfile extends Component<IProps> {
                 this.state.grdContainers[ContainerIndex].channels.forEach(async channel => {
                     if (channel.Mnemonic == e.dataItem.Mnemonic){
                         debugger;
-                       await    this.setState({ selectedChannel_: channel });
+                       await    this.setState({ selectedChannel_: channel, selectedChannelIndex : index });
                     }
                     
                 });
@@ -728,6 +763,33 @@ export default class AlarmProfile extends Component<IProps> {
 
         } catch (error) {
             
+        }
+       
+    }
+
+
+    RemoveChannel =()=>{
+        try {
+            let grdContainers_ = utilFunc.CopyObject(this.state.grdContainers);
+            let ContainerIndex = this.state.grdContainers.findIndex(item => item.ContainerID === this.state.selectedConainerID);
+
+            
+            if (this.state.selectedChannelIndex >=0){
+                 //grdContainers_[ContainerIndex].channels[this.state.selectedChannelIndex].splice(this.state.selectedChannelIndex-1,1);
+                 grdContainers_[ContainerIndex].channels.splice( (this.state.selectedChannelIndex),1);
+                
+                 //alert("After remove ="+ grdContainers_[ContainerIndex].channels.length);
+                this.setState({ grdContainers : grdContainers_, selectedChannelIndex : -1, ChannelsList : grdContainers_[ContainerIndex].channels });
+            }
+            debugger;
+
+
+          
+
+
+            
+        } catch (error) {
+           alert(error) ;
         }
     }
     render() {
@@ -886,7 +948,7 @@ export default class AlarmProfile extends Component<IProps> {
                                                 <Button className='mt-3' style={{ width: "150px" }}  onClick={this.EditChannel}>
                                                     Edit Channel
                                                 </Button>
-                                                <Button className='mt-3' style={{ width: "150px" }}>
+                                                <Button className='mt-3' style={{ width: "150px" }}  onClick={this.RemoveChannel}>
                                                     Remove Channel
                                                 </Button>
                                             </div>
@@ -1030,7 +1092,7 @@ export default class AlarmProfile extends Component<IProps> {
                         }}
                     >
 
-                        <AlarmPanelDesigner onClosePanelDesigner={this.onClosePanelDesigner} objChannel = {this.state.selectedChannel_}></AlarmPanelDesigner>
+                        <AlarmPanelDesigner onClosePanelDesigner={this.onClosePanelDesigner} objChannel = {this.state.selectedChannel_} ModeChannel = {this.state.ModeChannel}></AlarmPanelDesigner>
 
                     </Dialog>
 

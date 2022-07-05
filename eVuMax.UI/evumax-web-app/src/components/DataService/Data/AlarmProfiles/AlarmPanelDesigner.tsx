@@ -20,6 +20,7 @@ let _gMod = new GlobalMod();
 interface IProps {
   onClosePanelDesigner: any,
   objChannel: APChannel,
+  ModeChannel: string,
 }
 
 export default class AlarmPanelDesigner extends Component<IProps> {
@@ -71,7 +72,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
 
   }
   componentDidMount = () => {
-    
+
     //this.loadCombo();
     this.loadData();
   }
@@ -79,7 +80,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
 
   saveExpression = (expressionText: string, expType: string) => {
     try {
-      
+
       let objChannel_: APChannel = this.state.objChannel;
       if (expType == "YellowExpression") {
         objChannel_.YellowExpression = expressionText;
@@ -204,7 +205,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
         .then(async (res) => {
           Util.StatusSuccess("Data successfully retrived  ");
           this.objLogger.SendLog("load Download Audit Info Data Received...");
-          
+
 
           let objData_ = JSON.parse(res.data.Response);
 
@@ -234,9 +235,15 @@ export default class AlarmPanelDesigner extends Component<IProps> {
 
           //containerList_ = containerList_.map((item: any) => Object.assign({ selected: false, inEdit: true }, item));
 
-          
+
           if (this.state.objChannel.SourceType == apSourceType.Trajectory) {
             if (this.state.isStdChannelList) {
+
+              let combodata_ = new comboData();
+              combodata_.id = this.state.objChannel.Mnemonic;
+              combodata_.text = this.state.objChannel.ChannelName;
+
+
               await this.setState({
                 objData: objData_, AlarmTypeList: Object.values(objData_.alarmTypeList),
                 AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
@@ -250,30 +257,43 @@ export default class AlarmPanelDesigner extends Component<IProps> {
           }
           else {
             if (this.state.isStdChannelList) {
+
+              let combodata_ = new comboData();
+              combodata_.id = this.state.objChannel.Mnemonic;
+              combodata_.text = this.state.objChannel.ChannelName;
+              //this.setState({ selectedChannel: combodata_ });
+
+
               await this.setState({
                 objData: objData_, ChannelList: Object.values(objData_.stdChannelList), AlarmTypeList: Object.values(objData_.alarmTypeList),
-                AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+                AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__, selectedChannel: combodata_
               });
             } else {
+              debugger;
+              let combodata_ = new comboData();
+              combodata_.id = this.state.objChannel.Mnemonic;
+              combodata_.text = this.state.objChannel.ChannelName;
+
+
               await this.setState({
                 objData: objData_, ChannelList: Object.values(objData_.channelList), AlarmTypeList: Object.values(objData_.alarmTypeList),
-                AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__
+                AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__,  selectedChannel: combodata_
               });
             }
           }
 
           //alert("name = " + this.state.objChannel.ChannelName);
 
-          if (this.state.objChannel.ChannelName != "") {
+          // if (this.state.objChannel.ChannelName != "") {
 
-            //name, mnemonic
+          //   //name, mnemonic
 
 
-            let combodata_ = new comboData();
-            combodata_.id = this.state.objChannel.Mnemonic;
-            combodata_.text = this.state.objChannel.ChannelName;
-            this.setState({ selectedChannel: combodata_ });
-          }
+          //   let combodata_ = new comboData();
+          //   combodata_.id = this.state.objChannel.Mnemonic;
+          //   combodata_.text = this.state.objChannel.ChannelName;
+          //   this.setState({ selectedChannel: combodata_ });
+          // }
 
           this.loadCombo();
         })
@@ -314,7 +334,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
       cboData = new comboData("DQM Alarm", "1");
       this.state.cmbAlarmCategory.push(cboData);
 
-      
+
       if (this.state.objChannel.ChannelName != "") {
         for (let index = 0; index < this.state.cmbAlarmCategory.length; index++) {
           if (this.state.cmbAlarmCategory[index].id == this.state.objChannel.AlarmCategory) {
@@ -374,7 +394,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
       cboData = new comboData("First Value", "4");
       this.state.cmbDownSampleFunction.push(cboData);
 
-debugger;
+      debugger;
       if (this.state.objChannel.ChannelName != "") {
         for (let index = 0; index < this.state.cmbDownSampleFunction.length; index++) {
           if (this.state.cmbDownSampleFunction[index].id == this.state.objChannel.DownSampleFunction) {
@@ -400,34 +420,34 @@ debugger;
       //rigstate collection
       let selectedRigStateList = this.state.objChannel.RigStates.split(",");
 
-      
+
       let rigStateList_ = this.state.RigStatesList;
       selectedRigStateList.forEach(element => {
 
         let index = this.state.RigStatesList.findIndex(x => x.Number.toString() === element);
         if (index != -1) {
-          rigStateList_[index]["selected"]= true;
+          rigStateList_[index]["selected"] = true;
         }
       });
 
-      await this.setState( {RigStatesList : rigStateList_});
+      await this.setState({ RigStatesList: rigStateList_ });
 
-      
 
-    //well status selection
-    
-    let selectedWellStatusList = this.state.objChannel.WellStatus.split(",");
-    let wellStatusList_ = this.state.WellStatusList;
 
-    selectedWellStatusList.forEach(element => {
+      //well status selection
 
-      let index = this.state.WellStatusList.findIndex(x => x.Number.toString() === element);
-      if (index != -1) {
-        wellStatusList_[index]["selected"]= true;
-      }
-    });
+      let selectedWellStatusList = this.state.objChannel.WellStatus.split(",");
+      let wellStatusList_ = this.state.WellStatusList;
 
-    await this.setState( {WellStatusList : wellStatusList_});
+      selectedWellStatusList.forEach(element => {
+
+        let index = this.state.WellStatusList.findIndex(x => x.Number.toString() === element);
+        if (index != -1) {
+          wellStatusList_[index]["selected"] = true;
+        }
+      });
+
+      await this.setState({ WellStatusList: wellStatusList_ });
 
 
 
@@ -437,7 +457,7 @@ debugger;
   }
   handleChange = (event: any, field: any) => {
     try {
-      
+
       const value = event.value;
 
       const name = field;
@@ -488,11 +508,11 @@ debugger;
         .then(async (res) => {
           Util.StatusSuccess("Data successfully retrived  ");
           this.objLogger.SendLog("load ExpWizard Data Received...");
-          
+
 
           let objData = JSON.parse(res.data.Response);
 
-          
+
 
           let warnings: string = res.data.Warnings;
           if (warnings.trim() != "") {
@@ -506,7 +526,7 @@ debugger;
               warningMsg: []
             });
           }
-          
+
 
           let objData_: any = Object.values(objData);
           //Object.values(objData)[0].Name
@@ -549,7 +569,9 @@ debugger;
 
 
 
-      if (field == "Mnemonic") {  //Channel 
+      if (field == "ChannelName") {  //Channel 
+        debugger;
+        edited["Mnemonic"] = value.id;
         this.setState({
           selectedChannel: e.value, objChannel: edited
         });
@@ -587,7 +609,7 @@ debugger;
         });
         return;
       }
-debugger;
+      debugger;
       if (field == "DownSampleFunction") {
 
         this.setState({
@@ -622,7 +644,7 @@ debugger;
 
 
   grdRowClick = (e: any, field: string) => {
-    
+
     if (field == 'RigStatesList') {
       let index = this.state.RigStatesList.findIndex((item: any) => item["Number"] === e.dataItem.Number);
       this.setState({
@@ -644,7 +666,7 @@ debugger;
   selectionChange = async (event, field: string) => {
     try {
 
-      
+
 
 
       const checked = event.syntheticEvent.target.checked;
@@ -660,7 +682,7 @@ debugger;
       }
       if (field == "WellStatusList") {
         const data = this.state.WellStatusList.map((item: any) => {
-          
+
           if (item["WELL_STATUS"] === event.dataItem.WELL_STATUS) {
             item["selected"] = checked;
           }
@@ -721,7 +743,7 @@ debugger;
     }
   }
 
-  okClick = () => {
+  okClick = async () => {
     try {
 
       if (this.state.objChannel.RigStateSelection) {
@@ -733,7 +755,7 @@ debugger;
       else {
         let strRigStates: string = "";
 
-        
+
         for (let i: number = 0; (i <= (this.state.RigStatesList.length - 1)); i++) {
           let rigState_ = this.state.RigStatesList[i];
 
@@ -749,7 +771,7 @@ debugger;
 
         let objChannel_: APChannel = this.state.objChannel;
         objChannel_.RigStates = strRigStates;
-        this.setState({ objChannel: objChannel_ });
+        await this.setState({ objChannel: objChannel_ });
 
         let strWellStatus = "";
         if (this.state.objChannel.WellStatusSpecific) {
@@ -767,8 +789,10 @@ debugger;
 
         }
       }
+      debugger;
 
-      this.props.onClosePanelDesigner();
+        this.props.onClosePanelDesigner(this.state.objChannel, this.props.ModeChannel);
+     
 
     } catch (error) {
 
@@ -835,7 +859,7 @@ debugger;
                 dataItemKey="id"
                 data={this.state.ChannelList}
                 value={this.state.selectedChannel}
-                onChange={(e) => this.onDropdownChange(e, "Mnemonic")}
+                onChange={(e) => this.onDropdownChange(e, "ChannelName")}
               >
               </DropDownList>
 
@@ -844,7 +868,7 @@ debugger;
                 label={"Standard List"}
                 value={this.state.isStdChannelList}
                 onChange={async (e) => {
-                  
+
                   await this.setState({ isStdChannelList: e.value });
                   this.loadCombo();
 
@@ -1226,7 +1250,7 @@ debugger;
                 <Checkbox
                   label={"Send email to "}
                   checked={this.state.objChannel.SendMail}
-                  onChange={(e) => this.handleChange(e,"SendMail") }
+                  onChange={(e) => this.handleChange(e, "SendMail")}
                 >
                 </Checkbox>
 

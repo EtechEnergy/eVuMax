@@ -669,6 +669,7 @@ export default class AdvKPI extends Component {
 
     plotChart = (paramObjChart: Chart) => {
         try {
+            debugger;
             this.objChart = paramObjChart;
             //Load Workspace Wells into Combo FilterData
 

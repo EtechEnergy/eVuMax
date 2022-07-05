@@ -242,14 +242,30 @@ export class BarSeries {
           let objSeries_  = DataSeriesKeyList.get(d.key);
           let objVerticalAxis : Axis = ChartRef_.getAxisByID(objSeries_.YAxisId);
           let VAxisScale = objVerticalAxis.ScaleRef;
-          return VAxisScale(d.value);
+          
+          //change by prath on 30-06-2022  for (-v value on Y-Axis)
+          //return VAxisScale(d.value);
+          if (d.value < 0){
+            return VAxisScale(0);
+          }else{
+            return VAxisScale(d.value);
+          }
+
+          //=============
         })
         .attr("width", barWidth)
         .attr("height", function (d) {
           let objSeries_  = DataSeriesKeyList.get(d.key);
           let objVerticalAxis : Axis = ChartRef_.getAxisByID(objSeries_.YAxisId);
           let VAxisScale = objVerticalAxis.ScaleRef;
-          return height - Math.abs(VAxisScale(d.value));
+          //change by prath on 30-06-2022 for (-v value on Y-Axis)
+          if (d.value < 0){
+            return Math.abs(VAxisScale(d.value));
+          }else{
+            return height - Math.abs(VAxisScale(d.value));
+          }
+
+          
         })
         
         //prath 11-April-2022
