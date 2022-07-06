@@ -110,7 +110,7 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
 
                     const objData = JSON.parse(res.data.Response);
 
-                    debugger;
+                    
                     this.setState({
                         columnWell: objData.map((item: any) => Object.assign({ selected: false, inEdit: true }, item))
                     });
@@ -147,7 +147,7 @@ export default class WellColumnsEditor extends React.PureComponent<IProps> {
     Save = () => {
 
         try {
-            debugger;
+            
             objBrokerRequest = new BrokerRequest();
             objBrokerRequest.Module = "Well.Data.Objects";
             objBrokerRequest.Function = "SaveWellColumns";

@@ -127,7 +127,7 @@ export default class PhaseMappingMgr extends Component {
     }
     generateVuMaxTypeCombo = async () => {
         try {
-            debugger;
+            
             cmbVuMaxType.length = 0;
             cmbVuMaxType.push(new comboData("Trip", "TRIP"));
             cmbVuMaxType.push(new comboData("Cased Hole Trip", "CASED_HOLE_TRIP"));
@@ -203,7 +203,7 @@ export default class PhaseMappingMgr extends Component {
 
                 .then((res) => {
 
-                    debugger;
+                    
                     const objData = JSON.parse(res.data.Response);
 
 
@@ -381,7 +381,7 @@ export default class PhaseMappingMgr extends Component {
                 return;
 
             }
-            debugger;
+            
             if (this.state.cmbPhase.id == "") {
                 confirmAlert({
                     //title: 'eVuMax',
@@ -483,7 +483,7 @@ export default class PhaseMappingMgr extends Component {
             })
                 .then(async (response) => {
 
-                    debugger;
+                    
                     let objResp = response.data;
                     let warnings = objResp.Warnings;
 
@@ -518,7 +518,7 @@ export default class PhaseMappingMgr extends Component {
 
     generateStepCombo = () => {
         try {
-            debugger;
+            
 
             let strSQL = "";
             if (this.state.cmbTagSource.id == "-999") {
@@ -585,7 +585,7 @@ export default class PhaseMappingMgr extends Component {
     }
     generatePhaseCombo = () => {
         try {
-            debugger;
+            
             alert(this.state.cmbPhase.id);
             let strSQL = "";
             if (this.state.cmbTagSource.id == "-999") {
@@ -655,7 +655,7 @@ export default class PhaseMappingMgr extends Component {
 
     generateEmphCombo = () => {
         try {
-            debugger;
+            
             let strSQL = "";
             if (this.state.cmbTagSource.id == "-999") {
                 strSQL = "SELECT EMPH_ID,EMPH_NAME FROM VMX_EMPH_MASTER WHERE PHASE_ID='" + this.state.cmbPhase.id + "' AND STEP_ID='" + this.state.cmbStep.id + "' ORDER BY EMPH_NAME";
@@ -806,7 +806,7 @@ export default class PhaseMappingMgr extends Component {
 
 
                                 onChange={async (event) => {
-                                    debugger;
+                                    
                                     await this.setState({ cmbStep: new comboData(event.value.text, event.value.id), cmbEmph: new comboData() });
                                     this.generateEmphCombo();
 

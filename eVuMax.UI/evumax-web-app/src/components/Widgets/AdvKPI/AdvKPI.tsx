@@ -85,7 +85,7 @@ export default class AdvKPI extends Component {
 
     componentDidMount() {
         try {
-            debugger;
+            
             this.loadWorkSpace();
         } catch (error) {
 
@@ -96,6 +96,7 @@ export default class AdvKPI extends Component {
         try {
 
             let wellList = Object.values(objData.arrWells);
+            
             let newWellList: any = [];
             for (let index = 0; index < wellList.length; index++) {
                 const objItem: any = wellList[index];
@@ -113,6 +114,7 @@ export default class AdvKPI extends Component {
             });
             profileList = Object.values(objData.grdProfile);
             compositeProfileList = Object.values(objData.grdComposite);
+            
             console.log("grdWell", this.state.grdWells);
             console.log("grdProfile", this.state.grdProfile);
 
@@ -669,7 +671,7 @@ export default class AdvKPI extends Component {
 
     plotChart = (paramObjChart: Chart) => {
         try {
-            debugger;
+            
             this.objChart = paramObjChart;
             //Load Workspace Wells into Combo FilterData
 
@@ -1042,7 +1044,7 @@ export default class AdvKPI extends Component {
 
 
 
-                    debugger;
+                    
                     switch (objDataSeries.SeriesType) {
                         case 0:
                             this.objSeries.Type = dataSeriesType.Line;
@@ -1175,7 +1177,7 @@ export default class AdvKPI extends Component {
 
                 }
 
-                debugger;
+                
                 let dataFilterString = "";
                 if (this.objData.FilterData == true) {
                     dataFilterString = "(";
@@ -1829,7 +1831,7 @@ export default class AdvKPI extends Component {
             //==========================================
             let objBottomAxes: Axis = new Axis();
             objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
-            debugger;
+            
             for (let i = 0; i < SeriesData.length; i++) {
                 this.objSeries.Name = SeriesData[i].LegendTitle;
 
@@ -1869,7 +1871,7 @@ export default class AdvKPI extends Component {
                 this.objSeries.Data.push(objVal);
 
             }
-            debugger;
+            
             this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
 
         } catch (error) {
@@ -1966,7 +1968,7 @@ export default class AdvKPI extends Component {
                     });
                     this.objCompositeProfile.items = objCompositeProfileItems;
 
-                    debugger;
+                    
                     this.plotCompositeChart();
                     //Warnings Notifications
                     let warnings: string = res.data.Warnings;
@@ -2138,7 +2140,7 @@ export default class AdvKPI extends Component {
                 _gMod._userId
             );
             objBrokerRequest.Parameters.push(objParameter);
-
+                
 
             this.AxiosSource = axios.CancelToken.source();
             axios
@@ -2228,7 +2230,7 @@ export default class AdvKPI extends Component {
 
     handleChangeDropDown = async (event: any, fieldName: string, filterObject: string) => {
 
-        debugger;
+        
 
         let edited = this.state.objFilterData;
         edited[filterObject] = event.value.id;
@@ -2242,7 +2244,7 @@ export default class AdvKPI extends Component {
         //     await this.setState({ selectedMainWell: new comboData(event.value.text, event.value.id) });
         // }
 
-        debugger;
+        
     }
 
     cmdRunKPI_click = async (e, objRow: any, RunType: string) => {
@@ -2298,7 +2300,7 @@ export default class AdvKPI extends Component {
                     ProfileName: objRow.PROFILE_NAME,
                     ProfileNameMain: objRow.PROFILE_NAME,
                 });
-                debugger;
+                
             }
             if (RunType == "RunComposite") {
                 this.ID = objRow.TEMPLATE_ID;
@@ -2888,7 +2890,7 @@ export default class AdvKPI extends Component {
                                 icon={faFilter}
                                 size="lg"
                                 onClick={() => {
-                                    debugger;
+                                    
                                     this.setState({
                                         showFilterDialog: true, 
                                         "selectedMainWell" : this.state.selectedMainWell

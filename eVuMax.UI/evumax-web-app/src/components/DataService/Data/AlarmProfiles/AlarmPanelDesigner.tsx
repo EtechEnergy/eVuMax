@@ -269,7 +269,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
                 AlarmCategory2List: Object.values(objData_.alarmCategory2List), RigStatesList: RigStatesList__, WellStatusList: WellStatusList__, selectedChannel: combodata_
               });
             } else {
-              debugger;
+              
               let combodata_ = new comboData();
               combodata_.id = this.state.objChannel.Mnemonic;
               combodata_.text = this.state.objChannel.ChannelName;
@@ -394,7 +394,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
       cboData = new comboData("First Value", "4");
       this.state.cmbDownSampleFunction.push(cboData);
 
-      debugger;
+      
       if (this.state.objChannel.ChannelName != "") {
         for (let index = 0; index < this.state.cmbDownSampleFunction.length; index++) {
           if (this.state.cmbDownSampleFunction[index].id == this.state.objChannel.DownSampleFunction) {
@@ -570,7 +570,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
 
 
       if (field == "ChannelName") {  //Channel 
-        debugger;
+        
         edited["Mnemonic"] = value.id;
         this.setState({
           selectedChannel: e.value, objChannel: edited
@@ -609,7 +609,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
         });
         return;
       }
-      debugger;
+      
       if (field == "DownSampleFunction") {
 
         this.setState({
@@ -789,7 +789,7 @@ export default class AlarmPanelDesigner extends Component<IProps> {
 
         }
       }
-      debugger;
+      
 
         this.props.onClosePanelDesigner(this.state.objChannel, this.props.ModeChannel);
      

@@ -155,7 +155,7 @@ export default class SetupAlarms extends Component {
                 })
                 .then(async (res) => {
                     const objData = JSON.parse(res.data.Response);
-                    debugger;
+                    
 
                     console.log(objData);
 
@@ -173,7 +173,7 @@ export default class SetupAlarms extends Component {
                         });
                     }
 
-                    debugger;
+                    
 
                     let selectedProfile_ = new comboData();
                     for (let index = 0; index < objData.objProfileList.length; index++) {
@@ -181,7 +181,7 @@ export default class SetupAlarms extends Component {
                             selectedProfile_ = new comboData(objData.objProfileList[index].text, objData.objProfileList[index].id);
                         }
                     }
-                    debugger;
+                    
 
                     await this.setState({ objProfileList: objData.objProfileList, WellID: objData.WellID, selectedProfile: selectedProfile_ });
                 })

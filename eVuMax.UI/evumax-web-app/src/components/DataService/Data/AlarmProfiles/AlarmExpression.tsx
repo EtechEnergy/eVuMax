@@ -16,7 +16,7 @@ export default class AlarmExpression extends Component<IProps> {
 
     componentDidMount(): void {
         try {
-            debugger;
+            
         } catch (error) {
 
         }
@@ -24,7 +24,7 @@ export default class AlarmExpression extends Component<IProps> {
 
     grdRowClick = (e: any, gridName: string) => {
         try {
-            debugger;
+            
             if (gridName == 'AlarmExp') {
                 let index = this.state.AlarmExpList.findIndex((item: any) => item["ExpressionID"] === e.dataItem.ExpressionID);
                 this.setState({
@@ -42,7 +42,7 @@ export default class AlarmExpression extends Component<IProps> {
     selectionChange = async (event, gridName: string) => {
         try {
 
-            debugger;
+            
 
 
             const checked = event.syntheticEvent.target.checked;
@@ -54,7 +54,7 @@ export default class AlarmExpression extends Component<IProps> {
                     }
                     return item;
                 });
-                debugger;
+                
                 await this.setState({ AlarmExpList: data });
             }
 
@@ -77,7 +77,7 @@ export default class AlarmExpression extends Component<IProps> {
         // VariableID: "CIRCVARIATION"
 
         let dynamicDiv__ = "<div>";
-        debugger;
+        
         this.state.AlarmExpList.forEach((element: any) => {
 
             if (element.ExpressionID == this.state.selectedAlarmExpID) {

@@ -88,11 +88,11 @@ export default class RigStateSetup extends Component {
 
 
 
-            debugger;
+            
 
             this.state.grdAutoSlideSetupList.forEach(function (x) { delete x.SRNO });
 
-debugger;
+
             this.state.objRigStateSetup.autoSlideSetupList = utilFunctions.convertMapToDictionaryJSON(this.state.grdAutoSlideSetupList);
 
 
@@ -102,7 +102,7 @@ debugger;
                 let objItem: any = localRigStateList[index];
                 objItem.Color = utilFunctions.rgb2hex(objItem.Color);
             }
-            debugger;
+            
 
 
             localRigStateList = utilFunctions.convertMapToDictionaryJSON(localRigStateList, "Number");
@@ -151,7 +151,7 @@ debugger;
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let objResponse = JSON.parse(res.data.Response);
 
                     this.setState({ FromDate: new Date(objResponse.FromDate), ToDate: new Date(objResponse.ToDate), showCalRigStateDialog: true });
@@ -203,7 +203,7 @@ debugger;
 
 
     grdItemChange = (e: any) => {
-        debugger;
+        
         e.dataItem[e.field] = e.value;
         this.setState({
             grdRigState: [...this.state.grdRigState]
@@ -324,7 +324,7 @@ debugger;
 
     onAddClick = (e) => {
         try {
-            debugger;
+            
             let newRow = {
                 SRNO: this.state.grdAutoSlideSetupList.length + 1,
                 FromDepth: 0,
@@ -362,7 +362,7 @@ debugger;
     AutoSlideSetupListItemChange = (e: any) => {
         try {
             e.dataItem[e.field] = e.value;
-            debugger;
+            
 
             let newData: any = Object.values([...this.state.grdAutoSlideSetupList]);
             let index = newData.findIndex((item: any) => item.SRNO === e.dataItem.SRNO); // use unique value like ID
@@ -422,7 +422,7 @@ debugger;
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let objResponse = res.data;
                     //JSON.parse(res.data.Response);
 
@@ -486,7 +486,7 @@ debugger;
 
     handleChangeCalRigState = (event: any, field: string) => {
 
-        debugger;
+        
         const value = event.value;
         const name = field; // target.props ? target.props.name : target.name;
         //let edited: any = utilFunc.CopyObject(this.state.objDataSelector);

@@ -135,7 +135,7 @@ export default class CustomTagSourceMgr extends Component {
                             })
                                 .then(async (response) => {
 
-                                    debugger;
+                                    
                                     let objRes = JSON.parse(response.data);
                                     //alert(objRes.Warnings);
                                     this.setState({

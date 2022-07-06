@@ -128,12 +128,12 @@ export default class AlarmProfile extends Component<IProps> {
                         });
                     }
 
-                    debugger;
+                    
                     if (res.data.Response == null) {
                         return;
                     }
                     let containerList_ = utilFunc.CopyObject(Object.values(JSON.parse(res.data.Response)));
-                    debugger;
+                    
 
 
                     // objPanel_.containers.forEach(element => {
@@ -226,7 +226,7 @@ export default class AlarmProfile extends Component<IProps> {
                     objPanel_.containers.forEach(element => {
                         element.channels = Object.values(element.channels)
                     });
-                    debugger;
+                    
                     this.setState({
                         objPanel: objPanel_, grdContainers: objPanel_.containers.map((item: any) => Object.assign({ selected: true, inEdit: true }, item)),
                         selectedTab: 0, showAlarmProfileDialog: true
@@ -295,7 +295,7 @@ export default class AlarmProfile extends Component<IProps> {
                 this.setState({ ContainerName: "", IsActive: true, Mode: 'R' });
 
                 let containers = this.state.grdContainers;
-                debugger;
+                
                 let index = containers.findIndex(item => item.ContainerID === this.state.selectedConainerID);
                 containers.splice(index, 1);
                 this.setState({ ContainerName: "", IsActive: true, grdContainers: containers, selectedConainerID: "" });
@@ -310,7 +310,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     grdRowClick = (e) => {
         try {
-            debugger;
+            
             let index = this.state.grdContainers.findIndex((item: any) => item["ContainerID"] === e.dataItem.ContainerID
             );
             if (index >= 0) {
@@ -325,7 +325,7 @@ export default class AlarmProfile extends Component<IProps> {
                     selectedTab: 1, ChannelsList: channelList_, ContainerName: e.dataItem.ContainerName, IsActive: e.dataItem.IsActive,
                     selectedConainerID: e.dataItem.ContainerID
                 });
-                debugger;
+                
             }
         } catch (error) {
 
@@ -335,10 +335,10 @@ export default class AlarmProfile extends Component<IProps> {
 
     grdRowClickLibrary = (e) => {
         try {
-            debugger;
+            
             let index = this.state.containerLibrary.findIndex((item: any) => item["ContainerID"] === e.dataItem.ContainerID);
 
-            debugger;
+            
             let selectedItem: any = this.state.containerLibrary[index];
 
 
@@ -381,7 +381,7 @@ export default class AlarmProfile extends Component<IProps> {
                             });
                         }
 
-                        debugger;
+                        
 
                         let strAlarmInfo_ = JSON.parse(res.data.Response);
 
@@ -426,7 +426,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     selectionChange = (event) => {
         try {
-            debugger;
+            
             const checked = event.syntheticEvent.target.checked;
 
             const data = this.state.grdContainers.map((item: any) => {
@@ -444,7 +444,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     selectionChangeLibrary = (event) => {
         try {
-            debugger;
+            
             const checked = event.syntheticEvent.target.checked;
 
             const data = this.state.containerLibrary.map((item: any) => {
@@ -479,7 +479,7 @@ export default class AlarmProfile extends Component<IProps> {
 
                 this.setState({ grdContainers: containers, showEditContainer: false, ContainerName: this.state.ContainerName1, IsActive: this.state.IsActive });
             } else {
-                debugger;
+                
 
                 if (this.state.selectedConainerID != "") {
                     containers.forEach(element => {
@@ -516,51 +516,71 @@ export default class AlarmProfile extends Component<IProps> {
 
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "DataAlarmProfiles";
-            objBrokerRequest.Function = "saveAlarmProfile";  //saveAlarmProfile
+            objBrokerRequest.Function = "saveAlarmProfile";  //saveAlarmProfile //loadFromLibrary
 
-            debugger;
+            
             let objPanel_: any = utilFunc.CopyObject(this.state.objPanel);
 
+
+            //objPanel_.containers = null;
             objPanel_.containers.forEach(element => {
-                element.channels = null;
+                //element.channels = null;
+
+                // element.__functionCache =null;
+                // element.alarmContainerDates = null;
+                // element.otherValues = null;
+                // element.setAlarms = null;
+                //element.channels = null;
+                element.channels.forEach((channel_ : APChannel) => {
+                    channel_.alarmContainerDates = null;
+                    channel_.__functionCache=null;
+                    channel_.history=null;
+
+                });
+                
             });
 
             objPanel_.containers = utilFunc.convertMapToDictionaryJSON(objPanel_.containers);
-
+            objPanel_.setAlarms = utilFunc.convertMapToDictionaryJSON(objPanel_.setAlarms);
+            
        
 
 
             let objParameter = new BrokerParameter("PanelEditMode", this.props.PanelEditMode);
             objBrokerRequest.Parameters.push(objParameter);
 
-            // objParameter = new BrokerParameter("objPanel", JSON.stringify(objPanel_));
-            // objBrokerRequest.Parameters.push(objParameter);
-            debugger;
+            objParameter = new BrokerParameter("objPanel", JSON.stringify(objPanel_));
+            objBrokerRequest.Parameters.push(objParameter);
+            
 
-            axios
-                .post(_gMod._performTask, {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json;charset=UTF-8",
-                    },
-                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
-                })
+            
+            axios.post(_gMod._performTask, {
+                paramRequest: JSON.stringify(objBrokerRequest),
+            })
+                // .get(_gMod._getData, {
+                //     headers: {
+                //         Accept: "application/json",
+                //         "Content-Type": "application/json;charset=UTF-8",
+                //     },
+                //     params: { paramRequest: JSON.stringify(objBrokerRequest) },
+                // })
                 .then(async (res) => {
                     Util.StatusSuccess("Data successfully Saved.");
                     alert("success");
+                    
 
-                    let warnings: string = res.data.Warnings;
-                    if (warnings.trim() != "") {
-                        let warningList = [];
-                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
-                        this.setState({
-                            warningMsg: warningList
-                        });
-                    } else {
-                        this.setState({
-                            warningMsg: []
-                        });
-                    }
+                    // let warnings: string = res.data.Warnings;
+                    // if (warnings.trim() != "") {
+                    //     let warningList = [];
+                    //     warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
+                    //     this.setState({
+                    //         warningMsg: warningList
+                    //     });
+                    // } else {
+                    //     this.setState({
+                    //         warningMsg: []
+                    //     });
+                    // }
 
                     this.props.saveProfile();
 
@@ -647,7 +667,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     grid_headerSelectionChange = (event: any, field: string) => {
 
-        debugger;
+        
         const checked = event.syntheticEvent.target.checked;
         if (field == "grdContainers") {
             const data = this.state.grdContainers.map((item: any) => {
@@ -670,7 +690,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     onClosePanelDesigner = async (objChannel_ : APChannel, Mode_ : string) => {
         try {
-            debugger;
+            
             //alert("abc");
             this.setState({ showAlarmPanelDesingerDialog : false, selectedChannel_  :  objChannel_});
 
@@ -683,7 +703,7 @@ export default class AlarmProfile extends Component<IProps> {
             let oldgrdContainers = this.state.grdContainers;
 
             // oldgrdContainers[ContainerIndex].channels.forEach( (element :any) => {
-            //     debugger;
+            //     
                 
             //     if (element.Mnemonic ==objChannel_.Mnemonic){
             //         oldgrdContainers[ContainerIndex].channels= objChannel_;
@@ -724,8 +744,8 @@ export default class AlarmProfile extends Component<IProps> {
             // });
 
 
-            alert(oldgrdContainers[ContainerIndex].ContainerName);
-            debugger;
+            //alert(oldgrdContainers[ContainerIndex].ContainerName);
+            
             await this.setState({ grdContainers: oldgrdContainers, ChannelsList: channelList_, ContainerName: oldgrdContainers[ContainerIndex].ContainerName });
 
         } catch (error) {
@@ -737,17 +757,17 @@ export default class AlarmProfile extends Component<IProps> {
     channelRowClick = async(e)=>{
         try {
             //this.state.grdContainers[1].channels
-            debugger;
+            
             let index = this.state.ChannelsList.findIndex((item: any) => item["Mnemonic"] === e.dataItem.Mnemonic
             );
 
             if (index >= 0) {
                 let ContainerIndex = this.state.grdContainers.findIndex( (item : any) => item.ContainerID === this.state.selectedConainerID);
-                debugger;
+                
 
                 this.state.grdContainers[ContainerIndex].channels.forEach(async channel => {
                     if (channel.Mnemonic == e.dataItem.Mnemonic){
-                        debugger;
+                        
                        await    this.setState({ selectedChannel_: channel, selectedChannelIndex : index });
                     }
                     
@@ -755,7 +775,7 @@ export default class AlarmProfile extends Component<IProps> {
                 
                 //alert(this.state.selectedChannel_.ChannelName);
              
-                debugger;
+                
             }else{
                 alert("Select channel from the list");
             }
@@ -781,7 +801,7 @@ export default class AlarmProfile extends Component<IProps> {
                  //alert("After remove ="+ grdContainers_[ContainerIndex].channels.length);
                 this.setState({ grdContainers : grdContainers_, selectedChannelIndex : -1, ChannelsList : grdContainers_[ContainerIndex].channels });
             }
-            debugger;
+            
 
 
           

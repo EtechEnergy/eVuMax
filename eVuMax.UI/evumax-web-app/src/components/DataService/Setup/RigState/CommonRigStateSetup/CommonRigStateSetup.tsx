@@ -50,7 +50,7 @@ export default class CommonRigStateSetup extends Component {
     }
 
     grdItemChange = (e: any) => {
-        debugger;
+        
         e.dataItem[e.field] = e.value;
         this.setState({
             grdRigState: [...this.state.grdRigState]
@@ -173,7 +173,7 @@ export default class CommonRigStateSetup extends Component {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let objResponse = res.data;
 
                     if (objResponse.RequestSuccessfull == false) {
