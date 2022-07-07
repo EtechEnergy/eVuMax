@@ -52,6 +52,7 @@ export default class AlarmProfiles extends Component {
         }
     }
 
+
     loadProfileGrid = () => {
         try {
             this.objLogger.SendLog("load Maint Std Channels");

@@ -245,8 +245,14 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
                     string PanelEditMode = paramRequest.Parameters.Where(x => x.ParamName.Contains("PanelEditMode")).FirstOrDefault().ParamValue;
 
-                    string strObjPanel = paramRequest.Parameters.Where(x => x.ParamName.Contains("objPanel")).FirstOrDefault().ParamValue;
 
+                    //string strTmpObjChannel = paramRequest.Parameters.Where(x => x.ParamName.Contains("tmpObjChannel")).FirstOrDefault().ParamValue;
+                    //APChannel[] objChannel = JsonConvert.DeserializeObject<APChannel[]>(strTmpObjChannel);
+
+
+
+                    string strObjPanel = paramRequest.Parameters.Where(x => x.ParamName.Contains("objPanel")).FirstOrDefault().ParamValue;
+                    
                     AlarmPanelProfile objPanel = JsonConvert.DeserializeObject<AlarmPanelProfile>(strObjPanel);
 
                     if (PanelEditMode == "A")

@@ -22,6 +22,12 @@ export enum apSourceType {
 }
 
 export class APChannel {
+    
+    
+    
+    
+    
+    
     SourceType: number = apSourceType.TimeLog;
     AlarmType: string = "";
     AlarmTypeName: string = "";
@@ -38,40 +44,39 @@ export class APChannel {
     AckTimeLimit: number = 0;
     SendMail: boolean;
     MailTo: string = "";
-    alarmContainerDates: Date[] = []; //As Dictionary(Of String, Date)
     alarmContainerID: string = "";
+    history: AlarmHistoryItem[] = [];//As Dictionary(Of Integer, AlarmHistoryItem)
     __doPause: boolean;
-    __functionCache: number[] = []; //As Dictionary(Of String, Double)
+    __functionCache: [] = []; //As Dictionary(Of String, Double)
     channelList: string = "";
     ExpLog: string = "";
     DownSampleFunction: enumDownSampleFunction.LastValue;
     TimeLogTableName: string = "";
     AlarmDepth: number = 0;
-    history: AlarmHistoryItem[] = [];//As Dictionary(Of Integer, AlarmHistoryItem)
+    alarmContainerDates : Date[] =[];  
     hasErrors: boolean;
     AlarmDateTime: Date;
     Mnemonic: string = "";
     ChannelName: string = "";
+    YellowExpression: string = "";
     RedExpression: string = "";
     currentState: number = 0;
     channelValue: number = 0;
-    LastState: number = 0;
     LastStateTime: Date;
     LastDataTime: Date;
     RigStates: string = "";
     RigStateSelection: boolean;
-    YellowExpression: string = "";
+    LastState :number=0;
     TimeDuration: number = 0;
-    TriggerType: number = apTriggerType.Instant;
-    WellStatus: string = "";
     parent: object;
+    TriggerType: number = apTriggerType.Instant;
+    WellStatusSpecific: boolean;
     RedConditions: string = "";
     RedUseBuilder: boolean=false;
-    WellStatusSpecific: boolean;
-    YellowConditions: string = "";
+    WellStatus: string ="";
     YellowUseBuilder: boolean=false;
     PlaySound: boolean;
     AckRequired: boolean;
-
+    YellowConditions : string="";
 
 }
