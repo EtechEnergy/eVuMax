@@ -1003,7 +1003,7 @@ export default class AdvKPI extends Component {
                 // });
 
                 let SeriesList = Object.values(this.objData.outputData);
-
+                debugger;
 
                 for (let index = 0; index < SeriesList.length; index++) {
                     let objDataSeries: any = SeriesList[index];
@@ -1177,7 +1177,7 @@ export default class AdvKPI extends Component {
 
                 }
 
-                
+                debugger;
                 let dataFilterString = "";
                 if (this.objData.FilterData == true) {
                     dataFilterString = "(";
@@ -1307,7 +1307,7 @@ export default class AdvKPI extends Component {
 
 
 
-
+            debugger;
             for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
 
                 let objItem = this.objCompositeProfile.items[index];
@@ -1606,7 +1606,8 @@ export default class AdvKPI extends Component {
                     this.objSeries = new DataSeries();
 
                     this.objSeries.Data.length = 0;
-                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID);
+                    //Random number used below line to create unique series id
+                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID) +"-"+Math.floor((Math.random() * 100));
                     this.objSeries.Title = objDataSeries.LegendTitle;
                     this.objSeries.XAxisId = objDataSeries.XColumn;
                     this.objSeries.YAxisId = objDataSeries.YColumn;
@@ -1720,13 +1721,14 @@ export default class AdvKPI extends Component {
                             break;
                     }
 
+                    debugger;
                     let DataGroup = objItem.objProfile.DataGroup;
                     let TimeUnit = objItem.objProfile.TimeUnit;
                     //if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
                     if ((DataGroup = 1) && TimeUnit == 3) {
                         this.getGroupSeriesData();
                     } else {
-                        this.getSingleSeriesData(); //WIP
+                        this.getSingleSeriesData(); 
                     }
                     //
 
@@ -1951,13 +1953,14 @@ export default class AdvKPI extends Component {
 
 
 
-                    let objDataReeceive = JSON.parse(res.data.Response);
-                    console.log("objDataReeceive", objDataReeceive);
+                    let objDataReceive = JSON.parse(res.data.Response);
+                    console.log("objDataReeceive", objDataReceive);
 
 
-                    this.objCompositeProfile = objDataReeceive.objCompositeProfile;
-                    let objCompositeProfileItems = Object.values(objDataReeceive.objCompositeProfile.items);
-                    this.objData = objDataReeceive.objProcessor;//Old
+                    this.objCompositeProfile = objDataReceive.objCompositeProfile;
+                    let objCompositeProfileItems = Object.values(objDataReceive.objCompositeProfile.items);
+                    this.objData = objDataReceive.objProcessor;//Old
+                    debugger;
 
                     objCompositeProfileItems.sort((a: any, b: any) => {
                         if (a.Row === b.Row) {
@@ -2670,7 +2673,7 @@ export default class AdvKPI extends Component {
 
 
                         <div className="row" style={{ display: "flex" }}>
-                            <div className="col-8 mt-5"> <Grid
+                            <div className="col-7 mt-5"> <Grid
                                 style={{
                                     height: "70vh", width: "auto"
                                 }}
@@ -2753,7 +2756,7 @@ export default class AdvKPI extends Component {
                                 />
 
                             </Grid></div>
-                            <div className="col-4">
+                            <div className="col-5">
                                 <TabStrip selected={this.state.selectedTab}
                                     onSelect={this.handleTabSelection}
                                     keepTabsMounted={true}>
@@ -2793,7 +2796,7 @@ export default class AdvKPI extends Component {
                                             <GridColumn
                                                 field="NOTES"
                                                 title="Notes"
-                                                width={50}
+                                                width={150}
                                             />
 
                                             <GridColumn
