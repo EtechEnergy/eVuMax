@@ -49,7 +49,7 @@ import { Util } from "../../../Models/eVuMax";
 import DataSelector_ from "../../Common/DataSelector_";
 import { ClientLogger } from "../../ClientLogger/ClientLogger";
 
-import NotifyMe from 'react-notification-timeline';
+import NotifyMe from 'react-notification-timeline'; 
 import DataSelectorInfo from "../../Common/DataSelectorInfo";
 import * as utilFunctions from "../../../utilFunctions/utilFunctions";
 

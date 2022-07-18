@@ -220,7 +220,7 @@ export default class AlarmProfile extends Component<IProps> {
                         return;
                     }
                     let objPanel_: AlarmPanelProfile = JSON.parse(res.data.Response);
-                    debugger;
+                    
                     objPanel_.containers = Object.values(objPanel_.containers);
 
                     objPanel_.containers.forEach(element => {
@@ -592,13 +592,13 @@ export default class AlarmProfile extends Component<IProps> {
 
     OkLoadLibrary = () => {
         try {
-            debugger;
+            
             let localContainers = utilFunc.CopyObject(this.state.grdContainers);
             this.state.containerLibrary.forEach((item: any) => {
                 if (item.selected_) {
                     localContainers.push(item);
                 }
-                debugger;
+                
                 let panel_: AlarmPanelProfile = this.state.objPanel;
                 panel_.containers = localContainers;
 
