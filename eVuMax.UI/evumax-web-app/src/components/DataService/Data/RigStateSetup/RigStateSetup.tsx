@@ -522,7 +522,7 @@ debugger;
     render() {
         return (
             <div>
-
+                    
                 <h5>Rig State Setup</h5>
 
 
@@ -993,7 +993,7 @@ debugger;
 
                 {this.state.showCalRigStateDialog && (
                     //style={{ height: '100%', width: '500px', top: 0, left: 0 }}
-                    <Dialog title={"Calculate Rig State"}
+                    <Dialog title={"Calculate Rig State (Class)"}
                         width={"700px"}
                         height={"400px"}
                         onClose={(e: any) => {

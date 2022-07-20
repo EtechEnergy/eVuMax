@@ -11,12 +11,18 @@ import {
   Popup,
   Window,
   Dialog,
+  Toolbar,
+  ToolbarItem,
+  ToolbarSpacer,
+  Button,
+  SplitButton,
+  SplitButtonItem,
 } from "@progress/kendo-react-all";
 
 import BrokerRequest from "../../broker/BrokerRequest";
 import BrokerParameter from "../../broker/BrokerParameter";
 
-import { faEdit, faPen, faCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+
 import { Input } from "@progress/kendo-react-inputs";
 import { filterBy } from "@progress/kendo-data-query";
 import CustomLoader from "../loader/loader";
@@ -46,6 +52,8 @@ import GreenPng from "../../images/green.png";
 import blueDotPng from "../../images/blue_dot.png";
 import redDotPng from "../../images/Red_dot.png";
 import snapBulletRed from "../../images/snapbulletred.png";
+import WellSpecificRigStateSetup from "../DataService/Data/RigStateSetup/WellSpecificRigStateSetup";
+import CalculateRigState from "../DataService/Fx_Functions/CalculateRigState";
 
 
 
@@ -112,6 +120,8 @@ export default class WellEditorForm extends React.Component<IProps> {
     objMudLog: new DataObjects.mudLog(),
 
     contextMenuShow: false,
+    showRigStateSetupDialog: false,
+    showCalculateRigStateDialog: false,
   };
 
   componentWillMount() {
@@ -205,7 +215,7 @@ export default class WellEditorForm extends React.Component<IProps> {
 
 
 
-   
+
 
   }
   ////#region
@@ -725,18 +735,75 @@ export default class WellEditorForm extends React.Component<IProps> {
     this.setState({ selected: e.selected });
   };
 
+  FxClicked = (e: any) => {
+    try {
+      debugger;
+      if (e.itemIndex == 0) {
+        if (this.state.showTimeLogEditor == true) {
+
+          this.setState({ showCalculateRigStateDialog: true });
+          alert(this.state.objTimeLog.ObjectID);
+          return;
+        } else {
+          alert("Please select Time Log from the Tree");
+          return;
+
+        }
+      }
+
+    } catch (error) {
+
+    }
+  }
+
+  closeRigStateSetupDialog = () => {
+    try {
+      this.setState({
+        showCalculateRigStateDialog: false,
+        showRigStateSetupDialog: false,
+        EditingInProgress: false
+      })
+    } catch (error) {
+
+    }
+  }
+
   render() {
-    let loader, isProcess = this.state;
-    // if (!this.state.objWell)
-    //   return null;
+
+
     return (
       <>
+        {this.state.showCalculateRigStateDialog && <CalculateRigState WellID={this.wellID} onClose={this.closeRigStateSetupDialog}></CalculateRigState>}
 
         <div id="mainContainer_" style={{ height: "86vh", width: "95vw" }}>
-          <div className="row">
+          <div className="row mb-3  " style={{height:"35px"}}>
             <span className="ml-2">
-              {this.state.isProcess ? <CustomLoader /> : ""}
+              <Toolbar >
+                <ToolbarSpacer />
+                <ToolbarItem>
+                  <Button icon="clock" title="Setup Alarm"></Button>
+                </ToolbarItem>
+                <ToolbarItem>
+                  <Button icon="file-wrench" title="RigState Setup" onClick={
+                    (e) => { this.setState({ showRigStateSetupDialog: true, EditingInProgress: true }) }} ></Button>
+                </ToolbarItem>
+                <ToolbarItem>
+                  <SplitButton icon="fx" onItemClick={this.FxClicked} >
+                    <SplitButtonItem icon="circle" text="Calculate Hole depth" />
+                    <SplitButtonItem icon="table" text="De-Spike" />
+                    {/* <SplitButtonItem icon="image" text="Image" />
+                    <SplitButtonItem icon="table" text="Table" />
+                    <SplitButtonItem icon="image" text="Image" />
+                    <SplitButtonItem icon="table" text="Table" /> */}
+                  </SplitButton>
+                </ToolbarItem>
+
+
+              </Toolbar>
             </span>
+          </div>
+          <div className="row" style={{ float: "right" }}>
+
           </div>
 
           <div className="row" >
@@ -962,6 +1029,9 @@ export default class WellEditorForm extends React.Component<IProps> {
                   {this.state.showMudLogEditor && (<MudLogEditor objMudLog={this.state.objMudLog} reloadTree={this.loadWellAgain}></MudLogEditor>)}
                   {this.state.showDepthLogEditor && (<DepthlogEditor objDepthLog={this.state.objDepthLog} reloadTree={this.loadWellAgain}  > </DepthlogEditor>)}
 
+                  {this.state.showRigStateSetupDialog && <Dialog title={"Rig State Setup"} height="818px" width="1000px">
+                    <WellSpecificRigStateSetup wellID={this.wellID} closeDialog={this.closeRigStateSetupDialog}></WellSpecificRigStateSetup>
+                  </Dialog>}
 
 
                 </div>
@@ -1062,6 +1132,7 @@ export default class WellEditorForm extends React.Component<IProps> {
             </div>
           </div>
         </div>
+
       </>
     );
   }
