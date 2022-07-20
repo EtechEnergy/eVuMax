@@ -96,7 +96,7 @@ export default class ExpressionEditor extends Component<IProps> {
     }
 
     save = () => {
-        debugger;
+        
         if (this.props.expType==""){
             this.__parentRef.saveExpression(this.state.expressionText);
         }else{

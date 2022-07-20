@@ -160,6 +160,76 @@ namespace eVuMax.DataBroker.DataServiceManager
                 ///      }
 
             }
+
+
+            //if (paramRequest.Function == saveAlarmProfile)
+            //{
+            //    try
+            //    {
+            //        string PanelEditMode = paramRequest.Parameters.Where(x => x.ParamName.Contains("PanelEditMode")).FirstOrDefault().ParamValue;
+
+            //        string strObjPanel = paramRequest.Parameters.Where(x => x.ParamName.Contains("objPanel")).FirstOrDefault().ParamValue;
+
+            //        AlarmPanelProfile objPanel = JsonConvert.DeserializeObject<AlarmPanelProfile>(strObjPanel);
+
+            //        if (PanelEditMode == "A")
+            //        {
+
+            //            string LastError = "";
+            //            if (AlarmPanelProfile.addPanel(ref paramRequest.objDataService, objPanel, ref LastError))
+            //            {
+            //                objResponse = paramRequest.createResponseObject();
+            //                objResponse.RequestSuccessfull = true;
+            //                objResponse.Response = "";
+
+            //                objResponse.Errors = "";
+            //                return objResponse;
+            //            }
+            //            else
+            //            {
+            //                Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+            //                objBadResponse.RequestSuccessfull = false;
+            //                objBadResponse.Warnings = LastError;
+            //                objBadResponse.Errors = LastError;
+            //                return objBadResponse;
+            //            }
+            //        }
+
+            //        if (PanelEditMode == "E")
+            //        {
+            //            string LastError = "";
+
+            //            if (AlarmPanelProfile.updatePanel(ref paramRequest.objDataService, objPanel, ref LastError))
+            //            {
+            //                objResponse = paramRequest.createResponseObject();
+            //                objResponse.RequestSuccessfull = true;
+            //                objResponse.Response = "";
+
+            //                objResponse.Errors = "";
+            //                return objResponse;
+            //            }
+            //            else
+            //            {
+            //                Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+            //                objBadResponse.RequestSuccessfull = false;
+            //                objBadResponse.Warnings = LastError;
+            //                objBadResponse.Errors = LastError;
+            //                return objBadResponse;
+            //            }
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+            //        objBadResponse.RequestSuccessfull = false;
+            //        objBadResponse.Warnings = "Error : " + ex.Message + ex.StackTrace;
+            //        objBadResponse.Errors = "Error : " + ex.Message + ex.StackTrace;
+            //        return objBadResponse;
+
+            //    }
+            //}
+
             throw new NotImplementedException();
         }
 
@@ -167,46 +237,7 @@ namespace eVuMax.DataBroker.DataServiceManager
         {
             BrokerResponse objResponse = paramRequest.createResponseObject();
 
-            if (paramRequest.Function == addAlarmProfiles)
-            {
 
-
-                objResponse = paramRequest.createResponseObject();
-                objResponse.RequestSuccessfull = true;
-                objResponse.Response = "";
-
-                objResponse.Errors = "";
-                return objResponse;
-            }
-
-            if (paramRequest.Function == editAlarmProfile)
-            {
-                try
-                {
-                    string ProfileID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ProfileID")).FirstOrDefault().ParamValue;
-
-
-                    AlarmPanelProfile objPanel = AlarmPanelProfile.loadProfile(ref paramRequest.objDataService, ProfileID);
-
-
-
-                    objResponse = paramRequest.createResponseObject();
-                    objResponse.RequestSuccessfull = true;
-                    objResponse.Response = JsonConvert.SerializeObject(objPanel);
-
-                    objResponse.Errors = "";
-                    return objResponse;
-                }
-                catch (Exception ex)
-                {
-
-                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
-                    objBadResponse.RequestSuccessfull = false;
-                    objBadResponse.Warnings = "Error : " + ex.Message + ex.StackTrace;
-                    objBadResponse.Errors = "Error : " + ex.Message + ex.StackTrace;
-                    return objBadResponse;
-                }
-            }
 
             if (paramRequest.Function == saveAlarmProfile)
             {
@@ -214,8 +245,14 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
                     string PanelEditMode = paramRequest.Parameters.Where(x => x.ParamName.Contains("PanelEditMode")).FirstOrDefault().ParamValue;
 
-                    string strObjPanel = paramRequest.Parameters.Where(x => x.ParamName.Contains("objPanel")).FirstOrDefault().ParamValue;
 
+                    //string strTmpObjChannel = paramRequest.Parameters.Where(x => x.ParamName.Contains("tmpObjChannel")).FirstOrDefault().ParamValue;
+                    //APChannel[] objChannel = JsonConvert.DeserializeObject<APChannel[]>(strTmpObjChannel);
+
+
+
+                    string strObjPanel = paramRequest.Parameters.Where(x => x.ParamName.Contains("objPanel")).FirstOrDefault().ParamValue;
+                    
                     AlarmPanelProfile objPanel = JsonConvert.DeserializeObject<AlarmPanelProfile>(strObjPanel);
 
                     if (PanelEditMode == "A")
@@ -275,6 +312,48 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                 }
             }
+
+            if (paramRequest.Function == addAlarmProfiles)
+            {
+
+
+                objResponse = paramRequest.createResponseObject();
+                objResponse.RequestSuccessfull = true;
+                objResponse.Response = "";
+
+                objResponse.Errors = "";
+                return objResponse;
+            }
+
+            if (paramRequest.Function == editAlarmProfile)
+            {
+                try
+                {
+                    string ProfileID = paramRequest.Parameters.Where(x => x.ParamName.Contains("ProfileID")).FirstOrDefault().ParamValue;
+
+
+                    AlarmPanelProfile objPanel = AlarmPanelProfile.loadProfile(ref paramRequest.objDataService, ProfileID);
+
+
+
+                    objResponse = paramRequest.createResponseObject();
+                    objResponse.RequestSuccessfull = true;
+                    objResponse.Response = JsonConvert.SerializeObject(objPanel);
+
+                    objResponse.Errors = "";
+                    return objResponse;
+                }
+                catch (Exception ex)
+                {
+
+                    Broker.BrokerResponse objBadResponse = paramRequest.createResponseObject();
+                    objBadResponse.RequestSuccessfull = false;
+                    objBadResponse.Warnings = "Error : " + ex.Message + ex.StackTrace;
+                    objBadResponse.Errors = "Error : " + ex.Message + ex.StackTrace;
+                    return objBadResponse;
+                }
+            }
+
 
             if (paramRequest.Function == removeAlarmProfile)
             {

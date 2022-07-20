@@ -83,7 +83,7 @@ export default class CustomTagMaster extends Component {
                 })
 
                 .then(async (res) => {
-                    debugger;
+                    
                     const objData = JSON.parse(res.data.Response);
 
 
@@ -139,7 +139,7 @@ export default class CustomTagMaster extends Component {
 
     prepareTree = () => {
         try {
-            debugger;
+            
             if (this.objData != null) {
 
                 this.objTreeNodes = [];
@@ -170,7 +170,7 @@ export default class CustomTagMaster extends Component {
     loadCategoryNodes = (objParentNode:customTagTreeNode): customTagTreeNode => {
         try {
 
-            debugger;
+            
 
             for (let index = 0; index < this.objData.items.length; index++) {
 
@@ -231,7 +231,7 @@ export default class CustomTagMaster extends Component {
 
 
                 if (objItem.items.length > 0) {
-                    debugger;
+                    
                     this.loadActivitiesNodes(objItem.items, objNode);
                 }
                 objParentNode.items.push(objNode);
@@ -248,7 +248,7 @@ export default class CustomTagMaster extends Component {
         try {
             for (let index = 0; index < objData.length; index++) {
 
-                debugger;
+                
                 let objItem: customTagTreeNode= objData[index];
                 let objNode: customTagTreeNode = new customTagTreeNode();
                 objNode.nodeID = objItem.nodeID;
@@ -296,7 +296,7 @@ export default class CustomTagMaster extends Component {
                 })
 
                 .then((res) => {
-                    debugger;
+                    
                     const objData = JSON.parse(res.data.Response);
                     console.log("CustomTag Tree Str: ", objData);
                     this.objData = objData;
@@ -343,7 +343,7 @@ export default class CustomTagMaster extends Component {
     };
 
     onTreeItemClick = (event: any) => {
-        debugger;
+        
         // if (this.state.EditingInProgress) {
         //     return;
         // }
@@ -417,7 +417,7 @@ export default class CustomTagMaster extends Component {
 
     buttonAddClicked = async () => {
 
-        debugger;
+        
         if (this.state.AddBtnCaption == "Add Category") {
 
             await this.setState({
@@ -454,7 +454,7 @@ export default class CustomTagMaster extends Component {
 
     buttonEditClicked = async () => {
         try {
-            debugger;
+            
             if (this.state.selectedNodeType == enumCustomTagTreeNodeType.Category) {
                 
                 await this.setState({
@@ -506,7 +506,7 @@ export default class CustomTagMaster extends Component {
                     {
                         label: 'Yes',
                         onClick: async () => {
-                            debugger;
+                            
                             objBrokerRequest = new BrokerRequest();
                             objBrokerRequest.Module = "DataService";
                             objBrokerRequest.Function = "removeActivity";
@@ -565,7 +565,7 @@ export default class CustomTagMaster extends Component {
                     {
                         label: 'Yes',
                         onClick: async () => {
-                            debugger;
+                            
                             objBrokerRequest = new BrokerRequest();
                             objBrokerRequest.Module = "DataService";
                             objBrokerRequest.Function = "removeSubCategoryTag";
@@ -617,7 +617,7 @@ export default class CustomTagMaster extends Component {
                     {
                         label: 'Yes',
                         onClick: async () => {
-                            debugger;
+                            
                             objBrokerRequest = new BrokerRequest();
                             objBrokerRequest.Module = "DataService";
                             objBrokerRequest.Function = "removeCategoryTag";
@@ -662,7 +662,7 @@ export default class CustomTagMaster extends Component {
 
     removeNode = () => {
         try {
-            debugger;
+            
             if (this.state.selectedNodeType == enumCustomTagTreeNodeType.Category) {
                 this.removeCategory();
             }
@@ -776,7 +776,7 @@ export default class CustomTagMaster extends Component {
     saveActivity = () => {
         try {
 
-            debugger;
+            
             let FunctioName = "";
 
 
@@ -792,7 +792,7 @@ export default class CustomTagMaster extends Component {
             objBrokerRequest.Function = FunctioName;
             objBrokerRequest.Broker = "KPICustomTagMaster";
 
-            debugger;
+            
             let objLocalActivity: clsCustomTagActivity = new clsCustomTagActivity();
             objLocalActivity = utilFunctions.CopyObject(this.state.objActivity);
             objLocalActivity.TagCategoryId = this.state.objCustomTag.TagCategoryId;

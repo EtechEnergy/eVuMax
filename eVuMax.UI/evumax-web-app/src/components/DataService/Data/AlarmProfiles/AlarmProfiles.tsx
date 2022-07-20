@@ -52,6 +52,7 @@ export default class AlarmProfiles extends Component {
         }
     }
 
+
     loadProfileGrid = () => {
         try {
             this.objLogger.SendLog("load Maint Std Channels");
@@ -110,7 +111,7 @@ export default class AlarmProfiles extends Component {
                             warningMsg: []
                         });
                     }
-                    debugger;
+                    
 
                     this.setState({
                         grdAlarmProfiles: Object.values(objData)
@@ -183,7 +184,7 @@ export default class AlarmProfiles extends Component {
 
     handleChange = (e: any, field: string) => {
         try {
-            debugger;
+            
 
             //let edited: any = this.state.objWellMonitorSetup;
 
@@ -218,7 +219,7 @@ export default class AlarmProfiles extends Component {
 
     RowClickAlarmProfile = (e) => {
         try {
-            debugger;
+            
 
             this.setState({ selectedProfileID: e.dataItem.PROFILE_ID });
 

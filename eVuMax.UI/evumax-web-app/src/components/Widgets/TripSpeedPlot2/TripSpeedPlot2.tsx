@@ -225,7 +225,7 @@ export class TripSpeedPlot2 extends Component {
     this.objChart_TripSpeed2.DataSeries.set(objSeries2.Id, objSeries2);
 
     this.objChart_TripSpeed2.bottomAxis().ShowLabels = true;
-    debugger;
+    
     if (this.state.objUserSettings.UseDepthRanges) {
       let Counter = 0;
       let objTagDepthInfo = Object.values(

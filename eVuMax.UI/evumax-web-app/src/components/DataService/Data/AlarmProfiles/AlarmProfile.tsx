@@ -48,9 +48,9 @@ export default class AlarmProfile extends Component<IProps> {
         strAlarmInfo: "",
 
         showAlarmPanelDesingerDialog: false,
-        selectedChannel_ :  new APChannel(),
+        selectedChannel_: new APChannel(),
 
-        selectedChannelIndex:-1
+        selectedChannelIndex: -1
     }
 
     handleSelectTab = (e: TabStripSelectEventArguments) => {
@@ -128,12 +128,12 @@ export default class AlarmProfile extends Component<IProps> {
                         });
                     }
 
-                    debugger;
+
                     if (res.data.Response == null) {
                         return;
                     }
                     let containerList_ = utilFunc.CopyObject(Object.values(JSON.parse(res.data.Response)));
-                    debugger;
+
 
 
                     // objPanel_.containers.forEach(element => {
@@ -220,13 +220,13 @@ export default class AlarmProfile extends Component<IProps> {
                         return;
                     }
                     let objPanel_: AlarmPanelProfile = JSON.parse(res.data.Response);
-
+                    
                     objPanel_.containers = Object.values(objPanel_.containers);
 
                     objPanel_.containers.forEach(element => {
                         element.channels = Object.values(element.channels)
                     });
-                    debugger;
+
                     this.setState({
                         objPanel: objPanel_, grdContainers: objPanel_.containers.map((item: any) => Object.assign({ selected: true, inEdit: true }, item)),
                         selectedTab: 0, showAlarmProfileDialog: true
@@ -295,7 +295,7 @@ export default class AlarmProfile extends Component<IProps> {
                 this.setState({ ContainerName: "", IsActive: true, Mode: 'R' });
 
                 let containers = this.state.grdContainers;
-                debugger;
+
                 let index = containers.findIndex(item => item.ContainerID === this.state.selectedConainerID);
                 containers.splice(index, 1);
                 this.setState({ ContainerName: "", IsActive: true, grdContainers: containers, selectedConainerID: "" });
@@ -310,7 +310,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     grdRowClick = (e) => {
         try {
-            debugger;
+
             let index = this.state.grdContainers.findIndex((item: any) => item["ContainerID"] === e.dataItem.ContainerID
             );
             if (index >= 0) {
@@ -318,14 +318,14 @@ export default class AlarmProfile extends Component<IProps> {
                 let channelList_ = [];
 
                 e.dataItem.channels.forEach(element => {
-                    channelList_.push({ ChannelName: element.ChannelName, Mnemonic : element.Mnemonic  });
+                    channelList_.push({ ChannelName: element.ChannelName, Mnemonic: element.Mnemonic });
                 });
 
                 this.setState({
                     selectedTab: 1, ChannelsList: channelList_, ContainerName: e.dataItem.ContainerName, IsActive: e.dataItem.IsActive,
                     selectedConainerID: e.dataItem.ContainerID
                 });
-                debugger;
+
             }
         } catch (error) {
 
@@ -335,10 +335,10 @@ export default class AlarmProfile extends Component<IProps> {
 
     grdRowClickLibrary = (e) => {
         try {
-            debugger;
+
             let index = this.state.containerLibrary.findIndex((item: any) => item["ContainerID"] === e.dataItem.ContainerID);
 
-            debugger;
+
             let selectedItem: any = this.state.containerLibrary[index];
 
 
@@ -381,7 +381,7 @@ export default class AlarmProfile extends Component<IProps> {
                             });
                         }
 
-                        debugger;
+
 
                         let strAlarmInfo_ = JSON.parse(res.data.Response);
 
@@ -426,7 +426,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     selectionChange = (event) => {
         try {
-            debugger;
+
             const checked = event.syntheticEvent.target.checked;
 
             const data = this.state.grdContainers.map((item: any) => {
@@ -444,7 +444,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     selectionChangeLibrary = (event) => {
         try {
-            debugger;
+
             const checked = event.syntheticEvent.target.checked;
 
             const data = this.state.containerLibrary.map((item: any) => {
@@ -479,7 +479,7 @@ export default class AlarmProfile extends Component<IProps> {
 
                 this.setState({ grdContainers: containers, showEditContainer: false, ContainerName: this.state.ContainerName1, IsActive: this.state.IsActive });
             } else {
-                debugger;
+
 
                 if (this.state.selectedConainerID != "") {
                     containers.forEach(element => {
@@ -507,6 +507,16 @@ export default class AlarmProfile extends Component<IProps> {
         }
     }
 
+    ofile = () => {
+        try {
+            this.props.saveProfile();
+            
+        } catch (error) {
+
+        }
+
+    }
+
     Save = () => {
         try {
             //if (this.props.PanelEditMode=="A")
@@ -516,51 +526,39 @@ export default class AlarmProfile extends Component<IProps> {
 
             objBrokerRequest.Module = "DataService";
             objBrokerRequest.Broker = "DataAlarmProfiles";
-            objBrokerRequest.Function = "saveAlarmProfile";  //saveAlarmProfile
+            objBrokerRequest.Function = "saveAlarmProfile";  //saveAlarmProfile //loadFromLibrary
 
-            debugger;
-            let objPanel_: any = utilFunc.CopyObject(this.state.objPanel);
 
-            objPanel_.containers.forEach(element => {
-                element.channels = null;
+            let objPanel__: AlarmPanelProfile = utilFunc.CopyObject(this.state.objPanel);
+            objPanel__.containers.forEach(element => {
+
+                let channels_ = Object.values(element.channels);
+                channels_.forEach((channel_: APChannel) => {
+
+                    channel_.history = utilFunc.convertMapToDictionaryJSON(channel_.history);
+                    channel_.__functionCache = utilFunc.convertMapToDictionaryJSON(channel_.__functionCache);
+                    channel_.alarmContainerDates = utilFunc.convertMapToDictionaryJSON(channel_.alarmContainerDates);
+                });
+
+                element.channels = utilFunc.convertMapToDictionaryJSON(channels_);
             });
 
-            objPanel_.containers = utilFunc.convertMapToDictionaryJSON(objPanel_.containers);
-
-       
-
+            objPanel__.containers = utilFunc.convertMapToDictionaryJSON(objPanel__.containers);
+            objPanel__.setAlarms = utilFunc.convertMapToDictionaryJSON(objPanel__.setAlarms);
 
             let objParameter = new BrokerParameter("PanelEditMode", this.props.PanelEditMode);
             objBrokerRequest.Parameters.push(objParameter);
 
-            // objParameter = new BrokerParameter("objPanel", JSON.stringify(objPanel_));
-            // objBrokerRequest.Parameters.push(objParameter);
-            debugger;
+            objParameter = new BrokerParameter("objPanel", JSON.stringify(objPanel__));
+            objBrokerRequest.Parameters.push(objParameter);
 
-            axios
-                .post(_gMod._performTask, {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json;charset=UTF-8",
-                    },
-                    params: { paramRequest: JSON.stringify(objBrokerRequest) },
-                })
+            axios.post(_gMod._performTask, {
+                paramRequest: JSON.stringify(objBrokerRequest),
+            })
                 .then(async (res) => {
                     Util.StatusSuccess("Data successfully Saved.");
                     alert("success");
 
-                    let warnings: string = res.data.Warnings;
-                    if (warnings.trim() != "") {
-                        let warningList = [];
-                        warningList.push({ "update": warnings, "timestamp": new Date(Date.now()).getTime() });
-                        this.setState({
-                            warningMsg: warningList
-                        });
-                    } else {
-                        this.setState({
-                            warningMsg: []
-                        });
-                    }
 
                     this.props.saveProfile();
 
@@ -594,13 +592,17 @@ export default class AlarmProfile extends Component<IProps> {
 
     OkLoadLibrary = () => {
         try {
+            
             let localContainers = utilFunc.CopyObject(this.state.grdContainers);
             this.state.containerLibrary.forEach((item: any) => {
-                if (item.selected) {
+                if (item.selected_) {
                     localContainers.push(item);
                 }
+                
+                let panel_: AlarmPanelProfile = this.state.objPanel;
+                panel_.containers = localContainers;
 
-                this.setState({ showLoadLibraryDialog: false, grdContainers: localContainers });
+                this.setState({ showLoadLibraryDialog: false, grdContainers: localContainers, objPanel: panel_ });
             });
 
         } catch (error) {
@@ -618,27 +620,27 @@ export default class AlarmProfile extends Component<IProps> {
 
     AddChannel = () => {
         try {
-            this.setState({ showAlarmPanelDesingerDialog: true, ModeChannel : "A", selectedChannelIndex : -1 })
+            this.setState({ showAlarmPanelDesingerDialog: true, ModeChannel: "A", selectedChannelIndex: -1 })
         } catch (error) {
 
         }
 
     }
 
-    
+
     EditChannel = () => {
         try {
             //alert("Edit click" + this.state.selectedChannel_.ChannelName);
 
-            if (this.state.selectedChannel_.ChannelName==""  ){
+            if (this.state.selectedChannel_.ChannelName == "") {
 
                 alert("Please select the channel from the list");
-            }else{
+            } else {
 
-                this.setState({ showAlarmPanelDesingerDialog: true, ModeChannel : "E"  });
+                this.setState({ showAlarmPanelDesingerDialog: true, ModeChannel: "E" });
             }
 
-            
+
         } catch (error) {
 
         }
@@ -647,7 +649,7 @@ export default class AlarmProfile extends Component<IProps> {
 
     grid_headerSelectionChange = (event: any, field: string) => {
 
-        debugger;
+
         const checked = event.syntheticEvent.target.checked;
         if (field == "grdContainers") {
             const data = this.state.grdContainers.map((item: any) => {
@@ -668,40 +670,40 @@ export default class AlarmProfile extends Component<IProps> {
     }
 
 
-    onClosePanelDesigner = async (objChannel_ : APChannel, Mode_ : string) => {
+    onClosePanelDesigner = async (objChannel_: APChannel, Mode_: string) => {
         try {
-            debugger;
+
             //alert("abc");
-            this.setState({ showAlarmPanelDesingerDialog : false, selectedChannel_  :  objChannel_});
+            this.setState({ showAlarmPanelDesingerDialog: false, selectedChannel_: objChannel_ });
 
 
             //let grdContainers_ = this.state.grdContainers;
-            
-            let ContainerIndex = this.state.grdContainers.findIndex( (item : any) => item.ContainerID === this.state.selectedConainerID);
-            
+
+            let ContainerIndex = this.state.grdContainers.findIndex((item: any) => item.ContainerID === this.state.selectedConainerID);
+
 
             let oldgrdContainers = this.state.grdContainers;
 
             // oldgrdContainers[ContainerIndex].channels.forEach( (element :any) => {
-            //     debugger;
-                
+            //     
+
             //     if (element.Mnemonic ==objChannel_.Mnemonic){
             //         oldgrdContainers[ContainerIndex].channels= objChannel_;
             //     }
-                
+
             // });
 
-            if (Mode_=="A"){
+            if (Mode_ == "A") {
                 //oldgrdContainers[ContainerIndex].channels[oldgrdContainers[ContainerIndex].channels.length] = objChannel_;
                 oldgrdContainers[ContainerIndex].channels.push(objChannel_);
 
-            }else{
+            } else {
                 oldgrdContainers[ContainerIndex].channels[this.state.selectedChannelIndex] = objChannel_;
             }
 
-            
-            
-            
+
+
+
 
             // for (let index = 0; index < oldgrdContainers[ContainerIndex].channels.length; index++) {
             //     const channel_ = oldgrdContainers[ContainerIndex].channels[index];
@@ -715,7 +717,7 @@ export default class AlarmProfile extends Component<IProps> {
             let channelList_ = [];
 
             oldgrdContainers[ContainerIndex].channels.forEach(element => {
-                channelList_.push({ ChannelName: element.ChannelName, Mnemonic : element.Mnemonic  });
+                channelList_.push({ ChannelName: element.ChannelName, Mnemonic: element.Mnemonic });
             });
 
             // this.setState({
@@ -724,72 +726,72 @@ export default class AlarmProfile extends Component<IProps> {
             // });
 
 
-            alert(oldgrdContainers[ContainerIndex].ContainerName);
-            debugger;
+            //alert(oldgrdContainers[ContainerIndex].ContainerName);
+
             await this.setState({ grdContainers: oldgrdContainers, ChannelsList: channelList_, ContainerName: oldgrdContainers[ContainerIndex].ContainerName });
 
         } catch (error) {
-                alert(error);
+            alert(error);
         }
     }
 
-    
-    channelRowClick = async(e)=>{
+
+    channelRowClick = async (e) => {
         try {
             //this.state.grdContainers[1].channels
-            debugger;
+
             let index = this.state.ChannelsList.findIndex((item: any) => item["Mnemonic"] === e.dataItem.Mnemonic
             );
 
             if (index >= 0) {
-                let ContainerIndex = this.state.grdContainers.findIndex( (item : any) => item.ContainerID === this.state.selectedConainerID);
-                debugger;
+                let ContainerIndex = this.state.grdContainers.findIndex((item: any) => item.ContainerID === this.state.selectedConainerID);
+
 
                 this.state.grdContainers[ContainerIndex].channels.forEach(async channel => {
-                    if (channel.Mnemonic == e.dataItem.Mnemonic){
-                        debugger;
-                       await    this.setState({ selectedChannel_: channel, selectedChannelIndex : index });
+                    if (channel.Mnemonic == e.dataItem.Mnemonic) {
+
+                        await this.setState({ selectedChannel_: channel, selectedChannelIndex: index });
                     }
-                    
+
                 });
-                
+
                 //alert(this.state.selectedChannel_.ChannelName);
-             
-                debugger;
-            }else{
+
+
+            } else {
                 alert("Select channel from the list");
             }
 
 
         } catch (error) {
-            
+
         }
-       
+
     }
 
 
-    RemoveChannel =()=>{
+    RemoveChannel = () => {
         try {
             let grdContainers_ = utilFunc.CopyObject(this.state.grdContainers);
             let ContainerIndex = this.state.grdContainers.findIndex(item => item.ContainerID === this.state.selectedConainerID);
 
-            
-            if (this.state.selectedChannelIndex >=0){
-                 //grdContainers_[ContainerIndex].channels[this.state.selectedChannelIndex].splice(this.state.selectedChannelIndex-1,1);
-                 grdContainers_[ContainerIndex].channels.splice( (this.state.selectedChannelIndex),1);
-                
-                 //alert("After remove ="+ grdContainers_[ContainerIndex].channels.length);
-                this.setState({ grdContainers : grdContainers_, selectedChannelIndex : -1, ChannelsList : grdContainers_[ContainerIndex].channels });
+
+            if (this.state.selectedChannelIndex >= 0) {
+                //grdContainers_[ContainerIndex].channels[this.state.selectedChannelIndex].splice(this.state.selectedChannelIndex-1,1);
+                grdContainers_[ContainerIndex].channels.splice((this.state.selectedChannelIndex), 1);
+
+                //alert("After remove ="+ grdContainers_[ContainerIndex].channels.length);
+                this.setState({ grdContainers: grdContainers_, selectedChannelIndex: -1, ChannelsList: grdContainers_[ContainerIndex].channels });
             }
-            debugger;
 
 
-          
 
 
-            
+
+
+
         } catch (error) {
-           alert(error) ;
+            alert(error);
         }
     }
     render() {
@@ -945,10 +947,10 @@ export default class AlarmProfile extends Component<IProps> {
                                                 <Button style={{ width: "150px" }} onClick={this.AddChannel}>
                                                     Add Channel
                                                 </Button>
-                                                <Button className='mt-3' style={{ width: "150px" }}  onClick={this.EditChannel}>
+                                                <Button className='mt-3' style={{ width: "150px" }} onClick={this.EditChannel}>
                                                     Edit Channel
                                                 </Button>
-                                                <Button className='mt-3' style={{ width: "150px" }}  onClick={this.RemoveChannel}>
+                                                <Button className='mt-3' style={{ width: "150px" }} onClick={this.RemoveChannel}>
                                                     Remove Channel
                                                 </Button>
                                             </div>
@@ -970,7 +972,7 @@ export default class AlarmProfile extends Component<IProps> {
                         </div>
                         <div className="col-lg-6 col-xl-6 col-md-6 col-sm-6">
                             <Button onClick={this.Save}>Save</Button>
-                            <Button className='ml-4'>Cancel</Button>
+                            <Button className='ml-4' onClick={this.ofile}>Cancel</Button>
                         </div>
                     </div>
 
@@ -1092,7 +1094,7 @@ export default class AlarmProfile extends Component<IProps> {
                         }}
                     >
 
-                        <AlarmPanelDesigner onClosePanelDesigner={this.onClosePanelDesigner} objChannel = {this.state.selectedChannel_} ModeChannel = {this.state.ModeChannel}></AlarmPanelDesigner>
+                        <AlarmPanelDesigner onClosePanelDesigner={this.onClosePanelDesigner} objChannel={this.state.selectedChannel_} ModeChannel={this.state.ModeChannel}></AlarmPanelDesigner>
 
                     </Dialog>
 

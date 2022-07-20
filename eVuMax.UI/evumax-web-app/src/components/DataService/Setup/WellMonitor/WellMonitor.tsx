@@ -63,7 +63,7 @@ export default class WellMonitor extends Component {
 
 
                     let objData = JSON.parse(res.data.Response);
-                    debugger;
+                    
 
                     // FlagBGColor: -32768
                     // GreenThresholdFrom: 0
@@ -146,7 +146,7 @@ export default class WellMonitor extends Component {
 
             })
                 .then((res) => {
-                    debugger;
+                    
                     Util.StatusSuccess("Data successfully retrived  ");
 
 
@@ -174,7 +174,7 @@ export default class WellMonitor extends Component {
 
     handleChange = (e, field: string) => {
         try {
-            debugger;
+            
 
             let edited: any = this.state.objWellMonitorSetup;
             // let index: number = 0;

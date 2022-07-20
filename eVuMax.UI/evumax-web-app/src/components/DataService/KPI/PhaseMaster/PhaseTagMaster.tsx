@@ -54,7 +54,7 @@ export default class PhaseTagMaster extends Component {
         // await this.setState({
         //     showPhaseEditor: true
         // });
-        debugger;
+        
         if (this.state.AddBtnCaption == "Add Phase") {
 
             await this.setState({
@@ -136,7 +136,7 @@ export default class PhaseTagMaster extends Component {
     saveEmph = () => {
         try {
 
-            debugger;
+            
             let FunctioName = "";
 
 
@@ -196,7 +196,7 @@ export default class PhaseTagMaster extends Component {
 
     removeNode = () => {
         try {
-            debugger;
+            
             if (this.state.selectedNodeType == UI.enumPhaseNodeType.Phase) {
                 this.removePhase();
             }
@@ -217,7 +217,7 @@ export default class PhaseTagMaster extends Component {
 
     removeStep = () => {
         try {
-            debugger;
+            
             confirmAlert({
                 //title: 'eVuMax',
                 message: 'Are you sure want to delete selected Step ?',
@@ -226,7 +226,7 @@ export default class PhaseTagMaster extends Component {
                     {
                         label: 'Yes',
                         onClick: async () => {
-                            debugger;
+                            
                             objBrokerRequest = new BrokerRequest();
                             objBrokerRequest.Module = "DataService";
                             objBrokerRequest.Function = "removeSteps";
@@ -282,7 +282,7 @@ export default class PhaseTagMaster extends Component {
 
     removeEmph = () => {
         try {
-            debugger;
+            
             confirmAlert({
                 //title: 'eVuMax',
                 message: 'Are you sure want to delete selected Emphasis ?',
@@ -291,7 +291,7 @@ export default class PhaseTagMaster extends Component {
                     {
                         label: 'Yes',
                         onClick: async () => {
-                            debugger;
+                            
                             objBrokerRequest = new BrokerRequest();
                             objBrokerRequest.Module = "DataService";
                             objBrokerRequest.Function = "removeEmph";
@@ -349,7 +349,7 @@ export default class PhaseTagMaster extends Component {
 
     removePhase = () => {
         try {
-            debugger;
+            
             confirmAlert({
                 //title: 'eVuMax',
                 message: 'Are you sure want to delete selected Phase ?',
@@ -358,7 +358,7 @@ export default class PhaseTagMaster extends Component {
                     {
                         label: 'Yes',
                         onClick: async () => {
-                            debugger;
+                            
                             objBrokerRequest = new BrokerRequest();
                             objBrokerRequest.Module = "DataService";
                             objBrokerRequest.Function = "removePhase";
@@ -380,7 +380,7 @@ export default class PhaseTagMaster extends Component {
 
                             })
                                 .then((response) => {
-                                    debugger;
+                                    
                                     let objResp = response.data;
                                     let warnings = objResp.Warnings;
                                    
@@ -400,7 +400,7 @@ export default class PhaseTagMaster extends Component {
 
                                     }
 
-                                    debugger;
+                                    
                                     let objRes = JSON.parse(response.data);
 
                                     this.setState({
@@ -482,7 +482,7 @@ export default class PhaseTagMaster extends Component {
     saveStep = () => {
         try {
 
-            debugger;
+            
             let FunctioName = "";
             let objLocalStep: clsStep = new clsStep();
             objLocalStep = this.state.objStep;
@@ -535,7 +535,7 @@ export default class PhaseTagMaster extends Component {
 
     buttonEditClicked = async () => {
         try {
-            debugger;
+            
             if (this.state.selectedNodeType == UI.enumPhaseNodeType.Phase) {
                 await this.setState({
                     showPhaseEditor: true,
@@ -593,7 +593,7 @@ export default class PhaseTagMaster extends Component {
                 })
 
                 .then((res) => {
-                    debugger;
+                    
                     const objData = JSON.parse(res.data.Response);
                     console.log("Phase Tree Str: ", objData);
                     this.objData = objData;
@@ -696,7 +696,7 @@ export default class PhaseTagMaster extends Component {
     loadPhaseNodes = (objParentNode: UI.phaseTreeNode): UI.phaseTreeNode => {
         try {
 
-            debugger;
+            
 
             for (let index = 0; index < this.objData.items.length; index++) {
 
@@ -704,7 +704,7 @@ export default class PhaseTagMaster extends Component {
                 let objItem: UI.phaseTreeNode = this.objData.items[index];
 
                 if (objItem.text == "Nishant") {
-                    debugger;
+                    
                 }
 
 
@@ -736,7 +736,7 @@ export default class PhaseTagMaster extends Component {
 
     preparePhaseTree = () => {
         try {
-            debugger;
+            
             if (this.objData != null) {
 
                 this.objTreeNodes = [];
@@ -862,7 +862,7 @@ export default class PhaseTagMaster extends Component {
     };
 
     onTreeItemClick = (event: any) => {
-        debugger;
+        
         // if (this.state.EditingInProgress) {
         //     return;
         // }
