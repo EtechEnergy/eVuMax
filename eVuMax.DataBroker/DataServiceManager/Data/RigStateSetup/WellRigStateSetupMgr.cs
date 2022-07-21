@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using VuMaxDR.Data.Objects;
 
@@ -239,6 +240,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
 
                     objResponse = doCalculate(paramRequest);
+                    Thread.Sleep(120000); //2 min sleep
 
                 }
 

@@ -11,12 +11,18 @@ import {
   Popup,
   Window,
   Dialog,
+  Toolbar,
+  ToolbarItem,
+  ToolbarSpacer,
+  Button,
+  SplitButton,
+  SplitButtonItem,
 } from "@progress/kendo-react-all";
 
 import BrokerRequest from "../../broker/BrokerRequest";
 import BrokerParameter from "../../broker/BrokerParameter";
 
-import { faEdit, faPen, faCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+
 import { Input } from "@progress/kendo-react-inputs";
 import { filterBy } from "@progress/kendo-data-query";
 import CustomLoader from "../loader/loader";
@@ -46,6 +52,13 @@ import GreenPng from "../../images/green.png";
 import blueDotPng from "../../images/blue_dot.png";
 import redDotPng from "../../images/Red_dot.png";
 import snapBulletRed from "../../images/snapbulletred.png";
+import WellSpecificRigStateSetup from "../DataService/Data/RigStateSetup/WellSpecificRigStateSetup";
+import CalculateRigState from "../DataService/Fx_Functions/CalculateRigState";
+import { NavLink } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Circle } from "@progress/kendo-drawing";
+import { faArrowsAltV, faBalanceScale, faCircle, faClock, faLevelDownAlt, faSort, faSortNumericDownAlt, faWrench } from "@fortawesome/free-solid-svg-icons";
+import FcSetupAlarms from "../DataService/Data/SetupAlarms/FcSetupAlarms";
 
 
 
@@ -112,8 +125,16 @@ export default class WellEditorForm extends React.Component<IProps> {
     objMudLog: new DataObjects.mudLog(),
 
     contextMenuShow: false,
+    showRigStateSetupDialog: false,
+    showCalculateRigStateDialog: false,
+    showSetupAlarmDialog:false, //Nishant 20/07/2022
   };
-
+  closeSetupAlarmDialog=()=>{
+    this.setState({
+      showSetupAlarmDialog:false,
+      EditingInProgress: false
+    })
+  }
   componentWillMount() {
 
     this.setState({
@@ -205,7 +226,7 @@ export default class WellEditorForm extends React.Component<IProps> {
 
 
 
-   
+
 
   }
   ////#region
@@ -725,18 +746,75 @@ export default class WellEditorForm extends React.Component<IProps> {
     this.setState({ selected: e.selected });
   };
 
+  FxClicked = (fxCode: any) => {
+    try {
+      debugger;
+      if (fxCode == 0) {
+        if (this.state.showTimeLogEditor == true) {
+
+          this.setState({ showCalculateRigStateDialog: true });
+          alert(this.state.objTimeLog.ObjectID);
+          return;
+        } else {
+          alert("Please select Time Log from the Tree");
+          return;
+
+        }
+      }
+
+    } catch (error) {
+
+    }
+  }
+
+  closeRigStateSetupDialog = () => {
+    try {
+      this.setState({
+        showCalculateRigStateDialog: false,
+        showRigStateSetupDialog: false,
+        EditingInProgress: false
+      })
+    } catch (error) {
+
+    }
+  }
+
   render() {
-    let loader, isProcess = this.state;
-    // if (!this.state.objWell)
-    //   return null;
+
+
     return (
       <>
+        {this.state.showCalculateRigStateDialog && <CalculateRigState WellID={this.wellID} onClose={this.closeRigStateSetupDialog}></CalculateRigState>}
+        {this.state.showSetupAlarmDialog && <FcSetupAlarms WellID={this.wellID} onClose={this.closeSetupAlarmDialog}></FcSetupAlarms>}
 
         <div id="mainContainer_" style={{ height: "86vh", width: "95vw" }}>
-          <div className="row">
-            <span className="ml-2">
-              {this.state.isProcess ? <CustomLoader /> : ""}
+          <div className="row mb-3 mt-2 " style={{ height: "35px",float:"right" }}>
+
+
+
+
+            <span style={{ display: "inline-block" }} className="ml-4 mr-2" onClick={
+              (e) => { this.setState({ showSetupAlarmDialog: true, EditingInProgress: true }) }} >
+              <FontAwesomeIcon title="Alarm Setup" icon={faClock}  style={{ height: "20px", width:"20px" }} ></FontAwesomeIcon>
             </span>
+
+            <span className="mr-2" style={{ display: "inline-block" }} onClick={
+              (e) => { this.setState({ showRigStateSetupDialog: true, EditingInProgress: true }) }}>
+              <FontAwesomeIcon title="Rig State Setup" icon={faWrench} style={{ height: "20px", width:"25px" }} />
+            </span>
+
+            <span className="mr-2" style={{ display: "inline-block" }}  onClick={(e) => { this.FxClicked(0) }}>
+              <FontAwesomeIcon title="Re-Calculate Rig State" icon={faLevelDownAlt} style={{ height: "20px", width:"25px" }} />
+            </span>
+
+            <span className="mr-2" style={{ display: "inline-block" }}  onClick={(e) => { this.FxClicked(0) }}>
+              <FontAwesomeIcon title="Re-Calculate Hole Depth" icon={faSortNumericDownAlt} style={{ height: "20px", width:"25px" }} />
+              
+            </span>
+
+          </div>
+          <div className="row" style={{ float: "right" }}>
+
           </div>
 
           <div className="row" >
@@ -962,6 +1040,9 @@ export default class WellEditorForm extends React.Component<IProps> {
                   {this.state.showMudLogEditor && (<MudLogEditor objMudLog={this.state.objMudLog} reloadTree={this.loadWellAgain}></MudLogEditor>)}
                   {this.state.showDepthLogEditor && (<DepthlogEditor objDepthLog={this.state.objDepthLog} reloadTree={this.loadWellAgain}  > </DepthlogEditor>)}
 
+                  {this.state.showRigStateSetupDialog && <Dialog title={"Rig State Setup"} height="818px" width="1000px">
+                    <WellSpecificRigStateSetup wellID={this.wellID} closeDialog={this.closeRigStateSetupDialog}></WellSpecificRigStateSetup>
+                  </Dialog>}
 
 
                 </div>
@@ -1062,6 +1143,7 @@ export default class WellEditorForm extends React.Component<IProps> {
             </div>
           </div>
         </div>
+
       </>
     );
   }
