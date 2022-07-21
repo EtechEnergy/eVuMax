@@ -3,7 +3,7 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faFilter, faUndo } from "@fortawesome/free-solid-svg-icons";
-import { Grid, GridCell, GridColumn, GridRow } from "@progress/kendo-react-grid";
+import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
 import React, { Component } from "react";
 import { Button, DateTimePicker, Dialog, DropDownList, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
 import * as d3 from "d3";
@@ -29,36 +29,12 @@ import { confirmAlert } from "react-confirm-alert";
 
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 import { ADVKPIDataFilter } from "./AdvKPIDataFilter";
-
-import { Tooltip } from '@progress/kendo-react-tooltip';
-
-class NotesCell extends GridCell {
-    render() {
-        return (
-            <td title={this.props.dataItem.NOTES}>
-                {this.props.dataItem.NOTES}
-            </td>
-        );
-    }
-}
-
-
-
-
+import { ETIMEDOUT } from "constants";
 let _gMod = new GlobalMod();
 
 let profileList: any[] = [];
 let compositeProfileList: any[] = [];
-
-
-
-
-
 export default class AdvKPI extends Component {
-
-
-
-
     //Cancel all Axios Request
     state = {
         panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
@@ -1026,7 +1002,32 @@ export default class AdvKPI extends Component {
                 //     this.objSeries.Id = "Series-" + well.ObjectID;
                 // });
 
+
+
+
                 let SeriesList = Object.values(this.objData.outputData);
+
+            //   let  SeriesList1 =  SeriesList.sort(function (a :any, b :any) {
+            //         debugger;
+            //         return a.EntryID - b.EntryID;
+                            
+            //     });
+
+              
+
+                SeriesList = SeriesList.sort(function(a :any, b :any) {
+                    const nameA = a.EntryID; // ignore upper and lowercase
+                    const nameB = b.EntryID; // ignore upper and lowercase
+                    if (nameA < nameB) {
+                      return -1;
+                    }
+                    if (nameA > nameB) {
+                      return 1;
+                    }
+                  
+                    // names must be equal
+                    return 0;
+                  });
                 debugger;
 
                 for (let index = 0; index < SeriesList.length; index++) {
@@ -2795,56 +2796,53 @@ export default class AdvKPI extends Component {
                                                 &nbsp;
                                             </a>
                                         </div>
-                                        <Tooltip openDelay={100} position="top" anchorElement="target">
-                                            <Grid
-                                                style={{
-                                                    height: "65vh", width: "auto"
-                                                }}
-                                                data={this.state.grdProfile}
+                                        <Grid
+                                            style={{
+                                                height: "65vh", width: "auto"
+                                            }}
+                                            data={this.state.grdProfile}
+                                            resizable={true}
+                                            
+                                        >
 
+                                            <GridColumn
+                                                field="PROFILE_NAME"
+                                                title="Profile Name"
+                                            //width="490px"
+                                            //                width="100%"
+                                            //resizable={true}
+                                            />
 
-                                            >
+                                            {false && <GridColumn
+                                                field="PROFILE_ID"
+                                                title="Id"
 
-                                                <GridColumn
-                                                    field="PROFILE_NAME"
-                                                    title="Profile Name"
-                                                //width="490px"
-                                                //                width="100%"
-                                                // resizable={true} Nishant Pending
-                                                />
+                                            />}
+                                            <GridColumn
+                                                field="NOTES"
+                                                title="Notes"
+//                                                width={200}
+                                            />
 
-                                                {false && <GridColumn
-                                                    field="PROFILE_ID"
-                                                    title="Id"
-
-                                                />}
-                                                <GridColumn
-                                                    field="NOTES"
-                                                    title="Notes"
-                                                    width={150}
-                                                    cell={NotesCell}
-                                                />
-
-                                                <GridColumn
-                                                    width="50px"
-                                                    headerClassName="text-center"
-                                                    resizable={false}
-                                                    field="editWell"
-                                                    title="Run"
-                                                    cell={(props) => (
-                                                        <td
-                                                            style={props.style}
-                                                            className={"text-center k-command-cell " + props.className}
-                                                            onClick={(e) => this.cmdRunKPI_click(e, props.dataItem, "RunKPI")}
-                                                        >
-                                                            <span>
-                                                                <FontAwesomeIcon icon={faChartLine} />
-                                                            </span>
-                                                        </td>
-                                                    )}
-                                                />
-                                            </Grid>
-                                        </Tooltip>
+                                            <GridColumn
+                                                width="50px"
+                                                headerClassName="text-center"
+                                                resizable={false}
+                                                field="editWell"
+                                                title="Run"
+                                                cell={(props) => (
+                                                    <td
+                                                        style={props.style}
+                                                        className={"text-center k-command-cell " + props.className}
+                                                        onClick={(e) => this.cmdRunKPI_click(e, props.dataItem, "RunKPI")}
+                                                    >
+                                                        <span>
+                                                            <FontAwesomeIcon icon={faChartLine} />
+                                                        </span>
+                                                    </td>
+                                                )}
+                                            />
+                                        </Grid>
                                     </TabStripTab>
 
                                     <TabStripTab title="Composite Templates">
@@ -2859,7 +2857,6 @@ export default class AdvKPI extends Component {
                                                 &nbsp;
                                             </a>
                                         </div>
-                                        <Tooltip openDelay={100} position="top" anchorElement="target">
                                         <Grid
                                             style={{
                                                 height: "65vh", width: "auto"
@@ -2879,8 +2876,7 @@ export default class AdvKPI extends Component {
                                             <GridColumn
                                                 field="NOTES"
                                                 title="Notes"
-                                                width={150}
-                                                cell={NotesCell}
+                                                width={50}
 
                                             />
 
@@ -2903,7 +2899,6 @@ export default class AdvKPI extends Component {
                                                 )}
                                             />
                                         </Grid>
-                                        </Tooltip>
                                     </TabStripTab>
                                 </TabStrip>
                             </div>
