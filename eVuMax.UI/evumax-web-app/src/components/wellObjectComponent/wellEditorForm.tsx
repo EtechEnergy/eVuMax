@@ -54,6 +54,11 @@ import redDotPng from "../../images/Red_dot.png";
 import snapBulletRed from "../../images/snapbulletred.png";
 import WellSpecificRigStateSetup from "../DataService/Data/RigStateSetup/WellSpecificRigStateSetup";
 import CalculateRigState from "../DataService/Fx_Functions/CalculateRigState";
+import { NavLink } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Circle } from "@progress/kendo-drawing";
+import { faArrowsAltV, faBalanceScale, faCircle, faClock, faLevelDownAlt, faSort, faSortNumericDownAlt, faWrench } from "@fortawesome/free-solid-svg-icons";
+import FcSetupAlarms from "../DataService/Data/SetupAlarms/FcSetupAlarms";
 
 
 
@@ -122,8 +127,14 @@ export default class WellEditorForm extends React.Component<IProps> {
     contextMenuShow: false,
     showRigStateSetupDialog: false,
     showCalculateRigStateDialog: false,
+    showSetupAlarmDialog:false, //Nishant 20/07/2022
   };
-
+  closeSetupAlarmDialog=()=>{
+    this.setState({
+      showSetupAlarmDialog:false,
+      EditingInProgress: false
+    })
+  }
   componentWillMount() {
 
     this.setState({
@@ -735,10 +746,10 @@ export default class WellEditorForm extends React.Component<IProps> {
     this.setState({ selected: e.selected });
   };
 
-  FxClicked = (e: any) => {
+  FxClicked = (fxCode: any) => {
     try {
       debugger;
-      if (e.itemIndex == 0) {
+      if (fxCode == 0) {
         if (this.state.showTimeLogEditor == true) {
 
           this.setState({ showCalculateRigStateDialog: true });
@@ -774,33 +785,33 @@ export default class WellEditorForm extends React.Component<IProps> {
     return (
       <>
         {this.state.showCalculateRigStateDialog && <CalculateRigState WellID={this.wellID} onClose={this.closeRigStateSetupDialog}></CalculateRigState>}
+        {this.state.showSetupAlarmDialog && <FcSetupAlarms WellID={this.wellID} onClose={this.closeSetupAlarmDialog}></FcSetupAlarms>}
 
         <div id="mainContainer_" style={{ height: "86vh", width: "95vw" }}>
-          <div className="row mb-3  " style={{height:"35px"}}>
-            <span className="ml-2">
-              <Toolbar >
-                <ToolbarSpacer />
-                <ToolbarItem>
-                  <Button icon="clock" title="Setup Alarm"></Button>
-                </ToolbarItem>
-                <ToolbarItem>
-                  <Button icon="file-wrench" title="RigState Setup" onClick={
-                    (e) => { this.setState({ showRigStateSetupDialog: true, EditingInProgress: true }) }} ></Button>
-                </ToolbarItem>
-                <ToolbarItem>
-                  <SplitButton icon="fx" onItemClick={this.FxClicked} >
-                    <SplitButtonItem icon="circle" text="Calculate Hole depth" />
-                    <SplitButtonItem icon="table" text="De-Spike" />
-                    {/* <SplitButtonItem icon="image" text="Image" />
-                    <SplitButtonItem icon="table" text="Table" />
-                    <SplitButtonItem icon="image" text="Image" />
-                    <SplitButtonItem icon="table" text="Table" /> */}
-                  </SplitButton>
-                </ToolbarItem>
+          <div className="row mb-3 mt-2 " style={{ height: "35px",float:"right" }}>
 
 
-              </Toolbar>
+
+
+            <span style={{ display: "inline-block" }} className="ml-4 mr-2" onClick={
+              (e) => { this.setState({ showSetupAlarmDialog: true, EditingInProgress: true }) }} >
+              <FontAwesomeIcon title="Alarm Setup" icon={faClock}  style={{ height: "20px", width:"20px" }} ></FontAwesomeIcon>
             </span>
+
+            <span className="mr-2" style={{ display: "inline-block" }} onClick={
+              (e) => { this.setState({ showRigStateSetupDialog: true, EditingInProgress: true }) }}>
+              <FontAwesomeIcon title="Rig State Setup" icon={faWrench} style={{ height: "20px", width:"25px" }} />
+            </span>
+
+            <span className="mr-2" style={{ display: "inline-block" }}  onClick={(e) => { this.FxClicked(0) }}>
+              <FontAwesomeIcon title="Re-Calculate Rig State" icon={faLevelDownAlt} style={{ height: "20px", width:"25px" }} />
+            </span>
+
+            <span className="mr-2" style={{ display: "inline-block" }}  onClick={(e) => { this.FxClicked(0) }}>
+              <FontAwesomeIcon title="Re-Calculate Hole Depth" icon={faSortNumericDownAlt} style={{ height: "20px", width:"25px" }} />
+              
+            </span>
+
           </div>
           <div className="row" style={{ float: "right" }}>
 
