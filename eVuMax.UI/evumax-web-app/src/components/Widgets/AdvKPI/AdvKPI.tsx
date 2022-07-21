@@ -85,7 +85,7 @@ export default class AdvKPI extends Component {
 
     componentDidMount() {
         try {
-            
+
             this.loadWorkSpace();
         } catch (error) {
 
@@ -96,7 +96,7 @@ export default class AdvKPI extends Component {
         try {
 
             let wellList = Object.values(objData.arrWells);
-            
+
             let newWellList: any = [];
             for (let index = 0; index < wellList.length; index++) {
                 const objItem: any = wellList[index];
@@ -114,7 +114,7 @@ export default class AdvKPI extends Component {
             });
             profileList = Object.values(objData.grdProfile);
             compositeProfileList = Object.values(objData.grdComposite);
-            
+
             console.log("grdWell", this.state.grdWells);
             console.log("grdProfile", this.state.grdProfile);
 
@@ -671,7 +671,7 @@ export default class AdvKPI extends Component {
 
     plotChart = (paramObjChart: Chart) => {
         try {
-            
+
             this.objChart = paramObjChart;
             //Load Workspace Wells into Combo FilterData
 
@@ -1002,7 +1002,32 @@ export default class AdvKPI extends Component {
                 //     this.objSeries.Id = "Series-" + well.ObjectID;
                 // });
 
+
+
+
                 let SeriesList = Object.values(this.objData.outputData);
+
+            //   let  SeriesList1 =  SeriesList.sort(function (a :any, b :any) {
+            //         debugger;
+            //         return a.EntryID - b.EntryID;
+                            
+            //     });
+
+              
+
+                SeriesList = SeriesList.sort(function(a :any, b :any) {
+                    const nameA = a.EntryID; // ignore upper and lowercase
+                    const nameB = b.EntryID; // ignore upper and lowercase
+                    if (nameA < nameB) {
+                      return -1;
+                    }
+                    if (nameA > nameB) {
+                      return 1;
+                    }
+                  
+                    // names must be equal
+                    return 0;
+                  });
                 debugger;
 
                 for (let index = 0; index < SeriesList.length; index++) {
@@ -1044,7 +1069,7 @@ export default class AdvKPI extends Component {
 
 
 
-                    
+
                     switch (objDataSeries.SeriesType) {
                         case 0:
                             this.objSeries.Type = dataSeriesType.Line;
@@ -1607,7 +1632,7 @@ export default class AdvKPI extends Component {
 
                     this.objSeries.Data.length = 0;
                     //Random number used below line to create unique series id
-                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID) +"-"+Math.floor((Math.random() * 100));
+                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID) + "-" + Math.floor((Math.random() * 100));
                     this.objSeries.Title = objDataSeries.LegendTitle;
                     this.objSeries.XAxisId = objDataSeries.XColumn;
                     this.objSeries.YAxisId = objDataSeries.YColumn;
@@ -1728,7 +1753,7 @@ export default class AdvKPI extends Component {
                     if ((DataGroup = 1) && TimeUnit == 3) {
                         this.getGroupSeriesData();
                     } else {
-                        this.getSingleSeriesData(); 
+                        this.getSingleSeriesData();
                     }
                     //
 
@@ -1833,7 +1858,7 @@ export default class AdvKPI extends Component {
             //==========================================
             let objBottomAxes: Axis = new Axis();
             objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
-            
+
             for (let i = 0; i < SeriesData.length; i++) {
                 this.objSeries.Name = SeriesData[i].LegendTitle;
 
@@ -1873,7 +1898,7 @@ export default class AdvKPI extends Component {
                 this.objSeries.Data.push(objVal);
 
             }
-            
+
             this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
 
         } catch (error) {
@@ -1971,7 +1996,7 @@ export default class AdvKPI extends Component {
                     });
                     this.objCompositeProfile.items = objCompositeProfileItems;
 
-                    
+
                     this.plotCompositeChart();
                     //Warnings Notifications
                     let warnings: string = res.data.Warnings;
@@ -2143,7 +2168,7 @@ export default class AdvKPI extends Component {
                 _gMod._userId
             );
             objBrokerRequest.Parameters.push(objParameter);
-                
+
 
             this.AxiosSource = axios.CancelToken.source();
             axios
@@ -2233,7 +2258,7 @@ export default class AdvKPI extends Component {
 
     handleChangeDropDown = async (event: any, fieldName: string, filterObject: string) => {
 
-        
+
 
         let edited = this.state.objFilterData;
         edited[filterObject] = event.value.id;
@@ -2247,7 +2272,7 @@ export default class AdvKPI extends Component {
         //     await this.setState({ selectedMainWell: new comboData(event.value.text, event.value.id) });
         // }
 
-        
+
     }
 
     cmdRunKPI_click = async (e, objRow: any, RunType: string) => {
@@ -2303,7 +2328,7 @@ export default class AdvKPI extends Component {
                     ProfileName: objRow.PROFILE_NAME,
                     ProfileNameMain: objRow.PROFILE_NAME,
                 });
-                
+
             }
             if (RunType == "RunComposite") {
                 this.ID = objRow.TEMPLATE_ID;
@@ -2776,8 +2801,8 @@ export default class AdvKPI extends Component {
                                                 height: "65vh", width: "auto"
                                             }}
                                             data={this.state.grdProfile}
-
-
+                                            resizable={true}
+                                            
                                         >
 
                                             <GridColumn
@@ -2785,7 +2810,7 @@ export default class AdvKPI extends Component {
                                                 title="Profile Name"
                                             //width="490px"
                                             //                width="100%"
-                                            // resizable={true}
+                                            //resizable={true}
                                             />
 
                                             {false && <GridColumn
@@ -2796,7 +2821,7 @@ export default class AdvKPI extends Component {
                                             <GridColumn
                                                 field="NOTES"
                                                 title="Notes"
-                                                width={150}
+//                                                width={200}
                                             />
 
                                             <GridColumn
@@ -2893,10 +2918,10 @@ export default class AdvKPI extends Component {
                                 icon={faFilter}
                                 size="lg"
                                 onClick={() => {
-                                    
+
                                     this.setState({
-                                        showFilterDialog: true, 
-                                        "selectedMainWell" : this.state.selectedMainWell
+                                        showFilterDialog: true,
+                                        "selectedMainWell": this.state.selectedMainWell
 
                                     })
                                 }}
@@ -3079,7 +3104,7 @@ export default class AdvKPI extends Component {
 
                             onChange={(event) => {
 
-                                
+
                                 this.handleChangeDropDown(event, "selectedMainWell", "FilterMainWellID");
                                 //this.setState({"selectedMainWell" : new comboData(event.value.text, event.value.id)});
 
