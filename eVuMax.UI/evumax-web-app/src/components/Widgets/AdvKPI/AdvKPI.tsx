@@ -3,7 +3,7 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faFilter, faUndo } from "@fortawesome/free-solid-svg-icons";
-import { Grid, GridColumn, GridRow } from "@progress/kendo-react-grid";
+import { Grid, GridCell, GridColumn, GridRow } from "@progress/kendo-react-grid";
 import React, { Component } from "react";
 import { Button, DateTimePicker, Dialog, DropDownList, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab } from "@progress/kendo-react-all";
 import * as d3 from "d3";
@@ -29,12 +29,36 @@ import { confirmAlert } from "react-confirm-alert";
 
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 import { ADVKPIDataFilter } from "./AdvKPIDataFilter";
-import { ETIMEDOUT } from "constants";
+
+import { Tooltip } from '@progress/kendo-react-tooltip';
+
+class NotesCell extends GridCell {
+    render() {
+        return (
+            <td title={this.props.dataItem.NOTES}>
+                {this.props.dataItem.NOTES}
+            </td>
+        );
+    }
+}
+
+
+
+
 let _gMod = new GlobalMod();
 
 let profileList: any[] = [];
 let compositeProfileList: any[] = [];
+
+
+
+
+
 export default class AdvKPI extends Component {
+
+
+
+
     //Cancel all Axios Request
     state = {
         panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
@@ -85,7 +109,7 @@ export default class AdvKPI extends Component {
 
     componentDidMount() {
         try {
-            
+
             this.loadWorkSpace();
         } catch (error) {
 
@@ -96,7 +120,7 @@ export default class AdvKPI extends Component {
         try {
 
             let wellList = Object.values(objData.arrWells);
-            
+
             let newWellList: any = [];
             for (let index = 0; index < wellList.length; index++) {
                 const objItem: any = wellList[index];
@@ -114,7 +138,7 @@ export default class AdvKPI extends Component {
             });
             profileList = Object.values(objData.grdProfile);
             compositeProfileList = Object.values(objData.grdComposite);
-            
+
             console.log("grdWell", this.state.grdWells);
             console.log("grdProfile", this.state.grdProfile);
 
@@ -671,7 +695,7 @@ export default class AdvKPI extends Component {
 
     plotChart = (paramObjChart: Chart) => {
         try {
-            
+
             this.objChart = paramObjChart;
             //Load Workspace Wells into Combo FilterData
 
@@ -1044,7 +1068,7 @@ export default class AdvKPI extends Component {
 
 
 
-                    
+
                     switch (objDataSeries.SeriesType) {
                         case 0:
                             this.objSeries.Type = dataSeriesType.Line;
@@ -1607,7 +1631,7 @@ export default class AdvKPI extends Component {
 
                     this.objSeries.Data.length = 0;
                     //Random number used below line to create unique series id
-                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID) +"-"+Math.floor((Math.random() * 100));
+                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID) + "-" + Math.floor((Math.random() * 100));
                     this.objSeries.Title = objDataSeries.LegendTitle;
                     this.objSeries.XAxisId = objDataSeries.XColumn;
                     this.objSeries.YAxisId = objDataSeries.YColumn;
@@ -1728,7 +1752,7 @@ export default class AdvKPI extends Component {
                     if ((DataGroup = 1) && TimeUnit == 3) {
                         this.getGroupSeriesData();
                     } else {
-                        this.getSingleSeriesData(); 
+                        this.getSingleSeriesData();
                     }
                     //
 
@@ -1833,7 +1857,7 @@ export default class AdvKPI extends Component {
             //==========================================
             let objBottomAxes: Axis = new Axis();
             objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
-            
+
             for (let i = 0; i < SeriesData.length; i++) {
                 this.objSeries.Name = SeriesData[i].LegendTitle;
 
@@ -1873,7 +1897,7 @@ export default class AdvKPI extends Component {
                 this.objSeries.Data.push(objVal);
 
             }
-            
+
             this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
 
         } catch (error) {
@@ -1971,7 +1995,7 @@ export default class AdvKPI extends Component {
                     });
                     this.objCompositeProfile.items = objCompositeProfileItems;
 
-                    
+
                     this.plotCompositeChart();
                     //Warnings Notifications
                     let warnings: string = res.data.Warnings;
@@ -2143,7 +2167,7 @@ export default class AdvKPI extends Component {
                 _gMod._userId
             );
             objBrokerRequest.Parameters.push(objParameter);
-                
+
 
             this.AxiosSource = axios.CancelToken.source();
             axios
@@ -2233,7 +2257,7 @@ export default class AdvKPI extends Component {
 
     handleChangeDropDown = async (event: any, fieldName: string, filterObject: string) => {
 
-        
+
 
         let edited = this.state.objFilterData;
         edited[filterObject] = event.value.id;
@@ -2247,7 +2271,7 @@ export default class AdvKPI extends Component {
         //     await this.setState({ selectedMainWell: new comboData(event.value.text, event.value.id) });
         // }
 
-        
+
     }
 
     cmdRunKPI_click = async (e, objRow: any, RunType: string) => {
@@ -2303,7 +2327,7 @@ export default class AdvKPI extends Component {
                     ProfileName: objRow.PROFILE_NAME,
                     ProfileNameMain: objRow.PROFILE_NAME,
                 });
-                
+
             }
             if (RunType == "RunComposite") {
                 this.ID = objRow.TEMPLATE_ID;
@@ -2771,53 +2795,56 @@ export default class AdvKPI extends Component {
                                                 &nbsp;
                                             </a>
                                         </div>
-                                        <Grid
-                                            style={{
-                                                height: "65vh", width: "auto"
-                                            }}
-                                            data={this.state.grdProfile}
+                                        <Tooltip openDelay={100} position="top" anchorElement="target">
+                                            <Grid
+                                                style={{
+                                                    height: "65vh", width: "auto"
+                                                }}
+                                                data={this.state.grdProfile}
 
 
-                                        >
+                                            >
 
-                                            <GridColumn
-                                                field="PROFILE_NAME"
-                                                title="Profile Name"
-                                            //width="490px"
-                                            //                width="100%"
-                                            // resizable={true}
-                                            />
+                                                <GridColumn
+                                                    field="PROFILE_NAME"
+                                                    title="Profile Name"
+                                                //width="490px"
+                                                //                width="100%"
+                                                // resizable={true} Nishant Pending
+                                                />
 
-                                            {false && <GridColumn
-                                                field="PROFILE_ID"
-                                                title="Id"
+                                                {false && <GridColumn
+                                                    field="PROFILE_ID"
+                                                    title="Id"
 
-                                            />}
-                                            <GridColumn
-                                                field="NOTES"
-                                                title="Notes"
-                                                width={150}
-                                            />
+                                                />}
+                                                <GridColumn
+                                                    field="NOTES"
+                                                    title="Notes"
+                                                    width={150}
+                                                    cell={NotesCell}
+                                                />
 
-                                            <GridColumn
-                                                width="50px"
-                                                headerClassName="text-center"
-                                                resizable={false}
-                                                field="editWell"
-                                                title="Run"
-                                                cell={(props) => (
-                                                    <td
-                                                        style={props.style}
-                                                        className={"text-center k-command-cell " + props.className}
-                                                        onClick={(e) => this.cmdRunKPI_click(e, props.dataItem, "RunKPI")}
-                                                    >
-                                                        <span>
-                                                            <FontAwesomeIcon icon={faChartLine} />
-                                                        </span>
-                                                    </td>
-                                                )}
-                                            />
-                                        </Grid>
+                                                <GridColumn
+                                                    width="50px"
+                                                    headerClassName="text-center"
+                                                    resizable={false}
+                                                    field="editWell"
+                                                    title="Run"
+                                                    cell={(props) => (
+                                                        <td
+                                                            style={props.style}
+                                                            className={"text-center k-command-cell " + props.className}
+                                                            onClick={(e) => this.cmdRunKPI_click(e, props.dataItem, "RunKPI")}
+                                                        >
+                                                            <span>
+                                                                <FontAwesomeIcon icon={faChartLine} />
+                                                            </span>
+                                                        </td>
+                                                    )}
+                                                />
+                                            </Grid>
+                                        </Tooltip>
                                     </TabStripTab>
 
                                     <TabStripTab title="Composite Templates">
@@ -2832,6 +2859,7 @@ export default class AdvKPI extends Component {
                                                 &nbsp;
                                             </a>
                                         </div>
+                                        <Tooltip openDelay={100} position="top" anchorElement="target">
                                         <Grid
                                             style={{
                                                 height: "65vh", width: "auto"
@@ -2851,7 +2879,8 @@ export default class AdvKPI extends Component {
                                             <GridColumn
                                                 field="NOTES"
                                                 title="Notes"
-                                                width={50}
+                                                width={150}
+                                                cell={NotesCell}
 
                                             />
 
@@ -2874,6 +2903,7 @@ export default class AdvKPI extends Component {
                                                 )}
                                             />
                                         </Grid>
+                                        </Tooltip>
                                     </TabStripTab>
                                 </TabStrip>
                             </div>
@@ -2893,10 +2923,10 @@ export default class AdvKPI extends Component {
                                 icon={faFilter}
                                 size="lg"
                                 onClick={() => {
-                                    
+
                                     this.setState({
-                                        showFilterDialog: true, 
-                                        "selectedMainWell" : this.state.selectedMainWell
+                                        showFilterDialog: true,
+                                        "selectedMainWell": this.state.selectedMainWell
 
                                     })
                                 }}
@@ -3079,7 +3109,7 @@ export default class AdvKPI extends Component {
 
                             onChange={(event) => {
 
-                                
+
                                 this.handleChangeDropDown(event, "selectedMainWell", "FilterMainWellID");
                                 //this.setState({"selectedMainWell" : new comboData(event.value.text, event.value.id)});
 

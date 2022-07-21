@@ -559,7 +559,7 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
         });
     }
     grdItemChange = (e: any) => {
-        
+
         e.dataItem[e.field] = e.value;
         this.setState({
             grdLogCurves: [...this.state.grdLogCurves]
@@ -1117,7 +1117,7 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                 <div className="row" style={{ position: "sticky", top: "0", padding: "10px" }} >
                     <h2>Time Log Editor</h2>
                 </div>
-                <div id="mainContainer_" style={{ height: '86vh', width: '70vw' }}>
+                <div id="mainContainer" style={{ height: '70vh', width: '70vw' }}>
 
                     <div className="row">
                         <legend>
@@ -1285,7 +1285,7 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                                 <TabStripTab title="Channels">
                                     <div id="tabChannels">
                                         <Grid
-                                            style={{ height: '70vh', width: '70vw' }}
+                                            style={{ height: '60vh', width: '70vw' }}
 
                                             data={this.state.grdLogCurves != null ? (this.state.grdLogCurves.map((item: DataObjects.logChannel) =>
                                                 ({ ...item, selected: item.mnemonic === this.state.currentChannel })
@@ -1759,7 +1759,7 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                                     </div>
                                 </TabStripTab>
                                 <TabStripTab title="De-Spike">
-                                    <div>
+                                    <div className="m-2 p-2">
                                         {/* Pending */}
                                         <div className="row">
                                             <div className="col">
@@ -1769,14 +1769,14 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                                             </div>
                                         </div>
                                         <div className="row">
-                                            <div className="col">
+                                            <div className="col-10">
                                                 <label >
                                                     This function allows detecting and auto despiking depth data which affects rig states. This function only de-spikes depth data where depth is suddenly increasing while drilling or near bottom.
                                                 </label>
                                             </div>
                                         </div>
-                                        <div className="row">
-                                            <div className="col">
+                                        <div className="row pt-4">
+                                            <div className="col-10">
                                                 <Checkbox
                                                     id="chkDetectSpike"
                                                     name="DetectSpike"
@@ -1789,33 +1789,38 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                                         </div>
 
                                         <div className="row mt-5 ml-3 mr-5">
-                                            <div className="col">
+                                            <div className="col-lg-4">
                                                 <Input
                                                     name="TolerancePc"
-                                                    //style={{ width: "50%" }}
+                                                    style={{ width: "100%" }}
                                                     label="Max. depth change tolerance %"
-                                                    minLength={2}
+                                                    //minLength={2}
                                                     value={this.state.objTimeLog.TolerancePc}
                                                     onChange={(e) => this.handleChange(e, "TolerancePc")}
                                                 />
-                                                <label style={{ paddingRight: 10 }}>over</label>
-                                                <Input
-                                                    name="CheckTimePeriod"
-                                                    style={{ width: "50%" }}
-                                                    label="seconds, while drilling or near bottom"
-                                                    minLength={2}
-                                                    value={this.state.objTimeLog.CheckTimePeriod}
-                                                    onChange={(e) => this.handleChange(e, "CheckTimePeriod")}
-                                                />
-
                                             </div>
+                                                <div className="col-lg-1 p-2" style={{display:"flex",alignItems:"flex-end"}}>
+                                                    <label >over</label>
+                                                </div>
+                                                <div className="col-lg-4">
+                                                    <Input
+                                                        name="CheckTimePeriod"
+                                                        style={{ width: "100%" }}
+                                                        label="seconds, while drilling or near bottom"
+                                                        minLength={2}
+                                                        value={this.state.objTimeLog.CheckTimePeriod}
+                                                        onChange={(e) => this.handleChange(e, "CheckTimePeriod")}
+                                                    />
+                                                </div>
+
+                                            
                                         </div>
 
                                         <div className="row mt-5 ml-3 mr-5">
                                             <div className="col">
                                                 <Input
                                                     name="CompareWindow"
-                                                    //style={{ width: "50%" }}
+                                                    style={{ width: "30%" }}
                                                     label="Depth comparision window (+/-) %"
                                                     minLength={2}
                                                     value={this.state.objTimeLog.CompareWindow}
@@ -1825,14 +1830,14 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                                             </div>
 
                                         </div>
-                                        <div className="row mt-5 ml-3 mr-5">
-                                            <div className="col">
-                                                <label style={{ paddingLeft: "30px" }}>Used while detecting end of data spike. When depth reaches between this window around start depth, it is considered as spike end</label>
+                                        <div className="row mt-3 ml-3 mr-5">
+                                            <div className="col-11">
+                                                <label>Used while detecting end of data spike. When depth reaches between this window around start depth, it is considered as spike end</label>
                                             </div>
                                         </div>
 
-                                        <div className="row mt-5 ml-3 mr-5">
-                                            <div className="col">
+                                        <div className="row mt-5 ml-3">
+                                            <div className="col-2">
                                                 <Input
                                                     name="MaxCloseTime"
                                                     //style={{ width: "50%" }}
@@ -1841,18 +1846,19 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                                                     value={this.state.objTimeLog.MaxCloseTime}
                                                     onChange={(e) => this.handleChange(e, "MaxCloseTime")}
                                                 />
-                                                <div className="col">
+                                                </div>
+                                                <div className="col-6" style={{display:"flex",alignItems:"flex-end"}}>
                                                     <label>
                                                         minutes, to look ahead to find closing of the data spike
                                                     </label>
 
                                                 </div>
-                                            </div>
+                                            
 
                                         </div>
 
-                                        <div className="row mt-5 ml-3 mr-5">
-                                            <div className="col">
+                                        <div className="row mt-3 ml-3 mr-5">
+                                            <div className="col-6">
                                                 <DropDownList
                                                     name="ActionTypeValue"
                                                     label='Action'
@@ -1863,13 +1869,16 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                                                     onChange={this.handleChangeDropDown}
                                                 />
                                             </div>
-                                            <label>
-                                                Selected action is performed when spike is detected
-                                            </label>
+
 
                                         </div>
+                                        <div className="row ml-3">
+                                            <label className="col-6">
+                                                Selected action is performed when spike is detected
+                                            </label>
+                                        </div>
 
-                                        <div className="row mt-5 ml-3 mr-1">
+                                        {/* <div className="row mt-5 ml-3 mr-1">
                                             <div className="col">
                                                 <Input
                                                     name="NearBottomDistance"
@@ -1885,7 +1894,7 @@ export default class TimeLogEditor extends React.PureComponent<IProps> {
                                                     depth unit
                                                 </label>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </TabStripTab>
                                 <TabStripTab title="Report">
