@@ -192,6 +192,7 @@ export class BarSeries {
         .range([0, this.objHorizontalAxisScaleRef.bandwidth()]);
 
       let barWidth = this.objHorizontalAxisScaleRef_x1.bandwidth();
+      
 
       if (barWidth <= 1) {
         barWidth = 1;
