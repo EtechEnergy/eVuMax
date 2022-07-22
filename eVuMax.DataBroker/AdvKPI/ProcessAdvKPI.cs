@@ -85,7 +85,7 @@ namespace eVuMax.DataBroker.AdvKPI_
 
                  objProcessor.processProfile();
 
-                Thread.Sleep(2000);
+                Thread.Sleep(5000);
 
                 foreach (AdvKPIData objItem in objProcessor.outputData.Values)
                 {

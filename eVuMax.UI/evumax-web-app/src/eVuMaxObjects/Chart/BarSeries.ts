@@ -40,6 +40,7 @@ export class BarSeries {
       let isDateTimeScale = false;
       let objHorizontalAxis: any;
 
+        
       // for (let key of this.ChartRef.DataSeries.keys()) {
       //   let objSeries: DataSeries = this.ChartRef.DataSeries.get(key);
 
@@ -283,11 +284,7 @@ export class BarSeries {
             return z(d.key);
           }
         })
-
-
-
-
-        .style("font-size", "1.25em");
+        .style("font-size", "1.0em");
 
       if (this.ShowLabelOnSeries) {
         // Show Value as lable on Bar Series //Parth 20-11-2020
