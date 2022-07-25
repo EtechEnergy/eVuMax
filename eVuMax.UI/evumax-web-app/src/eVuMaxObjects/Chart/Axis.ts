@@ -507,6 +507,7 @@ export class Axis {
       this.LabelFont,
       this.LabelFontSize.toString()
     );
+    debugger;
     let textHeight = this.ChartRef.calculateHeight(
       maxLabel,
       this.LabelFont,
