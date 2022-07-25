@@ -240,7 +240,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                 {
 
                     objResponse = doCalculate(paramRequest);
-                    Thread.Sleep(120000); //2 min sleep
+                    
 
                 }
 
