@@ -201,7 +201,7 @@ export default function FcSetupAlarms(_props) {
             width={"550px"}
             height={"150px"}
             onClose={(e: any) => {
-                debugger;
+                
                 _props.onClose();
             }}
         >

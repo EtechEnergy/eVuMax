@@ -56,7 +56,7 @@ export interface IProps {
 
 //     const grdItemChange=(obRow: any)=>{
 //         try {
-//             debugger;
+//             
 //             obRow.dataItem[obRow.field] = obRow.value;
 //             // this.setState({
 //             //     grdRigState: [...this.state.grdRigState]
@@ -615,7 +615,7 @@ export class WellSpecificRigStateSetup extends Component<IProps> {
         this.setState({ selectedTab: e.selected })
     }
     grdItemChange = (e: any) => {
-        debugger;
+        
         e.dataItem[e.field] = e.value;
         this.setState({
             grdRigState: [...this.state.grdRigState]
@@ -638,7 +638,7 @@ export class WellSpecificRigStateSetup extends Component<IProps> {
     }
     onAddClick = (e) => {
         try {
-            debugger;
+            
             let newRow = {
                 SRNO: this.state.grdAutoSlideSetupList.length + 1,
                 FromDepth: 0,
@@ -676,7 +676,7 @@ export class WellSpecificRigStateSetup extends Component<IProps> {
     AutoSlideSetupListItemChange = (e: any) => {
         try {
             e.dataItem[e.field] = e.value;
-            debugger;
+            
 
             let newData: any = Object.values([...this.state.grdAutoSlideSetupList]);
             let index = newData.findIndex((item: any) => item.SRNO === e.dataItem.SRNO); // use unique value like ID
@@ -705,7 +705,7 @@ export class WellSpecificRigStateSetup extends Component<IProps> {
 
     save = () => {
         try {
-            debugger;
+            
             this.state.grdAutoSlideSetupList.forEach(function (x) { delete x.SRNO });
             this.state.objRigStateSetup.autoSlideSetupList = utilFunctions.convertMapToDictionaryJSON(this.state.grdAutoSlideSetupList);
             let localRigStateList: any = utilFunctions.CopyObject(this.state.grdRigState);
@@ -760,7 +760,7 @@ export class WellSpecificRigStateSetup extends Component<IProps> {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let objResponse = JSON.parse(res.data.Response);
 
                     this.setState({ FromDate: new Date(objResponse.FromDate), ToDate: new Date(objResponse.ToDate), showCalRigStateDialog: true });
@@ -814,7 +814,7 @@ export class WellSpecificRigStateSetup extends Component<IProps> {
 
     handleChangeCalRigState = (event: any, field: string) => {
 
-        debugger;
+        
         const value = event.value;
         const name = field; // target.props ? target.props.name : target.name;
         //let edited: any = utilFunc.CopyObject(this.state.objDataSelector);
@@ -880,7 +880,7 @@ export class WellSpecificRigStateSetup extends Component<IProps> {
                     params: { paramRequest: JSON.stringify(objBrokerRequest) },
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let objResponse = res.data;
                     //JSON.parse(res.data.Response);
 
