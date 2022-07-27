@@ -72,7 +72,14 @@ export default function FcSetupAlarms(_props) {
             objParameter = new BrokerParameter('WellID', wellID);
             objBrokerRequest.Parameters.push(objParameter);
 
-            objParameter = new BrokerParameter('selectedProfileId', cboProfile.id);
+            let profileID: string = "";
+            if(cboProfile.id == "-1"){
+                profileID= "";
+            }else{
+                profileID=cboProfile.id;
+            }
+            
+            objParameter = new BrokerParameter('selectedProfileId', profileID);
             objBrokerRequest.Parameters.push(objParameter);
 
 

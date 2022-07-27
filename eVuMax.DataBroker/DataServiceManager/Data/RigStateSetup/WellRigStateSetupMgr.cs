@@ -75,7 +75,7 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
         }
 
-        public BrokerResponse performTask(BrokerRequest paramRequest)
+        public  BrokerResponse performTask(BrokerRequest paramRequest)
         {
             try
             {
@@ -239,8 +239,8 @@ namespace eVuMax.DataBroker.DataServiceManager
                 if (paramRequest.Function == calcRigState)
                 {
 
-                    objResponse = doCalculate(paramRequest);
-                    
+                    objResponse =   doCalculate(paramRequest);
+
 
                 }
 
@@ -313,7 +313,10 @@ namespace eVuMax.DataBroker.DataServiceManager
                 if (selectionType=="0")
                 {
                     startDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref paramRequest.objDataService));
-                    objCalculator.calculateRigStates(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID);
+                    //objCalculator.calculateRigStates(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID);
+                     Task thread1 = Task.Factory.StartNew(() => objCalculator.calculateRigStates(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID));
+                    Task thread2 = Task.Factory.StartNew(() => fun1());
+                    Task.WaitAll(thread1, thread2); 
                 }
 
                 if (selectionType == "1")
@@ -356,7 +359,30 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
         }
 
+
+
+        static void fun1()
+        {
+            try
+            {
+                for (int i = 0; i < 200000; i++)
+                {
+                    //Console.WriteLine("Thread 1 " + i);
+                    System.Diagnostics.Debug.WriteLine("thread value " + i);
+                }
+
+
+            }
+            catch (Exception)
+            {
+
+                
+            }
+        }
+
     }
+
+   
 
     public class CalRigStateDateRange
     {
