@@ -127,11 +127,11 @@ export default class WellEditorForm extends React.Component<IProps> {
     contextMenuShow: false,
     showRigStateSetupDialog: false,
     showCalculateRigStateDialog: false,
-    showSetupAlarmDialog:false, //Nishant 20/07/2022
+    showSetupAlarmDialog: false, //Nishant 20/07/2022
   };
-  closeSetupAlarmDialog=()=>{
+  closeSetupAlarmDialog = () => {
     this.setState({
-      showSetupAlarmDialog:false,
+      showSetupAlarmDialog: false,
       EditingInProgress: false
     })
   }
@@ -749,11 +749,11 @@ export default class WellEditorForm extends React.Component<IProps> {
   FxClicked = (fxCode: any) => {
     try {
       debugger;
-      if (fxCode == 0) {
+      if (fxCode == 0) { //Re Calc Rig State
         if (this.state.showTimeLogEditor == true) {
 
           this.setState({ showCalculateRigStateDialog: true });
-          alert(this.state.objTimeLog.ObjectID);
+
           return;
         } else {
           alert("Please select Time Log from the Tree");
@@ -761,6 +761,20 @@ export default class WellEditorForm extends React.Component<IProps> {
 
         }
       }
+
+      if (fxCode == 1) { //Re Calc Hole Depth
+        if (this.state.showTimeLogEditor == true) {
+
+          // this.setState({ showCalculateRigStateDialog: true });
+          // alert(this.state.objTimeLog.ObjectID);
+          return;
+        } else {
+          alert("Please select Time Log from the Tree");
+          return;
+
+        }
+      }
+
 
     } catch (error) {
 
@@ -787,39 +801,32 @@ export default class WellEditorForm extends React.Component<IProps> {
         {this.state.showCalculateRigStateDialog && <CalculateRigState WellID={this.wellID} onClose={this.closeRigStateSetupDialog}></CalculateRigState>}
         {this.state.showSetupAlarmDialog && <FcSetupAlarms WellID={this.wellID} onClose={this.closeSetupAlarmDialog}></FcSetupAlarms>}
 
-        <div id="mainContainer_" style={{ height: "86vh", width: "95vw" }}>
-          <div className="row mb-3 mt-2 " style={{ height: "35px",float:"right" }}>
+        <div id="mainContainer" style={{ height: "80vh", width: "95vw" }}>
+          <div className="row  p-2" >
 
-
-
-
-            <span style={{ display: "inline-block" }} className="ml-4 mr-2" onClick={
+            <span style={{ display: "inline-block" }} className="ml-4 mr-2 pl-2" onClick={
               (e) => { this.setState({ showSetupAlarmDialog: true, EditingInProgress: true }) }} >
-              <FontAwesomeIcon title="Alarm Setup" icon={faClock}  style={{ height: "20px", width:"20px" }} ></FontAwesomeIcon>
+              <FontAwesomeIcon title="Alarm Setup" icon={faClock} style={{ height: "20px", width: "20px" }} ></FontAwesomeIcon>
             </span>
 
-            <span className="mr-2" style={{ display: "inline-block" }} onClick={
+            <span className=" pl-2" style={{ display: "inline-block" }} onClick={
               (e) => { this.setState({ showRigStateSetupDialog: true, EditingInProgress: true }) }}>
-              <FontAwesomeIcon title="Rig State Setup" icon={faWrench} style={{ height: "20px", width:"25px" }} />
+              <FontAwesomeIcon title="Rig State Setup" icon={faWrench} style={{ height: "20px", width: "25px" }} />
             </span>
 
-            <span className="mr-2" style={{ display: "inline-block" }}  onClick={(e) => { this.FxClicked(0) }}>
-              <FontAwesomeIcon title="Re-Calculate Rig State" icon={faLevelDownAlt} style={{ height: "20px", width:"25px" }} />
+            <span className="pl-2" style={{ display: "inline-block" }} onClick={(e) => { this.FxClicked(0) }}>
+              <FontAwesomeIcon title="Re-Calculate Rig State" icon={faLevelDownAlt} style={{ height: "20px", width: "25px" }} />
             </span>
 
-            <span className="mr-2" style={{ display: "inline-block" }}  onClick={(e) => { this.FxClicked(0) }}>
-              <FontAwesomeIcon title="Re-Calculate Hole Depth" icon={faSortNumericDownAlt} style={{ height: "20px", width:"25px" }} />
-              
+            <span className="pl-2" style={{ display: "inline-block" }} onClick={(e) => { this.FxClicked(1) }}>
+              <FontAwesomeIcon title="Re-Calculate Hole Depth" icon={faSortNumericDownAlt} style={{ height: "20px", width: "25px" }} />
+
             </span>
 
           </div>
-          <div className="row" style={{ float: "right" }}>
-
-          </div>
-
           <div className="row" >
             {/* <label>Double click node to select</label> */}
-            <div id="mainContainer" style={{ minWidth: "100%", minHeight: "100%", height: "95vh" }}>
+            <div id="mainContainer" style={{ minWidth: "100%", minHeight: "100%", height: "75vh" }}>
               <Splitter
                 panes={this.state.panes}
                 onLayoutChange={this.onLayoutChange}

@@ -39,7 +39,7 @@ export default function FcSetupAlarms(_props) {
 
 
             if (wellID == "") {
-                alert("Well ID is blank, something went wrong, please reload well Editor.");
+
                 confirmAlert({
                     //title: 'eVuMax',
                     message: 'Well ID is blank, something went wrong, please reload well Editor.',
@@ -189,57 +189,46 @@ export default function FcSetupAlarms(_props) {
 
 
     return (
-        <Dialog title={"Alarm Setup (FC)"}
-            width={"700px"}
-            height={"400px"}
+        <Dialog title={"Alarm Profile Setup..."}
+
+            width={"550px"}
+            height={"150px"}
             onClose={(e: any) => {
                 
                 _props.onClose();
             }}
         >
-            <div>
-                <div>SetupAlarms</div>
-                <p>
-                    <div className="container">
-                        <div className="row" style={{ height: "50px" }}>
-                            <div className="col-lg-8 col-xl-8 col-md-8 col-sm-8 p-5">
-                                <Label>Well : {_props.WellName}</Label>
-                            </div>
-                        </div>
 
-                        <div className="row" style={{ height: "50px" }}>
-                            <div className="col-lg-3 col-xl-3 col-md-3 col-sm-3 p-5">
-                                <Label>Profile</Label>
-                            </div>
-                            <div className="col-lg-8 col-xl-8 col-md-8 col-sm-8 p-5">
-                                <DropDownList
-                                    className="form-control"
-                                    textField="text"
-                                    dataItemKey="id"
-                                    data={ProfileList}
-                                    onChange={(e) => onDropdownChange(e)}
-                                    value={cboProfile}
-                                />
-                            </div>
-                        </div>
-
-
-                        <div className='row' style={{ height: "50px" }}>
-                            <div className="col-lg-8 col-xl-8 col-md-8 col-sm-8 p-5">
-                                <div className="btn-group" role="group">
-                                    <Button onClick={okClick} style={{ width: "100px" }}>Ok</Button>
-                                    <Button className='ml-3' onClick={_props.onClose} style={{ width: "100px" }}>Cancel</Button>
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                </p>
+            <div className="row" style={{ height: "50px" }} >
+                <div className="col-lg-3 col-xl-3 col-md-3 col-sm-3 mb-2 mt-2 ">
+                    <Label>Profile</Label>
+                </div>
+                <div className="col-lg-8 col-xl-8 col-md-8 col-sm-8 mb-2 mt-2 ">
+                    <DropDownList
+                        className="form-control"
+                        textField="text"
+                        dataItemKey="id"
+                        data={ProfileList}
+                        onChange={(e) => onDropdownChange(e)}
+                        value={cboProfile}
+                    />
+                </div>
+                <div className="mt-2" role="group" >
+                    <Button onClick={okClick} style={{ width: "100px" }}>Ok</Button>
+                    <Button className='ml-3' onClick={_props.onClose} style={{ width: "100px" }}>Cancel</Button>
+                </div>
             </div>
-        </Dialog>
+            {/* <div className='row' >
+                        <div className="col-lg-8 col-xl-8 col-md-8 col-sm-8 p-5">
+                            <div className="btn-group" role="group">
+                                <Button onClick={okClick} style={{ width: "100px" }}>Ok</Button>
+                                <Button className='ml-3' onClick={_props.onClose} style={{ width: "100px" }}>Cancel</Button>
+
+
+                            </div>
+                        </div>
+                    </div> */}
+            {/* </div> */}
+        </Dialog >
     )
 }
