@@ -114,14 +114,55 @@ export default function CalculateRigState(_props) {
             objParameter = new BrokerParameter("ToDate", utilFunctions.formateDate(objCalcRigState.ToDate));
             objBrokerRequest.Parameters.push(objParameter);
 
+            debugger;
+            //new code
+            const client = axios.create({
+                //  baseURL: 'http://localhost:10000/v1/client',
+                timeout: 20000
+            })
 
-            await axios.get(_gMod._performTask, {
-                onDownloadProgress: (progressEvent) => {
-                    console.log(progressEvent);
-                    let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    console.log(progressEvent.lengthComputable)
-                    console.log(percentCompleted);
+            let result = await client.get(_gMod._performTask, {
+                onDownloadProgress: progressEvent => {
+                    const total = parseFloat(progressEvent.currentTarget.responseHeaders['Content-Length'])
+                    const current = progressEvent.currentTarget.response.length
+
+                    let percentCompleted = Math.floor(current / total * 100)
+                    console.log('completed: ', percentCompleted)
                 },
+
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json;charset=UTF-8",
+                },
+                params: { paramRequest: JSON.stringify(objBrokerRequest) },
+            }
+
+            )
+                .then(res => {
+                    console.log("All DONE: ", res.headers)
+                    return res.data
+                })
+
+            //888
+
+
+
+            
+return;
+            await axios.get(_gMod._performTask, {
+
+                //    onUploadProgress: (progressEvent) => {
+                //     console.log(progressEvent);
+                //     let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                //     console.log(progressEvent.lengthComputable)
+                //     console.log(percentCompleted);
+                // },
+                //     onDownloadProgress: (progressEvent) => {
+                //         console.log(progressEvent);
+                //         let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                //         console.log(progressEvent.lengthComputable)
+                //         console.log(percentCompleted);
+                //     },
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json;charset=UTF-8",
@@ -225,7 +266,7 @@ export default function CalculateRigState(_props) {
 
     return (
         <>
-            <Dialog title={"Calculate Rig State (FC)"}
+            <Dialog title={"Calculate Rig State  c (FC)"}
                 width={"700px"}
                 height={"400px"}
                 onClose={(e: any) => {

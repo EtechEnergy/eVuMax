@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using VuMaxDR.Data;
 using VuMaxDR.Data.Objects;
 
 namespace eVuMax.DataBroker.DataServiceManager 
@@ -313,7 +314,15 @@ namespace eVuMax.DataBroker.DataServiceManager
                 if (selectionType=="0")
                 {
                     startDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref paramRequest.objDataService));
-                    objCalculator.calculateRigStates(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID);
+                                  //     objCalculator.calculateRigStates(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID);
+
+
+                    Task thread1 = Task.Factory.StartNew(() => calculateRigStates(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID));
+                    //Task thread2 = Task.Factory.StartNew(() => fun1());
+                    Task.WaitAll(thread1);
+                    //Console.WriteLine("The End");
+                    System.Diagnostics.Debug.WriteLine("The End");
+
                 }
 
                 if (selectionType == "1")
@@ -356,6 +365,76 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
         }
 
+        static void fun1()
+        {
+            for (int i = 0; i < 10000; i++)
+            {
+                //Console.WriteLine("Thread 1" + i);
+                System.Diagnostics.Debug.WriteLine("Thread Prath 1" + i);
+            }
+        }
+
+
+        
+        public void calculateRigStates(ref DataService objDataService, string paramWellID, string paramWellboreID, string paramLogID)
+        {
+            try
+            {
+
+                //objDataService = paramDataService;
+                string WellID = paramWellID;
+                string WellboreID = paramWellboreID;
+                string LogID = paramLogID;
+
+                string methodName = "";
+                //var objThread = new System.Threading.Thread(calculateRigStates);
+                this.calculateRigStates(ref objDataService, WellID, WellboreID, LogID, methodName);
+
+                //objThread.Start();
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
+        public void calculateRigStates(ref DataService objDataService, string WellID, string WellboreID, string LogID, string methodName)
+        {
+            try
+            {
+
+                string LastError = "";
+                TimeLog objTimeLog = TimeLog.loadTimeLog(ref objDataService, WellID, WellboreID, LogID, ref LastError);
+
+                var objBulkExecutor = new BulkCommandExecutor(ref objDataService, 50);
+
+
+                if (objTimeLog != null)
+                {
+
+                    string dataTableName = objTimeLog.getDataTableName(ref objDataService);
+
+                    // 'Calculate Rig States
+                    rigState objRigState = rigState.loadWellRigStateSetup(ref objDataService, WellID);
+
+                    var ToDate = DateTime.FromOADate(objTimeLog.getLastIndex(ref objDataService));
+                    var FirstDate = DateTime.FromOADate(objTimeLog.getFirstIndex(ref objDataService));
+
+                    objRigState.DoNotPause = true;
+                    objRigState.updateRigStateNoBreakSmall(ref objDataService, objTimeLog, FirstDate, ToDate);
+                }
+
+                //Completed?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                //Completed?.Invoke();
+            }
+        }
+
+
     }
 
     public class CalRigStateDateRange
@@ -365,6 +444,6 @@ namespace eVuMax.DataBroker.DataServiceManager
 
     }
 
-   
+    
 
 }
