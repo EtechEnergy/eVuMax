@@ -108,7 +108,7 @@ export default function CalculateRigState(_props) {
             objBrokerRequest.Parameters.push(objParameter);
 
 
-           
+
 
 
             // let result = await client.get(_gMod._performTask, {
@@ -145,19 +145,31 @@ export default function CalculateRigState(_props) {
                     //     console.log("Upload Progress Bar",progress);
                     // },
 
-                    onUploadProgress(progressEvent) {
-
+                    onDownloadProgress: progressEvent => {
                         debugger;
-                        let progress: number = (progressEvent.loaded / progressEvent.total) * 100;
-                        // const timer = setInterval(() => {
-                        //     setProgress(progress);
-                        // }, 10);
-                        setProgress(progress);
-                        alert("100");
-                        console.log("Progress Bar", progress);
-                        console.log("progressEvent",progressEvent);
+                        let totalPersentage: number = (progressEvent.loaded / progressEvent.total) * 100;
+                        const current = progressEvent.currentTarget.response.length
+
+                        let percentCompleted = Math.floor(current / totalPersentage * 100);
+                        //setProgress(percentCompleted);
+                        setProgress(totalPersentage);
+                        console.log('completed: ', percentCompleted);
+                        console.log("Current", current);
                     },
-                
+
+                    // onUploadProgress(progressEvent) {
+
+                    //     debugger;
+                    //     let progress: number = (progressEvent.loaded / progressEvent.total) * 100;
+                    //     // const timer = setInterval(() => {
+                    //     //     setProgress(progress);
+                    //     // }, 10);
+                    //     setProgress(progress);
+                    //     alert("100");
+                    //     console.log("Progress Bar", progress);
+                    //     console.log("progressEvent", progressEvent);
+                    // },
+
 
 
                     headers: {

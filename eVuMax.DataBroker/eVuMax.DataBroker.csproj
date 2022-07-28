@@ -71,6 +71,10 @@
     <Reference Include="VuMaxDR.Data">
       <HintPath>..\lib\VuMaxDR.Data.dll</HintPath>
     </Reference>
+    <Reference Include="VuMaxDR.Data.Objects, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\VuMaxDR.Data.Objects.dll</HintPath>
+    </Reference>
     <Reference Include="VuMaxDR.Snapshots">
       <HintPath>..\lib\VuMaxDR.Snapshots.dll</HintPath>
     </Reference>
@@ -227,12 +231,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\E-TECH\VuMax DR Ex - 397102\VuMaxDR.Data.Objects\VuMaxDR.Data.Objects\VuMaxDR.Data.Objects.vbproj">
-      <Project>{f6576dd9-e362-4645-b2e9-1fe5ce979bf0}</Project>
-      <Name>VuMaxDR.Data.Objects</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
