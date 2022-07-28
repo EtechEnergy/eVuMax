@@ -316,7 +316,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                     startDate = DateTime.FromOADate(objTimeLog.getFirstIndexOptimized(ref paramRequest.objDataService));
                                   //     objCalculator.calculateRigStates(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID);
 
-
+                    //test for push
                     Task thread1 = Task.Factory.StartNew(() => calculateRigStates(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID));
                     //Task thread2 = Task.Factory.StartNew(() => fun1());
                     Task.WaitAll(thread1);
