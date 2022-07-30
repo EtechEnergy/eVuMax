@@ -30,6 +30,7 @@ import { confirmAlert } from "react-confirm-alert";
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 import { ADVKPIDataFilter } from "./AdvKPIDataFilter";
 import { ETIMEDOUT } from "constants";
+import { debug } from "console";
 let _gMod = new GlobalMod();
 
 let profileList: any[] = [];
@@ -46,6 +47,27 @@ class NotesCell extends GridCell {
     }
 }
 
+class Guid {
+    static newGuid() {
+    //   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    //     var r = Math.random() * 16 | 0,
+    //       v = c == 'x' ? r : (r & 0x3 | 0x8);
+    //     //return v.toString(16);
+    //     return v.toString(1);
+    //   });
+
+    return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0,
+          v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+        
+      });
+
+
+
+    }
+  }
+  
 
 
 export default class AdvKPI extends Component {
@@ -100,6 +122,7 @@ export default class AdvKPI extends Component {
     componentDidMount() {
         try {
 
+            alert(Guid.newGuid());
             this.loadWorkSpace();
         } catch (error) {
 
@@ -1052,7 +1075,8 @@ export default class AdvKPI extends Component {
                     this.objSeries = new DataSeries();
 
                     this.objSeries.Data.length = 0;
-                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID);
+                    //this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID);
+                    this.objSeries.Id= "Series" + index +"-"+ Guid.newGuid();
                     this.objSeries.Title = objDataSeries.LegendTitle;
                     this.objSeries.XAxisId = objDataSeries.XColumn;
                     this.objSeries.YAxisId = objDataSeries.YColumn;
@@ -1651,7 +1675,8 @@ export default class AdvKPI extends Component {
 
                     this.objSeries.Data.length = 0;
                     //Random number used below line to create unique series id
-                    this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID) + "-" + Math.floor((Math.random() * 100));
+                    //this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID) + "-" + Math.floor((Math.random() * 100));
+                    this.objSeries.Id= "Series" + index +"-"+ Guid.newGuid();
                     this.objSeries.Title = objDataSeries.LegendTitle;
                     this.objSeries.XAxisId = objDataSeries.XColumn;
                     this.objSeries.YAxisId = objDataSeries.YColumn;
@@ -2617,12 +2642,15 @@ export default class AdvKPI extends Component {
 
                 if (objItem[nCell].ColSpan > 1 && nCell <= rowTotalCells) {
                     cell.setAttribute('colspan', objItem[nCell].ColSpan);
-
-                    cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
+                    //
+                    //New cellID as SrNo
+                    //cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
+                    cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].SrNo.toString());
                     objItem[nCell].objChart = (this.initializeCompositeChart(cellId));
                     nCell = nCell + objItem[nCell].ColSpan;
                 } else {
-                    cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
+                    //cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
+                    cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].SrNo.toString());
                     objItem[nCell].objChart = (this.initializeCompositeChart(cellId));
                     nCell = nCell + 1;
                 }
@@ -2643,7 +2671,7 @@ export default class AdvKPI extends Component {
                 mainDiv.appendChild(chartDiv);
 
 
-                mainDiv.appendChild(chartDiv);
+                //mainDiv.appendChild(chartDiv);
                 cell.appendChild(mainDiv);
                 row.appendChild(cell);
             }
@@ -2666,9 +2694,11 @@ export default class AdvKPI extends Component {
         let colWidth = totalWidth / nCols;
 
         for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
+          debugger;
             try {
                 const objItem = this.objCompositeProfile.items[index];
-                let chartDivId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem.ProfileID.toString());
+                //let chartDivId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem.ProfileID.toString());
+                let chartDivId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem.SrNo.toString());
 
 
                 let cellTD: any = document.getElementById("td-" + chartDivId);
@@ -2676,6 +2706,8 @@ export default class AdvKPI extends Component {
 
 
                 let divStr = "<div id='" + chartDivId + "_legend" + "'  style='text-align: center; height: 25px; width: " + cellWidth + "px; background-color: transparent; display: inline-block;position: relative; padding-bottom: 10px; line-height: 1.5; font-weight: bold;' > Legend </div>"
+                // let a=document.getElementById("md-" + chartDivId);
+                // a.innerHTML=divStr;
                 $("#md-" + chartDivId).append(divStr);
             } catch (error) {
                 alert(error);
@@ -2824,6 +2856,7 @@ export default class AdvKPI extends Component {
                                                     height: "65vh", width: "auto"
                                                 }}
                                                 data={this.state.grdProfile}
+                                                resizable={true}
 
 
                                             >
@@ -2831,9 +2864,10 @@ export default class AdvKPI extends Component {
                                                 <GridColumn
                                                     field="PROFILE_NAME"
                                                     title="Profile Name"
+                                                    resizable={true} 
                                                 //width="490px"
                                                 //                width="100%"
-                                                // resizable={true} Nishant Pending
+                                                // resizable={true} //Nishant Pending
                                                 />
 
                                                 {false && <GridColumn
@@ -2846,6 +2880,7 @@ export default class AdvKPI extends Component {
                                                     title="Notes"
                                                     width={150}
                                                     cell={NotesCell}
+                                                    resizable={true}
                                                 />
 
                                                 <GridColumn
