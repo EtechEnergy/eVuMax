@@ -122,7 +122,7 @@ export default class AdvKPI extends Component {
     componentDidMount() {
         try {
 
-            alert(Guid.newGuid());
+            
             this.loadWorkSpace();
         } catch (error) {
 
