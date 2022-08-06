@@ -49,25 +49,25 @@ class NotesCell extends GridCell {
 
 class Guid {
     static newGuid() {
-    //   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    //     var r = Math.random() * 16 | 0,
-    //       v = c == 'x' ? r : (r & 0x3 | 0x8);
-    //     //return v.toString(16);
-    //     return v.toString(1);
-    //   });
+        //   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        //     var r = Math.random() * 16 | 0,
+        //       v = c == 'x' ? r : (r & 0x3 | 0x8);
+        //     //return v.toString(16);
+        //     return v.toString(1);
+        //   });
 
-    return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0,
-          v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-        
-      });
+        return 'xxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+
+        });
 
 
 
     }
-  }
-  
+}
+
 
 
 export default class AdvKPI extends Component {
@@ -122,7 +122,7 @@ export default class AdvKPI extends Component {
     componentDidMount() {
         try {
 
-            
+
             this.loadWorkSpace();
         } catch (error) {
 
@@ -1045,27 +1045,27 @@ export default class AdvKPI extends Component {
 
                 let SeriesList = Object.values(this.objData.outputData);
 
-            //   let  SeriesList1 =  SeriesList.sort(function (a :any, b :any) {
-            //         debugger;
-            //         return a.EntryID - b.EntryID;
-                            
-            //     });
+                //   let  SeriesList1 =  SeriesList.sort(function (a :any, b :any) {
+                //         debugger;
+                //         return a.EntryID - b.EntryID;
 
-              
+                //     });
 
-                SeriesList = SeriesList.sort(function(a :any, b :any) {
+
+
+                SeriesList = SeriesList.sort(function (a: any, b: any) {
                     const nameA = a.EntryID; // ignore upper and lowercase
                     const nameB = b.EntryID; // ignore upper and lowercase
                     if (nameA < nameB) {
-                      return -1;
+                        return -1;
                     }
                     if (nameA > nameB) {
-                      return 1;
+                        return 1;
                     }
-                  
+
                     // names must be equal
                     return 0;
-                  });
+                });
                 debugger;
 
                 for (let index = 0; index < SeriesList.length; index++) {
@@ -1076,7 +1076,7 @@ export default class AdvKPI extends Component {
 
                     this.objSeries.Data.length = 0;
                     //this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID);
-                    this.objSeries.Id= "Series" + index +"-"+ Guid.newGuid();
+                    this.objSeries.Id = "Series" + index + "-" + Guid.newGuid();
                     this.objSeries.Title = objDataSeries.LegendTitle;
                     this.objSeries.XAxisId = objDataSeries.XColumn;
                     this.objSeries.YAxisId = objDataSeries.YColumn;
@@ -1665,7 +1665,7 @@ export default class AdvKPI extends Component {
 
 
                 //Load Series
-
+                debugger;
                 let SeriesList = Object.values(objItem.objProfile.objProcessor.outputData)
                 for (let index = 0; index < SeriesList.length; index++) {
                     let objDataSeries: any = SeriesList[index];
@@ -1676,7 +1676,7 @@ export default class AdvKPI extends Component {
                     this.objSeries.Data.length = 0;
                     //Random number used below line to create unique series id
                     //this.objSeries.Id = "Series" + index + "-" + utilFunc.removeUnderScoreFromID(objDataSeries.EntryID) + "-" + Math.floor((Math.random() * 100));
-                    this.objSeries.Id= "Series" + index +"-"+ Guid.newGuid();
+                    this.objSeries.Id = "Series" + index + "-" + Guid.newGuid();
                     this.objSeries.Title = objDataSeries.LegendTitle;
                     this.objSeries.XAxisId = objDataSeries.XColumn;
                     this.objSeries.YAxisId = objDataSeries.YColumn;
@@ -1794,8 +1794,8 @@ export default class AdvKPI extends Component {
                     let DataGroup = objItem.objProfile.DataGroup;
                     let TimeUnit = objItem.objProfile.TimeUnit;
                     //if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
-                        
-                    
+
+
                     //frmKPI.vb (line 587)
                     if ((DataGroup == 11) && TimeUnit == 3) {
                         this.getGroupSeriesData();
@@ -2645,16 +2645,17 @@ export default class AdvKPI extends Component {
                     //
                     //New cellID as SrNo
                     //cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
-                    cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].SrNo.toString());
+                    cellId = "Chart" + utilFunc.removeUnderScoreFromID(objItem[nCell].SrNo.toString());
                     objItem[nCell].objChart = (this.initializeCompositeChart(cellId));
                     nCell = nCell + objItem[nCell].ColSpan;
                 } else {
                     //cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].ProfileID.toString());
-                    cellId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem[nCell].SrNo.toString());
+                    cellId = "Chart" + utilFunc.removeUnderScoreFromID(objItem[nCell].SrNo.toString());
                     objItem[nCell].objChart = (this.initializeCompositeChart(cellId));
                     nCell = nCell + 1;
                 }
-                cell.id = "td-" + cellId;
+                // cell.id = "td-" + cellId;
+                cell.id = "td" + cellId;
                 let chartDiv = document.createElement("div");
 
                 chartDiv.setAttribute('id', cellId);
@@ -2665,7 +2666,7 @@ export default class AdvKPI extends Component {
 
 
                 let mainDiv = document.createElement("div");
-                mainDiv.id = "md-" + cellId;
+                mainDiv.id = "md" + cellId;
                 mainDiv.setAttribute('style', 'height:100%');
 
                 mainDiv.appendChild(chartDiv);
@@ -2694,21 +2695,27 @@ export default class AdvKPI extends Component {
         let colWidth = totalWidth / nCols;
 
         for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
-          debugger;
+            debugger;
             try {
                 const objItem = this.objCompositeProfile.items[index];
                 //let chartDivId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem.ProfileID.toString());
-                let chartDivId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem.SrNo.toString());
+                let chartDivId = "Chart" + utilFunc.removeUnderScoreFromID(objItem.SrNo.toString());
 
 
-                let cellTD: any = document.getElementById("td-" + chartDivId);
+                // let cellTD: any = document.getElementById("td-" + chartDivId);
+                let cellTD: any = document.getElementById("td" + chartDivId);
                 let cellWidth = colWidth * cellTD.colSpan;
 
 
                 let divStr = "<div id='" + chartDivId + "_legend" + "'  style='text-align: center; height: 25px; width: " + cellWidth + "px; background-color: transparent; display: inline-block;position: relative; padding-bottom: 10px; line-height: 1.5; font-weight: bold;' > Legend </div>"
                 // let a=document.getElementById("md-" + chartDivId);
                 // a.innerHTML=divStr;
-                $("#md-" + chartDivId).append(divStr);
+                debugger;
+                //document.getElementById("md" + chartDivId).innerHTML = divStr;
+
+
+                // $("#md-" + chartDivId).append(divStr);
+                $("#md" + chartDivId).append(divStr);//not working
             } catch (error) {
                 alert(error);
             }
@@ -2864,7 +2871,7 @@ export default class AdvKPI extends Component {
                                                 <GridColumn
                                                     field="PROFILE_NAME"
                                                     title="Profile Name"
-                                                    resizable={true} 
+                                                    resizable={true}
                                                 //width="490px"
                                                 //                width="100%"
                                                 // resizable={true} //Nishant Pending
@@ -2918,49 +2925,49 @@ export default class AdvKPI extends Component {
                                             </a>
                                         </div>
                                         <Tooltip openDelay={100} position="top" anchorElement="target">
-                                        <Grid
-                                            style={{
-                                                height: "65vh", width: "auto"
-                                            }}
-                                            data={this.state.grdComposite}
-                                        >
+                                            <Grid
+                                                style={{
+                                                    height: "65vh", width: "auto"
+                                                }}
+                                                data={this.state.grdComposite}
+                                            >
 
-                                            <GridColumn
-                                                field="TEMPLATE_NAME"
-                                                title="Template Name"
+                                                <GridColumn
+                                                    field="TEMPLATE_NAME"
+                                                    title="Template Name"
 
-                                            />
-                                            {false && <GridColumn
-                                                field="TEMPLATE_ID"
-                                                title="ID"
-                                            />}
-                                            <GridColumn
-                                                field="NOTES"
-                                                title="Notes"
-                                                width={150}
-                                                cell={NotesCell}
+                                                />
+                                                {false && <GridColumn
+                                                    field="TEMPLATE_ID"
+                                                    title="ID"
+                                                />}
+                                                <GridColumn
+                                                    field="NOTES"
+                                                    title="Notes"
+                                                    width={150}
+                                                    cell={NotesCell}
 
-                                            />
+                                                />
 
-                                            <GridColumn
-                                                width="50px"
-                                                headerClassName="text-center"
-                                                resizable={false}
-                                                field="editWell"
-                                                title="Run"
-                                                cell={(props) => (
-                                                    <td
-                                                        style={props.style}
-                                                        className={"text-center k-command-cell " + props.className}
-                                                        onClick={(e) => this.cmdRunKPI_click(e, props.dataItem, "RunComposite")}
-                                                    >
-                                                        <span>
-                                                            <FontAwesomeIcon icon={faChartLine} />
-                                                        </span>
-                                                    </td>
-                                                )}
-                                            />
-                                        </Grid>
+                                                <GridColumn
+                                                    width="50px"
+                                                    headerClassName="text-center"
+                                                    resizable={false}
+                                                    field="editWell"
+                                                    title="Run"
+                                                    cell={(props) => (
+                                                        <td
+                                                            style={props.style}
+                                                            className={"text-center k-command-cell " + props.className}
+                                                            onClick={(e) => this.cmdRunKPI_click(e, props.dataItem, "RunComposite")}
+                                                        >
+                                                            <span>
+                                                                <FontAwesomeIcon icon={faChartLine} />
+                                                            </span>
+                                                        </td>
+                                                    )}
+                                                />
+                                            </Grid>
                                         </Tooltip>
                                     </TabStripTab>
                                 </TabStrip>
