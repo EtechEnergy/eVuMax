@@ -146,6 +146,7 @@ namespace eVuMax.DataBroker.AdvKPI_
                 Broker.BrokerResponse objResponse = objRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Response = ex.Message + ex.StackTrace;
+                objLogger.LogMessage("catch Error " + ex.Message + ex.StackTrace);
                 return objResponse;
             }
 
@@ -178,6 +179,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("catch Error (mapPhaseTagsWithDays) " + ex.Message + ex.StackTrace);
             }
         }
 
@@ -209,6 +211,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("catch Error (mapPhaseTagsWithDays) " + ex.Message + ex.StackTrace);
             }
         }
 
@@ -241,6 +244,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("catch Error (mapCustomTagsWithDays) " + ex.Message + ex.StackTrace);
             }
         }
 
@@ -260,6 +264,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("catch Error (getVerticalAxisByColumnID) " + ex.Message + ex.StackTrace);
             }
 
             return default;
@@ -282,6 +287,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("catch Error (getBottomAxis) " + ex.Message + ex.StackTrace);
                 return "";
             }
         }
@@ -317,6 +323,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("catch Error (setWellSelection) " + ex.Message + ex.StackTrace);
             }
         }
 
@@ -378,6 +385,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("catch Error (loadPhaseTags) " + ex.Message + ex.StackTrace);
             }
         }
 
@@ -449,6 +457,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             }
             catch (Exception ex)
             {
+                objLogger.LogMessage("catch Error (loadCustomTags) " + ex.Message + ex.StackTrace);
             }
         }
 
@@ -498,6 +507,7 @@ namespace eVuMax.DataBroker.AdvKPI_
                 Broker.BrokerResponse objResponse = objRequest.createResponseObject();
                 objResponse.RequestSuccessfull = false;
                 objResponse.Response = ex.Message + ex.StackTrace;
+                objLogger.LogMessage("catch Error (processCompositeKPI) " + ex.Message + ex.StackTrace);
                 return objResponse;
             }
 
@@ -542,11 +552,13 @@ namespace eVuMax.DataBroker.AdvKPI_
 
 
                     //objProcessor.processProfile();
-                    objLogger.LogMessage("objLocalProcessor.processProfile() ");
-                    objLocalProcessor.processProfile();
+                    objLogger.LogMessage("objLocalProcessor.processProfile() before thread1 called ");
+                    Task thread1 = Task.Factory.StartNew(() => objLocalProcessor.processProfile());
+                    Task.WaitAll(thread1);
+                    
                     
                     Thread.Sleep(4000);
-                    objLogger.LogMessage("objLocalProcessor.processProfile() sleep4000 ");
+                    objLogger.LogMessage("objLocalProcessor.processProfile() sleep4000, thread1 called ");
 
 
                     //foreach (AdvKPIData objItem_ in objProcessor.outputData.Values)
@@ -612,6 +624,7 @@ namespace eVuMax.DataBroker.AdvKPI_
             catch (Exception ex)
             {
                 string LastError = ex.Message + ex.StackTrace;
+                objLogger.LogMessage("catch Error (processCompositeProfile with Parameters) " + ex.Message + ex.StackTrace);
 
             }      
     
@@ -643,10 +656,10 @@ namespace eVuMax.DataBroker.AdvKPI_
                     objLocalProcessor.objWorkSpace = objWorkSpace;
 
 
-
+                    objLogger.LogMessage("Before thread1");
                     Task thread1 = Task.Factory.StartNew(() => objLocalProcessor.processProfile());
                     Task.WaitAll(thread1);
-
+                    objLogger.LogMessage("after thread1");
                     //objLocalProcessor.processProfile();
                     Thread.Sleep(2000);
 
@@ -690,7 +703,7 @@ namespace eVuMax.DataBroker.AdvKPI_
 
                     //update Series 
 
-
+                    objLogger.LogMessage("Updating Series");
                     this.objProcessor = objLocalProcessor;
 
                     foreach (AdvKPIData objSeries in objLocalProcessor.outputData.Values)
@@ -699,14 +712,16 @@ namespace eVuMax.DataBroker.AdvKPI_
                         objSeries.YColumn = "Y" + getVerticalAxisByColumnID(objSeries.getDataColumnID()).Replace("_", "").ToString();
                     }
                     objItem.objProfile.objProcessor = objLocalProcessor;
+                    objLogger.LogMessage("after Updating Series");
 
                 }
 
-                bool halt = true;
+                
             }
             catch (Exception ex)
             {
                 string LastError = ex.Message + ex.StackTrace;
+                objLogger.LogMessage("catch Error (processCompositeProfile without Parameters) " + ex.Message + ex.StackTrace);
 
             }
 
