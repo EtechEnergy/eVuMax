@@ -957,7 +957,7 @@ export default class AdvKPI extends Component {
                     // objAxis.LabelFont = objSummaryAxis.FontName;
                     // objAxis.LabelFontBold = objSummaryAxis.FontBold;
                     // objAxis.LabelFontColor = objSummaryAxis.FontColor;
-                    debugger;
+                    //debugger;
                     objAxis.LabelFontSize = objSummaryAxis.FontSize <= 8 ? 11 : objSummaryAxis.FontSize;
                     objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
                     // objAxis.Min = objSummaryAxis.MinValue;
@@ -1046,7 +1046,7 @@ export default class AdvKPI extends Component {
                 let SeriesList = Object.values(this.objData.outputData);
 
                 //   let  SeriesList1 =  SeriesList.sort(function (a :any, b :any) {
-                //         debugger;
+                //         //debugger;
                 //         return a.EntryID - b.EntryID;
 
                 //     });
@@ -1066,7 +1066,7 @@ export default class AdvKPI extends Component {
                     // names must be equal
                     return 0;
                 });
-                debugger;
+                //debugger;
 
                 for (let index = 0; index < SeriesList.length; index++) {
                     let objDataSeries: any = SeriesList[index];
@@ -1184,7 +1184,7 @@ export default class AdvKPI extends Component {
 
 
                     //prath
-                    debugger;
+                    
                     //alert(this.objData.objProfile.DataGroup);
                     //frmKPI Line no. 587
                     if ((this.objData.objProfile.DataGroup == 11) && this.objData.objProfile.TimeUnit == 3) {
@@ -1243,7 +1243,7 @@ export default class AdvKPI extends Component {
 
                 }
 
-                debugger;
+                
                 let dataFilterString = "";
                 if (this.objData.FilterData == true) {
                     dataFilterString = "(";
@@ -1316,6 +1316,8 @@ export default class AdvKPI extends Component {
             let dataFilterString = "";
             if (this.objCompositeProfile.items.length > 0) {
                 let objProcessor: any = this.objCompositeProfile.items[0].objProfile.objProcessor;
+                console.log("=====================================================");
+                console.log("objProcessor: ", JSON.stringify(objProcessor));
                 if (objProcessor.FilterData == true) {
                     dataFilterString = "(";
                     switch (objProcessor.FilterType) {
@@ -1373,10 +1375,14 @@ export default class AdvKPI extends Component {
 
 
 
-            debugger;
+            
             for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
 
                 let objItem = this.objCompositeProfile.items[index];
+                
+            //     console.log("=====================================================");
+            //   //  console.log("objItem", JSON.stringify(objItem));
+            //     console.log("=====================================================");
                 //this.objData.objProfile = objItem.objProfile;
                 //this.objData.outputData = objItem.
                 this.plotChartCompositeEx(objItem);
@@ -1588,7 +1594,7 @@ export default class AdvKPI extends Component {
                     // objAxis.LabelFont = objSummaryAxis.FontName;
                     // objAxis.LabelFontBold = objSummaryAxis.FontBold;
                     // objAxis.LabelFontColor = objSummaryAxis.FontColor;
-                    debugger;
+                    
                     //objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize;
                     objAxis.LabelFontSize = objSummaryAxis.FontSize <= 8 ? 11 : objSummaryAxis.FontSize;
                     objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
@@ -1665,8 +1671,11 @@ export default class AdvKPI extends Component {
 
 
                 //Load Series
-                debugger;
+                
                 let SeriesList = Object.values(objItem.objProfile.objProcessor.outputData)
+                console.log("=====================================================");
+                console.log("Composite Data Location: objItem.objProfile.objProcessor.outputData",JSON.stringify(objItem.objProfile.objProcessor.outputData));
+                console.log("=====================================================");
                 for (let index = 0; index < SeriesList.length; index++) {
                     let objDataSeries: any = SeriesList[index];
                     this.objDataSeries = objDataSeries;
@@ -1790,7 +1799,7 @@ export default class AdvKPI extends Component {
                             break;
                     }
 
-                    debugger;
+                    
                     let DataGroup = objItem.objProfile.DataGroup;
                     let TimeUnit = objItem.objProfile.TimeUnit;
                     //if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
@@ -1820,7 +1829,7 @@ export default class AdvKPI extends Component {
                 this.objChart.reDraw();
             }
         } catch (error) {
-
+            alert(error);
         }
     }
 
@@ -1843,6 +1852,11 @@ export default class AdvKPI extends Component {
                 return a - b;
             });
 
+            console.log("=====================================================");
+            console.log("getGroupSeriesData: SeriesXData Length",JSON.stringify(SeriesXData.length));
+            console.log("=====================================================");
+            console.log("getGroupSeriesData: SeriesYData length",JSON.stringify(SeriesYData.length));
+            console.log("=====================================================");
             //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
             let xMin = 0;
             let xMax = 0;
@@ -1884,6 +1898,9 @@ export default class AdvKPI extends Component {
         try {
 
             let SeriesData: any = Object.values(this.objDataSeries.outputData);
+            console.log("=====================================================");
+            console.log("getSingleSeriesData: this.objDataSeries.outputData",JSON.stringify(this.objDataSeries.outputData));
+            console.log("=====================================================");
 
             //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
             let xMin = 0;
@@ -2032,7 +2049,7 @@ export default class AdvKPI extends Component {
                     this.objCompositeProfile = objDataReceive.objCompositeProfile;
                     let objCompositeProfileItems = Object.values(objDataReceive.objCompositeProfile.items);
                     this.objData = objDataReceive.objProcessor;//Old
-                    debugger;
+                    
 
                     objCompositeProfileItems.sort((a: any, b: any) => {
                         if (a.Row === b.Row) {
@@ -2695,7 +2712,7 @@ export default class AdvKPI extends Component {
         let colWidth = totalWidth / nCols;
 
         for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
-            debugger;
+            //debugger;
             try {
                 const objItem = this.objCompositeProfile.items[index];
                 //let chartDivId = "Chart-" + utilFunc.removeUnderScoreFromID(objItem.ProfileID.toString());
@@ -2710,23 +2727,43 @@ export default class AdvKPI extends Component {
                 let divStr = "<div id='" + chartDivId + "_legend" + "'  style='text-align: center; height: 25px; width: " + cellWidth + "px; background-color: transparent; display: inline-block;position: relative; padding-bottom: 10px; line-height: 1.5; font-weight: bold;' > Legend </div>"
                 // let a=document.getElementById("md-" + chartDivId);
                 // a.innerHTML=divStr;
-                debugger;
+                //debugger;
                 //document.getElementById("md" + chartDivId).innerHTML = divStr;
 
 
                 // $("#md-" + chartDivId).append(divStr);
-                $("#md" + chartDivId).append(divStr);//not working
+                let chartDiv = $("#md" + chartDivId).append(divStr);
+
+                let warningList = [];
+
+                if (chartDiv.length == 0) {
+                    //chartDiv[0].innerHTML
+                    warningList.push({ "update": chartDivId + " not Found..", "timestamp": new Date(Date.now()).getTime() });
+                    this.insertWarningMessage(chartDivId + " Not Found");
+                } else {
+                    //warningList.push({ "update": chartDiv[0].innerHTML, "timestamp": new Date(Date.now()).getTime() });
+                }
+
             } catch (error) {
                 alert(error);
             }
+        }
+    }
 
 
+    insertWarningMessage = (pMsg: string) => {
+        try {
 
+            let warningList = [];
+            warningList.push({ "update": pMsg + " not Found..", "timestamp": new Date(Date.now()).getTime() });
+            this.setState({
+                warningMsg: warningList
+            });
+
+
+        } catch (error) {
 
         }
-
-
-
     }
 
     render() {

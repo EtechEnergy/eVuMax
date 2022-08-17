@@ -29,7 +29,7 @@ export default function CalculateRigState(_props) {
 
     let wellID = _props.WellID;
 
-    debugger;
+    
 
     const [objCalcRigState, setCalcRigState] = useState(new CalcRigState());
     // const [FromDate, setFromDate] = useState(new Date());
@@ -41,7 +41,7 @@ export default function CalculateRigState(_props) {
     }, []);
 
     const HandleChange = async (e: any, FieldName: string) => {
-        debugger;
+        
         // const { name, value } = e.target;
         let value = e.value;
 
@@ -146,7 +146,7 @@ export default function CalculateRigState(_props) {
                     // },
 
                     onDownloadProgress: progressEvent => {
-                        debugger;
+                        
                         let totalPersentage: number = (progressEvent.loaded / progressEvent.total) * 100;
                         const current = progressEvent.currentTarget.response.length
 
@@ -180,7 +180,7 @@ export default function CalculateRigState(_props) {
 
                 })
                 .then((res) => {
-                    debugger;
+                    
                     let objResponse = res.data;
                     //JSON.parse(res.data.Response);
                     //  this.setState({ FromDate: new Date(objResponse.FromDate), ToDate: new Date(objResponse.ToDate), showCalRigStateDialog: false });
@@ -239,7 +239,7 @@ export default function CalculateRigState(_props) {
                 width={"700px"}
                 height={"400px"}
                 onClose={() => {
-                    debugger;
+                    
                     _props.onClose();
                 }}
             >

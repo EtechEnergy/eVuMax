@@ -748,7 +748,7 @@ export default class WellEditorForm extends React.Component<IProps> {
 
   FxClicked = (fxCode: any) => {
     try {
-      debugger;
+      
       if (fxCode == 0) { //Re Calc Rig State
         if (this.state.showTimeLogEditor == true) {
 

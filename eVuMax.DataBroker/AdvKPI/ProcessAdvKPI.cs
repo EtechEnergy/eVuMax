@@ -52,6 +52,7 @@ namespace eVuMax.DataBroker.AdvKPI_
         private AdvKPIWorkSpace objWorkSpace = new AdvKPIWorkSpace();
         public string[] WellList = new  string[0];
 
+        public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
 
         public Broker.BrokerResponse processKPI(ref DataService paramDataService, string ProfileID)
         {
@@ -83,9 +84,11 @@ namespace eVuMax.DataBroker.AdvKPI_
                     loadCustomTags();
                 }
 
-                 objProcessor.processProfile();
+                Task thread1 = Task.Factory.StartNew(() => objProcessor.processProfile());
+                Task.WaitAll(thread1);
+                //objProcessor.processProfile();
 
-                Thread.Sleep(5000);
+                Thread.Sleep(2000);
 
                 foreach (AdvKPIData objItem in objProcessor.outputData.Values)
                 {
@@ -505,9 +508,9 @@ namespace eVuMax.DataBroker.AdvKPI_
         {
             try
             {
-                
-              
 
+                objLogger.LogMessage("Inside processCompositeProfile ");
+                
                 foreach (CompositeData objItem in paramCompositeProfile.items.Values)
                 {
                     KPIProcessor objLocalProcessor= new KPIProcessor();
@@ -539,9 +542,11 @@ namespace eVuMax.DataBroker.AdvKPI_
 
 
                     //objProcessor.processProfile();
+                    objLogger.LogMessage("objLocalProcessor.processProfile() ");
                     objLocalProcessor.processProfile();
-                    Thread.Sleep(2000);
-
+                    
+                    Thread.Sleep(4000);
+                    objLogger.LogMessage("objLocalProcessor.processProfile() sleep4000 ");
 
 
                     //foreach (AdvKPIData objItem_ in objProcessor.outputData.Values)
@@ -639,11 +644,11 @@ namespace eVuMax.DataBroker.AdvKPI_
 
 
 
-                    //objProcessor.processProfile();
-                    objLocalProcessor.processProfile();
+                    Task thread1 = Task.Factory.StartNew(() => objLocalProcessor.processProfile());
+                    Task.WaitAll(thread1);
+
+                    //objLocalProcessor.processProfile();
                     Thread.Sleep(2000);
-
-
 
                     //foreach (AdvKPIData objItem_ in objProcessor.outputData.Values)
                     foreach (AdvKPIData objItem_ in objLocalProcessor.outputData.Values)
