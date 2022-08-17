@@ -59,6 +59,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Circle } from "@progress/kendo-drawing";
 import { faArrowsAltV, faBalanceScale, faCircle, faClock, faLevelDownAlt, faSort, faSortNumericDownAlt, faWrench } from "@fortawesome/free-solid-svg-icons";
 import FcSetupAlarms from "../DataService/Data/SetupAlarms/FcSetupAlarms";
+import FcCalculateHoleDepth from "../DataService/Fx_Functions/FcCalculateHoleDepth";
 
 
 
@@ -128,6 +129,7 @@ export default class WellEditorForm extends React.Component<IProps> {
     showRigStateSetupDialog: false,
     showCalculateRigStateDialog: false,
     showSetupAlarmDialog: false, //Nishant 20/07/2022
+    showCalculateHoleDepthDialog: false, //Nishant 28/07/2022
   };
   closeSetupAlarmDialog = () => {
     this.setState({
@@ -762,11 +764,11 @@ export default class WellEditorForm extends React.Component<IProps> {
         }
       }
 
-      if (fxCode == 1) { //Re Calc Hole Depth
+      if (fxCode == 1) { //Calc Hole Depth
         if (this.state.showTimeLogEditor == true) {
 
-          // this.setState({ showCalculateRigStateDialog: true });
-          // alert(this.state.objTimeLog.ObjectID);
+           this.setState({ showCalculateHoleDepthDialog: true });
+          
           return;
         } else {
           alert("Please select Time Log from the Tree");
@@ -786,7 +788,8 @@ export default class WellEditorForm extends React.Component<IProps> {
       this.setState({
         showCalculateRigStateDialog: false,
         showRigStateSetupDialog: false,
-        EditingInProgress: false
+        EditingInProgress: false,
+        showCalculateHoleDepthDialog:false
       })
     } catch (error) {
 
@@ -799,6 +802,8 @@ export default class WellEditorForm extends React.Component<IProps> {
     return (
       <>
         {this.state.showCalculateRigStateDialog && <CalculateRigState WellID={this.wellID} onClose={this.closeRigStateSetupDialog}></CalculateRigState>}
+        {this.state.showCalculateHoleDepthDialog && <FcCalculateHoleDepth WellID={this.wellID} onClose={this.closeRigStateSetupDialog}></FcCalculateHoleDepth>}
+        
         {this.state.showSetupAlarmDialog && <FcSetupAlarms WellID={this.wellID} onClose={this.closeSetupAlarmDialog}></FcSetupAlarms>}
 
         <div id="mainContainer" style={{ height: "80vh", width: "95vw" }}>
@@ -819,7 +824,7 @@ export default class WellEditorForm extends React.Component<IProps> {
             </span>
 
             <span className="pl-2" style={{ display: "inline-block" }} onClick={(e) => { this.FxClicked(1) }}>
-              <FontAwesomeIcon title="Re-Calculate Hole Depth" icon={faSortNumericDownAlt} style={{ height: "20px", width: "25px" }} />
+              <FontAwesomeIcon title="Calculate Hole Depth" icon={faSortNumericDownAlt} style={{ height: "20px", width: "25px" }} />
 
             </span>
 

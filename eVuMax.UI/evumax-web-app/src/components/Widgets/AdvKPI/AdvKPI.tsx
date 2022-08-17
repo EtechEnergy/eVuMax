@@ -2831,6 +2831,7 @@ export default class AdvKPI extends Component {
                                                 <GridColumn
                                                     field="PROFILE_NAME"
                                                     title="Profile Name"
+                                                    resizable={true}
                                                 //width="490px"
                                                 //                width="100%"
                                                 // resizable={true} Nishant Pending
@@ -2846,6 +2847,7 @@ export default class AdvKPI extends Component {
                                                     title="Notes"
                                                     width={150}
                                                     cell={NotesCell}
+                                                    resizable={true}
                                                 />
 
                                                 <GridColumn

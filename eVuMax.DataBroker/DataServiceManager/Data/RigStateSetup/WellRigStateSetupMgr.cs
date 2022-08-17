@@ -18,7 +18,11 @@ namespace eVuMax.DataBroker.DataServiceManager
         const string loadRigStateSetup = "loadRigStateSetup";
         const string saveRigStateSetup = "saveRigStateSetup";
         const string calcRigState = "calcRigState";
+        const string calcHoleDepth = "calcHoleDepth";
 
+        const string deSpikeDataByInterpolation = "deSpikeDataByInterpolation";
+        const string deSpikeDataByRange = "deSpikeDataByRange";
+        
 
 
         public eVuMaxLogger.eVuMaxLogger objLogger = new eVuMaxLogger.eVuMaxLogger();
@@ -245,6 +249,22 @@ namespace eVuMax.DataBroker.DataServiceManager
 
                 }
 
+                if(paramRequest.Function == calcHoleDepth)
+                {
+                    objResponse = calculateHoleDepth(paramRequest);
+                }
+
+
+                if(paramRequest.Function == deSpikeDataByInterpolation)
+                {
+                    //pending
+                }
+
+                if (paramRequest.Function == deSpikeDataByRange)
+                {
+                    //pending
+                }
+
                 return objResponse;
 
             }
@@ -259,6 +279,79 @@ namespace eVuMax.DataBroker.DataServiceManager
             }
         }
 
+
+        public BrokerResponse calculateHoleDepth(BrokerRequest paramRequest)
+        {
+            try
+            {
+                BrokerResponse objResponse = paramRequest.createResponseObject();
+
+                string userID = paramRequest.Parameters.Where(x => x.ParamName.Contains("UserID")).FirstOrDefault().ParamValue.ToString();
+                string WellID = paramRequest.Parameters.Where(x => x.ParamName.Contains("WellID")).FirstOrDefault().ParamValue.ToString();
+                string selectionType = paramRequest.Parameters.Where(x => x.ParamName.Contains("selectedval")).FirstOrDefault().ParamValue.ToString();
+
+                DateTime FromDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("FromDate")).FirstOrDefault().ParamValue.ToString());
+                DateTime ToDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
+
+                
+
+                WellWorkSpace objWorkSpace = new WellWorkSpace(paramRequest.objDataService);
+                HoleDepthCalculator objCalculator = new HoleDepthCalculator();
+                //pending
+                objWorkSpace.loadWorkSpace();
+
+                TimeLog objTimeLog = VuMaxDR.Data.Objects.Well.getPrimaryTimeLogWOPlan(ref paramRequest.objDataService, WellID);
+                VuMaxDR.Data.Objects.Well objWell = objWorkSpace.Wells[objTimeLog.WellID];
+                rigState objRigState = rigState.loadWellRigStateSetup(ref paramRequest.objDataService, objTimeLog.WellID);
+                
+                DateTime startDate = FromDate;
+
+                if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
+                {
+
+                    startDate = utilFunctionsDO.convertWellTimeZoneToUTC(startDate, objWell);
+                }
+                else
+                {
+
+                    startDate = utilFunctionsDO.convertWellToLocalTimeZone(startDate, objWell);
+
+                }
+
+                DateTime rangeStartDate = startDate;
+                DateTime rangeEndDate = ToDate;
+
+
+                if (objWell.wellDateFormat == VuMaxDR.Data.Objects.Well.wDateFormatUTC)
+                {
+                    rangeStartDate = utilFunctionsDO.convertWellTimeZoneToUTC(rangeStartDate, objWell);
+                    rangeEndDate = utilFunctionsDO.convertWellTimeZoneToUTC(rangeEndDate, objWell);
+                }
+                else
+                {
+                    rangeStartDate = utilFunctionsDO.convertWellToLocalTimeZone(rangeStartDate, objWell);
+                    rangeEndDate = utilFunctionsDO.convertWellToLocalTimeZone(rangeEndDate, objWell);
+                }
+
+
+
+                //objCalculator.calculateHoleDepth()
+
+                objResponse.RequestSuccessfull = true;
+                objResponse.Response = "";
+                return objResponse;
+
+            }
+            catch (Exception ex)
+            {
+
+                BrokerResponse objResponse = paramRequest.createResponseObject();
+                objResponse.RequestSuccessfull = false;
+                objResponse.Warnings = ex.Message;
+                objResponse.Response = ex.Message + " " + ex.StackTrace;
+                return objResponse;
+            }
+        }
         public BrokerResponse doCalculate(BrokerRequest paramRequest)
         {
             try
@@ -273,7 +366,7 @@ namespace eVuMax.DataBroker.DataServiceManager
                 DateTime ToDate = DateTime.Parse(paramRequest.Parameters.Where(x => x.ParamName.Contains("ToDate")).FirstOrDefault().ParamValue.ToString());
 
                 WellWorkSpace objWorkSpace = new WellWorkSpace(paramRequest.objDataService);
-                VuMaxDR.Data.Objects.HoleDepthCalculator objCalculator = new HoleDepthCalculator(); 
+                HoleDepthCalculator objCalculator = new HoleDepthCalculator(); 
 
                 objWorkSpace.loadWorkSpace();
 
@@ -330,7 +423,12 @@ namespace eVuMax.DataBroker.DataServiceManager
                     //startDateUTC = startDate;
                     objCalculator.processFromDate = startDate;
                     objCalculator.processToDate = DateTime.FromOADate(objTimeLog.getLastIndexOptimized(ref paramRequest.objDataService));
-                    objCalculator.calculateRigStatesRange(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID);
+                    //objCalculator.calculateRigStatesRange(ref paramRequest.objDataService, objTimeLog.WellID, objTimeLog.WellboreID, objTimeLog.ObjectID);
+                    //objCalculator.objDataService = paramRequest.objDataService;
+                    //objCalculator.WellID = objTimeLog.WellID;
+                    //objCalculator.WellboreID = objTimeLog.WellboreID;
+                    //objCalculator.LogID = objTimeLog.ObjectID;
+                    //objCalculator.calculateRigStatesExRange();
                 }
 
                 if (selectionType == "2")
