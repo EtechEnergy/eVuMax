@@ -2,7 +2,7 @@
 //https://stackoverflow.com/questions/38330484/dynamic-complex-rowspan-in-html-table
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine, faFilter, faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faChartLine, faFilter, faListAlt, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Grid, GridCell, GridColumn, GridRow } from "@progress/kendo-react-grid";
 import React, { Component } from "react";
 import { Button, DateTimePicker, Dialog, DropDownList, Label, Splitter, SplitterOnChangeEvent, TabStrip, TabStripTab, Tooltip } from "@progress/kendo-react-all";
@@ -29,9 +29,10 @@ import { confirmAlert } from "react-confirm-alert";
 
 import { comboData } from "../../../eVuMaxObjects/UIObjects/comboData";
 import { ADVKPIDataFilter } from "./AdvKPIDataFilter";
-import { ETIMEDOUT } from "constants";
-import { debug } from "console";
+import { ClientLogger } from "../../ClientLogger/ClientLogger";
+
 let _gMod = new GlobalMod();
+
 
 let profileList: any[] = [];
 let compositeProfileList: any[] = [];
@@ -71,7 +72,9 @@ class Guid {
 
 
 export default class AdvKPI extends Component {
-    //Cancel all Axios Request
+
+    objLogger: ClientLogger = new ClientLogger("AdvKPI", _gMod._userId);
+
     state = {
         panes: [{ size: "100%", collapsible: false, collapsed: false }, {}],
         grdWells: [],
@@ -591,7 +594,7 @@ export default class AdvKPI extends Component {
             return objChart;
 
         } catch (error) {
-            alert(error);
+            this.objLogger.SendLog("initializeComposoteChart Try Catch Error " + error);
         }
     }
 
@@ -1183,8 +1186,10 @@ export default class AdvKPI extends Component {
                     }
 
 
+                    this.objLogger.SendLog("Plot Chart Line 1189");
+
                     //prath
-                    
+
                     //alert(this.objData.objProfile.DataGroup);
                     //frmKPI Line no. 587
                     if ((this.objData.objProfile.DataGroup == 11) && this.objData.objProfile.TimeUnit == 3) {
@@ -1193,24 +1198,9 @@ export default class AdvKPI extends Component {
                         this.getSingleSeriesData(); //WIP
                     }
                     //
-
-
-
-
-
-
-
                 }
-
-
-
-
                 this.objChart.updateChart();
-
-
-
                 this.objChart.reDraw();
-
             }
         } catch (error) {
 
@@ -1220,6 +1210,7 @@ export default class AdvKPI extends Component {
 
     plotCompositeChart = async () => {
         try {
+            this.objLogger.SendLog("Inside plotCompositeChart");
             //04-04-2022
             let WellList: any = Object.values(this.objData.objWorkSpace.wells);
 
@@ -1243,7 +1234,7 @@ export default class AdvKPI extends Component {
 
                 }
 
-                
+
                 let dataFilterString = "";
                 if (this.objData.FilterData == true) {
                     dataFilterString = "(";
@@ -1375,14 +1366,14 @@ export default class AdvKPI extends Component {
 
 
 
-            
+
             for (let index = 0; index < this.objCompositeProfile.items.length; index++) {
 
                 let objItem = this.objCompositeProfile.items[index];
-                
-            //     console.log("=====================================================");
-            //   //  console.log("objItem", JSON.stringify(objItem));
-            //     console.log("=====================================================");
+
+                //     console.log("=====================================================");
+                //   //  console.log("objItem", JSON.stringify(objItem));
+                //     console.log("=====================================================");
                 //this.objData.objProfile = objItem.objProfile;
                 //this.objData.outputData = objItem.
                 this.plotChartCompositeEx(objItem);
@@ -1433,6 +1424,7 @@ export default class AdvKPI extends Component {
     plotChartCompositeEx = (paramObjItem: any) => {
         try {
 
+            this.objLogger.SendLog("Inside plotChartCompositeEx");
             let objItem = paramObjItem;
             this.objChart = paramObjItem.objChart;
 
@@ -1594,7 +1586,7 @@ export default class AdvKPI extends Component {
                     // objAxis.LabelFont = objSummaryAxis.FontName;
                     // objAxis.LabelFontBold = objSummaryAxis.FontBold;
                     // objAxis.LabelFontColor = objSummaryAxis.FontColor;
-                    
+
                     //objAxis.LabelFontSize = objSummaryAxis.FontSize == 0 ? 10 : objSummaryAxis.FontSize;
                     objAxis.LabelFontSize = objSummaryAxis.FontSize <= 8 ? 11 : objSummaryAxis.FontSize;
                     objAxis.LabelFontItalic = objSummaryAxis.FontItalic;
@@ -1671,10 +1663,10 @@ export default class AdvKPI extends Component {
 
 
                 //Load Series
-                
+
                 let SeriesList = Object.values(objItem.objProfile.objProcessor.outputData)
                 console.log("=====================================================");
-                console.log("Composite Data Location: objItem.objProfile.objProcessor.outputData",JSON.stringify(objItem.objProfile.objProcessor.outputData));
+                console.log("Composite Data Location: objItem.objProfile.objProcessor.outputData", JSON.stringify(objItem.objProfile.objProcessor.outputData));
                 console.log("=====================================================");
                 for (let index = 0; index < SeriesList.length; index++) {
                     let objDataSeries: any = SeriesList[index];
@@ -1799,7 +1791,7 @@ export default class AdvKPI extends Component {
                             break;
                     }
 
-                    
+
                     let DataGroup = objItem.objProfile.DataGroup;
                     let TimeUnit = objItem.objProfile.TimeUnit;
                     //if ((this.objData.objProfile.DataGroup = 1) && this.objData.objProfile.TimeUnit == 3) {
@@ -1812,24 +1804,16 @@ export default class AdvKPI extends Component {
                         this.getSingleSeriesData();
                     }
                     //
-
-
-
-
-
-
                 }
 
 
 
                 this.objChart.updateChart();
-
-
-
                 this.objChart.reDraw();
             }
         } catch (error) {
-            alert(error);
+
+            this.objLogger.SendLog("Inside plotChartCompositeEx try Catch Error " + error);
         }
     }
 
@@ -1838,6 +1822,7 @@ export default class AdvKPI extends Component {
 
     getGroupSeriesData = () => {
         try {
+            this.objLogger.SendLog("Inside getGroupSeriesData");
             console.clear();
             this.objSeries.Data.length = 0;
 
@@ -1853,9 +1838,9 @@ export default class AdvKPI extends Component {
             });
 
             console.log("=====================================================");
-            console.log("getGroupSeriesData: SeriesXData Length",JSON.stringify(SeriesXData.length));
+            console.log("getGroupSeriesData: SeriesXData Length", JSON.stringify(SeriesXData.length));
             console.log("=====================================================");
-            console.log("getGroupSeriesData: SeriesYData length",JSON.stringify(SeriesYData.length));
+            console.log("getGroupSeriesData: SeriesYData length", JSON.stringify(SeriesYData.length));
             console.log("=====================================================");
             //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
             let xMin = 0;
@@ -1875,7 +1860,8 @@ export default class AdvKPI extends Component {
                 autoScaleY = false;
             }
             //==========================================
-
+            this.objLogger.SendLog("Inside getGroupSeriesData: SeriesXData Length: " + SeriesXData.length.toString());
+            this.objLogger.SendLog("Inside getGroupSeriesData: SeriesYData Length: " + SeriesYData.length.toString());
             for (let i = 0; i < SeriesXData.length; i++) {
                 let objVal: ChartData = new ChartData();
 
@@ -1884,11 +1870,15 @@ export default class AdvKPI extends Component {
 
                 this.objSeries.Data.push(objVal);
             }
+
+            this.objLogger.SendLog("Inside getGroupSeriesData: objSeries.Data Length: " + this.objSeries.Data.length.toString());
+
             this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
 
 
         } catch (error) {
-
+            this.objLogger.SendLog("Inside try Catch Error getGroupSeriesData");
+            this.objLogger.SendLog("Error: " + error);
         }
     }
 
@@ -1896,10 +1886,12 @@ export default class AdvKPI extends Component {
 
     getSingleSeriesData = () => {
         try {
+            this.objLogger.SendLog("Inside getSingleSeriesData");
+
 
             let SeriesData: any = Object.values(this.objDataSeries.outputData);
             console.log("=====================================================");
-            console.log("getSingleSeriesData: this.objDataSeries.outputData",JSON.stringify(this.objDataSeries.outputData));
+            console.log("getSingleSeriesData: this.objDataSeries.outputData", JSON.stringify(this.objDataSeries.outputData));
             console.log("=====================================================");
 
             //prath 04-Feb-2022 (To handle autoscale false case - No need to fill all data to series to avoid overlape charts)
@@ -1922,6 +1914,7 @@ export default class AdvKPI extends Component {
             //==========================================
             let objBottomAxes: Axis = new Axis();
             objBottomAxes = this.objChart.getAxisByID(this.objSeries.XAxisId);
+            this.objLogger.SendLog("Inside getSingleSeriesData SeriesData.length" + SeriesData.length.toString());
 
             for (let i = 0; i < SeriesData.length; i++) {
                 this.objSeries.Name = SeriesData[i].LegendTitle;
@@ -1963,10 +1956,12 @@ export default class AdvKPI extends Component {
 
             }
 
+
             this.objChart.DataSeries.set(this.objSeries.Id, this.objSeries);
+            this.objLogger.SendLog("Inside getSingleSeriesData  this.objChart.DataSeries.length" + this.objChart.DataSeries.size.toString());
 
         } catch (error) {
-
+            this.objLogger.SendLog("Inside getSingleSeriesData Try Catch Error " + error);
         }
     }
     formatSeries = (paramSeries: DataSeries, paramDataSeries: any) => {
@@ -1985,7 +1980,7 @@ export default class AdvKPI extends Component {
 
 
         } catch (error) {
-
+            this.objLogger.SendLog("Inside formatSeries Try Catch Error " + error);
         }
     }
 
@@ -1994,7 +1989,7 @@ export default class AdvKPI extends Component {
 
         try {
 
-
+            this.objLogger.SendLog("Inside runCompositeKPIReport");
             SelectedWellList = SelectedWellList.substring(1, SelectedWellList.length);
             let newPanes: any = this.state.panes;
             newPanes[0].collapsible = true;
@@ -2043,13 +2038,14 @@ export default class AdvKPI extends Component {
 
 
                     let objDataReceive = JSON.parse(res.data.Response);
+                    this.objLogger.SendLog("Inside runCompositeKPIReport Data received " );
                     console.log("objDataReeceive", objDataReceive);
 
 
                     this.objCompositeProfile = objDataReceive.objCompositeProfile;
                     let objCompositeProfileItems = Object.values(objDataReceive.objCompositeProfile.items);
                     this.objData = objDataReceive.objProcessor;//Old
-                    
+
 
                     objCompositeProfileItems.sort((a: any, b: any) => {
                         if (a.Row === b.Row) {
@@ -2223,6 +2219,7 @@ export default class AdvKPI extends Component {
 
 
             //_gMod._userId = "PRATH\PRATH";
+            this.objLogger.SendLog("loadWorkSpace");
             _gMod._userId = _gMod._userId;
 
             let objParameter = new BrokerParameter("", ""); // // "f3205325-4ddb-4996-b700-f04d6773a051"
@@ -2249,6 +2246,8 @@ export default class AdvKPI extends Component {
 
                     let objData = JSON.parse(res.data.Response);
                     console.log("AdvKPI", objData);
+
+
 
 
                     //Warnings Notifications
@@ -2745,7 +2744,7 @@ export default class AdvKPI extends Component {
                 }
 
             } catch (error) {
-                alert(error);
+                this.objLogger.SendLog("generateDynamicTable Try Catch Error " + error);
             }
         }
     }
@@ -2782,6 +2781,8 @@ export default class AdvKPI extends Component {
                         size={24}
                         color="yellow"
                     />
+
+
 
                 </div>
                 <label>Select Well from the List </label>
@@ -3063,6 +3064,13 @@ export default class AdvKPI extends Component {
                                         this.plotCompositeChart();
                                     }}
                                 />
+                                <label className=" ml-5 mr-1" onClick={() => {
+                                    this.objLogger.downloadFile();
+                                }} style={{ cursor: "pointer" }}>Download Log</label><FontAwesomeIcon icon={faListAlt} size="lg" onClick={() => {
+
+                                    this.objLogger.downloadFile();
+
+                                }} />
                             </div>
                             <Button
                                 className="ml-5 mr-3"

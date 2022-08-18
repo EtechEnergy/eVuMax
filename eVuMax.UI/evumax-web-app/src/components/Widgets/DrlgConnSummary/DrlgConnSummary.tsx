@@ -1836,7 +1836,7 @@ class DrlgConnSummary extends Component {
       this.objChart.bottomAxis().ShowSelector = false;
       this.objChart.bottomAxis().ShowTitle = true;
       this.objChart.bottomAxis().Visible = true;
-      
+
 
       this.objChart.rightAxis().ShowLabels = true;
       this.objChart.rightAxis().ShowTitle = true;
@@ -1911,9 +1911,9 @@ class DrlgConnSummary extends Component {
 
       //Fill up the data for data series
       this.objChart.isNightConnection = false;
-      
-       
-        for (let i = this.objSummaryData.connData.length-1; i >= 0; i--) {
+
+
+      for (let i = this.objSummaryData.connData.length - 1; i >= 0; i--) {
         let objBTSPoint = new ChartData();
         objBTSPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objBTSPoint.y = this.objSummaryData.connData[i]["BOTTOM_TO_SLIPS"];
@@ -2005,7 +2005,7 @@ class DrlgConnSummary extends Component {
       //Fill up the data for data series
 
       //for (let i = 0; i < this.objSummaryData.connData.length; i++) {
-        for (let i = this.objSummaryData.connData.length-1; i >=0 ; i--) {
+      for (let i = this.objSummaryData.connData.length - 1; i >= 0; i--) {
         let objPoint = new ChartData();
         objPoint.x = this.objSummaryData.connData[i]["DEPTH"];
         objPoint.y = this.objSummaryData.connData[i]["DIFF"];
@@ -2026,7 +2026,7 @@ class DrlgConnSummary extends Component {
 
   // sortArrRigState = (arrRigStatesInfo : any) =>{
   //   try {
-      
+
   //     for (let index = 0; index < arrRigStatesInfo.length; index++) {
   //       const element = arrRigStatesInfo[index].split("~");
   //       if (element[0].length==1){
@@ -2036,7 +2036,7 @@ class DrlgConnSummary extends Component {
   //     }
 
   //     arrRigStatesInfo.sort();
-  
+
   //   } catch (error) {
   //     alert(error);
   //   }
@@ -2075,22 +2075,22 @@ class DrlgConnSummary extends Component {
       // this.objSummaryData.rigStateData.sort(function (a, b) {
       //   return a.DEPTH - b.DEPTH;
       // });
-      
+
 
       //Create series for each rig state
       this.objSummaryData.rigStates.sort((a, b) => a.RIG_STATE > b.RIG_STATE ? 1 : -1);
-      
+
       for (let i = 0; i < this.objSummaryData.rigStates.length; i++) {
-        if (this.objSummaryData.rigStates[i]["RIG_STATE_NAME"].toString()==null){
-          
+        if (this.objSummaryData.rigStates[i]["RIG_STATE_NAME"].toString() == null) {
+
           continue;
         }
         let objSeries = new DataSeries();
         objSeries.Id = this.objSummaryData.rigStates[i]["RIG_STATE"].toString();
         objSeries.Stacked = true;
-            
+
         objSeries.Title = this.objSummaryData.rigStates[i]["RIG_STATE_NAME"].toString();
-         
+
         objSeries.Type = dataSeriesType.Bar;
         objSeries.Color = this.objSummaryData.rigStates[i]["COLOR"].toString();
         objSeries.XAxisId = this.objChart.bottomAxis().Id;
@@ -2098,15 +2098,15 @@ class DrlgConnSummary extends Component {
         this.objChart.DataSeries.set(objSeries.Id, objSeries);
       }
 
-      
+
       //Fill up the data for each series
       //for (let i = 0; i < this.objSummaryData.rigStateData.length; i++) {
-        for (let i = this.objSummaryData.rigStateData.length-1; i >=0 ; i--) {
+      for (let i = this.objSummaryData.rigStateData.length - 1; i >= 0; i--) {
         //let arrRigStates: string[] = this.objSummaryData.rigStateData[i]["TIMES"].toString().split(",");
         let arrRigStatesInfo: string[] = this.objSummaryData.rigStateData[i]["TIMES"].toString().split(",");
         //this.sortArrRigState(arrRigStatesInfo);
 
-      
+
 
         for (let j = 0; j < this.objSummaryData.rigStates.length; j++) {
           let lnRigState: number = this.objSummaryData.rigStates[j]["RIG_STATE"];

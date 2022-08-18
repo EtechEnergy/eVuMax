@@ -626,7 +626,7 @@ export class Chart {
     } catch (error) {
       //alert(error.message);
       
-      this.objLogger.SendLog("Error ->CHART-updateAxes : " + error.message);
+      this.objLogger.SendLog("try catch Error ->Chart.ts-updateAxes : " + error);
     }
   };
 

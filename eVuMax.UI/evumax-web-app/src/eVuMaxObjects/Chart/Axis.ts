@@ -1516,7 +1516,7 @@ export class Axis {
       this.formatAxis();
 
     } catch (error) {
-      this.objLogger.SendLog("Error ->Axis-updateAxis : " + error.message);
+      this.objLogger.SendLog("Error ->Axis-updateAxis : " + error);
     }
   };
 
